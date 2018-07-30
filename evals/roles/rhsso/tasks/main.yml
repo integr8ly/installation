@@ -1,0 +1,26 @@
+---
+- name: "Update latest RH-SSO image stream and templates"
+  shell: oc replace -n openshift --force -f {{ rhsso_template_url }}/{{ item }}
+  with_items:
+    - "{{ rhsso_image_stream_filename }}"
+    - "{{ rhsso_template_filename }}"
+  when: rhsso_force_image_streams_update
+
+# The below import step intermittently fails due to timeout issues following the image stream/template updates so we need to apply a sleep 5 before executing
+- name: "Import image streams {{ rhsso_image_stream }}"
+  shell: sleep 5; oc -n openshift import-image {{ rhsso_image_stream }}:{{ rhsso_image_stream_tag }}
+  when: rhsso_force_image_streams_update
+
+- name: "Create project namespace: {{ rhsso_namespace }}"
+  shell: oc new-project {{ rhsso_namespace }}
+  register: output
+  failed_when: output.stderr != '' and 'already exists' not in output.stderr
+  changed_when: output.rc == 0
+
+- name: Check namespace for existing resources
+  shell: oc get all -n {{ rhsso_namespace }}
+  register: rhsso_resources_exist
+
+- name: "Provision RH-SSO using template {{ rhsso_template }} in namespace {{ rhsso_namespace }}"
+  shell: oc new-app --template=sso72-x509-postgresql-persistent -p SSO_ADMIN_USERNAME={{ rhsso_admin_username }} -p SSO_SERVICE_USERNAME={{ rhsso_service_username }} -p SSO_REALM={{ rhsso_realm }} -n {{rhsso_namespace}}
+  when: rhsso_resources_exist.stderr == "No resources found."
