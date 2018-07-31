@@ -1,0 +1,14 @@
+---
+rhsso_namespace: rhsso
+rhsso_template: sso72-x509-postgresql-persistent
+rhsso_template_filename: sso72-x509-postgresql-persistent.json
+rhsso_template_url: https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.11/sso/
+
+rhsso_image_stream: redhat-sso72-openshift
+rhsso_image_stream_filename: sso72-image-stream.json
+rhsso_image_stream_tag: "1.1"
+rhsso_force_image_streams_update: true
+
+rhsso_admin_username: admin
+rhsso_service_username: sso-service-user
+rhsso_realm: openshift
