@@ -1,0 +1,4 @@
+- name: "Install EnMasse"
+  hosts: local
+  roles:
+  - enmasse
