@@ -3,3 +3,11 @@
 
 [local:vars]
 ansible_connection=local
+# These are EnMasse-specific variables. When we run the EnMasse playbook it
+# still uses our inventory file.
+namespace=enmasse
+multitenant=True
+enable_rbac=True
+service_catalog=True
+keycloak_admin_password=admin
+authentication_services=["standard"]

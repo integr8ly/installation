@@ -1,0 +1,5 @@
+---
+- name: Download EnMasse
+  hosts: local
+  roles:
+  - enmasse

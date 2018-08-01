@@ -1,0 +1,3 @@
+---
+- name: Provision EnMasse
+  import_playbook: "{{ enmasse_playbook  | default('/tmp/enmasse-artifacts/ansible/playbooks/openshift/enmasse-playbook.yml') }}"

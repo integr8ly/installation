@@ -1,0 +1,4 @@
+---
+enmasse_release_artifacts:
+  v0.21.0:
+    url: https://github.com/EnMasseProject/enmasse/releases/download/0.21.0/enmasse-0.21.0.tgz
