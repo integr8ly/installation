@@ -1,0 +1,36 @@
+---
+# tasks file for ipaas
+-
+  name: Download install script
+  get_url:
+    url: "{{ ipaas_script_url }}"
+    dest: "{{ ipaas_script_path }}"
+    mode: 0644
+
+-
+  name: Select openshift project
+  shell: oc project {{ ipaas_namespace }}
+  register: project_cmd
+  failed_when: false
+
+-
+  name: Create openshift project
+  shell: oc new-project {{ ipaas_namespace }}
+  when: project_cmd.rc != 0
+
+-
+  name: Set user permissions
+  shell: oc adm policy add-role-to-user edit {{ ipaas_username }} -n {{ ipaas_namespace }}
+
+-
+  name: Execute install script
+  shell: bash {{ ipaas_script_path }}
+  register: install_cmd
+  changed_when: install_cmd.rc == 0
+  failed_when: install_cmd.rc != 0
+
+-
+  name: Cleanup
+  file:
+    state: absent
+    path: "{{ ipaas_script_path }}"
