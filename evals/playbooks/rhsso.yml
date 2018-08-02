@@ -3,3 +3,10 @@
   gather_facts: no
   roles:
     - role: rhsso
+
+- hosts: master
+  gather_facts: no
+  tasks:
+  - include_role:
+      name: rhsso
+      tasks_from: identityprovider
