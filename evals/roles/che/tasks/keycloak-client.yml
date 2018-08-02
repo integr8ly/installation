@@ -1,0 +1,46 @@
+---
+
+-
+  name: Get che route
+  shell: "oc get route/che -o jsonpath='{.spec.host}' -n {{ che_namespace }}"
+  register: che_route_cmd
+
+-
+  name: Set initial vars
+  set_fact:
+    che_keycloak_url: "{{ che_protocol }}://{{ che_keycloak_host }}"
+    che_url: "{{ che_protocol }}://{{ che_route_cmd.stdout }}"
+    che_json_path: "{{ che_template_folder }}/keycloak/client.json"
+
+-
+  name: Copy template files to temporary folder
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ che_template_folder }}/keycloak/{{ item.path }}"
+  with_filetree: "{{ role_path }}/templates/keycloak"
+  when: item.state == 'file'
+
+-
+  name: Generate keycloak auth token for admin user
+  uri:
+    url: "{{ che_keycloak_url }}/auth/realms/master/protocol/openid-connect/token"
+    method: POST
+    body: "client_id=admin-cli&username={{ che_keycloak_user }}&password={{ che_keycloak_password }}&grant_type=password"
+    validate_certs: "{{ che_validate_certs }}"
+  register: che_keycloak_auth_response
+  retries: 20
+  delay: 2
+  until: che_keycloak_auth_response.status == 503 or che_keycloak_auth_response.status in [200, 401, 403]
+
+-
+  name: Create public client in {{ che_keycloak_realm }} realm
+  uri:
+    url: "{{ che_keycloak_url }}/auth/admin/realms/{{ che_keycloak_realm }}/clients"
+    method: POST
+    body: "{{ lookup('file', che_json_path) }}"
+    validate_certs: "{{ che_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ che_keycloak_auth_response.json.access_token }}"
+    status_code: [201, 409]
+  when: che_keycloak_auth_response.status != 503

@@ -1,0 +1,38 @@
+---
+-
+  name: Delete objects labeled as app:{{ che_app_label }}
+  shell: "oc delete all -l app={{ item }} -n {{ che_namespace }}"
+  register: che_delete_cmd
+  failed_when: che_delete_cmd.rc != 0
+  changed_when: che_delete_cmd == 0
+  with_items:
+    - "{{ che_app_label }}"
+    - "keycloak"
+    - "postgres"
+
+-
+  name: Retrieve service account secrets
+  shell: "oc get sa -o jsonpath='{.items[*].secrets[*].name}' -l app={{ che_app_label }} -n {{ che_namespace }}"
+  register: che_sa_cmd
+  ignore_errors: true
+
+-
+  name: Delete service account secrets
+  shell: "oc delete secret/{{ item }} -n {{ che_namespace }}"
+  with_items: "{{ che_sa_cmd.stdout.split(' ') | lower }}"
+
+-
+  name: Deleting remaining resources
+  shell: "oc delete {{ item }} -l app={{ che_app_label }} -n {{ che_namespace }}"
+  with_items:
+    - serviceaccount
+    - rolebinding
+    - pvc
+  register: che_delete_res_cmd
+  failed_when: che_delete_res_cmd.rc != 0
+  changed_when: che_delete_res_cmd == 0
+
+-
+  name: Delete che namespace
+  shell: "oc delete project {{ che_namespace }}"
+  when: che_delete_namespace | bool == true

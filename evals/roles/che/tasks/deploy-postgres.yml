@@ -1,0 +1,25 @@
+---
+-
+  name: Check if postgres is already deployed
+  shell: "oc get dc -l app=postgres -o jsonpath='{.items[0].metadata.name}' -n {{ che_namespace }}"
+  register: che_postgres_dc_cmd
+  failed_when: false
+
+-
+  name: Deploy postgres
+  shell: "oc new-app \
+          -p 'CHE_VERSION={{ che_postgre_image_tag }}' \
+          -p 'IMAGE_POSTGRES={{ che_postgre_image_name }}' \
+          -f {{ che_template_folder }}/multi/postgres-template.yaml \
+          -n {{ che_namespace }}"
+  when: che_postgres_dc_cmd.rc != 0
+
+-
+  name: "Verify postgres deployment succeeded"
+  shell: sleep 5; oc get pods --namespace {{ che_namespace }}  |  grep  "deploy"
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False

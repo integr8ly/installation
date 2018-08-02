@@ -1,0 +1,66 @@
+---
+-
+  name: Certificate setup
+  block:
+    -
+      name: Retrieve cluster cert
+      set_fact:
+        che_cert_content: "{{lookup('file', che_cert_path) }}"
+    -
+      name: Check if cluster cert exists
+      shell: "oc get secret/openshift-identity-provider -o json -n {{ che_namespace }}"
+      register: che_cert_cmd
+      failed_when: false
+    -
+      name: Create cluster cert
+      shell: "oc new-app -f {{ che_template_folder }}/multi/openshift-certificate-secret.yaml -p CERTIFICATE='{{ che_cert_content }}' -n {{ che_namespace }}"
+      when: che_cert_cmd.rc != 0
+  when: che_protocol == 'https'
+
+
+-
+  name: Deplpoy che server
+  shell: "oc new-app \
+          -p 'ROUTING_SUFFIX={{ che_route_suffix }}' \
+          -p 'CHE_VERSION={{ che_image_tag }}' \
+          -p 'IMAGE_CHE={{ che_image_name }}' \
+          -p 'PROTOCOL={{ che_protocol }}' \
+          -p 'WS_PROTOCOL={{ che_ws_protocol }}' \
+          -p 'TLS={{ che_tls }}' \
+          -p 'CHE_MULTIUSER={{ che_multiuser }}' \
+          -p 'CHE_KEYCLOAK_AUTH__SERVER__URL={{ che_protocol }}://{{ che_keycloak_host }}/auth' \
+          -p 'CHE_KEYCLOAK_REALM={{ che_keycloak_realm }}' \
+          -p 'CHE_KEYCLOAK_CLIENT_ID={{ che_keycloak_client_id }}' \
+          -f {{ che_template_folder }}/che-server-template.yaml \
+          -n {{ che_namespace }}"
+
+-
+  name: "Verify che server deployment succeeded"
+  shell: sleep 5; oc get pods --namespace {{ che_namespace }}  |  grep  "deploy"
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
+
+-
+  name: Check if secure route exists
+  shell: "oc get route -o jsonpath='{.spec.tls}' -l app={{ che_app_label }} -n {{ che_namespace }}"
+  register: che_route_cmd
+  failed_when: false
+  when: che_protocol == 'https'
+
+-
+  name: Deploy secure che server route
+  block:
+    -
+      name: Delete non-secure route
+      shell: "oc delete route/che -n {{ che_namespace }}"
+      failed_when: false
+    -
+      name: Create secure route
+      shell: "oc apply -f {{ che_template_folder }}/https/che-route-tls.yaml"
+  when:
+    - che_route_cmd is defined and che_route_cmd.changed == true
+    - che_route_cmd.rc == 0 and che_route_cmd.stdout == ''
