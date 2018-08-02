@@ -1,0 +1,10 @@
+{
+  "apiVersion": "oauth.openshift.io/v1",
+  "grantMethod": "auto",
+  "kind": "OAuthClient",
+  "metadata": {
+    "name": "{{ launcher_sso_openshift_idp_client_id }}"
+  },
+  "redirectURIs": ["https://{{ launcher_sso_route }}/auth/realms/{{ launcher_sso_realm }}/broker/{{ launcher_sso_openshift_idp_client_id }}/endpoint"],
+  "secret": "{{ launcher_sso_openshift_idp_client_secret }}"
+}

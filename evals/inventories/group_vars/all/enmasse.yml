@@ -1,3 +1,4 @@
+---
 enmasse_namespace: enmasse
 enmasse_multitenant: True
 enmasse_enable_rbac: True
