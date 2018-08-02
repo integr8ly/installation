@@ -7,3 +7,8 @@
     service_catalog: "{{ enmasse_service_catalog }}"
     keycloak_admin_password: "{{ enmasse_keycloak_admin_password }}"
     authentication_services: "{{ enmasse_authentication_services }}"
+
+- name: Setup EnMasse in namespace
+  hosts: local
+  roles:
+  - enmasse
