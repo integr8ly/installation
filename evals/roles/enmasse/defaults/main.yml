@@ -1,0 +1,8 @@
+---
+enmasse_serviceclass_name: enmasse-standard
+enmasse_serviceinstance_name: "{{ enmasse_serviceclass_name }}-instance"
+enmasse_service_plan: unlimited-standard
+enmasse_service_namespace: "{{ eval_namespace | default('eval') }}"
+enmasse_service_name: "{{ enmasse_service_namespace }}"
+enmasse_username: "{{ eval_username| default('evals@example.com') }}"
+enmasse_svcat_download_path: /tmp
