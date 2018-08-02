@@ -3,28 +3,28 @@
 -
   name: Download install script
   get_url:
-    url: "{{ script_url }}"
-    dest: "{{ script_path }}"
+    url: "{{ ipaas_script_url }}"
+    dest: "{{ ipaas_script_path }}"
     mode: 0644
 
 -
   name: Select openshift project
-  shell: oc project {{ namespace }}
+  shell: oc project {{ ipaas_namespace }}
   register: project_cmd
   failed_when: false
 
 -
   name: Create openshift project
-  shell: oc new-project {{ namespace }}
+  shell: oc new-project {{ ipaas_namespace }}
   when: project_cmd.rc != 0
 
 -
   name: Set user permissions
-  shell: oc adm policy add-role-to-user edit {{ username }} -n {{ namespace }}
+  shell: oc adm policy add-role-to-user edit {{ ipaas_username }} -n {{ ipaas_namespace }}
 
 -
   name: Execute install script
-  shell: bash {{ script_path }}
+  shell: bash {{ ipaas_script_path }}
   register: install_cmd
   changed_when: install_cmd.rc == 0
   failed_when: install_cmd.rc != 0
@@ -33,4 +33,4 @@
   name: Cleanup
   file:
     state: absent
-    path: "{{ script_path }}"
+    path: "{{ ipaas_script_path }}"
