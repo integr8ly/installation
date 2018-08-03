@@ -31,10 +31,19 @@
       mode: u+x
 
   - name: Provision the EnMasse (standard) service
-    shell: "{{ enmasse_svcat_download_path }}/svcat provision {{ enmasse_serviceinstance_name }} --class {{ enmasse_serviceclass_name }} --plan {{ enmasse_service_plan }} -p name={{ enmasse_service_name }} -n {{ enmasse_service_namespace }}"
+    shell: "{{ enmasse_svcat_download_path }}/svcat provision {{ enmasse_serviceinstance_name }} --class {{ enmasse_serviceclass_name }} --plan {{ enmasse_service_plan }} -p name={{ enmasse_service_name }} -n {{ enmasse_service_namespace }} --wait"
     register: provision_cmd
     failed_when: provision_cmd.rc != 0 and 'already exists' not in provision_cmd.stderr
     changed_when: provision_cmd.rc == 0
+  
+  - name: Get EnMasse binding
+    shell: "{{ enmasse_svcat_download_path }}/svcat describe binding {{ enmasse_binding_name }} -n {{ enmasse_service_namespace }}"
+    register: binding_cmd
+    ignore_errors: yes
+
+  - name: Create an EnMasse binding
+    shell: "{{ enmasse_svcat_download_path }}/svcat bind {{ enmasse_serviceinstance_name }} --name {{ enmasse_binding_name }} -p consoleAccess={{ enmasse_binding_console_access }} -p externalAccess={{ enmasse_binding_external_access }} -p consoleAdmin={{ enmasse_binding_console_admin }} -p receiveAddresses={{ enmasse_binding_receive_addresses }} -p sendAddresses={{ enmasse_binding_send_addresses }} -n {{ enmasse_service_namespace }} --wait"
+    when: binding_cmd.rc != 0
   always:
   - name: Remove svcat binary
     file:
