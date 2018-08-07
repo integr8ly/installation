@@ -79,6 +79,9 @@ cd evals/
 ansible-playbook -i inventories/hosts playbooks/enmasse.yml
 ```
 
+Once the playbook has completed a service named `EnMasse (standard)` will be available
+in the Service Catalog. This can be provisioned into your namespace to use EnMasse.
+
 #### 5. Run Fuse iPaaS install playbook
 
 ```shell

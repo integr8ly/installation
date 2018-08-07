@@ -1,5 +1,0 @@
----
-# vars file for enmasse
-enmasse_svcat_mac_binary: https://download.svcat.sh/cli/v0.1.27/darwin/amd64/svcat
-enmasse_svcat_linux_binary: https://download.svcat.sh/cli/v0.1.27/linux/amd64/svcat
-enmasse_svcat_binary: "{{ enmasse_svcat_linux_binary }}"
