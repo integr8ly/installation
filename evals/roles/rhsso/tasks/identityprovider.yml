@@ -1,0 +1,62 @@
+---
+- name: Get RH-SSO secure route
+  local_action: command oc get route/secure-sso -o template --template \{\{.spec.host\}\} -n {{ rhsso_namespace }}
+  register: rhsso_secure_route
+
+- set_fact:
+    rhsso_route: "{{ rhsso_secure_route.stdout }}"
+
+- name: Retrieve RH-SSO Client Config
+  local_action: command cat /tmp/client-config.json
+  register: client_config_raw
+
+- set_fact:
+    client_config: "{{ client_config_raw.stdout }}"
+
+- name: Add RH-SSO identity provider to master config
+  blockinfile:
+    path: "{{ openshift_master_config }}"
+    insertafter: "identityProviders"
+    backup: yes
+    block: |2
+        - name: rh_sso
+          challenge: false
+          login: true
+          mappingInfo: add
+          provider:
+            apiVersion: v1
+            kind: OpenIDIdentityProvider
+            clientID: {{ rhsso_client_id }}
+            clientSecret: {{ client_config.json.value }}
+            urls:
+              authorize: https://{{ rhsso_route }}/auth/realms/{{ rhsso_realm }}/protocol/openid-connect/auth
+              token: https://{{ rhsso_route }}/auth/realms/{{ rhsso_realm }}/protocol/openid-connect/token
+              userInfo: https://{{ rhsso_route }}/auth/realms/{{ rhsso_realm }}/protocol/openid-connect/userinfo
+            claims:
+              id:
+              - sub
+              preferredUsername:
+               - preferred_username
+              name:
+              - name
+              email:
+              - email
+  register: master_config_update
+  become: yes
+
+- name: restart openshift master api service
+  service:
+    name: atomic-openshift-master-api
+    state: restarted
+  become: yes
+  when: master_config_update.changed
+
+- name: restart openshift master controller service
+  service:
+    name: atomic-openshift-master-controllers
+    state: restarted
+  become: yes
+  when: master_config_update.changed
+
+- name: Delete local client config file
+  file: path=/tmp/client-config.json state=absent
