@@ -13,7 +13,7 @@
       failed_when: false
     -
       name: Create cluster cert
-      shell: "oc new-app -f {{ che_template_folder }}/multi/openshift-certificate-secret.yaml -p CERTIFICATE='{{ che_cert_content }}' -n {{ che_namespace }}"
+      shell: "oc new-app -f {{ che_template_folder }}/deploy/multi/openshift-certificate-secret.yaml -p CERTIFICATE='{{ che_cert_content }}' -n {{ che_namespace }}"
       when: che_cert_cmd.rc != 0
   when: che_protocol == 'https'
 
@@ -31,7 +31,8 @@
           -p 'CHE_KEYCLOAK_AUTH__SERVER__URL={{ che_protocol }}://{{ che_keycloak_host }}/auth' \
           -p 'CHE_KEYCLOAK_REALM={{ che_keycloak_realm }}' \
           -p 'CHE_KEYCLOAK_CLIENT_ID={{ che_keycloak_client_id }}' \
-          -f {{ che_template_folder }}/che-server-template.yaml \
+          -p 'CHE_INFRA_KUBERNETES_MASTER__URL={{ che_infra_namespace }}'
+          -f {{ che_template_folder }}/deploy/che-server-template.yaml \
           -n {{ che_namespace }}"
 
 -
@@ -43,24 +44,3 @@
   delay: 10
   failed_when: result.stdout
   changed_when: False
-
--
-  name: Check if secure route exists
-  shell: "oc get route -o jsonpath='{.spec.tls}' -l app={{ che_app_label }} -n {{ che_namespace }}"
-  register: che_route_cmd
-  failed_when: false
-  when: che_protocol == 'https'
-
--
-  name: Deploy secure che server route
-  block:
-    -
-      name: Delete non-secure route
-      shell: "oc delete route/che -n {{ che_namespace }}"
-      failed_when: false
-    -
-      name: Create secure route
-      shell: "oc apply -f {{ che_template_folder }}/https/che-route-tls.yaml"
-  when:
-    - che_route_cmd is defined and che_route_cmd.changed == true
-    - che_route_cmd.rc == 0 and che_route_cmd.stdout == ''

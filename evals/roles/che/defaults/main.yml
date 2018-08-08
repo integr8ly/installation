@@ -3,6 +3,7 @@
 
 #common vars
 che_namespace: "{{ eval_namespace | default('eval')}}"
+che_infra_namespace: ''
 che_username: "{{ eval_username | default('evals@example.com') }}"
 che_template_folder: /tmp/che-templates
 che_app_label: che

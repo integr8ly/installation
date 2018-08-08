@@ -6,7 +6,7 @@
 
 -
   name: Create che persistent volume
-  shell: oc apply -f {{ che_template_folder }}/pvc/che-server-pvc.yaml
+  shell: oc apply -f {{ che_template_folder }}/deploy/pvc/che-server-pvc.yaml
   when: che_pvc_cmd.rc != 0
 
 -

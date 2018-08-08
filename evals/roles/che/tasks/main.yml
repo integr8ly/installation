@@ -8,16 +8,32 @@
   failed_when: project_cmd.rc != 0 and project_cmd.rc != 1
 
 -
+  name: Create infra namespace
+  shell: "oc new-project {{ che_infra_namespace }}"
+  register: project_infra_cmd
+  failed_when: project_cmd.rc != 0 and project_cmd.rc != 1
+  when: che_infra_namespace is defined
+
+-
   name: Set user permissions
   shell: oc adm policy add-role-to-user edit {{ che_username }} -n {{ che_namespace }}
 
 -
   name: Create template folder structure
   file:
-    path: "{{ che_template_folder }}/{{ item.path }}"
+    path: "{{ che_template_folder }}/deploy/{{ item.path }}"
     state: directory
   with_filetree: "{{ role_path }}/templates/deploy"
   when: item.state == 'directory'
+
+-
+  name: Copy template files to temporary folder
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ che_template_folder }}/deploy/{{ item.path }}"
+  with_filetree: "{{ role_path }}/templates/deploy"
+  when: item.state == 'file'
+
 
 -
   name: Include postgres tasks
@@ -34,6 +50,11 @@
   name: Include che server tasks
   include_tasks: deploy-che-server.yml
   when: che_dc_cmd.rc != 0
+
+-
+  name: Include che route tasks
+  include_tasks: deploy-che-route.yml
+  when: che_protocol == 'https'
 
 -
   name: Include keycloak tasks

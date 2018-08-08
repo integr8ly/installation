@@ -10,7 +10,7 @@
   shell: "oc new-app \
           -p 'CHE_VERSION={{ che_postgre_image_tag }}' \
           -p 'IMAGE_POSTGRES={{ che_postgre_image_name }}' \
-          -f {{ che_template_folder }}/multi/postgres-template.yaml \
+          -f {{ che_template_folder }}/deploy/multi/postgres-template.yaml \
           -n {{ che_namespace }}"
   when: che_postgres_dc_cmd.rc != 0
 

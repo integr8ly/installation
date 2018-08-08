@@ -13,6 +13,12 @@
     che_json_path: "{{ che_template_folder }}/keycloak/client.json"
 
 -
+  name: Create keycloak template folder structure
+  file:
+    path: "{{ che_template_folder }}/keycloak"
+    state: directory
+
+-
   name: Copy template files to temporary folder
   template:
     src: "{{ item.src }}"

@@ -4,6 +4,7 @@
 [local:vars]
 ansible_connection=local
 che_namespace=che-multi
+che_infra_namespace=che-multi
 che_route_suffix=cloudservices.skunkhenry.com
 che_protocol=https
 che_ws_protocol=wss
