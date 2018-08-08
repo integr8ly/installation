@@ -45,3 +45,4 @@ che_keycloak_image_tag: '6.9.0'
 che_keycloak_image_name: 'docker.io/eclipse/che-keycloak'
 che_keycloak_require_update_password: true
 che_keycloak_update_password: 'admin'
+che_keycloak_port: 443

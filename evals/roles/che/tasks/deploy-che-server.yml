@@ -4,8 +4,8 @@
   block:
     -
       name: Retrieve cluster cert
-      set_fact:
-        che_cert_content: "{{lookup('file', che_cert_path) }}"
+      shell: "echo -n '' | openssl s_client -showcerts -connect {{ che_keycloak_host }}:{{ che_keycloak_port }} | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p'"
+      register: che_ssl_cmd
     -
       name: Check if cluster cert exists
       shell: "oc get secret/openshift-identity-provider -o json -n {{ che_namespace }}"
@@ -13,7 +13,7 @@
       failed_when: false
     -
       name: Create cluster cert
-      shell: "oc new-app -f {{ che_template_folder }}/deploy/multi/openshift-certificate-secret.yaml -p CERTIFICATE='{{ che_cert_content }}' -n {{ che_namespace }}"
+      shell: "oc new-app -f {{ che_template_folder }}/deploy/multi/openshift-certificate-secret.yaml -p CERTIFICATE='{{ che_ssl_cmd.stdout }}' -n {{ che_namespace }}"
       when: che_cert_cmd.rc != 0
   when: che_protocol == 'https'
 
@@ -30,7 +30,7 @@
           -p 'CHE_MULTIUSER={{ che_multiuser }}' \
           -p 'CHE_KEYCLOAK_AUTH__SERVER__URL={{ che_protocol }}://{{ che_keycloak_host }}/auth' \
           -p 'CHE_KEYCLOAK_REALM={{ che_keycloak_realm }}' \
-          -p 'CHE_KEYCLOAK_CLIENT_ID={{ che_keycloak_client_id }}' \
+          -p 'CHE_KEYCLOAK_CLIENT__ID={{ che_keycloak_client_id }}' \
           -p 'CHE_INFRA_KUBERNETES_MASTER__URL={{ che_infra_namespace }}'
           -f {{ che_template_folder }}/deploy/che-server-template.yaml \
           -n {{ che_namespace }}"
