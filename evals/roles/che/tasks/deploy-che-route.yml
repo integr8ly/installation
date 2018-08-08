@@ -1,0 +1,20 @@
+-
+  name: Check if secure route exists
+  shell: "oc get route -o jsonpath='{.spec.tls}' -l app={{ che_app_label }} -n {{ che_namespace }}"
+  register: che_route_cmd
+  failed_when: false
+  when: che_protocol == 'https'
+
+-
+  name: Deploy secure che server route
+  block:
+    -
+      name: Delete non-secure route
+      shell: "oc delete route/che -n {{ che_namespace }}"
+      failed_when: false
+    -
+      name: Create secure route
+      shell: "oc apply -f {{ che_template_folder }}/deploy/https/che-route-tls.yaml"
+  when:
+    - che_route_cmd is defined and che_route_cmd.changed == true
+    - che_route_cmd.rc == 0 and che_route_cmd.stdout == ''

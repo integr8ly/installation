@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  remote_user: root
+  tasks:
+    -
+      name: Uninstall che
+      import_role:
+        name: che
+        tasks_from: uninstall

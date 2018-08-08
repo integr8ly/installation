@@ -1,0 +1,14 @@
+che_namespace: che-multi
+che_infra_namespace: che-multi
+che_route_suffix: cloudservices.skunkhenry.com
+che_protocol: https
+che_ws_protocol: wss
+che_tls: true
+che_multiuser: true
+che_keycloak_host: secure-sso-sso.cloudservices.skunkhenry.com
+che_keycloak_port: 443
+che_keycloak_realm: openshift
+che_keycloak_client_id: che-muilti-client
+che_keycloak_user: admin
+che_keycloak_password: admin
+che_keycloak_update_password: admin

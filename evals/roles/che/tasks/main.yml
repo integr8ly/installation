@@ -1,0 +1,67 @@
+---
+# tasks file for che
+
+-
+  name: Create openshift project
+  shell: oc new-project {{ che_namespace }}
+  register: project_cmd
+  failed_when: project_cmd.rc != 0 and project_cmd.rc != 1
+
+-
+  name: Create infra namespace
+  shell: "oc new-project {{ che_infra_namespace }}"
+  register: project_infra_cmd
+  failed_when: project_cmd.rc != 0 and project_cmd.rc != 1
+  when: che_infra_namespace is defined
+
+-
+  name: Set user permissions
+  shell: oc adm policy add-role-to-user edit {{ che_username }} -n {{ che_namespace }}
+
+-
+  name: Create template folder structure
+  file:
+    path: "{{ che_template_folder }}/deploy/{{ item.path }}"
+    state: directory
+  with_filetree: "{{ role_path }}/templates/deploy"
+  when: item.state == 'directory'
+
+-
+  name: Copy template files to temporary folder
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ che_template_folder }}/deploy/{{ item.path }}"
+  with_filetree: "{{ role_path }}/templates/deploy"
+  when: item.state == 'file'
+
+
+-
+  name: Include postgres tasks
+  include_tasks: deploy-postgres.yml
+  when: che_multiuser|bool == true
+
+-
+  name: Check if che is already deployed
+  shell: "oc get dc -l app={{ che_app_label }} -o jsonpath='{.items[0].metadata.name}' -n {{ che_namespace }}"
+  register: che_dc_cmd
+  failed_when: false
+
+-
+  name: Include che server tasks
+  include_tasks: deploy-che-server.yml
+  when: che_dc_cmd.rc != 0
+
+-
+  name: Include che route tasks
+  include_tasks: deploy-che-route.yml
+  when: che_protocol == 'https'
+
+-
+  name: Include keycloak tasks
+  include_tasks: keycloak-client.yml
+  when: che_multiuser|bool == true
+
+-
+  name: Include persistent volume tasks
+  include_tasks: deploy-persistent-volume.yml
+  when: che_persistent_volume|bool == true
