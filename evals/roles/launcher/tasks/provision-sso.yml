@@ -14,5 +14,5 @@
   when: launcher_sso_force_image_streams_update
 
 - name: Provision SSO for Launcher
-  shell: "oc new-app --template={{ launcher_sso_serviceclass }} -n {{ launcher_namespace }} -p SSO_ADMIN_PASSWORD={{ launcher_sso_username }} -p SSO_ADMIN_USERNAME={{ launcher_sso_username }} -p SSO_SERVICE_USERNAME={{ launcher_sso_service_username }} -p SSO_SERVICE_PASSWORD={{ launcher_sso_service_password }} -p SSO_REALM={{ launcher_sso_realm }} -p APPLICATION_NAME={{ launcher_sso_prefix }}"
+  shell: "oc new-app --template={{ launcher_sso_serviceclass }} -n {{ launcher_namespace }} -p SSO_ADMIN_PASSWORD={{ launcher_sso_username }} -p SSO_ADMIN_USERNAME={{ launcher_sso_username }} -p SSO_REALM={{ launcher_sso_realm }} -p APPLICATION_NAME={{ launcher_sso_prefix }}"
   when: launcher_sso_exists_cmd.rc != 0

@@ -7,9 +7,11 @@
     "enabled": true,
     "clientAuthenticatorType": "client-secret",
     "redirectUris": [
+        "https://{{ launcher_sso_route }}",
         "https://{{ launcher_sso_route }}/*"
     ],
     "webOrigins": [
+        "https://{{ launcher_sso_route }}",
         "https://{{ launcher_sso_route }}/*"
     ],
     "notBefore": 0,
