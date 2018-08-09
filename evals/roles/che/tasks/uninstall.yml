@@ -1,5 +1,10 @@
 ---
 -
+  name: Set initial vars
+  set_fact:
+    che_keycloak_url: "{{ che_protocol }}://{{ che_keycloak_host }}"
+
+-
   name: Delete objects labeled as app:{{ che_app_label }}
   shell: "oc delete all -l app={{ item }} -n {{ che_namespace }}"
   register: che_delete_cmd
@@ -36,3 +41,28 @@
   name: Delete che namespace
   shell: "oc delete project {{ che_namespace }}"
   when: che_delete_namespace | bool == true
+
+-
+  name: Generate keycloak auth token for admin user
+  uri:
+    url: "{{ che_keycloak_url }}/auth/realms/master/protocol/openid-connect/token"
+    method: POST
+    body: "client_id=admin-cli&username={{ che_keycloak_user }}&password={{ che_keycloak_password }}&grant_type=password"
+    validate_certs: "{{ che_validate_certs }}"
+  register: che_keycloak_auth_response
+  retries: 20
+  delay: 2
+  until: che_keycloak_auth_response.status == 503 or che_keycloak_auth_response.status in [200, 401, 403]
+
+-
+  name: "Delete client {{ che_keycloak_client_id }} from realm {{ che_keycloak_realm }}"
+  uri:
+    url: "{{ che_keycloak_url }}/auth/admin/realms/{{ che_keycloak_realm }}/clients/{{ che_keycloak_client_id }}"
+    method: DELETE
+    validate_certs: "{{ che_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ che_keycloak_auth_response.json.access_token }}"
+    status_code: [204]
+  register: che_clients_cmd
+  when: che_keycloak_auth_response.status != 503
