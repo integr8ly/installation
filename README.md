@@ -88,3 +88,43 @@ in the Service Catalog. This can be provisioned into your namespace to use EnMas
 cd evals/
 ansible-playbook -i inventories/hosts playbooks/ipaas.yml
 ```
+
+#### 6. Run Launcher install playbook
+
+Before running the playbook, create a new OAuth Application on GitHub. This can
+be done at https://github.com/settings/developers. Note the `Client ID` and
+`Client Secret` fields of the OAuth Application, these are required by the
+Launcher playbook.
+
+The Launcher playbook also requires information about the existing SSO that was
+provisioned previously. It needs to know the route of the SSO. This can be
+retrieved using:
+
+```shell
+oc get route secure-sso -o jsonpath='{.spec.host}' -n rhsso
+```
+
+It also needs to know the realm to interact with. By default this would be
+`openshift`. Finally it needs the credentials of a user to login as, by default
+this would be the `evals@example.com` user created by the SSO playbook.
+
+Specify the following variables in the inventory files or as `--extra-vars` when
+running the playbook.
+
+* `launcher_openshift_sso_route` - The route to the previously created SSO, without protocol.
+* `launcher_openshift_sso_realm` - The realm to create resources in the SSO, this would be `openshift` by default.
+* `launcher_openshift_sso_username` - Username to authenticate as, this would be `evals@example.com` by default.
+* `launcher_openshift_sso_password` - Password of the user.
+* `launcher_github_client_id` - The `Client ID` of the created GitHub OAuth Application.
+* `launcher_github_client_secret` - The `Client Secret` of the created GitHub OAuth Application.
+
+Run the playbook.
+
+```shell
+cd evals
+ansible-playbook -i inventories/hosts playbooks/launcher.yml
+```
+
+Once the playbook has completed it will print a debug message saying to update
+the `Authorization callback URL` of the GitHub OAuth Application. Once this is
+done the launcher setup has finished.
