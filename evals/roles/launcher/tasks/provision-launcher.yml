@@ -1,0 +1,245 @@
+---
+- set_fact:
+    launcher_sso_openshift_idp_client_secret: "{{ 99999 | random | to_uuid }}"
+
+- name: Get Launcher SSO secure route
+  shell: oc get route/secure-{{ launcher_sso_prefix }} -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
+  register: rhsso_secure_route
+  retries: 60
+  delay: 5
+  until: rhsso_secure_route.rc == 0
+
+- name: Get Openshift master URL
+  shell: oc version | grep Server | cut -d ' ' -f2
+  register: openshift_master_url
+
+- set_fact:
+    launcher_sso_route: "{{ rhsso_secure_route.stdout }}"
+    openshift_master_url: "{{ openshift_master_url.stdout }}"
+
+- name: Generate Launcher SSO auth token for admin user
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/realms/master/protocol/openid-connect/token"
+    method: POST
+    body: "client_id=admin-cli&username={{ launcher_sso_username }}&password={{ launcher_sso_password }}&grant_type=password"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+  register: launcher_sso_auth_response
+  retries: 60
+  delay: 5
+  until: launcher_sso_auth_response.status == 200
+
+- name: Generate OpenShift SSO auth token
+  uri:
+    url: "https://{{ launcher_openshift_sso_route }}/auth/realms/master/protocol/openid-connect/token"
+    method: POST
+    body: "client_id=admin-cli&username={{ launcher_openshift_sso_username }}&password={{ launcher_openshift_sso_password }}&grant_type=password"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+  register: launcher_openshift_sso_auth_response
+  retries: 20
+  delay: 2
+  until: launcher_sso_auth_response.status == 200
+
+- template:
+    src: client-openshift-confidential.json.j2
+    dest: /tmp/client-openshift-confidential.json
+
+- name: Create client in OpenShift SSO
+  uri:
+    url: "https://{{ launcher_openshift_sso_route }}/auth/admin/realms/{{ launcher_openshift_sso_realm }}/clients"
+    method: POST
+    body: "{{ lookup('file', '/tmp/client-openshift-confidential.json') }}"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_openshift_sso_auth_response.json.access_token }}"
+    status_code: [201, 409]
+  register: openshift_client_creation_response
+
+- name: Retrieve secret for created client
+  uri:
+    url: "{{ openshift_client_creation_response.location }}/client-secret"
+    method: GET
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_openshift_sso_auth_response.json.access_token }}"
+    status_code: [200, 409]
+  register: openshift_client_secret_response
+
+- template:
+    src: idp-keycloak.json.j2
+    dest: /tmp/idp-keycloak.json
+
+- name: Create Keycloak identity provider in Launcher SSO
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/identity-provider/instances"
+    method: POST
+    body: "{{ lookup('file', '/tmp/idp-keycloak.json') }}"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: [201] 
+
+- template:
+    src: idp-github.json.j2
+    dest: /tmp/idp-github.json
+
+- name: Create GitHub identity provider in Launcher SSO
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/identity-provider/instances"
+    method: POST
+    body: "{{ lookup('file', '/tmp/idp-github.json') }}"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: [201, 409] 
+
+- name: Get list of authentication flows
+  uri:
+    url: https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/authentication/flows/browser/executions
+    method: GET
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: 200
+  register: launcher_sso_authentication_flows
+
+- name: Update authentication flow
+  uri:
+    url: https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/authentication/executions/{{ flow_id }}/config
+    method: POST
+    body: '{"config":{"defaultProvider":"keycloak-oidc"},"alias":"OpenShift Keycloak Users"}'
+    body_format: json
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: [201, 409]
+  vars:
+    flow_id: "{{ launcher_sso_authentication_flows.json[2].id }}"
+
+- name: Get list of clients in OpenShift SSO
+  uri:
+    url: https://{{ launcher_openshift_sso_route }}/auth/admin/realms/{{ launcher_openshift_sso_realm }}/clients
+    method: GET
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_openshift_sso_auth_response.json.access_token }}"
+    status_code: 200
+  register: launcher_openshift_client_list
+
+- set_fact:
+    client_id: "{{ launcher_openshift_client_list.json[2].id }}"
+
+- template:
+    src: default-role.json.j2
+    dest: /tmp/default-role.json
+
+- name: Set default roles for client {{ client_id }}
+  uri:
+    url: https://{{ launcher_openshift_sso_route }}/auth/admin/realms/{{ launcher_openshift_sso_realm }}/clients/{{ client_id }}
+    method: PUT
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body: "{{ lookup('file', '/tmp/default-role.json') }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_openshift_sso_auth_response.json.access_token }}"
+    status_code: 204
+
+- name: Check if Launcher already exists in namespace
+  shell: oc get dc/launcher-backend -n {{ launcher_namespace }}
+  register: launcher_exists_cmd
+  failed_when: false
+
+- name: Create Launcher from template
+  shell: oc process -n {{ launcher_namespace }} -f {{ launcher_template }} --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_USERNAME= --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_PASSWORD= --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_API_URL= --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_CONSOLE_URL= --param=LAUNCHER_KEYCLOAK_URL=https://{{ launcher_sso_route }}/auth --param=LAUNCHER_KEYCLOAK_REALM={{ launcher_sso_realm }} --param=LAUNCHER_KEYCLOAK_CLIENT_ID=launcher-public | oc create -n {{ launcher_namespace }} -f -
+  when: launcher_exists_cmd.rc != 0
+
+- name: Get Launcher route
+  shell: oc get route/launcher -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
+  register: launcher_route
+
+- copy:
+    src: patch-launcher-frontend-memory.json
+    dest: /tmp/patch-launcher-frontend-memory.json
+
+- name: Store contents of Launcher frontend patch
+  shell: cat /tmp/patch-launcher-frontend-memory.json
+  register: launcher_frontend_patch_contents
+
+- name: Patch Launcher frontend (handle PDS 10Mi minimum memory restrictions)
+  shell: oc patch dc/launcher-frontend -p '{{ launcher_frontend_patch_contents.stdout }}' -n {{ launcher_namespace }}
+  ignore_errors: yes
+
+- set_fact:
+    launcher_route: "{{ launcher_route.stdout }}"
+
+- name: Create template for Launcher SSO public client
+  template:
+    src: client-launcher-public.json.j2
+    dest: /tmp/client-launcher-public.json
+
+- name: Create public client in Launcher SSO
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/clients"
+    method: POST
+    body: "{{ lookup('file', '/tmp/client-launcher-public.json') }}"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: [201, 409]
+
+- name: Create template for OpenShift v3 identity provider
+  template:
+    src: idp-openshift-v3.json.j2
+    dest: /tmp/idp-openshift-v3.json
+
+- name: Create OpenShift v3 identity provider in Launcher SSO
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/identity-provider/instances"
+    method: POST
+    body: "{{ lookup('file', '/tmp/idp-openshift-v3.json') }}"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: [201, 409]
+
+- name: Create template for OpenShift OAuth client
+  template:
+    src: oauthclient.json.j2
+    dest: /tmp/oauthclient.json
+
+- name: Check if OpenShift OAuth client already exists
+  shell: oc get oauthclient {{ launcher_sso_openshift_idp_client_id }}
+  register: launcher_oauthclient_check_cmd
+  changed_when: false
+  ignore_errors: yes
+
+- name: Remove OpenShift OAuth client
+  shell: oc delete oauthclient {{ launcher_sso_openshift_idp_client_id }}
+  when: launcher_oauthclient_check_cmd.rc == 0
+
+- name: Create OpenShift OAuth client
+  shell: oc create -f /tmp/oauthclient.json
+
+- template:
+    src: launcher-clusters.yml.j2
+    dest: /tmp/launcher-clusters.yml
+
+- shell: cat /tmp/launcher-clusters.yml
+  register: launcher_clusters_content_cmd
+
+- name: Patch launch-clusters ConfigMap with cluster information
+  shell: oc patch configmap launcher-clusters -p '{{ launcher_clusters_content_cmd.stdout }}' -n {{ launcher_namespace }}
+  register: launcher_patch_clusters_cmd
+  ignore_errors: yes
+
+- debug:
+    msg: Launcher has been provisioned successfully. Add '{{ callback_url }}' as the Authorization callback URL of the GitHub OAuth Application.
+  vars:
+    callback_url: https://{{ launcher_sso_route }}/auth/realms/{{ launcher_sso_realm }}/broker/github/endpoint

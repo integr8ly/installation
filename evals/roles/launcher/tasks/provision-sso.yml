@@ -1,0 +1,18 @@
+---
+- name: Check if deployment config {{ launcher_sso_prefix }} exists
+  shell: "oc get dc {{ launcher_sso_prefix }} -n {{ launcher_namespace }}"
+  ignore_errors: yes
+  register: launcher_sso_exists_cmd
+
+- name: "Import image streams {{ launcher_sso_image_stream }}"
+  shell: oc -n openshift import-image {{ launcher_sso_image_stream }}:{{ launcher_sso_image_stream_tag }}
+  register: import_result
+  until: import_result is succeeded
+  retries: 10
+  delay: 5
+  failed_when: import_result is failed
+  when: launcher_sso_force_image_streams_update
+
+- name: Provision SSO for Launcher
+  shell: "oc new-app --template={{ launcher_sso_serviceclass }} -n {{ launcher_namespace }} -p SSO_ADMIN_PASSWORD={{ launcher_sso_username }} -p SSO_ADMIN_USERNAME={{ launcher_sso_username }} -p SSO_REALM={{ launcher_sso_realm }} -p APPLICATION_NAME={{ launcher_sso_prefix }}"
+  when: launcher_sso_exists_cmd.rc != 0

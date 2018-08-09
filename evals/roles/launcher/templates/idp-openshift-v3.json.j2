@@ -1,0 +1,22 @@
+{
+   "config":{
+      "useJwksUrl":"true",
+      "disableUserInfo":"",
+      "hideOnLoginPage":"true",
+      "clientId":"{{ launcher_sso_openshift_idp_client_id }}",
+      "clientSecret":"{{ launcher_sso_openshift_idp_client_secret }}",
+      "baseUrl":"{{ openshift_master_url }}",
+      "defaultScope":"{{ launcher_sso_openshift_idp_scope }}"
+   },
+   "alias":"launcher",
+   "providerId":"openshift-v3",
+   "enabled":true,
+   "authenticateByDefault":false,
+   "firstBrokerLoginFlowAlias":"first broker login",
+   "postBrokerLoginFlowAlias":"",
+   "displayName":"Launcher OpenShift v3 IDP",
+   "storeToken":true,
+   "addReadTokenRoleOnCreate":true,
+   "trustEmail":true,
+   "linkOnly":""
+}

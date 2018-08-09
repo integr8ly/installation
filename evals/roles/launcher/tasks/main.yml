@@ -1,0 +1,12 @@
+---
+- name: Perform prerequisite checks
+  import_tasks: prereq-check.yml
+
+- name: Create namespace if it doesn't exist
+  import_tasks: create-namespace.yml
+
+- name: Provision Launcher SSO
+  import_tasks: provision-sso.yml
+
+- name: Provision and Configure Launcher
+  import_tasks: provision-launcher.yml

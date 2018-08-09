@@ -1,0 +1,12 @@
+---
+- name: Fail if variable {{ item }} is undefined
+  fail:
+    msg: Variable {{ item }} is undefined
+  when: (item is not defined) or (item == '')
+  with_items:
+  - "{{ launcher_github_client_id }}"
+  - "{{ launcher_github_client_secret }}"
+  - "{{ launcher_openshift_sso_route }}"
+  - "{{ launcher_openshift_sso_realm }}"
+  - "{{ launcher_openshift_sso_username }}"
+  - "{{ launcher_openshift_sso_password }}"

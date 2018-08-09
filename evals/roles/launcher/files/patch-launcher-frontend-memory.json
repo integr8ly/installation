@@ -1,0 +1,1 @@
+{ "spec": { "template": { "spec": { "containers": [{"name": "launcher-frontend", "resources": { "requests": { "memory": "15M"  }}  }] } } }}

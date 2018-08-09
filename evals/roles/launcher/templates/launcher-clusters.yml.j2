@@ -1,0 +1,14 @@
+{
+  "apiVersion": "v1",
+  "data": {
+    "openshift-clusters.yaml": "- id: {{ launcher_sso_openshift_idp_client_id }}\n  name: \"openshift-master\"\n  apiUrl: \"{{ openshift_master_url }}\"\n  consoleUrl: \"{{ openshift_master_url }}\"\n  type: pro"
+  },
+  "kind": "ConfigMap",
+  "metadata": {
+    "labels": {
+      "app": "fabric8-launcher",
+      "template": "launcher-header"
+    },
+    "name": "launcher-clusters"
+  }
+}
