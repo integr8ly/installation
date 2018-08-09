@@ -118,7 +118,14 @@ running the playbook.
 * `launcher_github_client_id` - The `Client ID` of the created GitHub OAuth Application.
 * `launcher_github_client_secret` - The `Client Secret` of the created GitHub OAuth Application.
 
-Run the playbook.
+If using self signed certs set `launcher_sso_validate_certs` to `no/false`.
+Without this, an error will be thrown similar to this:
+
+```
+fatal: [127.0.0.1]: FAILED! => {"msg": "The conditional check 'launcher_sso_auth_response.status == 200' failed. The error was: error while evaluating conditional (launcher_sso_auth_response.status == 200): 'dict object' has no attribute 'status'"}
+```
+
+Next, run the playbook.
 
 ```shell
 cd evals
