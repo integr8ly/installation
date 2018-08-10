@@ -20,9 +20,9 @@ launcher_sso_image_stream_tag: "1.1"
 launcher_sso_force_image_streams_update: true
 
 launcher_openshift_sso_route: ""
-launcher_openshift_sso_realm: ""
-launcher_openshift_sso_username: ""
-launcher_openshift_sso_password: ""
+launcher_openshift_sso_realm: "openshift"
+launcher_openshift_sso_username: "admin"
+launcher_openshift_sso_password: "admin"
 
 launcher_sso_keycloak_client_id: launcher-openshift-users
 
