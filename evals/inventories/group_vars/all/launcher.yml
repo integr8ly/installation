@@ -1,0 +1,31 @@
+---
+launcher_namespace: "{{ eval_namespace | default('launcher') }}"
+
+launcher_template: https://raw.githubusercontent.com/fabric8-launcher/launcher-openshift-templates/dbf6291c876f881a6d8544e664c9260c44879d7e/openshift/launcher-template.yaml
+
+launcher_sso_serviceclass: sso72-x509-postgresql-persistent
+launcher_sso_serviceinstance_name: launcher-sso-instance-leo
+launcher_sso_username: admin
+launcher_sso_password: admin
+launcher_sso_plan: default
+launcher_sso_realm: launcher_realm-leo
+launcher_sso_prefix: launcher-sso-leo
+launcher_sso_validate_certs: no
+
+launcher_sso_openshift_idp_scope: user:full
+launcher_sso_openshift_idp_client_id: launcher
+
+launcher_sso_image_stream: redhat-sso72-openshift
+launcher_sso_image_stream_tag: "1.1"
+launcher_sso_force_image_streams_update: true
+
+launcher_openshift_sso_route: ""
+launcher_openshift_sso_realm: "openshift"
+launcher_openshift_sso_username: "admin"
+launcher_openshift_sso_password: "admin"
+
+launcher_sso_keycloak_client_id: launcher-openshift-users-leo
+
+launcher_github_client_id: "92ceeb13136676252899"
+launcher_github_client_secret: "e9537a836ecc2489c7639eb4df86bdd2733b9168"
+launcher_github_default_scopes: "admin:repo_hook,read:org,public_repo"

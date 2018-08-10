@@ -1,1 +1,5 @@
 ---
+eval_action: install
+eval_namespace: eval
+eval_username: evals@example.com
+eval_app_host: ''
