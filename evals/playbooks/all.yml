@@ -1,0 +1,111 @@
+---
+- hosts: localhost
+  remote_user: root
+  tasks:
+    - 
+      name: Install rhsso
+      include_role:
+        name: rhsso
+      tags: ['rhsso']
+    -
+      name: Gather rhsso data
+      block: 
+        -
+          name: Retrieve cluster rhsso username
+          shell: "oc get dc/sso \
+                  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"SSO_SERVICE_USERNAME\")].value}' \
+                  -n {{ rhsso_namespace }}"
+          register: eval_sso_username_cmd 
+        -
+          name: Retrieve cluster rhsso password
+          shell: "oc get dc/sso \
+                  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"SSO_SERVICE_PASSWORD\")].value}' \
+                  -n {{ rhsso_namespace }}"
+          register: eval_sso_password_cmd
+        -
+          name: Retrieve cluster rhsso admin username
+          shell: "oc get dc/sso \
+                  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"SSO_ADMIN_USERNAME\")].value}' \
+                  -n {{ rhsso_namespace }}"
+          register: eval_sso_admin_username_cmd 
+        -
+          name: Retrieve cluster rhsso admin password
+          shell: "oc get dc/sso \
+                  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"SSO_ADMIN_PASSWORD\")].value}' \
+                  -n {{ rhsso_namespace }}"
+          register: eval_sso_admin_password_cmd
+        -
+          name: Retrieve cluster rhsso host
+          shell: "oc get route/secure-sso -o jsonpath='{.spec.host}' -n {{ rhsso_namespace }}"
+          register: eval_sso_host_cmd
+        -
+          name: Set rhsso shared vars
+          set_fact:
+            eval_rhsso_service_username: "{{ eval_sso_username_cmd.stdout }}"
+            eval_rhsso_service_password: "{{ eval_sso_password_cmd.stdout }}"
+            eval_rhsso_admin_username: "{{ eval_sso_admin_username_cmd.stdout }}"
+            eval_rhsso_admin_password: "{{ eval_sso_admin_password_cmd.stdout }}"
+            eval_rhsso_host: "{{ eval_sso_host_cmd.stdout }}"
+            che_route_suffix: "{{ eval_app_host }}"
+      tags: ['bootstrap']
+    - 
+      name: Install che
+      include_role:
+        name: che
+      vars:
+        che_keycloak_user: "{{ eval_rhsso_admin_username }}"
+        che_keycloak_password: "{{ eval_rhsso_admin_password }}"
+        che_keycloak_host: "{{ eval_rhsso_host }}"
+      tags: ['che']
+      when: eval_action == 'install'
+    - 
+      name: Uninstall che
+      include_role:
+        name: che
+        tasks_from: uninstall
+      vars:
+        che_keycloak_user: "{{ eval_rhsso_admin_username }}"
+        che_keycloak_password: "{{ eval_rhsso_admin_password }}"
+        che_keycloak_host: "{{ eval_rhsso_host }}"
+      tags: ['che']
+      when: eval_action == 'uninstall'
+    - 
+      name: Install ipaas
+      include_role:
+        name: ipaas
+      tags: ['ipaas']
+    -
+      name: Install launcher
+      include_role:
+        name: launcher
+      vars:
+        launcher_openshift_sso_username: "{{ eval_rhsso_admin_username }}"
+        launcher_openshift_sso_password: "{{ eval_rhsso_admin_password }}"
+        launcher_openshift_sso_route: "{{ eval_rhsso_host }}"
+      tags: ['launcher']
+    -
+      name: Link enmasse resources folder
+      file:
+        src: "{{ playbook_dir }}/../artifacts/enmasse/resources"
+        dest: "{{ playbook_dir }}/resources"
+        state: link
+      tags: ['enmasse']
+    -
+      name: Install enmasse
+      include_role:
+        name: enmasse
+      vars:
+        namespace: "{{ enmasse_namespace }}"
+        multitenant: "{{ enmasse_multitenant }}"
+        enable_rbac: "{{ enmasse_enable_rbac }}"
+        service_catalog: "{{ enmasse_service_catalog }}"
+        keycloak_admin_password: "{{ eval_rhsso_admin_password }}"
+        authentication_services: "{{ enmasse_authentication_services }}"
+      when: enmasse_deploy_infra | default('true') | bool
+      tags: ['enmasse']
+    -
+      name: Unlink enmasse resources folder
+      file:
+        path: "{{ playbook_dir }}/resources"
+        state: absent
+      tags: ['enmasse'] 
