@@ -11,42 +11,28 @@
       name: Gather rhsso data
       block: 
         -
-          name: Retrieve cluster rhsso username
+          name: Retrive rhsso env vars
           shell: "oc get dc/sso \
-                  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"SSO_SERVICE_USERNAME\")].value}' \
+                  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
                   -n {{ rhsso_namespace }}"
-          register: eval_sso_username_cmd 
+          with_items:
+            - 'SSO_SERVICE_USERNAME'
+            - 'SSO_SERVICE_PASSWORD'
+            - 'SSO_ADMIN_USERNAME'
+            - 'SSO_ADMIN_PASSWORD'
+          register: _eval_rhsso_dc_cmd
         -
-          name: Retrieve cluster rhsso password
-          shell: "oc get dc/sso \
-                  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"SSO_SERVICE_PASSWORD\")].value}' \
-                  -n {{ rhsso_namespace }}"
-          register: eval_sso_password_cmd
-        -
-          name: Retrieve cluster rhsso admin username
-          shell: "oc get dc/sso \
-                  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"SSO_ADMIN_USERNAME\")].value}' \
-                  -n {{ rhsso_namespace }}"
-          register: eval_sso_admin_username_cmd 
-        -
-          name: Retrieve cluster rhsso admin password
-          shell: "oc get dc/sso \
-                  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"SSO_ADMIN_PASSWORD\")].value}' \
-                  -n {{ rhsso_namespace }}"
-          register: eval_sso_admin_password_cmd
+          name: Set rhsso playbook vars
+          set_fact: "eval_rh{{ item.item | lower }}={{ item.stdout }}"
+          with_items: "{{ _eval_rhsso_dc_cmd.results }}"
         -
           name: Retrieve cluster rhsso host
           shell: "oc get route/secure-sso -o jsonpath='{.spec.host}' -n {{ rhsso_namespace }}"
           register: eval_sso_host_cmd
         -
-          name: Set rhsso shared vars
+          name: Set rhsso host var
           set_fact:
-            eval_rhsso_service_username: "{{ eval_sso_username_cmd.stdout }}"
-            eval_rhsso_service_password: "{{ eval_sso_password_cmd.stdout }}"
-            eval_rhsso_admin_username: "{{ eval_sso_admin_username_cmd.stdout }}"
-            eval_rhsso_admin_password: "{{ eval_sso_admin_password_cmd.stdout }}"
             eval_rhsso_host: "{{ eval_sso_host_cmd.stdout }}"
-            che_route_suffix: "{{ eval_app_host }}"
       tags: ['bootstrap']
     - 
       name: Install che
@@ -56,6 +42,7 @@
         che_keycloak_user: "{{ eval_rhsso_admin_username }}"
         che_keycloak_password: "{{ eval_rhsso_admin_password }}"
         che_keycloak_host: "{{ eval_rhsso_host }}"
+        che_route_suffix: "{{ eval_app_host }}"
       tags: ['che']
       when: eval_action == 'install'
     - 
