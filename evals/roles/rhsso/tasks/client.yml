@@ -15,11 +15,15 @@
     rhsso_redirect_uri: "{{ openshift_master_url }}"
   when: rhsso_redirect_uri == ""
 
+- name: Retrieve RH-SSO admin user password
+  shell: oc get dc/sso -o jsonpath='{.spec.template.spec.containers[?(@.name=="sso")].env[?(@.name=="SSO_ADMIN_PASSWORD")].value}'
+  register: rhsso_admin_password_cmd
+
 - name: Generate RH-SSO auth token for admin user
   uri:
-    url: "https://{{ rhsso_route }}/auth/realms/{{ rhsso_realm }}/protocol/openid-connect/token"
+    url: "https://{{ rhsso_route }}/auth/realms/master/protocol/openid-connect/token"
     method: POST
-    body: "client_id=admin-cli&username={{ rhsso_service_username }}&password={{ rhsso_service_password }}&grant_type=password"
+    body: "client_id=admin-cli&username={{ rhsso_admin_username }}&password={{ rhsso_admin_password_cmd.stdout }}&grant_type=password"
     validate_certs: "{{ rhsso_validate_certs }}"
   register: rhsso_auth_response
   retries: 20

@@ -26,7 +26,7 @@
   register: rhsso_resources_exist
 
 - name: "Provision RH-SSO using template {{ rhsso_template }} in namespace {{ rhsso_namespace }}"
-  shell: oc new-app --template=sso72-x509-postgresql-persistent -p SSO_ADMIN_USERNAME={{ rhsso_admin_username }} -p SSO_SERVICE_USERNAME={{ rhsso_service_username }} -p SSO_SERVICE_PASSWORD={{ rhsso_service_password }} -p SSO_REALM={{ rhsso_realm }} -n {{rhsso_namespace}}
+  shell: oc new-app --template=sso72-x509-postgresql-persistent -p SSO_ADMIN_USERNAME={{ rhsso_admin_username }} -p SSO_REALM={{ rhsso_realm }} -n {{rhsso_namespace}}
   when: rhsso_resources_exist.stderr == "No resources found."
 
 - name: "Verify RH-SSO deployment succeeded"

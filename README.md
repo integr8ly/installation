@@ -69,7 +69,7 @@ Default login credentials are evals@example.com / Password1
 To configure custom account credentials, simply override the rhsso role environment variables by specifying user parameters as part of the install command:
 
 ```shell
-ansible-playbook -i inventories/hosts playbooks/rhsso.yml -e rhsso_service_username=<username> -e rhsso_service_password=<password>
+ansible-playbook -i inventories/hosts playbooks/rhsso.yml -e rhsso_evals_username=<username> -e rhsso_evals_password=<password>
 ```
 
 #### 4. Run EnMasse install playbook
