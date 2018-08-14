@@ -1,5 +1,5 @@
 ---
-rhsso_namespace: rhsso
+rhsso_namespace: sso
 rhsso_template: sso72-x509-postgresql-persistent
 rhsso_template_filename: sso72-x509-postgresql-persistent.json
 rhsso_template_url: https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.11/sso/

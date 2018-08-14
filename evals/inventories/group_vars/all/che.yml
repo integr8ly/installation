@@ -1,13 +1,48 @@
-che_namespace: che-multi
-che_infra_namespace: che-multi
+---
+# defaults file for che
+
+#common vars
+che_namespace: "{{ eval_namespace | default('eval')}}"
+che_infra_namespace: ''
+che_username: "{{ eval_username | default('evals@example.com') }}"
+che_template_folder: /tmp/che-templates
+che_app_label: che
+che_delete_namespace: false
+che_validate_certs: false
+
+#server template vars
 che_route_suffix: ''
-che_protocol: https
-che_ws_protocol: wss
-che_tls: true
-che_multiuser: true
+che_image_tag: '6.9.0-centos'
+che_image_name: 'docker.io/eclipse/che-server'
+che_protocol: http
+che_ws_protocol: ws
+che_multiuser: false
+che_tls: false
+che_infra_openshift_project: "{{ che_namespace }}"
+che_infra_pvc_size: 1Gi
+che_update_strategy: 'Recreate'
+che_image_pull_policy: IfNotPresent
+che_create_subfolder_pv: false
+che_github_client_id: ''
+che_github_client_sceret: ''
+che_keycloak_realm: ''
+che_keycloak_client_id: ''
 che_keycloak_host: ''
-che_keycloak_port: 443
-che_keycloak_realm: openshift
-che_keycloak_client_id: che-muilti-client
+che_cert_path: ''
+
+#pvc vars
+che_persistent_volume: true
+che_persistemt_volume_size: 1Gi
+
+#postgre
+che_postgre_image_name: 'docker.io/eclipse/che-postgres'
+che_postgre_image_tag: '6.9.0'
+
+#keycloak
 che_keycloak_user: admin
 che_keycloak_password: admin
+che_keycloak_image_tag: '6.9.0'
+che_keycloak_image_name: 'docker.io/eclipse/che-keycloak'
+che_keycloak_require_update_password: true
+che_keycloak_update_password: 'admin'
+che_keycloak_port: 443
