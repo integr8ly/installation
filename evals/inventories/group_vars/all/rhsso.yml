@@ -10,9 +10,12 @@ rhsso_image_stream_tag: "1.1"
 rhsso_force_image_streams_update: true
 
 rhsso_admin_username: admin
-rhsso_service_username: evals@example.com
-rhsso_service_password: Password1
+rhsso_admin_realm: master
 rhsso_realm: openshift
 rhsso_client_id: openshift-client
 rhsso_validate_certs: no
 rhsso_redirect_uri: ""
+
+rhsso_evals_email: evals@example.com
+rhsso_evals_username: "{{ rhsso_evals_email }}"
+rhsso_evals_password: Password1
