@@ -8,6 +8,13 @@
         name: rhsso
       tags: ['rhsso']
     -
+      name: Add rhsso identity provider in master node config file
+      include_role:
+        name: rhsso
+        tasks_from: identityprovider
+      delegate_to: master
+      tags: ['rhsso']
+    -
       name: Gather rhsso data
       block: 
         -
@@ -33,6 +40,20 @@
           name: Set rhsso host var
           set_fact:
             eval_rhsso_host: "{{ eval_sso_host_cmd.stdout }}"
+      tags: ['bootstrap']
+    -
+      block:
+        -
+          name: Retrieve app submain from master node
+          slurp:
+            src: "{{ openshift_master_config }}"
+          register: eval_master_config
+        -
+          name: Get app submain value
+          set_fact:
+            eval_app_host: "{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
+      delegate_to: master
+      when: eval_app_host | length > 0
       tags: ['bootstrap']
     - 
       name: Install che
