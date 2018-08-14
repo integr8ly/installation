@@ -16,7 +16,7 @@
   when: rhsso_redirect_uri == ""
 
 - name: Retrieve RH-SSO admin user password
-  shell: oc get dc/sso -o jsonpath='{.spec.template.spec.containers[?(@.name=="sso")].env[?(@.name=="SSO_ADMIN_PASSWORD")].value}'
+  shell: oc get dc/sso -o jsonpath='{.spec.template.spec.containers[?(@.name=="sso")].env[?(@.name=="SSO_ADMIN_PASSWORD")].value}' -n {{ rhsso_namespace }}
   register: rhsso_admin_password_cmd
 
 - name: Generate RH-SSO auth token for admin user
