@@ -8,13 +8,6 @@
         name: rhsso
       tags: ['rhsso']
     -
-      name: Add rhsso identity provider in master node config file
-      include_role:
-        name: rhsso
-        tasks_from: identityprovider
-      delegate_to: master
-      tags: ['rhsso']
-    -
       name: Gather rhsso data
       block: 
         -
@@ -116,4 +109,13 @@
       file:
         path: "{{ playbook_dir }}/resources"
         state: absent
-      tags: ['enmasse'] 
+      tags: ['enmasse']
+    -
+      name: Add rhsso identity provider in master node config file
+      include_role:
+        name: rhsso
+        tasks_from: identityprovider
+      vars:
+        rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
+      delegate_to: master
+      tags: ['rhsso']

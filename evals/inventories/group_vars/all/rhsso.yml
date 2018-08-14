@@ -19,3 +19,5 @@ rhsso_redirect_uri: ""
 rhsso_evals_email: evals@example.com
 rhsso_evals_username: "{{ rhsso_evals_email }}"
 rhsso_evals_password: Password1
+
+rhsso_openshift_master_config_path: ''
