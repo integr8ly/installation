@@ -39,7 +39,7 @@
         -
           name: Retrieve app submain from master node
           slurp:
-            src: "{{ openshift_master_config }}"
+            src: "{{ eval_openshift_master_config_path }}"
           register: eval_master_config
         -
           name: Get app submain value
