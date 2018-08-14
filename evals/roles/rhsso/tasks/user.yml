@@ -5,7 +5,7 @@
 - set_fact:
     rhsso_route: "{{ rhsso_secure_route.stdout }}"
 
-- name: Generate evaluataions user template
+- name: Generate evaluations user template
   template:
     src: user.json.j2
     dest: /tmp/user.json

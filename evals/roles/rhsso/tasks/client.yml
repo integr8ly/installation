@@ -21,7 +21,7 @@
 
 - name: Generate RH-SSO auth token for admin user
   uri:
-    url: "https://{{ rhsso_route }}/auth/realms/master/protocol/openid-connect/token"
+    url: "https://{{ rhsso_route }}/auth/realms/{{ rhsso_admin_realm }}/protocol/openid-connect/token"
     method: POST
     body: "client_id=admin-cli&username={{ rhsso_admin_username }}&password={{ rhsso_admin_password_cmd.stdout }}&grant_type=password"
     validate_certs: "{{ rhsso_validate_certs }}"
