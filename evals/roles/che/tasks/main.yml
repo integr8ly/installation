@@ -15,10 +15,6 @@
   when: che_infra_namespace is defined
 
 -
-  name: Set user permissions
-  shell: oc adm policy add-role-to-user edit {{ che_username }} -n {{ che_namespace }}
-
--
   name: Create template folder structure
   file:
     path: "{{ che_template_folder }}/deploy/{{ item.path }}"
@@ -33,7 +29,6 @@
     dest: "{{ che_template_folder }}/deploy/{{ item.path }}"
   with_filetree: "{{ role_path }}/templates/deploy"
   when: item.state == 'file'
-
 
 -
   name: Include postgres tasks
