@@ -12,19 +12,19 @@ rhsso_force_image_streams_update: true
 rhsso_admin_username: admin
 rhsso_admin_realm: master
 rhsso_realm: openshift
-rhsso_client_id: openshift-client
+rhsso_client_id: openshift
+rhsso_client_secret: openshift-client
 rhsso_validate_certs: no
 rhsso_redirect_uri: ""
 
 rhsso_evals_email: evals@example.com
 rhsso_evals_username: "{{ rhsso_evals_email }}"
-rhsso_evals_password: Password1
+rhsso_evals_secret: openshift-evals
 
 rhsso_cluster_admin_email: admin@example.com
 rhsso_cluster_admin_username: "{{ rhsso_cluster_admin_email }}"
-rhsso_cluster_admin_password: Password1
+rhsso_cluster_admin_secret: openshift-admin
 
-rhsso_openshift_master_config_path: /etc/origin/master/master-config.yaml
 rhsso_disable_htpasswd_identity_provider: true
 
 rhsso_identity_provider_self_signed_certs: "{{ eval_self_signed_certs | default(true) }}"
@@ -34,3 +34,14 @@ rhsso_master_restart_shim_path: /usr/local/bin/master-restart
 rhsso_openshift_webconsole_namespace: openshift-web-console
 rhsso_openshift_webconsole_configmap: webconsole-config
 rhsso_openshift_update_webconsole_configmap: false
+
+keycloak_operator_namespace: "{{ rhsso_namespace }}"
+keycloak_operator_git_tag: v0.0.1
+keycloak_operator_raw_repo: https://raw.githubusercontent.com/aerogear/keycloak-operator
+keycloak_operator_raw_file_url: "{{ keycloak_operator_raw_repo }}/{{ keycloak_operator_git_tag }}"
+keycloak_operator_rbac: "{{ keycloak_operator_raw_file_url }}/deploy/rbac.yaml"
+keycloak_operator_crd:  "{{ keycloak_operator_raw_file_url }}/deploy/Keycloak_crd.yaml"
+keycloak_operator_operator: "{{ keycloak_operator_raw_file_url }}/deploy/operator.yaml"
+keycloak_operator_integreatly_template: "{{ keycloak_operator_raw_file_url }}/deploy/examples/integreatly-keycloak.yaml"
+
+keycloak_admin_console_secret: credential-integreatly

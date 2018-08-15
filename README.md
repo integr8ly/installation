@@ -54,6 +54,10 @@ ansible_user=evals
 [master]
 master.evals.example.com
 ```
+#### Examples
+PDS clusters:
+`ansible_user=ec2-user`
+`master1.<PDS_CLUSTER_CITY>.internal`
 
 ### 3. Run Install Playbooks
 

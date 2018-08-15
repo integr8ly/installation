@@ -1,0 +1,62 @@
+apiVersion: aerogear.org/v1alpha1
+kind: Keycloak
+metadata:
+  finalizers:
+  - finalizer.org.aerogear.keycloak
+  name: integreatly
+spec:
+  realms:
+  - clients:
+    - attributes: {}
+      bearerOnly: false
+      clientAuthenticatorType: client-secret
+      #this is the secret that is needed by openshift config
+      secret: somethinggenerated
+      clientId: openshift
+      consentRequired: false
+      directAccessGrantsEnabled: true
+      enabled: true
+      frontchannelLogout: false
+      fullScopeAllowed: true
+      implicitFlowEnabled: false
+      protocol: openid-connect
+      publicClient: true
+      redirectUris:
+      - {{ rhsso_redirect_uri }}
+      standardFlowEnabled: true
+      #this is the secret that the client and client secret will be stored in
+      outputSecret: {{ rhsso_client_secret }}
+      webOrigins: []
+    enabled: true
+    id: openshift
+    realm: openshift
+    users:
+    - clientRoles:
+        account:
+        - manage-account
+        - view-profile
+      email: {{ rhsso_cluster_admin_email }}
+      emailVerified: true
+      enabled: true
+      firstName: ""
+      lastName: ""
+      realmRoles:
+      - offline_access
+      - uma_authorization
+      username: {{ rhsso_cluster_admin_username }}
+      outputSecret: {{ rhsso_cluster_admin_secret }}
+    - clientRoles:
+        account:
+        - manage-account
+        - view-profile
+      email: {{ rhsso_evals_email }}
+      emailVerified: true
+      enabled: true
+      firstName: ""
+      lastName: ""
+      realmRoles:
+      - offline_access
+      - uma_authorization
+      username: {{ rhsso_evals_username }}
+      outputSecret: {{ rhsso_evals_secret }}
+  version: 7.2.2.GA

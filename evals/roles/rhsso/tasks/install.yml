@@ -15,25 +15,25 @@
   failed_when: import_result is failed
   when: rhsso_force_image_streams_update
 
-- name: "Create project namespace: {{ rhsso_namespace }}"
-  shell: oc new-project {{ rhsso_namespace }}
+- name: "Create project namespace: {{ keycloak_operator_namespace }}"
+  shell: kubectl create namespace {{ keycloak_operator_namespace }}
   register: output
   failed_when: output.stderr != '' and 'already exists' not in output.stderr
   changed_when: output.rc == 0
 
-- name: Check namespace for existing resources
-  shell: oc get all -n {{ rhsso_namespace }}
-  register: rhsso_resources_exist
+- name: Install operator
+  command: kubectl create -f {{ item }} -n {{ keycloak_operator_namespace }}
+  register: output
+  failed_when: output.stderr != '' and 'already exists' not in output.stderr
+  with_items:
+    - "{{ keycloak_operator_rbac }}"
+    - "{{ keycloak_operator_crd }}"
+    - "{{ keycloak_operator_operator }}"
 
-- name: "Provision RH-SSO using template {{ rhsso_template }} in namespace {{ rhsso_namespace }}"
-  shell: oc new-app --template=sso72-x509-postgresql-persistent -p SSO_ADMIN_USERNAME={{ rhsso_admin_username }} -p SSO_REALM={{ rhsso_realm }} -n {{rhsso_namespace}}
-  when: rhsso_resources_exist.stderr == "No resources found."
+- name: Generate client template
+  template:
+    src: "integreatly-keycloak.yaml"
+    dest: /tmp/integreatly-keycloak.yaml
 
-- name: "Verify RH-SSO deployment succeeded"
-  shell: sleep 5; oc get pods --namespace {{ rhsso_namespace }}  |  grep  "deploy"
-  register: result
-  until: not result.stdout
-  retries: 50
-  delay: 10
-  failed_when: result.stdout
-  changed_when: False
+- name: Deploy integreatly keycloak
+  command: oc create -f /tmp/integreatly-keycloak.yaml -n {{ keycloak_operator_namespace }}

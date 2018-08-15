@@ -1,0 +1,42 @@
+---
+- name: get sso admin secret {{ keycloak_admin_console_secret }} in namespace {{ rhsso_namespace }}
+  command: oc get secret {{ keycloak_admin_console_secret }} -o json -n {{ rhsso_namespace }}
+  register: sso_admin_secret
+  until: sso_admin_secret.stderr == ""
+  retries: 300
+  delay: 5
+  failed_when: sso_admin_secret.stderr != "" and sso_admin_secret.stderr.find("not found") == -1
+
+- name: get admin secret
+  command: oc get secret {{ rhsso_cluster_admin_secret }} -o json -n {{ rhsso_namespace }}
+  register: admin_secret
+  until: admin_secret.stderr == ""
+  retries: 300
+  delay: 5
+  failed_when: admin_secret.stderr != "" and admin_secret.stderr.find("not found") == -1
+
+- name: get evals secret
+  command: oc get secret {{ rhsso_evals_secret }} -o json -n {{ rhsso_namespace }}
+  register: evals_secret
+  until: evals_secret.stderr == ""
+  retries: 300
+  delay: 5
+  failed_when: evals_secret.stderr != "" and evals_secret.stderr.find("not found") == -1
+
+- set_fact:
+    admin: "{{ admin_secret.stdout |from_json }}"
+    evals: "{{ evals_secret.stdout |from_json }}"
+    sso_admin: "{{ sso_admin_secret.stdout |from_json }}"
+
+- name: Print Summary
+  vars:
+    msg: |
+          Cluster URL {{cluster_url}}
+          {{ admin.data.username |b64decode }} {{ admin.data.password |b64decode }}
+          {{ evals.data.username |b64decode }} {{ evals.data.password |b64decode }}
+          SSO
+          {{ sso_admin.data.SSO_ADMIN_URL |b64decode }}
+          {{ sso_admin.data.SSO_ADMIN_USERNAME |b64decode }} {{ sso_admin.data.SSO_ADMIN_PASSWORD |b64decode }}
+
+  debug:
+    msg: "{{ msg.split('\n') }}"
