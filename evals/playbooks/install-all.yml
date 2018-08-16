@@ -15,7 +15,6 @@
       tags: ['bootstrap']
         
 - hosts: localhost
-  remote_user: root
   tasks:
     - 
       name: Install rhsso
