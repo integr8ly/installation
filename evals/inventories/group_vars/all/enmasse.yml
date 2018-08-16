@@ -5,4 +5,4 @@ enmasse_enable_rbac: True
 enmasse_service_catalog: True
 enmasse_keycloak_admin_password: admin
 enmasse_authentication_services: ["standard"]
-enmasse_deploy_infra: true
+enmasse_deploy_infra: True

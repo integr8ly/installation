@@ -1,7 +1,7 @@
 ---
-- name: Fail if variable {{ item }} is undefined
+- name: "Fail if variable {{ item }} is undefined"
   fail:
-    msg: Variable {{ item }} is undefined
+    msg: "Variable {{ item }} is undefined"
   when: (item is not defined) or (item == '')
   with_items:
   - "{{ launcher_github_client_id }}"

@@ -19,7 +19,7 @@
 
 
 -
-  name: Deplpoy che server
+  name: Deploy che server
   shell: "oc new-app \
           -p 'ROUTING_SUFFIX={{ che_route_suffix }}' \
           -p 'CHE_VERSION={{ che_image_tag }}' \
