@@ -9,11 +9,9 @@
         register: eval_master_config
         become: yes
       -
-        name: Get app subdomain value
-        set_fact:
+        add_host:
+          name: EVAL_VARS
           eval_app_host: "{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
-        when: eval_app_host | length == 0
-        become: yes
       tags: ['bootstrap']
         
 - hosts: localhost
@@ -59,7 +57,7 @@
         che_keycloak_user: "{{ eval_rhsso_admin_username }}"
         che_keycloak_password: "{{ eval_rhsso_admin_password }}"
         che_keycloak_host: "{{ eval_rhsso_host }}"
-        che_route_suffix: "{{ eval_app_host }}"
+        che_route_suffix: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
       tags: ['che']
       when: eval_action == 'install'
     - 
