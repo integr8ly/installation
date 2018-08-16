@@ -55,7 +55,31 @@ openshift_master_config=/etc/origin/master/master-config.yaml
 master.evals.example.com
 ```
 
-#### 3. Run Single Sign On install playbook
+#### 3. Run Install Playbooks
+
+There are currently two options for installing:
+
+* [Install all products from a single playbook](#install-all-products-from-a-single-playbook)
+* [Install each product separately using their associated install playbooks](#install-each-product-individually)
+
+##### Install all products from a single playbook
+
+All products can be installed using the ```install-all.yml``` playbook located in the ```evals/playbooks/``` directory.
+
+Before running the playbook, create new OAuth Applications on GitHub for both Che and Launcher. This can
+be done at https://github.com/settings/developers. Please note the `Client ID` and
+`Client Secret` fields of the OAuth Applications and pass them into the install command as follows:
+
+```shell
+cd evals/
+ansible-playbook -i inventories/hosts playbooks/install-all.yml -e launcher_github_client_id=<launcher-client-id> -e launcher_github_client_secret=<launcher-client-secret> -e che_github_client_id=<che-client-id> -e che_github_client_secret=<che-client-secret>
+```
+
+##### Install each product individually
+
+Each product has an associated install playbook available from the ```evals/playbooks/``` directory.
+
+###### Run Single Sign On install playbook
 
 ```shell
 cd evals/
@@ -72,7 +96,7 @@ To configure custom account credentials, simply override the rhsso role environm
 ansible-playbook -i inventories/hosts playbooks/rhsso.yml -e rhsso_evals_username=<username> -e rhsso_evals_password=<password>
 ```
 
-#### 4. Run EnMasse install playbook
+###### Run EnMasse install playbook
 
 ```shell
 cd evals/
@@ -82,14 +106,37 @@ ansible-playbook -i inventories/hosts playbooks/enmasse.yml
 Once the playbook has completed a service named `EnMasse (standard)` will be available
 in the Service Catalog. This can be provisioned into your namespace to use EnMasse.
 
-#### 5. Run Fuse iPaaS install playbook
+###### Run Fuse iPaaS install playbook
 
 ```shell
 cd evals/
 ansible-playbook -i inventories/hosts playbooks/ipaas.yml
 ```
 
-#### 6. Run Launcher install playbook
+###### Run Che install playbook
+
+Before running the playbook, create a new OAuth Application on GitHub. This can
+be done at https://github.com/settings/developers. Note the `Client ID` and
+`Client Secret` fields of the OAuth Application, these are required by the Che
+playbook.
+
+Set the following variables:
+
+* `che_github_client_id` - The `Client ID` of the created GitHub OAuth Application.
+* `che_github_client_secret` - The `Client Secret` of the created GitHub OAuth Application.
+* `che_route_suffix` - The router suffix of the OpenShift cluster.
+* `che_keycloak_host` - The route to the previously created SSO, without protocol.
+* `che_keycloak_user` - Username to authenticate as, this would be the admin user by default.
+* `che_keycloak_password` - Password of the user.
+* `che_namespace` - The namesapce to provision che into.
+* `che_infra_namespace` - This can usually be the same as `che_namespace`.
+
+```shell
+cd evals/
+ansible-playbook -i inventories/hosts playbooks/che-install.yml
+```
+
+###### Run Launcher install playbook
 
 Before running the playbook, create a new OAuth Application on GitHub. This can
 be done at https://github.com/settings/developers. Note the `Client ID` and
