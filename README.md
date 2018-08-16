@@ -10,6 +10,8 @@ These products include:
 * Single Sign On
 * EnMasse
 * Fuse iPaaS
+* Eclipse Che
+* Launcher
 
 ## Prerequisites
 
