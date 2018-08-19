@@ -1,5 +1,6 @@
 ---
 - hosts: master
+  gather_facts: no
   tasks:
     - block:
       -
@@ -12,7 +13,7 @@
         add_host:
           name: EVAL_VARS
           eval_app_host: "{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
-      tags: ['bootstrap']
+      tags: ['bootstrap', 'remote']
         
 - hosts: localhost
   tasks:
@@ -147,4 +148,4 @@
       tasks_from: identityprovider
     vars:
       rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
-    tags: ['rhsso']
+    tags: ['rhsso', 'remote']
