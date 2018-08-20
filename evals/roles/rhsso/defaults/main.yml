@@ -20,4 +20,9 @@ rhsso_evals_email: evals@example.com
 rhsso_evals_username: "{{ rhsso_evals_email }}"
 rhsso_evals_password: Password1
 
+rhsso_cluster_admin_email: admin@example.com
+rhsso_cluster_admin_username: "{{ rhsso_cluster_admin_email }}"
+rhsso_cluster_admin_password: Password1
+
 rhsso_openshift_master_config_path: /etc/origin/master/master-config.yaml
+rhsso_disable_htpasswd_identity_provider: true
