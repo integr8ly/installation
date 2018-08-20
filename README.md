@@ -49,7 +49,6 @@ master
 
 [OSEv3:vars]
 ansible_user=evals
-openshift_master_config=/etc/origin/master/master-config.yaml
 
 [master]
 master.evals.example.com
