@@ -71,6 +71,7 @@ be done at https://github.com/settings/developers. Please note the `Client ID` a
 `Client Secret` fields of the OAuth Applications and pass them into the install command as follows:
 
 ```shell
+oc login https://<openshift-master-url>
 cd evals/
 ansible-playbook -i inventories/hosts playbooks/install-all.yml -e launcher_github_client_id=<launcher-client-id> -e launcher_github_client_secret=<launcher-client-secret> -e che_github_client_id=<che-client-id> -e che_github_client_secret=<che-client-secret>
 ```
@@ -82,6 +83,7 @@ Each product has an associated install playbook available from the ```evals/play
 ##### Run Single Sign On install playbook
 
 ```shell
+oc login https://<openshift-master-url>
 cd evals/
 ansible-playbook -i inventories/hosts playbooks/rhsso.yml
 ```
@@ -99,6 +101,7 @@ ansible-playbook -i inventories/hosts playbooks/rhsso.yml -e rhsso_evals_usernam
 ##### Run EnMasse install playbook
 
 ```shell
+oc login https://<openshift-master-url>
 cd evals/
 ansible-playbook -i inventories/hosts playbooks/enmasse.yml
 ```
@@ -109,6 +112,7 @@ in the Service Catalog. This can be provisioned into your namespace to use EnMas
 ##### Run Fuse iPaaS install playbook
 
 ```shell
+oc login https://<openshift-master-url>
 cd evals/
 ansible-playbook -i inventories/hosts playbooks/ipaas.yml
 ```
@@ -132,6 +136,7 @@ Set the following variables:
 * `che_infra_namespace` - This can usually be the same as `che_namespace`.
 
 ```shell
+oc login https://<openshift-master-url>
 cd evals/
 ansible-playbook -i inventories/hosts playbooks/che-install.yml
 ```
@@ -175,6 +180,7 @@ fatal: [127.0.0.1]: FAILED! => {"msg": "The conditional check 'launcher_sso_auth
 Next, run the playbook.
 
 ```shell
+oc login https://<openshift-master-url>
 cd evals
 ansible-playbook -i inventories/hosts playbooks/launcher.yml
 ```
