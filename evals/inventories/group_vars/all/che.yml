@@ -16,8 +16,8 @@ che_image_tag: '6.9.0-centos'
 che_image_name: 'docker.io/eclipse/che-server'
 che_protocol: http
 che_ws_protocol: ws
-che_multiuser: false
-che_tls: false
+che_multiuser: true
+che_tls: true
 che_infra_openshift_project: "{{ che_namespace }}"
 che_infra_pvc_size: 1Gi
 che_update_strategy: 'Recreate'
@@ -28,7 +28,6 @@ che_github_client_sceret: ''
 che_keycloak_realm: ''
 che_keycloak_client_id: ''
 che_keycloak_host: ''
-che_cert_path: ''
 
 #pvc vars
 che_persistent_volume: true

@@ -90,6 +90,11 @@
       set_fact:
         eval_launcher_sso_host: "{{ eval_launcher_sso_host_cmd.stdout }}"
       tags: ['bootstrap']
+    -
+      name: Set eval_app_host var
+      set_fact:
+        eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+      when: eval_app_host == ''
     - 
       name: Install che
       include_role:
@@ -98,8 +103,10 @@
         che_keycloak_user: "{{ eval_launcher_sso_admin_username }}"
         che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"
         che_keycloak_host: "{{ eval_launcher_sso_host }}"
-        che_route_suffix: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+        che_route_suffix: "{{ eval_app_host }}"
         che_protocol: https
+        che_keycloak_realm: "{{ launcher_sso_realm }}"
+        che_keycloak_client_id: che-client
       tags: ['che']
       when: eval_action == 'install'
     - 
