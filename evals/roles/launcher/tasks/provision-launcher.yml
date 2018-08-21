@@ -55,6 +55,41 @@
     status_code: [201, 409]
   register: openshift_client_creation_response
 
+-
+  name: Openshift sso client already exists
+  uri:
+    url: "https://{{ launcher_openshift_sso_route }}/auth/admin/realms/{{ launcher_openshift_sso_realm }}/clients?clientId=launcher-openshift-users"
+    method: GET
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_openshift_sso_auth_response.json.access_token }}"
+    status_code: [200]
+  failed_when: openshift_client_list_response.json | length == 0
+  when: openshift_client_creation_response.status == 409
+  register: openshift_client_list_response
+
+-
+  name: Get existent client
+  uri:
+    url: "https://{{ launcher_openshift_sso_route }}/auth/admin/realms/{{ launcher_openshift_sso_realm }}/clients/{{ openshift_client_list_response.json[0].id }}"
+    method: GET
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_openshift_sso_auth_response.json.access_token }}"
+    status_code: [200]
+  when: openshift_client_list_response is not skipped
+  register: openshift_client_read_response
+
+- 
+  name: Set location var
+  set_fact:
+    openshift_client_creation_response: "{{ openshift_client_creation_response | combine(_client_location) }}"
+  vars:
+    _client_location: "{'location': '{{ openshift_client_read_response.url }}' }"
+  when: openshift_client_read_response is not skipped
+
 - name: Retrieve secret for created client
   uri:
     url: "{{ openshift_client_creation_response.location }}/client-secret"
@@ -79,7 +114,7 @@
     body_format: json
     headers:
       Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
-    status_code: [201] 
+    status_code: [201, 409] 
 
 - template:
     src: idp-github.json.j2
@@ -147,7 +182,7 @@
     body_format: json
     headers:
       Authorization: "Bearer {{ launcher_openshift_sso_auth_response.json.access_token }}"
-    status_code: 204
+    status_code: [204, 409]
 
 - name: Check if Launcher already exists in namespace
   shell: oc get dc/launcher-backend -n {{ launcher_namespace }}
