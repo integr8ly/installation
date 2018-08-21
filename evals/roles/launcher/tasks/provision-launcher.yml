@@ -82,9 +82,6 @@
   when: openshift_client_list_response is not skipped
   register: openshift_client_read_response
 
--
-  debug: var=openshift_client_read_response
-
 - 
   name: Set location var
   set_fact:
