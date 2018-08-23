@@ -3,13 +3,8 @@
   shell: oc get route/secure-sso -o template --template \{\{.spec.host\}\} -n {{ rhsso_namespace }}
   register: rhsso_secure_route
 
-- name: Get Openshift master URL
-  shell: oc version | grep Server | cut -d ' ' -f2
-  register: openshift_master_url
-
 - set_fact:
     rhsso_route: "{{ rhsso_secure_route.stdout }}"
-    openshift_master_url: "{{ openshift_master_url.stdout }}"
 
 - set_fact:
     rhsso_redirect_uri: "{{ openshift_master_url }}"
