@@ -207,7 +207,7 @@
 
 - name: Patch Launcher frontend (handle PDS 10Mi minimum memory restrictions)
   shell: oc patch dc/launcher-frontend -p '{{ launcher_frontend_patch_contents.stdout }}' -n {{ launcher_namespace }}
-  ignore_errors: yes
+  failed_when: false
 
 - set_fact:
     launcher_route: "{{ launcher_route.stdout }}"
@@ -253,7 +253,7 @@
   shell: oc get oauthclient {{ launcher_sso_openshift_idp_client_id }}
   register: launcher_oauthclient_check_cmd
   changed_when: false
-  ignore_errors: yes
+  failed_when: false
 
 - name: Remove OpenShift OAuth client
   shell: oc delete oauthclient {{ launcher_sso_openshift_idp_client_id }}
@@ -272,7 +272,7 @@
 - name: Patch launch-clusters ConfigMap with cluster information
   shell: oc patch configmap launcher-clusters -p '{{ launcher_clusters_content_cmd.stdout }}' -n {{ launcher_namespace }}
   register: launcher_patch_clusters_cmd
-  ignore_errors: yes
+  failed_when: false
 
 - debug:
     msg: Launcher has been provisioned successfully. Add '{{ callback_url }}' as the Authorization callback URL of the GitHub OAuth Application.

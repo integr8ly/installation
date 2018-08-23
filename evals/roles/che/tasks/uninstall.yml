@@ -19,13 +19,13 @@
   name: Retrieve service account secrets
   shell: "oc get sa -o jsonpath='{.items[*].secrets[*].name}' -l app={{ che_app_label }} -n {{ che_namespace }}"
   register: che_sa_cmd
-  ignore_errors: true
+  failed_when: false
 
 -
   name: Delete service account secrets
   shell: "oc delete secret/{{ item }} -n {{ che_namespace }}"
   with_items: "{{ che_sa_cmd.stdout.split(' ') | lower }}"
-  failed_when: false
+  when: che_sa_cmd.rc == 0
 
 -
   name: Deleting remaining resources
