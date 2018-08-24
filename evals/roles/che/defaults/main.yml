@@ -11,7 +11,7 @@ che_delete_namespace: false
 che_validate_certs: false
 
 #server template vars
-che_route_suffix: ''
+che_route_suffix: "{{ eval_app_host | default('') }}"
 che_image_tag: '6.9.0-centos'
 che_image_name: 'docker.io/eclipse/che-server'
 che_protocol: http
