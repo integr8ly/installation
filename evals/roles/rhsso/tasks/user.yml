@@ -5,16 +5,27 @@
 - set_fact:
     rhsso_route: "{{ rhsso_secure_route.stdout }}"
 
-- name: Generate evaluations user template
+- name: Generate user templates
   template:
-    src: user.json.j2
-    dest: /tmp/user.json
+    src: "user-{{ item }}.json.j2"
+    dest: "/tmp/user-{{ item }}.json"
+  with_items:
+    - eval
+    - admin
 
-- name: Create SSO evaluations user
+- name: Generate password reset template
+  template:
+    src: "password-{{ item }}-reset.json.j2"
+    dest: "/tmp/password-{{ item }}-reset.json"
+  with_items:
+    - eval
+    - admin
+
+- name: Create SSO evaluation user
   uri:
     url: "https://{{ rhsso_route }}/auth/admin/realms/{{ rhsso_realm }}/users"
     method: POST
-    body: "{{ lookup('file', '/tmp/user.json') }}"
+    body: "{{ lookup('file', '/tmp/user-eval.json') }}"
     validate_certs: "{{ rhsso_validate_certs }}"
     body_format: json
     headers:
@@ -36,19 +47,55 @@
 - set_fact:
     rhsso_eval_user_id: "{{ get_evals_user_request.json[0].id }}"
 
-- name: Generate password reset template
-  template:
-    src: password-reset.json.j2
-    dest: /tmp/password-reset.json
-
 - name: Reset SSO evaluations user password
   uri:
     url: "https://{{ rhsso_route }}/auth/admin/realms/{{ rhsso_realm }}/users/{{ rhsso_eval_user_id }}/reset-password"
     method: PUT
-    body: "{{ lookup('file', '/tmp/password-reset.json') }}"
+    body: "{{ lookup('file', '/tmp/password-eval-reset.json') }}"
     validate_certs: "{{ rhsso_validate_certs }}"
     body_format: json
     headers:
       Authorization: "Bearer {{ rhsso_auth_response.json.access_token }}"
     status_code: [204]
   when: rhsso_auth_response.status != 503
+
+- name: Create SSO cluster admin user
+  uri:
+    url: "https://{{ rhsso_route }}/auth/admin/realms/{{ rhsso_realm }}/users"
+    method: POST
+    body: "{{ lookup('file', '/tmp/user-admin.json') }}"
+    validate_certs: "{{ rhsso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ rhsso_auth_response.json.access_token }}"
+    status_code: [201, 409]
+  when: rhsso_auth_response.status != 503
+
+- name: Retrieve created cluster admin user
+  uri:
+    url: "https://{{ rhsso_route }}/auth/admin/realms/{{ rhsso_realm }}/users?first=0&max=1&search={{ rhsso_cluster_admin_email }}"
+    method: GET
+    validate_certs: "{{ rhsso_validate_certs }}"
+    return_content: yes
+    headers:
+      Authorization: "Bearer {{ rhsso_auth_response.json.access_token }}"
+    status_code: 200
+  register: get_cluster_admin_user_request
+
+- set_fact:
+    rhsso_cluster_admin_user_id: "{{ get_cluster_admin_user_request.json[0].id }}"
+
+- name: Reset SSO cluster admin password
+  uri:
+    url: "https://{{ rhsso_route }}/auth/admin/realms/{{ rhsso_realm }}/users/{{ rhsso_cluster_admin_user_id }}/reset-password"
+    method: PUT
+    body: "{{ lookup('file', '/tmp/password-admin-reset.json') }}"
+    validate_certs: "{{ rhsso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ rhsso_auth_response.json.access_token }}"
+    status_code: [204]
+  when: rhsso_auth_response.status != 503
+
+- name: Set SSO admin as cluster-admin
+  shell: oc adm policy add-cluster-role-to-user cluster-admin {{ rhsso_cluster_admin_email }}
