@@ -1,5 +1,5 @@
 ---
-- name: "Fail if variable {{ item }} is undefined"
+- name: "Prerequisite checks"
   fail:
     msg: "Variable {{ item }} is undefined"
   when: (item is not defined) or (item == '')
