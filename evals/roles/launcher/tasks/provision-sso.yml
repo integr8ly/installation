@@ -1,7 +1,7 @@
 ---
 - name: Check if deployment config {{ launcher_sso_prefix }} exists
   shell: "oc get dc {{ launcher_sso_prefix }} -n {{ launcher_namespace }}"
-  ignore_errors: yes
+  failed_when: false
   register: launcher_sso_exists_cmd
 
 - name: "Import image streams {{ launcher_sso_image_stream }}"
