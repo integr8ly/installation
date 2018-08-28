@@ -65,14 +65,14 @@ There are currently two options for installing:
 
 All products can be installed using the ```install-all.yml``` playbook located in the ```evals/playbooks/``` directory.
 
-Before running the playbook, create a new OAuth Applications on GitHub. This can
+Before running the playbook, create a new OAuth Application on GitHub. This can
 be done at https://github.com/settings/developers. Please note the `Client ID` and
 `Client Secret` fields of the OAuth Application and pass them into the install command as follows:
 
 ```shell
 oc login https://<openshift-master-url>
 cd evals/
-ansible-playbook -i inventories/hosts playbooks/install-all.yml -e eval_github_client_id=<github-client-id> -e eval_github_client_secret=<github-client-secret>
+ansible-playbook -i inventories/hosts playbooks/install-all.yml -e eval_github_client_id=<client-id> -e eval_github_client_secret=<client-secret>
 ```
 
 #### Install each product individually
