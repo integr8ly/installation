@@ -65,14 +65,14 @@ There are currently two options for installing:
 
 All products can be installed using the ```install-all.yml``` playbook located in the ```evals/playbooks/``` directory.
 
-Before running the playbook, create new OAuth Applications on GitHub for both Che and Launcher. This can
+Before running the playbook, create a new OAuth Applications on GitHub. This can
 be done at https://github.com/settings/developers. Please note the `Client ID` and
-`Client Secret` fields of the OAuth Applications and pass them into the install command as follows:
+`Client Secret` fields of the OAuth Application and pass them into the install command as follows:
 
 ```shell
 oc login https://<openshift-master-url>
 cd evals/
-ansible-playbook -i inventories/hosts playbooks/install-all.yml -e launcher_github_client_id=<launcher-client-id> -e launcher_github_client_secret=<launcher-client-secret> -e che_github_client_id=<che-client-id> -e che_github_client_secret=<che-client-secret>
+ansible-playbook -i inventories/hosts playbooks/install-all.yml -e eval_github_client_id=<github-client-id> -e eval_github_client_secret=<github-client-secret>
 ```
 
 #### Install each product individually
