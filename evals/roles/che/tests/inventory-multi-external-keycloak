@@ -4,7 +4,6 @@
 [local:vars]
 ansible_connection=local
 che_namespace=che-multi
-che_infra_namespace=che-multi
 che_protocol=https
 che_ws_protocol=wss
 che_tls=true
