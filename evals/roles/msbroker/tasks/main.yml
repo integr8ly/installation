@@ -1,0 +1,24 @@
+---
+# Create managed-services-broker namespace
+- name: Check if {{ msbroker_namespace }} namespace exists
+  shell: oc get namespace {{ msbroker_namespace }}
+  failed_when: false
+  register: msbroker_check_namespace_exists
+
+- name: Create managed services broker namespace
+  shell: oc new-project {{ msbroker_namespace }}
+  when: msbroker_check_namespace_exists.rc != 0
+
+# Create RBAC
+- name: Create RBAC for the managed services broker
+  shell: oc create -f {{ msbroker_rbac_url }} -n {{ msbroker_namespace }}
+
+# Deploy managed service broker
+- name: Check if managed service broker already exists in {{ msbroker_namespace }}
+  shell: oc get dc/msb -n {{ msbroker_namespace }}
+  register: msbroker_exists_cmd
+  failed_when: false
+
+- name: Create managed service broker template in {{ msbroker_namespace }}
+  shell: oc process -n {{ msbroker_namespace }} -f {{ msbroker_template_url }} --param=ROUTE_SUFFIX={{ route_suffix }} --param=IMAGE_ORG={{ msbroker_image_org }} | oc create -n {{ msbroker_namespace }} -f -
+  when: msbroker_exists_cmd.rc != 0
