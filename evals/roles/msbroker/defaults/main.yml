@@ -1,5 +1,5 @@
 ---
 msbroker_namespace: managed-services-broker
+msbroker_image_org: aerogear
 msbroker_rbac_url: https://raw.githubusercontent.com/aerogear/managed-services-broker/master/deploy/rbac.yaml
 msbroker_template_url: https://raw.githubusercontent.com/aerogear/managed-services-broker/master/templates/broker.template.yaml
-msbroker_image_org: aerogear
