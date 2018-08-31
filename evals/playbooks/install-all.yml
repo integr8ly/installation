@@ -166,6 +166,14 @@
         path: "{{ playbook_dir }}/resources"
         state: absent
       tags: ['enmasse']
+    -
+      name: Configure SSO Logout URL
+      include_role:
+        name: rhsso
+        tasks_from: logout
+      vars:
+        rhsso_redirect_uri: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+      tags: ['rhsso']
 
 - hosts: master
   gather_facts: no

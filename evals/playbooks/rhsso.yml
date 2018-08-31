@@ -18,10 +18,16 @@
     - role: rhsso
       vars:
         rhsso_redirect_uri: "{{ hostvars['RHSSO_VARS']['openshift_master_url'] }}"
+  tasks:
+    - include_role:
+        name: rhsso
+        tasks_from: logout
+      vars:
+        rhsso_redirect_uri: "{{ hostvars['RHSSO_VARS']['openshift_master_url'] }}"
 
 - hosts: master
   gather_facts: no
   tasks:
-  - include_role:
-      name: rhsso
-      tasks_from: identityprovider
+    - include_role:
+        name: rhsso
+        tasks_from: identityprovider
