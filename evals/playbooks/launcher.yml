@@ -2,3 +2,9 @@
   hosts: local
   roles:
   - launcher
+  tasks:
+  - name: Print OAuth Information
+    debug:
+      msg: Launcher has been provisioned successfully. Add '{{ callback_url }}' as the Authorization callback URL of your GitHub OAuth Application.
+    vars:
+      callback_url: https://{{ launcher_sso_route }}/auth/realms/{{ launcher_sso_realm }}/broker/github/endpoint

@@ -86,7 +86,7 @@
         launcher_github_client_secret: "{{ eval_github_client_secret }}"
       tags: ['launcher']
     -
-      name: Retrive launcher sso env vars
+      name: Retrieve launcher sso env vars
       shell: "oc get dc/launcher-sso \
         -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
         -n {{ launcher_namespace }}"
@@ -191,3 +191,12 @@
     vars:
       rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
     tags: ['rhsso', 'remote']
+
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - debug:
+        msg: All services have been provisioned successfully. Please add '{{ callback_url }}' as the Authorization callback URL of your GitHub OAuth Application.
+      vars:
+        callback_url: https://{{ launcher_sso_route }}/auth/realms/{{ launcher_sso_realm }}/broker/github/endpoint
+
