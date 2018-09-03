@@ -1,8 +1,6 @@
 ---
 - name: Check if project namespace exists
-  shell: oc project {{ namespace }}
-  register: namespace_exists
-  ignore_errors: True
-- name: Create project namespace
   shell: oc new-project {{ namespace }} --description="EnMasse Infrastructure"
-  when: namespace_exists.failed
+  register: output
+  failed_when: output.stderr != '' and 'already exists' not in output.stderr
+  changed_when: output.rc == 0
