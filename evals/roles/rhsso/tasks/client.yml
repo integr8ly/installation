@@ -23,13 +23,12 @@
   register: rhsso_auth_response
   retries: 20
   delay: 2
-  until: rhsso_auth_response.status in [200, 401, 403]
+  until: rhsso_auth_response.status == 200
 
 - name: Generate client template
   template:
     src: "client.json.j2"
     dest: /tmp/client.json
-  when: rhsso_auth_response.status in [200, 401, 403]
 
 - name: Create public client in {{ rhsso_realm }} realm
   uri:
@@ -41,7 +40,6 @@
     headers:
       Authorization: "Bearer {{ rhsso_auth_response.json.access_token }}"
     status_code: [201, 409]
-  when: rhsso_auth_response.status in [200, 401, 403]
 
 - name: Get client secret
   uri:
