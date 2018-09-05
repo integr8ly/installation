@@ -70,13 +70,6 @@
         eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
       when: eval_app_host == ''
     - 
-      name: Install managed services broker
-      include_role:
-        name: msbroker
-      vars:
-        route_suffix: "{{ eval_app_host }}"
-      tags: ['msbroker']
-    - 
       name: Install ipaas
       include_role:
         name: ipaas
@@ -147,6 +140,13 @@
         che_keycloak_host: "{{ eval_launcher_sso_host }}"
       tags: ['che']
       when: eval_action == 'uninstall'
+    - 
+      name: Install managed services broker
+      include_role:
+        name: msbroker
+      vars:
+        route_suffix: "{{ eval_app_host }}"
+      tags: ['msbroker']
     -
       name: Link enmasse resources folder
       file:
