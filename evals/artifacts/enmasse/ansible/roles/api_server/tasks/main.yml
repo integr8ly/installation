@@ -10,13 +10,10 @@
 - name: Grant auth delegation privileges to service account
   shell: oc adm policy add-cluster-role-to-user system:auth-delegator -n {{ namespace }} system:serviceaccount:{{ namespace }}:enmasse-admin
   when: enable_rbac
-- name: Check if api-server-config exists
-  shell: oc get configmap -n {{ namespace }} api-server-config
-  register: config_exists
-  ignore_errors: True
 - name: Create API Server Config
-  when: config_exists.failed
   shell: oc create -n {{ namespace }} configmap api-server-config --from-literal=enableRbac={{ enable_rbac }}
+  register: config_exists
+  failed_when: config_exists.stderr != '' and 'already exists' not in config_exists.stderr
 - name: Create EnMasse API Server Deployment
   shell: oc apply -n {{ namespace }} -f "{{ playbook_dir }}/resources/api-server/deployment.yaml"
 - name: Create EnMasse API Server Service
@@ -25,23 +22,24 @@
   when: secure_api_server
   shell: oc get secret -n {{ namespace }} api-server-client-ca
   register: secret_exists
-  ignore_errors: True
+  failed_when: secret_exists.stderr != '' and 'NotFound' not in secret_exists.stderr
+  changed_when: secret_exists.rc == 1
 - name: Extract API Client CA
-  when: secure_api_server and secret_exists.failed
+  when: secure_api_server and secret_exists.changed
   shell: oc get configmap extension-apiserver-authentication -n kube-system -o jsonpath={.data.client-ca-file}
   register: clientca_result 
 - set_fact:
     client_ca: "{{ clientca_result.stdout }}"
-  when: secure_api_server and secret_exists.failed
+  when: secure_api_server and secret_exists.changed
 - name: Extract API Request Header Client CA
-  when: secure_api_server and secret_exists.failed
+  when: secure_api_server and secret_exists.changed
   shell: oc get configmap extension-apiserver-authentication -n kube-system -o jsonpath={.data.requestheader-client-ca-file}
   register: requestheaderclientca_result
 - set_fact:
     request_header_client_ca: "{{ requestheaderclientca_result.stdout }}"
-  when: secure_api_server and secret_exists.failed
+  when: secure_api_server and secret_exists.changed
 - name: Store API Client CA in secret
-  when: secure_api_server and secret_exists.failed
+  when: secure_api_server and secret_exists.changed
   shell:
     cmd: |
       cat <<EOF | oc apply -n {{ namespace }} -f -

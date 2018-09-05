@@ -273,8 +273,3 @@
   shell: oc patch configmap launcher-clusters -p '{{ launcher_clusters_content_cmd.stdout }}' -n {{ launcher_namespace }}
   register: launcher_patch_clusters_cmd
   failed_when: false
-
-- debug:
-    msg: Launcher has been provisioned successfully. Add '{{ callback_url }}' as the Authorization callback URL of the GitHub OAuth Application.
-  vars:
-    callback_url: https://{{ launcher_sso_route }}/auth/realms/{{ launcher_sso_realm }}/broker/github/endpoint
