@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: "{{ threescale_limit_range_name }}"
+spec:
+  limits:
+  - default:
+      cpu: "{{ threescale_limit_range_container_default_cpu }}"
+      memory: "{{ threescale_limit_range_container_default_memory }}"
+    defaultRequest:
+      cpu: "{{ threescale_limit_range_container_default_request_cpu }}"
+      memory: "{{ threescale_limit_range_container_default_request_memory }}"
+    max:
+      memory: "{{ threescale_limit_range_container_max_memory }}"
+    min:
+      memory: "{{ threescale_limit_range_container_min_memory }}"
+    type: Container
+  - max:
+      memory: "{{ threescale_limit_range_pod_max_memory }}"
+    min:
+      memory: "{{ threescale_limit_range_pod_min_memory }}"
+    type: Pod

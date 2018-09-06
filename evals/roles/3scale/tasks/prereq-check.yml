@@ -1,0 +1,5 @@
+---
+- name: "Prerequisite checks"
+  fail:
+    msg: "Variable threescale_route_suffix is undefined. Please specify with -e threescale_route_suffix=<value>"
+  when: threescale_route_suffix == ''

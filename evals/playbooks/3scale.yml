@@ -1,0 +1,4 @@
+- name: Install 3Scale
+  hosts: local
+  roles:
+  - 3scale
