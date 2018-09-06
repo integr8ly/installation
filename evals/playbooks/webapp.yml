@@ -1,0 +1,5 @@
+---
+- hosts: local
+  gather_facts: no
+  roles:
+    - role: webapp

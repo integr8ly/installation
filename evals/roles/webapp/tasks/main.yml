@@ -1,0 +1,6 @@
+---
+- name: Create namespace if it doesn't exist
+  import_tasks: create-namespace.yml
+
+- name: Provision and Configure Webapp
+  import_tasks: provision-webapp.yml

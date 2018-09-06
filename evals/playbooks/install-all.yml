@@ -141,6 +141,12 @@
       tags: ['che']
       when: eval_action == 'uninstall'
     - 
+      name: Install webapp
+      include_role:
+        name: webapp
+      tags: ['webapp']
+      when: eval_action == 'install'
+    - 
       name: Install managed services broker
       include_role:
         name: msbroker

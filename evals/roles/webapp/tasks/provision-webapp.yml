@@ -1,0 +1,54 @@
+---
+- name: Get Openshift master URL
+  shell: oc version | grep Server | cut -d ' ' -f2 | cut -d '/' -f3
+  register: openshift_master_url
+
+- set_fact:
+    openshift_master_url: "{{ openshift_master_url.stdout }}"
+
+- name: Check if webapp already exists in namespace
+  shell: oc get dc/tutorial-web-app -n {{ webapp_namespace }}
+  register: webapp_exists_cmd
+  failed_when: false
+
+- name: Create webapp from template
+  shell: oc process -n {{ webapp_namespace }} -f {{ webapp_template }} --param=OPENSHIFT_HOST={{ openshift_master_url }}  | oc create -n {{ webapp_namespace }} -f -
+  when: webapp_exists_cmd.rc != 0
+
+- name: Get webapp secure route
+  shell: oc get route/{{ webapp_route }} -o template --template \{\{.spec.host\}\} -n {{ webapp_namespace }}
+  register: webapp_secure_route
+  retries: 60
+  delay: 5
+  until: webapp_secure_route.rc == 0
+
+- set_fact:
+    webapp_secure_route: "{{ webapp_secure_route.stdout }}"
+
+- name: Add webapp route to corsAllowedOrigins in master config
+  blockinfile:
+    path: "{{ openshift_master_config_path }}"
+    insertafter: "corsAllowedOrigins"
+    backup: yes
+    block: |2
+      - https://{{ webapp_secure_route }}
+  register: master_config_update
+  become: yes
+
+- name: Create template for OpenShift OAuth client
+  template:
+    src: oauthclient.json.j2
+    dest: /tmp/oauthclient.json
+
+- name: Check if OpenShift OAuth client already exists
+  shell: oc get oauthclient {{ webapp_client_id }}
+  register: webapp_oauthclient_check_cmd
+  changed_when: false
+  failed_when: false
+
+- name: Remove OpenShift OAuth client
+  shell: oc delete oauthclient {{ webapp_client_id }}
+  when: webapp_oauthclient_check_cmd.rc == 0
+
+- name: Create OpenShift OAuth client
+  shell: oc create -f /tmp/oauthclient.json
