@@ -1,0 +1,10 @@
+---
+- name: Add webapp route to corsAllowedOrigins in master config
+  blockinfile:
+    path: "{{ webapp_openshift_master_config_path }}"
+    insertafter: "corsAllowedOrigins"
+    backup: yes
+    block: |2
+      - https://{{ webapp_secure_route }}
+  register: master_config_update
+  become: yes

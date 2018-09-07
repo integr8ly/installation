@@ -205,6 +205,14 @@
       rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
     tags: ['rhsso', 'remote']
 
+- hosts: master
+  gather_facts: no
+  tasks:
+  - include_role:
+      name: webapp
+      tasks_from: cors
+    tags: ['webapp', 'remote']
+
 - hosts: localhost
   gather_facts: no
   tasks:

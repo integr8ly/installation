@@ -3,3 +3,10 @@
   remote_user: root
   roles:
     - webapp
+
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: webapp
+        tasks_from: cors

@@ -3,3 +3,10 @@
   gather_facts: no
   roles:
     - role: webapp
+
+- hosts: master
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: webapp
+        tasks_from: cors
