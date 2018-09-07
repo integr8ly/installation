@@ -206,3 +206,11 @@ oc login https://<openshift-master-url>
 cd evals/
 ansible-playbook -i inventories/hosts playbooks/3scale.yml -e threescale_route_suffix=<openshift-router-suffix>
 ```
+
+##### Run Webapp install playbook
+
+```shell
+oc login https://<openshift-master-url>
+cd evals/
+ansible-playbook -i inventories/hosts playbooks/webapp.yml
+```
