@@ -3,4 +3,4 @@ webapp_namespace: webapp
 webapp_client_id: tutorial-web-app
 webapp_route: tutorial-web-app
 
-openshift_master_config_path: /etc/origin/master/master-config.yaml
+webapp_openshift_master_config_path: "{{ eval_openshift_master_config_path | default('/etc/origin/master/master-config.yaml') }}"
