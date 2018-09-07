@@ -1,0 +1,6 @@
+---
+- name: Run Prerequisite checks
+  import_tasks: prereq-check.yml
+
+- name: Install 3Scale
+  import_tasks: install.yml

@@ -1,0 +1,8 @@
+---
+- name: Generate resource limitrange template
+  template:
+    src: "resource-limits.yml.j2"
+    dest: /tmp/resource-limits.yml
+
+- name: "Replace limit range {{ threescale_limit_range_name }}"
+  shell: oc replace -f /tmp/resource-limits.yml -n {{ threescale_namespace }}
