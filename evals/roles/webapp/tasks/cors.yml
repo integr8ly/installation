@@ -5,6 +5,6 @@
     insertafter: "corsAllowedOrigins"
     backup: yes
     block: |2
-      - https://{{ webapp_secure_route }}
+      - https://{{ hostvars['WEBAPP_VARS']['webapp_secure_route'] }}
   register: master_config_update
   become: yes

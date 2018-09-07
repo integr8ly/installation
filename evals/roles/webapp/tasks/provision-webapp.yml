@@ -25,6 +25,10 @@
 - set_fact:
     webapp_secure_route: "{{ webapp_secure_route.stdout }}"
 
+- add_host:
+    name: WEBAPP_VARS
+    webapp_secure_route: "{{ webapp_secure_route }}"
+
 - name: Create template for OpenShift OAuth client
   template:
     src: oauthclient.json.j2
