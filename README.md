@@ -17,8 +17,8 @@ These products include:
 ## Prerequisites
 
 * Ansible v2.6
-* Openshift Container Platform v3.9
-* Openshift CLI (OC) v3.9
+* Openshift Container Platform v3.10
+* Openshift CLI (OC) v3.10
 * SSH Access to Openshift master(s)
 * Cluster administrator permissions
 
@@ -72,8 +72,8 @@ OAuth Application.
 
 The installer has a number of important variables, namely:
 
-* `launcher_github_client_id` - `Client ID` of the created GitHub OAuth Application.
-* `launcher_github_client_secret` - `Client Secret` of the created GitHub OAuth Application.
+* `eval_github_client_id` - `Client ID` of the created GitHub OAuth Application.
+* `eval_github_client_secret` - `Client Secret` of the created GitHub OAuth Application.
 * `eval_self_signed_certs` - Whether the OpenShift cluster uses self-signed certs or not. Defaults to `true`.
 
 Run the playbook:
@@ -134,8 +134,8 @@ playbook.
 
 Set the following variables:
 
-* `che_github_client_id` - The `Client ID` of the created GitHub OAuth Application.
-* `che_github_client_secret` - The `Client Secret` of the created GitHub OAuth Application.
+* `eval_github_client_id` - The `Client ID` of the created GitHub OAuth Application.
+* `eval_github_client_secret` - The `Client Secret` of the created GitHub OAuth Application.
 * `che_route_suffix` - The router suffix of the OpenShift cluster.
 * `che_keycloak_host` - The route to the previously created SSO, without protocol.
 * `che_keycloak_user` - Username to authenticate as, this would be the admin user by default.
@@ -175,8 +175,8 @@ running the playbook.
 * `launcher_openshift_sso_realm` - The realm to create resources in the SSO, this would be `openshift` by default.
 * `launcher_openshift_sso_username` - Username to authenticate as, this would be the admin user by default.
 * `launcher_openshift_sso_password` - Password of the user.
-* `launcher_github_client_id` - The `Client ID` of the created GitHub OAuth Application.
-* `launcher_github_client_secret` - The `Client Secret` of the created GitHub OAuth Application.
+* `eval_github_client_id` - The `Client ID` of the created GitHub OAuth Application.
+* `eval_github_client_secret` - The `Client Secret` of the created GitHub OAuth Application.
 
 If using self signed certs set `launcher_sso_validate_certs` to `no/false`.
 Without this, an error will be thrown similar to this:
