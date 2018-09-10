@@ -21,6 +21,13 @@
   shell: oc new-project {{ msbroker_namespace }}
   when: msbroker_check_namespace_exists.rc != 0
 
+- name: Create Required CRDs
+  shell: "oc create -f {{ item }}"
+  register: output
+  failed_when: output.stderr != '' and 'already exists' not in output.stderr
+  changed_when: output.rc == 0
+  with_items: "{{ required_crds }}"
+
 # Create RBAC
 - name: Check if rbac roles exists
   shell: oc get -f {{ msbroker_rbac_url }} -n {{ msbroker_namespace }}
