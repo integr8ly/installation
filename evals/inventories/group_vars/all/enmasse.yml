@@ -1,8 +1,8 @@
 ---
 enmasse_namespace: enmasse
-enmasse_multitenant: True
-enmasse_enable_rbac: True
-enmasse_service_catalog: True
+enmasse_multitenant: true
+enmasse_enable_rbac: true
+enmasse_service_catalog: true
 enmasse_keycloak_admin_password: admin
 enmasse_authentication_services: ["standard"]
-enmasse_deploy_infra: True
+enmasse_deploy_infra: true

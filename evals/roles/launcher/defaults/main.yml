@@ -1,5 +1,5 @@
 ---
-launcher_namespace: "{{ eval_namespace | default('launcher') }}"
+launcher_namespace: "{{ eval_launcher_namespace | default('launcher') }}"
 
 launcher_template: https://raw.githubusercontent.com/fabric8-launcher/launcher-openshift-templates/cc0cabe7e2b541735cbea8f364d1fb98ef1f26ba/openshift/launcher-template.yaml
 

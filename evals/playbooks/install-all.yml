@@ -41,10 +41,10 @@
       name: Gather rhsso data
       block: 
         -
-          name: Retrive rhsso env vars
+          name: Retrieve rhsso env vars
           shell: "oc get dc/sso \
                   -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
-                  -n {{ rhsso_namespace }}"
+                  -n {{ eval_rhsso_namespace }}"
           with_items:
             - 'SSO_SERVICE_USERNAME'
             - 'SSO_SERVICE_PASSWORD'
@@ -57,7 +57,7 @@
           with_items: "{{ _eval_rhsso_dc_cmd.results }}"
         -
           name: Retrieve cluster rhsso host
-          shell: "oc get route/secure-sso -o jsonpath='{.spec.host}' -n {{ rhsso_namespace }}"
+          shell: "oc get route/secure-sso -o jsonpath='{.spec.host}' -n {{ eval_rhsso_namespace }}"
           register: eval_sso_host_cmd
         -
           name: Set rhsso host var
@@ -79,12 +79,13 @@
         launcher_openshift_sso_route: "{{ eval_rhsso_host }}"
         launcher_github_client_id: "{{ eval_github_client_id }}"
         launcher_github_client_secret: "{{ eval_github_client_secret }}"
+        launcher_sso_validate_certs: "{{ eval_launcher_sso_validate_certs }}"
       tags: ['launcher']
     -
       name: Retrieve launcher sso env vars
       shell: "oc get dc/launcher-sso \
         -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
-        -n {{ launcher_namespace }}"
+        -n {{ eval_launcher_namespace }}"
       with_items:
         - 'SSO_SERVICE_USERNAME'
         - 'SSO_SERVICE_PASSWORD'
@@ -99,7 +100,7 @@
       tags: ['bootstrap']
     -
       name: Retrieve launcher sso hostvars
-      shell: "oc get route/secure-launcher-sso -o jsonpath='{.spec.host}' -n {{ launcher_namespace }}"
+      shell: "oc get route/secure-launcher-sso -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
       register: eval_launcher_sso_host_cmd
       tags: ['bootstrap']
     -
@@ -118,7 +119,7 @@
         che_route_suffix: "{{ eval_app_host }}"
         che_protocol: https
         che_ws_protocol: wss
-        che_keycloak_realm: "{{ launcher_sso_realm }}"
+        che_keycloak_realm: "{{ eval_launcher_sso_realm }}"
         che_keycloak_client_id: che-client
         che_github_client_id: "{{ eval_github_client_id }}"
         che_github_client_secret: "{{ eval_github_client_secret }}"
@@ -147,6 +148,8 @@
         name: msbroker
       vars:
         route_suffix: "{{ eval_app_host }}"
+        launcher_namespace: "{{ eval_launcher_namespace }}"
+        che_namespace: "{{ eval_che_namespace }}"
       tags: ['msbroker']
     -
       name: Link enmasse resources folder
@@ -193,20 +196,16 @@
 - hosts: master
   gather_facts: no
   tasks:
-  - include_role:
-      name: webapp
-      tasks_from: cors
-    tags: ['webapp', 'remote']
-
-- hosts: master
-  gather_facts: no
-  tasks:
-  - include_role:
-      name: rhsso
-      tasks_from: identityprovider
-    vars:
-      rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
-    tags: ['rhsso', 'remote']
+    - include_role:
+        name: webapp
+        tasks_from: cors
+      tags: ['webapp', 'remote']
+    - include_role:
+        name: rhsso
+        tasks_from: identityprovider
+      vars:
+        rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
+      tags: ['rhsso', 'remote']
 
 - hosts: localhost
   gather_facts: no
@@ -214,5 +213,5 @@
     - debug:
         msg: All services have been provisioned successfully. Please add '{{ callback_url }}' as the Authorization callback URL of your GitHub OAuth Application.
       vars:
-        callback_url: https://{{ launcher_sso_route }}/auth/realms/{{ launcher_sso_realm }}/broker/github/endpoint
+        callback_url: https://{{ launcher_sso_route }}/auth/realms/{{ eval_launcher_sso_realm }}/broker/github/endpoint
 
