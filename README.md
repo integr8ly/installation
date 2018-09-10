@@ -8,10 +8,11 @@ The purpose of this repository is to provide a set of Ansible playbooks that can
 These products include:
 
 * Single Sign On
+* Managed Services Broker
 * EnMasse
-* Fuse iPaaS
 * Eclipse Che
 * Launcher
+* 3Scale
 
 ## Prerequisites
 
@@ -87,7 +88,7 @@ ansible-playbook -i inventories/hosts playbooks/install-all.yml -e eval_github_c
 
 Each product has an associated install playbook available from the ```evals/playbooks/``` directory.
 
-##### Run Single Sign On install playbook
+#### Run Single Sign On install playbook
 
 ```shell
 oc login https://<openshift-master-url>
@@ -105,7 +106,7 @@ To configure custom account credentials, simply override the rhsso role environm
 ansible-playbook -i inventories/hosts playbooks/rhsso.yml -e rhsso_evals_username=<username> -e rhsso_evals_password=<password>
 ```
 
-##### Run EnMasse install playbook
+#### Run EnMasse install playbook
 
 ```shell
 oc login https://<openshift-master-url>
@@ -115,6 +116,7 @@ ansible-playbook -i inventories/hosts playbooks/enmasse.yml
 
 Once the playbook has completed a service named `EnMasse (standard)` will be available
 in the Service Catalog. This can be provisioned into your namespace to use EnMasse.
+
 
 #### Run Che install playbook
 
@@ -140,7 +142,7 @@ cd evals/
 ansible-playbook -i inventories/hosts playbooks/che-install.yml
 ```
 
-##### Run Launcher install playbook
+#### Run Launcher install playbook
 
 Before running the playbook, create a new OAuth Application on GitHub. This can
 be done at https://github.com/settings/developers. Note the `Client ID` and
@@ -187,3 +189,21 @@ ansible-playbook -i inventories/hosts playbooks/launcher.yml
 Once the playbook has completed it will print a debug message saying to update
 the `Authorization callback URL` of the GitHub OAuth Application. Once this is
 done the launcher setup has finished.
+
+#### Run 3Scale install playbook
+
+Note: 3Scale requires access to ReadWriteMany PVs. As such, it will only work on Openshift clusters that have RWX PVs available.
+
+```shell
+oc login https://<openshift-master-url>
+cd evals/
+ansible-playbook -i inventories/hosts playbooks/3scale.yml -e threescale_route_suffix=<openshift-router-suffix>
+```
+
+##### Run Webapp install playbook
+
+```shell
+oc login https://<openshift-master-url>
+cd evals/
+ansible-playbook -i inventories/hosts playbooks/webapp.yml
+```
