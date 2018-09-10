@@ -116,15 +116,7 @@ ansible-playbook -i inventories/hosts playbooks/enmasse.yml
 Once the playbook has completed a service named `EnMasse (standard)` will be available
 in the Service Catalog. This can be provisioned into your namespace to use EnMasse.
 
-##### Run Fuse iPaaS install playbook
-
-```shell
-oc login https://<openshift-master-url>
-cd evals/
-ansible-playbook -i inventories/hosts playbooks/ipaas.yml
-```
-
-##### Run Che install playbook
+#### Run Che install playbook
 
 Before running the playbook, create a new OAuth Application on GitHub. This can
 be done at https://github.com/settings/developers. Note the `Client ID` and

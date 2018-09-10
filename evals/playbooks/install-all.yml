@@ -69,11 +69,6 @@
       set_fact:
         eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
       when: eval_app_host == ''
-    - 
-      name: Install ipaas
-      include_role:
-        name: ipaas
-      tags: ['ipaas']
     -
       name: Install launcher
       include_role:
