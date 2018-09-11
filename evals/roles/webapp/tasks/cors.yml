@@ -7,5 +7,5 @@
     backup: yes
     block: |2
       - https://{{ hostvars['WEBAPP_VARS']['webapp_secure_route'] }}
-  register: master_config_update
+  register: webapp_master_config_update
   become: yes
