@@ -8,8 +8,8 @@ The purpose of this repository is to provide a set of Ansible playbooks that can
 These products include:
 
 * Single Sign On
+* Managed Services Broker
 * EnMasse
-* Fuse iPaaS
 * Eclipse Che
 * Launcher
 * 3Scale
@@ -116,14 +116,6 @@ ansible-playbook -i inventories/hosts playbooks/enmasse.yml
 
 Once the playbook has completed a service named `EnMasse (standard)` will be available
 in the Service Catalog. This can be provisioned into your namespace to use EnMasse.
-
-#### Run Fuse iPaaS install playbook
-
-```shell
-oc login https://<openshift-master-url>
-cd evals/
-ansible-playbook -i inventories/hosts playbooks/ipaas.yml
-```
 
 #### Run Che install playbook
 
