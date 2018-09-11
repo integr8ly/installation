@@ -1,0 +1,6 @@
+[local]
+127.0.0.1
+
+[local:vars]
+ansible_connection=local
+webapp_openshift_master_config_path=/var/lib/origin/openshift.local.config/master/master-config.yaml

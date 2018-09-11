@@ -1,0 +1,9 @@
+---
+- name: Check if namespace exists
+  shell: oc get namespace {{ webapp_namespace }}
+  failed_when: false
+  register: webapp_check_namespace_exists_cmd
+
+- name: Create webapp namespace
+  shell: oc new-project {{ webapp_namespace }}
+  when: webapp_check_namespace_exists_cmd.rc != 0

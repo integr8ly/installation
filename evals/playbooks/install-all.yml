@@ -136,6 +136,12 @@
       tags: ['che']
       when: eval_action == 'uninstall'
     - 
+      name: Install webapp
+      include_role:
+        name: webapp
+      tags: ['webapp']
+      when: eval_action == 'install'
+    - 
       name: Install managed services broker
       include_role:
         name: msbroker
@@ -169,6 +175,13 @@
         state: absent
       tags: ['enmasse']
     -
+      name: Install 3Scale
+      include_role:
+        name: 3scale
+      vars:
+        threescale_route_suffix: "{{ eval_app_host }}"
+      tags: ['3scale']
+    -
       name: Configure SSO Logout URL
       include_role:
         name: rhsso
@@ -186,6 +199,14 @@
     vars:
       rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
     tags: ['rhsso', 'remote']
+
+- hosts: master
+  gather_facts: no
+  tasks:
+  - include_role:
+      name: webapp
+      tasks_from: cors
+    tags: ['webapp', 'remote']
 
 - hosts: localhost
   gather_facts: no

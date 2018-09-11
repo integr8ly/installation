@@ -1,7 +1,7 @@
 ---
 launcher_namespace: "{{ eval_namespace | default('launcher') }}"
 
-launcher_template: https://raw.githubusercontent.com/fabric8-launcher/launcher-openshift-templates/dbf6291c876f881a6d8544e664c9260c44879d7e/openshift/launcher-template.yaml
+launcher_template: https://raw.githubusercontent.com/fabric8-launcher/launcher-openshift-templates/cc0cabe7e2b541735cbea8f364d1fb98ef1f26ba/openshift/launcher-template.yaml
 
 launcher_sso_serviceclass: sso72-x509-postgresql-persistent
 launcher_sso_serviceinstance_name: launcher-sso-instance

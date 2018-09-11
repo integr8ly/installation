@@ -1,0 +1,16 @@
+---
+threescale_namespace: 3scale
+threescale_route_suffix: ""
+threescale_template_url: https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/2.2.0.GA/amp/amp.yml
+
+threescale_limit_range_name: 3scale-core-resource-limits
+
+threescale_limit_range_container_default_cpu: 500m
+threescale_limit_range_container_default_memory: 1536Mi
+threescale_limit_range_container_default_request_cpu: 50m
+threescale_limit_range_container_default_request_memory: 256Mi
+threescale_limit_range_container_max_memory: 32Gi
+threescale_limit_range_container_min_memory: 10Mi
+
+threescale_limit_range_pod_max_memory: 32Gi
+threescale_limit_range_pod_min_memory: 6Mi

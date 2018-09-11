@@ -14,8 +14,8 @@ che_validate_certs: false
 che_route_suffix: "{{ eval_app_host | default('') }}"
 che_image_tag: '6.9.0-centos'
 che_image_name: 'docker.io/eclipse/che-server'
-che_protocol: http
-che_ws_protocol: ws
+che_protocol: https
+che_ws_protocol: wss
 che_multiuser: true
 che_tls: true
 che_infra_openshift_project: "{{ che_namespace }}"

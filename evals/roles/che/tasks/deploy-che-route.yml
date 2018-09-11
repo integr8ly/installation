@@ -15,4 +15,4 @@
     -
       name: Create secure route
       shell: "oc apply -f {{ che_template_folder }}/deploy/https/che-route-tls.yaml -n {{ che_namespace }}"
-  when: che_route_cmd.stderr != ''
+  when: che_route_cmd.stdout == '<no value>'
