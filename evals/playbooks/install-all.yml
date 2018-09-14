@@ -79,7 +79,7 @@
         launcher_openshift_sso_route: "{{ eval_rhsso_host }}"
         launcher_github_client_id: "{{ eval_github_client_id }}"
         launcher_github_client_secret: "{{ eval_github_client_secret }}"
-        launcher_sso_validate_certs: "{{ eval_launcher_sso_validate_certs }}"
+        launcher_sso_validate_certs: "{{ eval_sso_validate_certs }}"
       tags: ['launcher']
     -
       name: Retrieve launcher sso env vars
@@ -181,6 +181,14 @@
       name: Install 3Scale
       include_role:
         name: 3scale
+      vars:
+        threescale_route_suffix: "{{ eval_app_host }}"
+      tags: ['3scale']
+    - 
+      name: Configure 3Scale SSO
+      include_role:
+        name: 3scale
+        tasks_from: sso
       vars:
         threescale_route_suffix: "{{ eval_app_host }}"
       tags: ['3scale']

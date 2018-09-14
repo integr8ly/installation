@@ -2,6 +2,12 @@
 threescale_namespace: 3scale
 threescale_route_suffix: ""
 threescale_template_url: https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/2.2.0.GA/amp/amp.yml
+threescale_sso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"
+threescale_sso_admin_username: admin
+threescale_sso_admin_realm: master
+threescale_sso_realm: openshift
+threescale_sso_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
+threescale_sso_client_id: 3scale
 
 threescale_limit_range_name: 3scale-core-resource-limits
 
@@ -14,3 +20,13 @@ threescale_limit_range_container_min_memory: 10Mi
 
 threescale_limit_range_pod_max_memory: 32Gi
 threescale_limit_range_pod_min_memory: 6Mi
+
+threescale_evals_email: evals@example.com
+threescale_evals_username: "{{ threescale_evals_email }}"
+threescale_evals_password: Password1
+
+threescale_cluster_admin_email: admin@example.com
+threescale_cluster_admin_username: "{{ threescale_cluster_admin_email }}"
+threescale_cluster_admin_password: Password1
+
+

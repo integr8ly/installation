@@ -5,8 +5,8 @@ eval_username: evals@example.com
 eval_app_host: ''
 eval_openshift_master_config_path: /etc/origin/master/master-config.yaml
 eval_self_signed_certs: true
+eval_sso_validate_certs: false
 eval_che_namespace: che
 eval_rhsso_namespace: sso
 eval_launcher_namespace: launcher
 eval_launcher_sso_realm: launcher_realm
-eval_launcher_sso_validate_certs: no

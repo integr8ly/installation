@@ -64,4 +64,6 @@
   - controllers
 
 - name: Delete local client config file
-  file: path=/tmp/client-config.json state=absent
+  file: 
+    path: /tmp/client-config.json 
+    state: absent

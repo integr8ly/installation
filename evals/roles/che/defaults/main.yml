@@ -8,7 +8,7 @@ che_username: "{{ eval_username | default('evals@example.com') }}"
 che_template_folder: /tmp/che-templates
 che_app_label: che
 che_delete_namespace: false
-che_validate_certs: false
+che_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
 
 #server template vars
 che_route_suffix: "{{ eval_app_host | default('') }}"

@@ -58,4 +58,7 @@
     dest: /tmp/client-config.json
 
 - name: Delete client template file
-  file: path=/tmp/client.json state=absent
+  file: 
+    path: /tmp/client.json
+    state: absent
+    
