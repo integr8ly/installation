@@ -64,7 +64,7 @@ There are currently two options for installing:
 
 #### Install all products from a single playbook
 
-All products can be installed using the ```install-all.yml``` playbook located in the ```evals/playbooks/``` directory.
+All products can be installed using the ```install.yml``` playbook located in the ```evals/playbooks/``` directory.
 
 Before running the playbook, create a new OAuth Application on GitHub. This can
 be done at https://github.com/settings/developers. Note the `Client ID` and `Client Secret` of the created
@@ -81,7 +81,7 @@ Run the playbook:
 ```shell
 oc login https://<openshift-master-url>
 cd evals/
-ansible-playbook -i inventories/hosts playbooks/install-all.yml -e eval_github_client_id=<client-id> -e eval_github_client_secret=<client-secret> -e eval_self_signed_certs=<boolean>
+ansible-playbook -i inventories/hosts playbooks/install.yml -e eval_github_client_id=<client-id> -e eval_github_client_secret=<client-secret> -e eval_self_signed_certs=<boolean>
 ```
 
 #### Install each product individually
@@ -205,4 +205,12 @@ ansible-playbook -i inventories/hosts playbooks/3scale.yml -e threescale_route_s
 oc login https://<openshift-master-url>
 cd evals/
 ansible-playbook -i inventories/hosts playbooks/webapp.yml
+```
+
+## Uninstallation steps
+
+Run the uninstall.yml playbook from inside the evals directory:
+```shell
+cd evals/
+ansible-playbook -i inventories/hosts playbooks/uninstall.yml
 ```

@@ -25,7 +25,7 @@
   name: Delete service account secrets
   shell: "oc delete secret/{{ item }} -n {{ che_namespace }}"
   with_items: "{{ che_sa_cmd.stdout.split(' ') | lower }}"
-  when: che_sa_cmd.rc == 0
+  when: che_sa_cmd.rc == 0 and che_sa_cmd.stdout != ""
 
 -
   name: Deleting remaining resources
@@ -40,6 +40,9 @@
 -
   name: Delete che namespace
   shell: "oc delete project {{ che_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
   when: che_delete_namespace | bool == true
 
 -
@@ -53,6 +56,7 @@
   retries: 20
   delay: 2
   until: che_keycloak_auth_response.status == 503 or che_keycloak_auth_response.status in [200, 401, 403]
+  when: delete_keycloak_user
 
 -
   name: "Delete client {{ che_keycloak_client_id }} from realm {{ che_keycloak_realm }}"
@@ -65,4 +69,4 @@
       Authorization: "Bearer {{ che_keycloak_auth_response.json.access_token }}"
     status_code: [204]
   register: che_clients_cmd
-  when: che_keycloak_auth_response.status != 503
+  when: che_keycloak_auth_response.status != 503 and delete_keycloak_user

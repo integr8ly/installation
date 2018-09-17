@@ -17,7 +17,7 @@
 
 -
   name: Set che pod persistent volume
-  shell: oc set volume dc/che --add -m /data --name=che-data-volume --claim-name=che-data-volume
+  shell: oc set volume dc/che --add -m /data --name=che-data-volume --claim-name=che-data-volume --namespace {{ che_namespace }}
   when: che_dc_pv_cmd.stdout != 'che-data-volume'
 
 -

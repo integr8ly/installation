@@ -1,0 +1,53 @@
+---
+- hosts: localhost
+  tasks:
+    -
+      name: Uninstall launcher
+      include_role:
+        name: launcher
+        tasks_from: uninstall
+      tags: ['launcher']
+    -
+      name: Uninstall che
+      include_role:
+        name: che
+        tasks_from: uninstall
+      vars:
+        delete_keycloak_user: false
+        che_delete_namespace: true
+      tags: ['che']
+    - 
+      name: Uninstall managed services broker
+      include_role:
+        name: msbroker
+        tasks_from: uninstall
+      tags: ['msbroker']
+    - 
+      name: Uninstall 3scale
+      include_role:
+        name: 3scale
+        tasks_from: uninstall
+      tags: ['3scale']
+    - 
+      name: "Delete project namespace: {{ enmasse_namespace }}"
+      shell: oc delete project {{ enmasse_namespace }}
+      register: output
+      failed_when: output.stderr != '' and 'not found' not in output.stderr
+      changed_when: output.rc == 0
+    - 
+      name: Delete users
+      shell: oc delete user admin@example.com evals@example.com
+    - 
+      name: Uninstall the webapp
+      include_role:
+        name: webapp
+        tasks_from: uninstall
+      tags: ['webapp']
+- hosts: master
+  tasks:
+    - 
+      name: Uninstall rhsso
+      include_role:
+        name: rhsso
+        tasks_from: uninstall
+      tags: ['rhsso']
