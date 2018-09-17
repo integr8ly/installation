@@ -1,0 +1,97 @@
+---
+- name: Get RH-SSO secure route
+  shell: oc get route/secure-sso -o template --template \{\{.spec.host\}\} -n {{ threescale_sso_namespace }}
+  register: sso_secure_route
+
+- set_fact:
+    sso_route: "{{ sso_secure_route.stdout }}"
+    threescale_admin_route: "3scale-admin.{{ threescale_route_suffix }}"
+
+- name: Retrieve RH-SSO admin user password
+  shell: oc get dc/sso -o jsonpath='{.spec.template.spec.containers[?(@.name=="sso")].env[?(@.name=="SSO_ADMIN_PASSWORD")].value}' -n {{ threescale_sso_namespace }}
+  register: sso_admin_password_cmd
+
+- name: Generate RH-SSO auth token for admin user
+  uri:
+    url: "https://{{ sso_route }}/auth/realms/{{ threescale_sso_admin_realm }}/protocol/openid-connect/token"
+    method: POST
+    body: "client_id=admin-cli&username={{ threescale_sso_admin_username }}&password={{ sso_admin_password_cmd.stdout }}&grant_type=password"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+  register: sso_auth_response
+  retries: 20
+  delay: 2
+  until: sso_auth_response.status == 200
+
+- name: Generate client template
+  template:
+    src: "sso-client.json.j2"
+    dest: /tmp/3scale-sso-client.json
+
+- name: Create public client in {{ threescale_sso_realm }} realm
+  uri:
+    url: "https://{{ sso_route }}/auth/admin/realms/{{ threescale_sso_realm }}/clients"
+    method: POST
+    body: "{{ lookup('file','/tmp/3scale-sso-client.json') }}"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ sso_auth_response.json.access_token }}"
+    status_code: [201, 409]
+
+- name: Get client secret
+  uri:
+    url: "https://{{ sso_route }}/auth/admin/realms/{{ threescale_sso_realm }}/clients/{{ threescale_sso_client_id }}/client-secret"
+    method: GET
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    headers:
+      Authorization: "Bearer {{ sso_auth_response.json.access_token }}"
+    status_code: 200
+    return_content: yes
+  register: client_secret
+
+- name: Retrieve 3Scale admin auth token
+  shell: oc describe dc/system-app -n {{ threescale_namespace }} | grep ADMIN_ACCESS_TOKEN | tail -1 | awk '{print $2}'
+  register: admin_auth_config
+
+- name: Create 3Scale SSO provider
+  uri:
+    url: "https://{{ threescale_admin_route }}/admin/api/account/authentication_providers.xml"
+    method: POST
+    body: "access_token={{ admin_auth_config.stdout }}&kind=keycloak&name=rhsso&client_id={{ threescale_sso_client_id }}&client_secret={{ client_secret.json.value }}&site=https%3A%2F%2F{{ sso_route }}%2Fauth%2Frealms%2F{{ threescale_sso_realm }}&skip_ssl_certificate_verification=true&published=true"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    status_code: [201, 422]
+
+- name: Retrieve default admin user configurations
+  uri:
+    url: "https://{{ threescale_admin_route }}/admin/api/users.xml"
+    method: GET
+    return_content: yes
+    dest: /tmp/default-admin-config.xml
+    body: "access_token={{ admin_auth_config.stdout }}&role=admin"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    status_code: [200]
+
+- name: Retrieve default admin user ID
+  xml:
+    path: /tmp/default-admin-config.xml
+    xpath: /users/user/id
+    content: text
+  register: default_admin_user_xml
+
+- name: Update default admin user account details
+  uri:
+    url: "https://{{ threescale_admin_route }}/admin/api/users/{{ default_admin_user_xml.matches.0.id|int }}.xml"
+    method: PUT
+    body: "access_token={{ admin_auth_config.stdout }}&username={{ threescale_cluster_admin_username }}&email={{ threescale_cluster_admin_email }}"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    status_code: [200]
+
+- name: Delete default admin config file
+  file: 
+    path: /tmp/default-admin-config.xml 
+    state: absent
+
+- name: Delete sso client config file
+  file: 
+    path: /tmp/3scale-sso-client.json
+    state: absent

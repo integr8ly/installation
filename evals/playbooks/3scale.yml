@@ -2,3 +2,7 @@
   hosts: local
   roles:
   - 3scale
+  tasks:
+  - include_role:
+        name: 3scale
+        tasks_from: sso

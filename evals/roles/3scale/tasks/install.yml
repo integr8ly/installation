@@ -9,7 +9,7 @@
   shell: oc get all -n {{ threescale_namespace }}
   register: threescale_resources_exist
 
-- name: "Provision 3scale in namespace {{ threescale_namespace }}"
+- name: "Provision 3scale in namespace: {{ threescale_namespace }}"
   shell: oc process -n {{ threescale_namespace }} -f {{ threescale_template_url }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} | oc create -n {{ threescale_namespace }} -f -
   when: threescale_resources_exist.stderr == "No resources found."
 
