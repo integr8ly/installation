@@ -27,6 +27,7 @@
 - name: Check if broker secret exists
   shell: oc get secret -n {{ namespace }} service-broker-secret
   register: broker_secret_exists
+  failed_when: false
   ignore_errors: True
 - name: Create service-broker-secret for secure info
   when: broker_secret_exists.failed
@@ -51,6 +52,7 @@
 - name: Check if console route exists
   shell: oc get route console -n {{ namespace }} -o yaml -o jsonpath={.spec.host}
   register: console_route
+  failed_when: false
   ignore_errors: True
 - set_fact:
     osb_console_prefix: "https://{{ console_route.stdout }}/console"
@@ -66,6 +68,7 @@
 - name: Check if service-broker-config exists
   shell: oc get configmap -n {{ namespace }} service-broker-config
   register: config_exists
+  failed_when: false
   ignore_errors: True
 - name: Create service-broker-config for configuration data
   when: config_exists.failed
@@ -78,6 +81,7 @@
 - name: Check if secret exists
   shell: oc get secret -n {{ namespace }} service-catalog-credentials
   register: catalog_secret_exists
+  failed_when: false
   ignore_errors: True
 - name: Create secret for catalog credentials
   shell: oc create secret generic -n {{ namespace }} service-catalog-credentials --from-literal=token={{ enmasse_admin_token }}

@@ -8,6 +8,7 @@
 - name: Check if keycloak credentials secret exists
   shell: oc get secret -n {{ namespace }} keycloak-credentials
   register: secret_exists
+  failed_when: false
   ignore_errors: True
 - name: Create secret with the keycloak credentials
   when: secret_exists.failed
@@ -15,6 +16,7 @@
 - name: Check if keycloak config exists
   shell: oc get configmap -n {{ namespace }} keycloak-config
   register: config_exists
+  failed_when: false
   ignore_errors: True
 
 - name: Keycloak http setting
@@ -24,6 +26,7 @@
 - name: Check if OAUTH service account exists
   shell: oc get sa -n {{ namespace }} kc-oauth
   register: oauth_sa_exists
+  failed_when: false
   ignore_errors: True
 - name: Create OAUTH service account
   shell: oc create sa -n {{ namespace }} kc-oauth

@@ -2,6 +2,7 @@
 - name: Check if address-space-admin SA exists
   shell: oc get sa address-space-admin
   register: sa_exists
+  failed_when: false
   ignore_errors: True
 - name: Create address space admin SA
   shell: oc create sa address-space-admin -n {{ namespace }}

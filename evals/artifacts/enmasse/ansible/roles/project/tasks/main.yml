@@ -2,6 +2,7 @@
 - name: Check if project namespace exists
   shell: oc project {{ namespace }}
   register: namespace_exists
+  failed_when: false
   ignore_errors: True
 - name: Create project namespace
   shell: oc new-project {{ namespace }} --description="EnMasse Infrastructure"

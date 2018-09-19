@@ -1,6 +1,7 @@
 - name: Check if keycloak route exists
   shell: oc get route keycloak -n {{ namespace }} -o yaml -o jsonpath={.spec.host}
   register: keycloak_route
+  failed_when: false
   ignore_errors: True
 - set_fact:
     keycloak_http_url: "https://{{ keycloak_route.stdout }}/auth"
