@@ -13,7 +13,6 @@
 - name: Check if api-server-config exists
   shell: oc get configmap -n {{ namespace }} api-server-config
   register: config_exists
-  failed_when: false
   ignore_errors: True
 - name: Create API Server Config
   when: config_exists.failed
@@ -26,7 +25,6 @@
   when: secure_api_server
   shell: oc get secret -n {{ namespace }} api-server-client-ca
   register: secret_exists
-  failed_when: false
   ignore_errors: True
 - name: Extract API Client CA
   when: secure_api_server and secret_exists.failed
