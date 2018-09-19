@@ -69,4 +69,4 @@
       Authorization: "Bearer {{ che_keycloak_auth_response.json.access_token }}"
     status_code: [204]
   register: che_clients_cmd
-  when: che_keycloak_auth_response.status != 503 and delete_keycloak_user
+  when: delete_keycloak_user and che_keycloak_auth_response.status != 503
