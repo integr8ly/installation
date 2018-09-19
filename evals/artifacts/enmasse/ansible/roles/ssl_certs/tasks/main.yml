@@ -2,7 +2,6 @@
 - name: Check if secret exists
   shell: oc get secret -n {{ namespace }} {{ cert_secret }}
   register: secret_exists
-  failed_when: false
   ignore_errors: True
 - name: Create temp folder for certificates
   when: secret_exists.failed

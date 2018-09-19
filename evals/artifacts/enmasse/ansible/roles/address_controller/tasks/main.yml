@@ -2,7 +2,6 @@
 - name: Check if address-space-controller-config exists
   shell: oc get configmap -n {{ namespace }} address-space-controller-config
   register: config_exists
-  failed_when: false
   ignore_errors: True
 - name: Create the address space controller config map
   when: config_exists.failed
