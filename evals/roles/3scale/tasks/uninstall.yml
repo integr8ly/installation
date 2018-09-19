@@ -1,0 +1,7 @@
+---
+
+- name: "Delete project namespace: {{ threescale_namespace }}"
+  shell: oc delete project {{ threescale_namespace }}
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0

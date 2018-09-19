@@ -1,0 +1,12 @@
+---
+- name: Remove OpenShift OAuth client
+  shell: oc delete oauthclient {{ webapp_client_id }}
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+
+- name: Remove webapp namespace {{ webapp_namespace }}
+  shell: oc delete namespace {{ webapp_namespace }}
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0

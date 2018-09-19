@@ -1,0 +1,31 @@
+---
+- name: "Delete project namespace: {{ msbroker_namespace }}"
+  shell: oc delete project {{ msbroker_namespace }}
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+
+- name: Delete CRDs
+  shell: "oc delete crd {{ item }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+  with_items: syndesises.syndesis.io
+
+- name: Clean up clusterservicebroker
+  shell: "oc delete clusterservicebrokers.servicecatalog.k8s.io managed-services-broker"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+
+- name: Clean up cluster role
+  shell: "oc delete clusterroles.rbac.authorization.k8s.io managed-services"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+
+- name: Clean up cluster role binding
+  shell: "oc delete clusterrolebindings.rbac.authorization.k8s.io default-cluster-account-managed-services"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
