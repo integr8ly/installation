@@ -61,37 +61,73 @@
     validate_certs: "{{ threescale_sso_validate_certs }}"
     status_code: [201, 422]
 
-- name: Retrieve default admin user configurations
+- name: Retrieve 3Scale users
   uri:
     url: "https://{{ threescale_admin_route }}/admin/api/users.xml"
     method: GET
     return_content: yes
-    dest: /tmp/default-admin-config.xml
+    dest: /tmp/3scale_users.xml
     body: "access_token={{ admin_auth_config.stdout }}&role=admin"
     validate_certs: "{{ threescale_sso_validate_certs }}"
     status_code: [200]
 
 - name: Retrieve default admin user ID
   xml:
-    path: /tmp/default-admin-config.xml
-    xpath: /users/user/id
+    path: /tmp/3scale_users.xml
+    xpath: /users/user[username[text()='{{ threescale_cluster_admin_old_username }}']]/id
     content: text
   register: default_admin_user_xml
+  ignore_errors: True
+
+- name: Retrieve eval user ID
+  xml:
+    path: /tmp/3scale_users.xml
+    xpath: /users/user[email[text()='{{ threescale_evals_email }}']]/id
+    content: text
+  register: eval_user_xml
+  ignore_errors: True
+
+- set_fact:
+    eval_user_id: "{{ eval_user_xml.matches.0.id|int }}"
+  when: eval_user_xml is defined and eval_user_xml.matches is defined
 
 - name: Update default admin user account details
   uri:
     url: "https://{{ threescale_admin_route }}/admin/api/users/{{ default_admin_user_xml.matches.0.id|int }}.xml"
     method: PUT
-    body: "access_token={{ admin_auth_config.stdout }}&username={{ threescale_cluster_admin_username }}&email={{ threescale_cluster_admin_email }}"
+    body: "access_token={{ admin_auth_config.stdout }}&username={{ threescale_cluster_admin_new_username }}&email={{ threescale_cluster_admin_email }}"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    status_code: [200]
+  when: default_admin_user_xml is defined and default_admin_user_xml.matches is defined
+
+- name: Create eval user in 3Scale
+  uri:
+    url: "https://{{ threescale_admin_route }}/admin/api/users.json"
+    method: POST
+    body: "access_token={{ admin_auth_config.stdout }}&username={{ threescale_evals_username }}&email={{ threescale_evals_email }}&password={{ threescale_evals_password }}"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    status_code: [201]
+  when: eval_user_xml.failed
+  register: created_eval_user
+
+- set_fact:
+    eval_user_id: "{{ created_eval_user.json.user.id }}"
+  when: created_eval_user is defined and created_eval_user.json is defined
+
+- name: Update eval user to be an admin in 3Scale
+  uri:
+    url: "https://{{ threescale_admin_route }}/admin/api/users/{{ eval_user_id }}/admin.xml"
+    method: PUT
+    body: "access_token={{ admin_auth_config.stdout }}"
     validate_certs: "{{ threescale_sso_validate_certs }}"
     status_code: [200]
 
 - name: Delete default admin config file
-  file: 
-    path: /tmp/default-admin-config.xml 
+  file:
+    path: /tmp/3scale_users.xml 
     state: absent
 
 - name: Delete sso client config file
-  file: 
+  file:
     path: /tmp/3scale-sso-client.json
     state: absent
