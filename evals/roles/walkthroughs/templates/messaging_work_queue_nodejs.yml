@@ -1,0 +1,174 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: nodejs-messaging-work-queue-frontend
+  annotations:
+    iconClass: icon-jboss
+    tags: nodejs, microservice, messaging
+    template.openshift.io/provider-display-name: "Red Hat, Inc."
+    description: The Node.js Work Queue Mission demonstrates scalable task processing using messaging
+parameters:
+  - name: SOURCE_REPOSITORY_URL
+    description: The source URL for the application
+    displayName: Source URL
+    value: {{ msg_work_queue_node_source_repo_url }}
+    required: true
+  - name: SOURCE_REPOSITORY_REF
+    description: The branch name for the application
+    displayName: Source Branch
+    value: {{ msg_work_queue_node_source_repo_ref }}
+    required: true
+  - name: SOURCE_REPOSITORY_DIR
+    description: The location within the source repo of the application
+    displayName: Source Directory
+    value: {{ msg_work_queue_node_source_repo_dir }}
+    required: true
+  - name: GITHUB_WEBHOOK_SECRET
+    description: A secret string used to configure the GitHub webhook.
+    displayName: GitHub Webhook Secret
+    required: true
+    from: '[a-zA-Z0-9]{40}'
+    generate: expression
+objects:
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: {{ msg_work_queue_node_service_name }}
+  data:
+    MESSAGING_SERVICE_HOST: "{{ msg_work_queue_node_service_host }}"
+    MESSAGING_SERVICE_PORT: "{{ msg_work_queue_node_service_port }}"
+    MESSAGING_SERVICE_USER: "{{ msg_work_queue_node_service_user }}"
+    MESSAGING_SERVICE_PASSWORD: "{{ msg_work_queue_node_service_password }}"
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: nodejs-messaging-work-queue-frontend
+  spec: {}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: runtime-nodejs-messaging-work-queue-frontend
+  spec:
+    tags:
+    - name: latest
+      from:
+        kind: DockerImage
+        name: bucharestgold/centos7-s2i-nodejs:10.x
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: nodejs-messaging-work-queue-frontend
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: nodejs-messaging-work-queue-frontend:latest
+    postCommit: {}
+    resources: {}
+    source:
+      git:
+        uri: ${SOURCE_REPOSITORY_URL}
+        ref: ${SOURCE_REPOSITORY_REF}
+      contextDir: ${SOURCE_REPOSITORY_DIR}
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: runtime-nodejs-messaging-work-queue-frontend:latest
+        incremental: true
+      type: Source
+    triggers:
+    - github:
+        secret: ${GITHUB_WEBHOOK_SECRET}
+      type: GitHub
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: nodejs-messaging-work-queue-frontend
+    name: nodejs-messaging-work-queue-frontend
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 2
+    selector:
+      app: nodejs-messaging-work-queue-frontend
+    strategy:
+      rollingParams:
+        timeoutSeconds: 3600
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: nodejs-messaging-work-queue-frontend
+      spec:
+        containers:
+        - env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          envFrom:
+          - configMapRef:
+              name: messaging-service
+          image: nodejs-messaging-work-queue-frontend:latest
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /api/health/liveness
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+          name: nodejs-messaging-work-queue-frontend
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/health/readiness
+              port: 8080
+              scheme: HTTP
+          securityContext:
+            privileged: false
+      metadata:
+        labels:
+          app: nodejs-messaging-work-queue-frontend
+    triggers:
+    - type: ConfigChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - nodejs-messaging-work-queue-frontend
+        from:
+          kind: ImageStreamTag
+          name: nodejs-messaging-work-queue-frontend:latest
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: nodejs-messaging-work-queue-frontend
+    name: nodejs-messaging-work-queue-frontend
+  spec:
+    ports:
+    - name: http
+      port: 8080
+    selector:
+      app: nodejs-messaging-work-queue-frontend
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      app: nodejs-messaging-work-queue-frontend
+    name: frontend
+  spec:
+    port:
+      targetPort: 8080
+    to:
+      kind: Service
+      name: nodejs-messaging-work-queue-frontend

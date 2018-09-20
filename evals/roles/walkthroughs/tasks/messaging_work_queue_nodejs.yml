@@ -1,0 +1,12 @@
+---
+# ADDS MESSAGING WORK QUEUE NODEJS TO THE CATALOG
+- name: template messaging work queue nodejs
+  template:
+    src: messaging_work_queue_nodejs.yml
+    dest: /tmp/messaging_work_queue_nodejs.yml
+
+
+- name: Add messaging work queue nodejs to the catalog
+  command: oc create -f /tmp/messaging_work_queue_nodejs.yml -n openshift
+  register: out
+  failed_when: out.stderr != "" and out.stderr.find("AlreadyExists") == -1
