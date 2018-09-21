@@ -200,6 +200,11 @@
       vars:
         rhsso_redirect_uri: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
       tags: ['rhsso']
+    -
+      name: Setup AMQ Templates
+      include_role:
+        name: amq
+      tags: ['amq']
 
 - hosts: master
   gather_facts: no
