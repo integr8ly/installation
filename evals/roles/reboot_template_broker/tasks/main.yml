@@ -1,12 +1,16 @@
 ---
 # tasks file for reboot_template_broker
 - name: Dump current template broker
-  command: oc get clusterservicebroker/template-service-broker -o yaml > /tmp/template-service-broker.yml
+  shell: oc get clusterservicebroker template-service-broker -o yaml > /tmp/template-service-broker.yml
+
+
+- name: Delete current template broker
+  shell: oc delete clusterservicebroker template-service-broker
 
 - name: Create template-service-broker
   command: oc create -f /tmp/template-service-broker.yml
   register: result
-  until: result.stdout.find("created") == 1
+  until: '"created" in result.stdout'
   retries: 200
   delay: 5
-  failed_when: result.stderr != "" and result.stderr.find("AlreadyExists") == -1
+  failed_when: result.stderr != '' and 'AlreadyExists' not in result.stderr
