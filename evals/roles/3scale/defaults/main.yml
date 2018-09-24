@@ -26,7 +26,5 @@ threescale_evals_username: "{{ threescale_evals_email }}"
 threescale_evals_password: Password1
 
 threescale_cluster_admin_email: admin@example.com
-threescale_cluster_admin_username: "{{ threescale_cluster_admin_email }}"
-threescale_cluster_admin_password: Password1
-
-
+threescale_cluster_admin_old_username: admin
+threescale_cluster_admin_new_username: "{{ threescale_cluster_admin_email }}"
