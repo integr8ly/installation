@@ -29,16 +29,47 @@ parameters:
     required: true
     from: '[a-zA-Z0-9]{40}'
     generate: expression
+
+  - name: MESSAGING_SERVICE_NAME
+    description: Name of the messaging service
+    displayName: Messaging service name
+    value: '{{ msg_work_queue_node_service_name }}'
+    required: true
+
+  - name: MESSAGING_SERVICE_HOST
+    description: Host of messaging service
+    displayName: Messaging service
+    value: '{{ msg_work_queue_node_service_host }}'
+    required: true
+
+  - name: MESSAGING_SERVICE_PORT
+    description: Port used by the messaging service
+    displayName: Messaging service port
+    value: '{{ msg_work_queue_node_service_port }}'
+    required: true
+
+  - name: MESSAGING_SERVICE_USER
+    description: User used to log into the messaging service 
+    displayName: Messaging service user
+    value: '{{ msg_work_queue_node_service_user }}'
+    required: true
+
+  - name: MESSAGING_SERVICE_PASSWORD
+    description: Password used to log into the messaging service
+    displayName: Messaging service password
+    value: '{{ msg_work_queue_node_service_password }}'
+    required: true
+
 objects:
 - apiVersion: v1
   kind: ConfigMap
   metadata:
     name: {{ msg_work_queue_node_service_name }}
   data:
-    MESSAGING_SERVICE_HOST: "{{ msg_work_queue_node_service_host }}"
-    MESSAGING_SERVICE_PORT: "{{ msg_work_queue_node_service_port }}"
-    MESSAGING_SERVICE_USER: "{{ msg_work_queue_node_service_user }}"
-    MESSAGING_SERVICE_PASSWORD: "{{ msg_work_queue_node_service_password }}"
+    MESSAGING_SERVICE_HOST: ${MESSAGING_SERVICE_HOST}
+    MESSAGING_SERVICE_PORT: ${MESSAGING_SERVICE_PORT}
+    MESSAGING_SERVICE_USER: ${MESSAGING_SERVICE_USER}
+    MESSAGING_SERVICE_PASSWORD: ${MESSAGING_SERVICE_PASSWORD}
 - apiVersion: v1
   kind: ImageStream
   metadata:
