@@ -16,5 +16,5 @@ msg_work_queue_node_github_webhook_secret: ""
 msg_work_queue_node_service_name: messaging-service
 msg_work_queue_node_service_host: messaging.enmasse-eval.svc
 msg_work_queue_node_service_port: "5672"
-msg_work_queue_node_service_user: ""
-msg_work_queue_node_service_password: ""
+msg_work_queue_node_service_user: "username"
+msg_work_queue_node_service_password: "password"
