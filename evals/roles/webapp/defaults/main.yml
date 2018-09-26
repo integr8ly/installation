@@ -6,3 +6,4 @@ webapp_image_url: quay.io/integreatly/tutorial-web-app
 webapp_image_tag: 0.5.0
 
 webapp_openshift_master_config_path: "{{ eval_openshift_master_config_path | default('/etc/origin/master/master-config.yaml') }}"
+webapp_master_restart_shim_path: "{{ eval_master_restart_shim_path | default('/usr/local/bin/master-restart') }}"
