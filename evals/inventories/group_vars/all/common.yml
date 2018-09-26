@@ -2,6 +2,9 @@
 eval_action: install
 eval_namespace: eval
 eval_username: evals@example.com
+eval_app_host: ''
+eval_github_client_id: ''
+eval_github_client_secret: ''
 eval_openshift_master_config_path: /etc/origin/master/master-config.yaml
 eval_self_signed_certs: true
 eval_sso_validate_certs: false
@@ -10,3 +13,4 @@ eval_rhsso_namespace: sso
 eval_threescale_namespace: 3scale
 eval_launcher_namespace: launcher
 eval_launcher_sso_realm: launcher_realm
+eval_master_restart_shim_path: /usr/local/bin/master-restart
