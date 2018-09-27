@@ -1,8 +1,8 @@
 ---
-msbroker_namespace: managed-services-broker
+msbroker_namespace: managed-service-broker
 msbroker_image_org: quay.io/integreatly
-msbroker_rbac_url: https://raw.githubusercontent.com/aerogear/managed-services-broker/master/deploy/rbac.yaml
-msbroker_template_url: https://raw.githubusercontent.com/aerogear/managed-services-broker/master/templates/broker.template.yaml
+msbroker_rbac_url: https://raw.githubusercontent.com/integr8ly/managed-service-broker/master/deploy/rbac.yaml
+msbroker_template_url: https://raw.githubusercontent.com/integr8ly/managed-service-broker/master/templates/broker.template.yaml
 
 required_crds:
   - https://raw.githubusercontent.com/integr8ly/syndesis/master/install/operator/deploy/syndesis-crd.yml
