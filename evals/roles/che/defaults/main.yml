@@ -9,6 +9,7 @@ che_template_folder: /tmp/che-templates
 che_app_label: che
 che_delete_namespace: false
 che_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
+che_self_signed_certs: "{{ eval_self_signed_certs | default(false) }}"
 
 #server template vars
 che_route_suffix: "{{ eval_app_host | default('') }}"

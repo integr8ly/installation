@@ -10,3 +10,10 @@
 
 - name: Provision and Configure Launcher
   import_tasks: provision-launcher.yml
+
+- name: ACME Routes
+  include_role:
+    name: acme
+    tasks_from: routes
+  vars:
+    namespace: "{{ launcher_namespace }}"

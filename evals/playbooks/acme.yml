@@ -1,0 +1,4 @@
+- name: Install OpenShift ACME
+  hosts: local
+  roles:
+  - acme

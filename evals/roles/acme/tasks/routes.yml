@@ -1,0 +1,13 @@
+---
+- name: Get all Routes
+  shell: oc get routes -o json -n {{ namespace }}
+  register: get_tls_routes_cmd
+  failed_when: false
+
+- set_fact:
+    routes: "{{ get_tls_routes_cmd.stdout | from_json }}"
+
+- name: Add ACME route annotation
+  shell: oc annotate routes {{ item.metadata.name }} kubernetes.io/tls-acme=true -n {{ namespace }} --overwrite
+  with_items: "{{ routes.get('items') }}"
+  when: item.spec.tls is defined and item.spec.tls.termination != 'passthrough' and item.spec.host|length <= 64

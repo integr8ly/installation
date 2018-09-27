@@ -9,7 +9,7 @@ launcher_sso_username: admin
 launcher_sso_password: admin
 launcher_sso_plan: default
 launcher_sso_realm: launcher_realm
-launcher_sso_prefix: launcher-sso
+launcher_sso_prefix: sso
 launcher_sso_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
 
 launcher_sso_openshift_idp_scope: user:full

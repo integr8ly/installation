@@ -60,3 +60,10 @@
   name: Include persistent volume tasks
   include_tasks: deploy-persistent-volume.yml
   when: che_persistent_volume|bool == true
+
+- name: ACME Routes
+  include_role:
+    name: acme
+    tasks_from: routes
+  vars:
+    namespace: "{{ che_namespace }}"
