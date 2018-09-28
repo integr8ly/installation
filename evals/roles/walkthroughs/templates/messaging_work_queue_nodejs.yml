@@ -8,28 +8,6 @@ metadata:
     template.openshift.io/provider-display-name: "Red Hat, Inc."
     description: The Node.js Work Queue Mission demonstrates scalable task processing using messaging
 parameters:
-  - name: SOURCE_REPOSITORY_URL
-    description: The source URL for the application
-    displayName: Source URL
-    value: {{ msg_work_queue_node_source_repo_url }}
-    required: true
-  - name: SOURCE_REPOSITORY_REF
-    description: The branch name for the application
-    displayName: Source Branch
-    value: {{ msg_work_queue_node_source_repo_ref }}
-    required: true
-  - name: SOURCE_REPOSITORY_DIR
-    description: The location within the source repo of the application
-    displayName: Source Directory
-    value: {{ msg_work_queue_node_source_repo_dir }}
-    required: true
-  - name: GITHUB_WEBHOOK_SECRET
-    description: A secret string used to configure the GitHub webhook.
-    displayName: GitHub Webhook Secret
-    required: true
-    from: '[a-zA-Z0-9]{40}'
-    generate: expression
-
   - name: MESSAGING_SERVICE_NAME
     description: Name of the messaging service
     displayName: Messaging service name
@@ -86,39 +64,6 @@ objects:
         kind: DockerImage
         name: bucharestgold/centos7-s2i-nodejs:10.x
 - apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    name: nodejs-messaging-work-queue-frontend
-  spec:
-    output:
-      to:
-        kind: ImageStreamTag
-        name: nodejs-messaging-work-queue-frontend:latest
-    postCommit: {}
-    resources: {}
-    source:
-      git:
-        uri: ${SOURCE_REPOSITORY_URL}
-        ref: ${SOURCE_REPOSITORY_REF}
-      contextDir: ${SOURCE_REPOSITORY_DIR}
-      type: Git
-    strategy:
-      sourceStrategy:
-        from:
-          kind: ImageStreamTag
-          name: runtime-nodejs-messaging-work-queue-frontend:latest
-        incremental: true
-      type: Source
-    triggers:
-    - github:
-        secret: ${GITHUB_WEBHOOK_SECRET}
-      type: GitHub
-    - type: ConfigChange
-    - imageChange: {}
-      type: ImageChange
-  status:
-    lastVersion: 0
-- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
@@ -147,8 +92,8 @@ objects:
           envFrom:
           - configMapRef:
               name: messaging-service
-          image: nodejs-messaging-work-queue-frontend:latest
-          imagePullPolicy: IfNotPresent
+          image: quay.io/integreatly/nodejs-messaging-work-queue:latest
+          imagePullPolicy: Always
           livenessProbe:
             httpGet:
               path: /api/health/liveness
