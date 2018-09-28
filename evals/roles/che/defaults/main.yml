@@ -23,8 +23,6 @@ che_infra_pvc_size: 1Gi
 che_update_strategy: 'Recreate'
 che_image_pull_policy: IfNotPresent
 che_create_subfolder_pv: false
-che_github_client_id: ''
-che_github_client_sceret: ''
 che_keycloak_realm: ''
 che_keycloak_client_id: ''
 che_keycloak_host: ''
