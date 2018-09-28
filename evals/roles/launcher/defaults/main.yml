@@ -26,8 +26,6 @@ launcher_openshift_sso_password: "admin"
 
 launcher_sso_keycloak_client_id: launcher-openshift-users
 
-launcher_github_client_id: ""
-launcher_github_client_secret: ""
 launcher_github_default_scopes: "admin:repo_hook,read:org,public_repo"
 
 launcher_catalog_git_repo: https://github.com/integr8ly/launcher-booster-catalog

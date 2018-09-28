@@ -116,21 +116,6 @@
       Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
     status_code: [201, 409] 
 
-- template:
-    src: idp-github.json.j2
-    dest: /tmp/idp-github.json
-
-- name: Create GitHub identity provider in Launcher SSO
-  uri:
-    url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/identity-provider/instances"
-    method: POST
-    body: "{{ lookup('file', '/tmp/idp-github.json') }}"
-    validate_certs: "{{ launcher_sso_validate_certs }}"
-    body_format: json
-    headers:
-      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
-    status_code: [201, 409] 
-
 - name: Get list of authentication flows
   uri:
     url: https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/authentication/flows/browser/executions
