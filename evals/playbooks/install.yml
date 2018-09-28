@@ -11,7 +11,7 @@
         - name: "eval_github_client_secret"
           value: "{{ eval_github_client_secret | default('') }}"
 
-- hosts: master
+- hosts: "{{ eval_master_host }}"
   gather_facts: no
   tasks:
     - block:
@@ -68,7 +68,6 @@
       name: Set eval_app_host var
       set_fact:
         eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
-      when: eval_app_host == ''
     -
       name: Install launcher
       include_role:
@@ -206,7 +205,7 @@
         name: amq
       tags: ['amq']
 
-- hosts: master
+- hosts: "{{ eval_master_host }}"
   gather_facts: no
   tasks:
     - include_role:
