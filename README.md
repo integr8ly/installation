@@ -66,14 +66,8 @@ There are currently two options for installing:
 
 All products can be installed using the ```install.yml``` playbook located in the ```evals/playbooks/``` directory.
 
-Before running the playbook, create a new OAuth Application on GitHub. This can
-be done at https://github.com/settings/developers. Note the `Client ID` and `Client Secret` of the created
-OAuth Application.
+Before running the installer, please consider the following variables:
 
-The installer has a number of important variables, namely:
-
-* `eval_github_client_id` - `Client ID` of the created GitHub OAuth Application.
-* `eval_github_client_secret` - `Client Secret` of the created GitHub OAuth Application.
 * `eval_self_signed_certs` - Whether the OpenShift cluster uses self-signed certs or not. Defaults to `true`.
 
 Run the playbook:
@@ -81,7 +75,7 @@ Run the playbook:
 ```shell
 oc login https://<openshift-master-url>
 cd evals/
-ansible-playbook -i inventories/hosts playbooks/install.yml -e eval_github_client_id=<client-id> -e eval_github_client_secret=<client-secret> -e eval_self_signed_certs=<boolean> -e @./inventories/group_vars/all/common.yml
+ansible-playbook -i inventories/hosts playbooks/install.yml -e eval_self_signed_certs=<boolean> -e @./inventories/group_vars/all/common.yml
 ```
 
 #### Install each product individually
@@ -119,15 +113,8 @@ in the Service Catalog. This can be provisioned into your namespace to use EnMas
 
 #### Run Che install playbook
 
-Before running the playbook, create a new OAuth Application on GitHub. This can
-be done at https://github.com/settings/developers. Note the `Client ID` and
-`Client Secret` fields of the OAuth Application, these are required by the Che
-playbook.
-
 Set the following variables:
 
-* `eval_github_client_id` - The `Client ID` of the created GitHub OAuth Application.
-* `eval_github_client_secret` - The `Client Secret` of the created GitHub OAuth Application.
 * `che_route_suffix` - The router suffix of the OpenShift cluster.
 * `che_keycloak_host` - The route to the previously created SSO, without protocol.
 * `che_keycloak_user` - Username to authenticate as, this would be the admin user by default.
@@ -142,11 +129,6 @@ ansible-playbook -i inventories/hosts playbooks/che-install.yml
 ```
 
 #### Run Launcher install playbook
-
-Before running the playbook, create a new OAuth Application on GitHub. This can
-be done at https://github.com/settings/developers. Note the `Client ID` and
-`Client Secret` fields of the OAuth Application, these are required by the
-Launcher playbook.
 
 The Launcher playbook also requires information about the existing SSO that was
 provisioned previously. It needs to know the route of the SSO. This can be
@@ -167,8 +149,6 @@ running the playbook.
 * `launcher_openshift_sso_realm` - The realm to create resources in the SSO, this would be `openshift` by default.
 * `launcher_openshift_sso_username` - Username to authenticate as, this would be the admin user by default.
 * `launcher_openshift_sso_password` - Password of the user.
-* `eval_github_client_id` - The `Client ID` of the created GitHub OAuth Application.
-* `eval_github_client_secret` - The `Client Secret` of the created GitHub OAuth Application.
 
 If using self signed certs set `launcher_sso_validate_certs` to `no/false`.
 Without this, an error will be thrown similar to this:
