@@ -8,7 +8,7 @@ ansible_connection=local
 master
 
 [OSEv3:vars]
-ansible_user=<ssh-username>
+ansible_user=ec2-user
 
 [master]
-<master-hostname>
+127.0.0.1

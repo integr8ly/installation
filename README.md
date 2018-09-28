@@ -34,7 +34,7 @@ git clone https://github.com/integr8ly/installation.git
 
 ### 2. Update inventory hosts file
 
-Prior to running the playbooks the master hostname and associated SSH username need to be added to the inventory file. The following example sets the SSH username to ```evals``` and the master hostname to ```master.evals.example.com```:
+Prior to running the playbooks the master hostname and associated SSH username **must** be set in the inventory host file to match the target cluster configuration. The following example sets the SSH username to ```evals``` and the master hostname to ```master.evals.example.com```:
 
 ```yaml
 ~/installation/evals/inventories/hosts
@@ -81,7 +81,7 @@ Run the playbook:
 ```shell
 oc login https://<openshift-master-url>
 cd evals/
-ansible-playbook -i inventories/hosts playbooks/install.yml -e eval_github_client_id=<client-id> -e eval_github_client_secret=<client-secret> -e eval_self_signed_certs=<boolean>
+ansible-playbook -i inventories/hosts playbooks/install.yml -e eval_github_client_id=<client-id> -e eval_github_client_secret=<client-secret> -e eval_self_signed_certs=<boolean> -e @./inventories/group_vars/all/common.yml
 ```
 
 #### Install each product individually
