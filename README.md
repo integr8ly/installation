@@ -214,3 +214,8 @@ Run the uninstall.yml playbook from inside the evals directory:
 cd evals/
 ansible-playbook -i inventories/hosts playbooks/uninstall.yml
 ```
+
+By default this will delete all user-created namespaces as well, if you wish to keep these namespaces then add the following flag:
+```
+-e keep_namespaces=true
+```

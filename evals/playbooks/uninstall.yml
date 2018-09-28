@@ -1,6 +1,33 @@
 ---
 - hosts: localhost
   tasks:
+    - 
+      when: keep_namespaces is undefined or not keep_namespaces | bool
+      block:
+        - 
+          name: Check that the jq exists
+          stat:
+            path: /usr/bin/jq
+          failed_when: false
+          register: jq_binary
+
+        - 
+          name: download jq
+          become: true
+          get_url:
+            url: https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+            dest: /usr/bin/jq
+            mode: 0555
+          when: jq_binary.stat.exists == False 
+
+        - 
+          name: Get namespaces to clean up
+          shell: oc get namespaces -o json | jq '.items[] | select(.metadata.annotations["openshift.io/requester"] != null and .metadata.annotations["openshift.io/requester"] != "system:admin") | .metadata.name' | cut -f2 -d'"'
+          register: namespaces_output
+        -
+          name: Delete namespaces
+          shell: "oc delete namespace {{ item }}"
+          with_items: "{{ namespaces_output.stdout_lines }}"
     -
       name: Uninstall launcher
       include_role:
@@ -43,11 +70,17 @@
         name: webapp
         tasks_from: uninstall
       tags: ['webapp']
+    - 
+      name: Uninstall rhsso
+      include_role:
+        name: rhsso
+        tasks_from: uninstall
+      tags: ['rhsso']
 - hosts: master
   tasks:
     - 
       name: Uninstall rhsso
       include_role:
         name: rhsso
-        tasks_from: uninstall
+        tasks_from: reconfigure_master
       tags: ['rhsso']

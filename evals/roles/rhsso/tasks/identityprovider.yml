@@ -68,8 +68,3 @@
   with_items:
   - api
   - controllers
-
-- name: Delete local client config file
-  file: 
-    path: /tmp/client-config.json 
-    state: absent
