@@ -65,6 +65,7 @@
         launcher_openshift_sso_password: "{{ eval_rhsso_admin_password }}"
         launcher_openshift_sso_route: "{{ eval_rhsso_host }}"
         launcher_sso_validate_certs: "{{ eval_sso_validate_certs }}"
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
       tags: ['launcher']
     -
       name: Retrieve launcher sso env vars
@@ -138,6 +139,8 @@
       name: Install webapp
       include_role:
         name: webapp
+      vars:
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
       tags: ['webapp']
       when: eval_action == 'install'
     - 
