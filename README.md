@@ -192,7 +192,7 @@ ansible-playbook -i inventories/hosts playbooks/webapp.yml
 Run the uninstall.yml playbook from inside the evals directory:
 ```shell
 cd evals/
-ansible-playbook -i inventories/hosts playbooks/uninstall.yml
+ansible-playbook -i inventories/hosts playbooks/uninstall.yml -e @./inventories/group_vars/all/common.yml
 ```
 
 By default this will delete all user-created namespaces as well, if you wish to keep these namespaces then add the following flag:
