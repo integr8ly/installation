@@ -1,5 +1,5 @@
 ---
-threescale_namespace: 3scale
+threescale_namespace: "{{ eval_threescale_namespace | default('3scale') }}"
 threescale_route_suffix: ""
 threescale_template_url: https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/2.2.0.GA/amp/amp.yml
 threescale_sso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"

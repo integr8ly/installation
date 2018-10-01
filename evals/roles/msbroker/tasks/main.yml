@@ -11,13 +11,19 @@
 - set_fact:
     che_dashboard_url: "https://{{ che_host_cmd.stdout}}"
 
-# Create managed-services-broker namespace
+- name: Get 3scale dashboard url
+  shell: oc get route/system-developer-route -o jsonpath='{.spec.host}' -n {{ threescale_namespace }}
+  register: threescale_host_cmd
+- set_fact:
+    threescale_dashboard_url: "https://{{ threescale_host_cmd.stdout}}"
+
+# Create managed-service-broker namespace
 - name: Check if {{ msbroker_namespace }} namespace exists
   shell: oc get namespace {{ msbroker_namespace }}
   failed_when: false
   register: msbroker_check_namespace_exists
 
-- name: Create managed services broker namespace
+- name: Create managed service broker namespace
   shell: oc new-project {{ msbroker_namespace }}
   when: msbroker_check_namespace_exists.rc != 0
 
@@ -29,8 +35,8 @@
   with_items: "{{ required_crds }}"
 
 - name: Delete any previous managed-service-broker deployments
-  shell: oc process -n {{ msbroker_namespace }} -f {{ msbroker_template_url }} --param=NAMESPACE={{ msbroker_namespace }} --param=ROUTE_SUFFIX={{ route_suffix }} --param=LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url }} --param=CHE_DASHBOARD_URL={{ che_dashboard_url }} --param=IMAGE_ORG={{ msbroker_image_org }} | oc delete -n {{ msbroker_namespace }} -f -
+  shell: oc process -n {{ msbroker_namespace }} -f {{ msbroker_template_url }} --param=NAMESPACE={{ msbroker_namespace }} --param=ROUTE_SUFFIX={{ route_suffix }} --param=LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url }} --param=CHE_DASHBOARD_URL={{ che_dashboard_url }} --param=THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url }} --param=IMAGE_ORG={{ msbroker_image_org }} | oc delete -n {{ msbroker_namespace }} -f -
   failed_when: false
 
 - name: Create managed service broker template in {{ msbroker_namespace }}
-  shell: oc process -n {{ msbroker_namespace }} -f {{ msbroker_template_url }} --param=NAMESPACE={{ msbroker_namespace }} --param=ROUTE_SUFFIX={{ route_suffix }} --param=LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url }} --param=CHE_DASHBOARD_URL={{ che_dashboard_url }} --param=IMAGE_ORG={{ msbroker_image_org }} | oc create -n {{ msbroker_namespace }} -f -
+  shell: oc process -n {{ msbroker_namespace }} -f {{ msbroker_template_url }} --param=NAMESPACE={{ msbroker_namespace }} --param=ROUTE_SUFFIX={{ route_suffix }} --param=LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url }} --param=CHE_DASHBOARD_URL={{ che_dashboard_url }} --param=THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url }} --param=IMAGE_ORG={{ msbroker_image_org }} | oc create -n {{ msbroker_namespace }} -f -

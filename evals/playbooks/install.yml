@@ -135,6 +135,21 @@
         che_keycloak_host: "{{ eval_launcher_sso_host }}"
       tags: ['che']
       when: eval_action == 'uninstall'
+    -
+      name: Install 3Scale
+      include_role:
+        name: 3scale
+      vars:
+        threescale_route_suffix: "{{ eval_app_host }}"
+      tags: ['3scale']
+    - 
+      name: Configure 3Scale SSO
+      include_role:
+        name: 3scale
+        tasks_from: sso
+      vars:
+        threescale_route_suffix: "{{ eval_app_host }}"
+      tags: ['3scale']
     - 
       name: Install webapp
       include_role:
@@ -149,6 +164,7 @@
         route_suffix: "{{ eval_app_host }}"
         launcher_namespace: "{{ eval_launcher_namespace }}"
         che_namespace: "{{ eval_che_namespace }}"
+        threescale_namespace: "{{ eval_threescale_namespace }}"
       tags: ['msbroker']
     -
       name: Link enmasse resources folder
@@ -176,21 +192,6 @@
         path: "{{ playbook_dir }}/resources"
         state: absent
       tags: ['enmasse']
-    -
-      name: Install 3Scale
-      include_role:
-        name: 3scale
-      vars:
-        threescale_route_suffix: "{{ eval_app_host }}"
-      tags: ['3scale']
-    - 
-      name: Configure 3Scale SSO
-      include_role:
-        name: 3scale
-        tasks_from: sso
-      vars:
-        threescale_route_suffix: "{{ eval_app_host }}"
-      tags: ['3scale']
     -
       name: Configure SSO Logout URL
       include_role:

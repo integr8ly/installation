@@ -7,6 +7,7 @@ eval_self_signed_certs: true
 eval_sso_validate_certs: false
 eval_che_namespace: che
 eval_rhsso_namespace: sso
+eval_threescale_namespace: 3scale
 eval_launcher_namespace: launcher
 eval_launcher_sso_realm: launcher_realm
 eval_master_host: master
