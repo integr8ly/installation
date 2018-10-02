@@ -206,3 +206,21 @@
       vars:
         rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
       tags: ['rhsso', 'remote']
+
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: walkthroughs
+        tasks_from: walkthrough_1
+    - include_role:
+        name: reboot_template_broker
+
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - debug:
+        msg: All services have been provisioned successfully. Please add '{{ callback_url }}' as the Authorization callback URL of your GitHub OAuth Application.
+      vars:
+        callback_url: https://{{ launcher_sso_route }}/auth/realms/{{ eval_launcher_sso_realm }}/broker/github/endpoint
+

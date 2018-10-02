@@ -1,0 +1,20 @@
+---
+# defaults file for walkthroughs
+crud_spboot_runtime_version: 1.3-8
+crud_spboot_source_repo_url: "https://github.com/integr8ly/spboot-example.git"
+crud_spboot_source_repo_ref: "master"
+crud_spboot_source_repo_dir: "."
+crud_spboot_artifact_copy_args: "'*.jar'"
+crud_spboot_github_webhook_secret: ""
+crud_spboot_maven_mirror_url: ""
+
+msg_work_queue_node_source_repo_url: "https://github.com/integr8ly/nodejs-messaging-work-queue.git"
+msg_work_queue_node_source_repo_ref: "deploy-frontend-without-stock"
+msg_work_queue_node_source_repo_dir: "frontend"
+msg_work_queue_node_github_webhook_secret: ""
+
+msg_work_queue_node_service_name: messaging-service
+msg_work_queue_node_service_host: messaging.enmasse-eval.svc
+msg_work_queue_node_service_port: "5672"
+msg_work_queue_node_service_user: "username"
+msg_work_queue_node_service_password: "password"
