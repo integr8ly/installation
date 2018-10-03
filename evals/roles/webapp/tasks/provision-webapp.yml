@@ -9,7 +9,7 @@
   register: openshift_host
 
 - name: Create webapp from template
-  shell: oc process -n {{ webapp_namespace }} -f {{ webapp_template }} --param=OPENSHIFT_HOST={{ openshift_host.stdout }} --param=WEBAPP_IMAGE_TAG={{ webapp_image_tag }}  | oc create -n {{ webapp_namespace }} -f -
+  shell: oc process -n {{ webapp_namespace }} -f {{ webapp_template }} --param=OPENSHIFT_HOST={{ openshift_host.stdout }} --param=WEBAPP_IMAGE={{ webapp_image_url }} --param=WEBAPP_IMAGE_TAG={{ webapp_image_tag }}  | oc create -n {{ webapp_namespace }} -f -
   when: webapp_exists_cmd.rc != 0
 
 - name: Get webapp secure route
