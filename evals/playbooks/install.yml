@@ -18,6 +18,11 @@
         
 - hosts: localhost
   tasks:
+    - name: Install Nexus
+      include_role:
+        name: nexus
+        tasks_from: install
+      tags: ['nexus']
     - 
       name: Install rhsso
       include_role:

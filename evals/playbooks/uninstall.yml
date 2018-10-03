@@ -76,6 +76,11 @@
         name: rhsso
         tasks_from: uninstall
       tags: ['rhsso']
+    - name: Uninstall Nexus
+      include_role:
+        name: nexus
+        tasks_from: uninstall
+      tags: ['nexus']
 - hosts: master
   tasks:
     - 

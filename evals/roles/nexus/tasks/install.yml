@@ -1,0 +1,33 @@
+---
+- name: Check if {{ nexus_namespace }} namespace exists
+  shell: oc get namespace {{ nexus_namespace }}
+  failed_when: false
+  register: nexus_check_namespace_exists
+
+- name: Create {{ nexus_namespace }} namespace
+  shell: oc new-project {{ nexus_namespace }}
+  when: nexus_check_namespace_exists.rc != 0
+  
+- name: Check if nexus deploy exists
+  shell: "oc get pods -n {{ nexus_namespace }} | grep 'nexus' | grep -v 'deploy' | grep '1/1' | wc -l"
+  register: running_nexus_pods
+  failed_when: false
+
+- 
+  when: running_nexus_pods.stdout != "1"
+  block:
+    - name: Deploy nexus
+      shell: "oc new-app {{ nexus_image }} -n {{ nexus_namespace }}"
+
+    - name: Add liveness probe to nexus deployment
+      shell: "oc set probe dc/nexus  -n {{ nexus_namespace }} --liveness --failure-threshold 3 --initial-delay-seconds 30 -- echo ok"
+
+    - name: Add readiness probe to nexus deployment 
+      shell: "oc set probe dc/nexus  -n {{ nexus_namespace }} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8081/nexus/content/groups/public"
+
+    - name: Wait for nexus to be ready
+      shell: "oc get pods -n {{ nexus_namespace }} | grep 'nexus' | grep -v 'deploy' | grep '1/1' | wc -l"
+      register: nexus_pods
+      retries: 60
+      delay: 5
+      until: nexus_pods.stdout == "1"
