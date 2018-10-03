@@ -1,5 +1,5 @@
 ---
-- hosts: "{{ eval_master_host }}"
+- hosts: master
   gather_facts: no
   tasks:
     - block:
@@ -193,7 +193,7 @@
         name: amq
       tags: ['amq']
 
-- hosts: "{{ eval_master_host }}"
+- hosts: master
   gather_facts: no
   tasks:
     - include_role:
