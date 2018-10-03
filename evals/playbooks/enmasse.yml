@@ -1,9 +1,11 @@
 - name: Provision EnMasse
-  import_playbook: "{{ playbook_dir }}/../artifacts/enmasse/ansible/playbooks/openshift/enmasse-playbook.yml"
+  import_playbook: "{{ playbook_dir }}/../artifacts/enmasse0.23.0/ansible/playbooks/openshift/deploy_all.yml"
   vars:
     namespace: "{{ enmasse_namespace }}"
     multitenant: "{{ enmasse_multitenant }}"
     enable_rbac: "{{ enmasse_enable_rbac }}"
+    register_api_server: True
+    api_server: True
     service_catalog: "{{ enmasse_service_catalog }}"
     keycloak_admin_password: "{{ enmasse_keycloak_admin_password }}"
     authentication_services: "{{ enmasse_authentication_services }}"
