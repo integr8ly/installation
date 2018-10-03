@@ -6,11 +6,3 @@ enmasse_service_catalog: true
 enmasse_keycloak_admin_password: admin
 enmasse_authentication_services: ["standard"]
 enmasse_deploy_infra: true
-
-  namespace=enmasse
-  enable_rbac=False
-  api_server=True
-  service_catalog=True
-  register_api_server=True
-  keycloak_admin_password=admin
-  authentication_services=["standard"]
