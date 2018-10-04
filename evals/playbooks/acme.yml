@@ -2,3 +2,10 @@
   hosts: local
   roles:
   - acme
+  tasks:
+    - import_role:
+        name: acme
+        tasks_from: test
+      vars:
+        acme_test_namespace: acme-test
+      tags: [ 'never', 'test' ]

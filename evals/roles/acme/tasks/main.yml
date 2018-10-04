@@ -13,3 +13,21 @@
 
 - name: Grant acme controller cluster role privileges to service account
   shell: oc adm policy add-cluster-role-to-user openshift-acme -n {{ acme_namespace }} -z openshift-acme
+
+- name: Create template for ACME TLS Route
+  template:
+    src: acme-tls.yaml
+    dest: /tmp/acme-tls.yaml
+
+- name: Create secure route
+  shell: oc create -f /tmp/acme-tls.yaml -n {{ acme_namespace }}
+  register: acme_tls_route_exists
+  failed_when: acme_tls_route_exists.stderr != '' and 'already exists' not in acme_tls_route_exists.stderr
+
+- name: Get ACME TLS Route
+  shell: oc get route acme -o jsonpath={.spec.host} -n {{ acme_namespace }}
+  register: acme_tls_route_cmd
+
+- set_fact:
+    acme_tls_route: "{{ acme_tls_route_cmd.stdout }}"
+

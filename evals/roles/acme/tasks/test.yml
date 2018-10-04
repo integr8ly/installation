@@ -1,0 +1,57 @@
+---
+- name: Create ACME test namespace
+  shell: oc new-project {{ acme_test_namespace }}
+  register: acme_namespace_exists
+  failed_when: acme_namespace_exists.stderr != '' and 'already exists' not in acme_namespace_exists.stderr
+  changed_when: acme_namespace_exists.rc == 0
+
+- name: Create http example template
+  shell: oc create -n {{ acme_test_namespace }} -f https://raw.githubusercontent.com/sclorg/httpd-ex/master/openshift/templates/httpd.json
+  register: cmd_acme_template
+  failed_when: cmd_acme_template.stderr != '' and 'already exists' not in cmd_acme_template.stderr
+  changed_when: cmd_acme_template.rc == 0
+
+- name: Check if httpd example is already deployed
+  shell: "oc get dc -l app=httpd-example -o jsonpath='{.items[0].metadata.name}' -n {{ acme_test_namespace }}"
+  register: acme_dc_cmd
+  failed_when: false
+
+- name: Deploy httpd example
+  shell: oc new-app --template=httpd-example -n {{ acme_test_namespace }} -p NAME=acme
+  when: acme_dc_cmd.rc != 0
+
+- name: Verify httpd example deployment succeeded
+  shell: oc get pods --namespace {{ acme_test_namespace }} | grep "deploy"
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
+
+- name: Create example tls yaml
+  template:
+    src: example-tls.yaml
+    dest: /tmp/acme-example-tls.yaml
+
+- name: Create example route
+  shell: oc create -f /tmp/acme-example-tls.yaml -n {{ acme_test_namespace }}
+  register: acme_example_route_exists
+  failed_when: acme_example_route_exists.stderr != '' and 'already exists' not in acme_example_route_exists.stderr
+
+- name: Create example long tls yaml
+  template:
+    src: example-tls-long.yaml
+    dest: /tmp/acme-example-tls-long.yaml
+
+- name: Create example long route
+  shell: oc create -f /tmp/acme-example-tls-long.yaml -n {{ acme_test_namespace }}
+  register: acme_example_long_route_exists
+  failed_when: acme_example_long_route_exists.stderr != '' and 'already exists' not in acme_example_long_route_exists.stderr
+
+- name: ACME Routes
+  include_role:
+    name: acme
+    tasks_from: routes
+  vars:
+    namespace: "{{ acme_test_namespace }}"
