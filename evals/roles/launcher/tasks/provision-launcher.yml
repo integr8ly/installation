@@ -224,23 +224,21 @@
       Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
     status_code: [201, 409]
 
-- name: Create template for OpenShift OAuth client
-  template:
-    src: oauthclient.json.j2
-    dest: /tmp/oauthclient.json
-
 - name: Check if OpenShift OAuth client already exists
   shell: oc get oauthclient {{ launcher_sso_openshift_idp_client_id }}
   register: launcher_oauthclient_check_cmd
   changed_when: false
   failed_when: false
 
-- name: Remove OpenShift OAuth client
-  shell: oc delete oauthclient {{ launcher_sso_openshift_idp_client_id }}
-  when: launcher_oauthclient_check_cmd.rc == 0
+- name: Create template for OpenShift OAuth client
+  template:
+    src: oauthclient.json.j2
+    dest: /tmp/oauthclient.json
+  when: launcher_oauthclient_check_cmd.rc != 0
 
 - name: Create OpenShift OAuth client
   shell: oc create -f /tmp/oauthclient.json
+  when: launcher_oauthclient_check_cmd.rc != 0
 
 - template:
     src: launcher-clusters.yml.j2
