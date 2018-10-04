@@ -76,7 +76,7 @@
         name: rhsso
         tasks_from: uninstall
       tags: ['rhsso']
-- hosts: "{{ eval_master_host }}"
+- hosts: master
   tasks:
     - 
       name: Uninstall rhsso

@@ -75,7 +75,7 @@ Run the playbook:
 ```shell
 oc login https://<openshift-master-url>
 cd evals/
-ansible-playbook -i inventories/hosts playbooks/install.yml -e eval_self_signed_certs=<boolean> -e @./inventories/group_vars/all/common.yml
+ansible-playbook -i inventories/hosts playbooks/install.yml
 ```
 
 #### Install each product individually
@@ -192,7 +192,7 @@ ansible-playbook -i inventories/hosts playbooks/webapp.yml
 Run the uninstall.yml playbook from inside the evals directory:
 ```shell
 cd evals/
-ansible-playbook -i inventories/hosts playbooks/uninstall.yml -e @./inventories/group_vars/all/common.yml
+ansible-playbook -i inventories/hosts playbooks/uninstall.yml
 ```
 
 By default this will delete all user-created namespaces as well, if you wish to keep these namespaces then add the following flag:
