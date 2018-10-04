@@ -2,6 +2,7 @@ webapp_template: https://raw.githubusercontent.com/integr8ly/tutorial-web-app/de
 webapp_namespace: webapp
 webapp_client_id: tutorial-web-app
 webapp_route: tutorial-web-app
+webapp_image_url: quay.io/integreatly/tutorial-web-app
 webapp_image_tag: 0.5.0
 
 webapp_openshift_master_config_path: "{{ eval_openshift_master_config_path | default('/etc/origin/master/master-config.yaml') }}"
