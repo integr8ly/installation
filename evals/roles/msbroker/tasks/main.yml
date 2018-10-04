@@ -28,8 +28,9 @@
   when: msbroker_check_namespace_exists.rc != 0
 
 - name: Check namespace for existing resources
-  shell: oc get all -n {{ msbroker_namespace }}
+  shell: oc get deployment/msb -n {{ msbroker_namespace }}
   register: msbroker_resources_exist
+  failed_when: false
 
 - name: Create Required CRDs
   shell: "oc create -f {{ item }}"
@@ -40,4 +41,4 @@
 
 - name: Create managed service broker template in {{ msbroker_namespace }}
   shell: oc process -n {{ msbroker_namespace }} -f {{ msbroker_template_url }} --param=NAMESPACE={{ msbroker_namespace }} --param=ROUTE_SUFFIX={{ route_suffix }} --param=LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url }} --param=CHE_DASHBOARD_URL={{ che_dashboard_url }} --param=THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url }} --param=IMAGE_ORG={{ msbroker_image_org }} --param=IMAGE_TAG={{ msbroker_image_tag }} | oc create -n {{ msbroker_namespace }} -f -
-  when: msbroker_resources_exist.stderr == "No resources found."
+  when: msbroker_resources_exist.rc != 0
