@@ -19,13 +19,13 @@
   changed_when: output.rc == 0
 
 - name: Clean up cluster role
-  shell: "oc delete clusterroles.rbac.authorization.k8s.io managed-services"
+  shell: "oc delete clusterroles.rbac.authorization.k8s.io managed-service"
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr
   changed_when: output.rc == 0
 
 - name: Clean up cluster role binding
-  shell: "oc delete clusterrolebindings.rbac.authorization.k8s.io default-cluster-account-managed-services"
+  shell: "oc delete clusterrolebindings.rbac.authorization.k8s.io default-cluster-account-managed-service"
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr
   changed_when: output.rc == 0
