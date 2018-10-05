@@ -109,7 +109,8 @@
             "kind": "Route",
             "metadata": {
                 "annotations": {
-                    "description": "Route for application's https service."
+                    "description": "Route for application's https service.",
+                    "kubernetes.io/tls-acme": "true"
                 },
                 "labels": {
                     "application": "${APPLICATION_NAME}"

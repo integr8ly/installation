@@ -37,3 +37,10 @@
   delay: 10
   failed_when: result.stdout
   changed_when: False
+
+- name: ACME Routes
+  include_role:
+    name: acme
+    tasks_from: routes
+  vars:
+    namespace: "{{ rhsso_namespace }}"

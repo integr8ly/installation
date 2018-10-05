@@ -4,3 +4,10 @@
 
 - name: Provision and Configure Webapp
   import_tasks: provision-webapp.yml
+
+- name: ACME Routes
+  include_role:
+    name: acme
+    tasks_from: routes
+  vars:
+    namespace: "{{ webapp_namespace }}"

@@ -68,7 +68,7 @@ All products can be installed using the ```install.yml``` playbook located in th
 
 Before running the installer, please consider the following variables:
 
-* `eval_self_signed_certs` - Whether the OpenShift cluster uses self-signed certs or not. Defaults to `true`.
+* `eval_self_signed_certs` - Whether the OpenShift cluster uses self-signed certs or not. Defaults to `false`.
 
 Run the playbook:
 

@@ -1,0 +1,5 @@
+---
+acme_namespace: acme
+
+acme_template: "https://raw.githubusercontent.com/mikenairn/openshift-acme/configurable-cn/deploy/letsencrypt-live/cluster-wide/{clusterrole,serviceaccount,imagestream,deployment}.yaml"
+#acme_template: "https://raw.githubusercontent.com/mikenairn/openshift-acme/configurable-cn/deploy/letsencrypt-staging/cluster-wide/{clusterrole,serviceaccount,imagestream,deployment}.yaml"

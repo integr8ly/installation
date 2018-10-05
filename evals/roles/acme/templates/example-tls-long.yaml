@@ -7,15 +7,14 @@
 apiVersion: v1
 kind: Route
 metadata:
-    annotations:
-        kubernetes.io/tls-acme: "true"
-    labels:
-      app: che
-    name: che
+  labels:
+    app: acme
+  name: example-toolong
 spec:
-    tls:
-      insecureEdgeTerminationPolicy: Redirect
-      termination: edge
-    to:
-      kind: Service
-      name: che-host
+  host: example-toooooooooooooooooooooooooooooooooooooooooooolong-acme.mnairn1.skunkhenry.com
+  tls:
+    insecureEdgeTerminationPolicy: None
+    termination: edge
+  to:
+    kind: Service
+    name: acme

@@ -70,6 +70,12 @@
         name: webapp
         tasks_from: uninstall
       tags: ['webapp']
+    -
+      name: Uninstall ACME
+      include_role:
+        name: acme
+        tasks_from: uninstall
+      tags: ['acme']
     - 
       name: Uninstall rhsso
       include_role:

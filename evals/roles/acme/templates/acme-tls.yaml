@@ -10,12 +10,12 @@ metadata:
     annotations:
         kubernetes.io/tls-acme: "true"
     labels:
-      app: che
-    name: che
+      app: acme
+    name: acme
 spec:
     tls:
-      insecureEdgeTerminationPolicy: Redirect
+      insecureEdgeTerminationPolicy: None
       termination: edge
     to:
       kind: Service
-      name: che-host
+      name: acme

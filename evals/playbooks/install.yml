@@ -15,9 +15,13 @@
           eval_app_host: "{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
           openshift_master_url: "{{ (eval_master_config['content'] | b64decode | from_yaml)['masterPublicURL'] }}"
       tags: ['bootstrap', 'remote']
-        
+    
 - hosts: localhost
   tasks:
+    - name: Install ACME
+      include_role:
+        name: acme
+      tags: ['acme']
     - name: Install Nexus
       include_role:
         name: nexus
@@ -74,7 +78,7 @@
       tags: ['launcher']
     -
       name: Retrieve launcher sso env vars
-      shell: "oc get dc/launcher-sso \
+      shell: "oc get dc/sso \
         -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
         -n {{ eval_launcher_namespace }}"
       with_items:
@@ -91,7 +95,7 @@
       tags: ['bootstrap']
     -
       name: Retrieve launcher sso hostvars
-      shell: "oc get route/secure-launcher-sso -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
+      shell: "oc get route/secure-sso -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
       register: eval_launcher_sso_host_cmd
       tags: ['bootstrap']
     -

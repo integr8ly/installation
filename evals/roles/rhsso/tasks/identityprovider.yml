@@ -26,7 +26,7 @@
 
 - set_fact:
     rhsso_identity_provider_ca_cert_path: ""
-  when: not (eval_self_signed_certs | bool)
+  when: not (rhsso_identity_provider_self_signed_certs | bool)
 
 - name: Add RH-SSO identity provider to master config
   blockinfile:
