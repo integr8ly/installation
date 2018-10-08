@@ -25,6 +25,10 @@ threescale_evals_email: evals@example.com
 threescale_evals_username: "{{ threescale_evals_email }}"
 threescale_evals_password: Password1
 
+rhsso_seed_users_email_format: evals%02d@example.com
+rhsso_seed_users_count: 50
+rhsso_seed_users_password: Password1
+
 threescale_cluster_admin_email: admin@example.com
 threescale_cluster_admin_old_username: admin
 threescale_cluster_admin_new_username: "{{ threescale_cluster_admin_email }}"

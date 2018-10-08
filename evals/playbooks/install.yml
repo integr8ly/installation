@@ -140,7 +140,13 @@
       vars:
         threescale_route_suffix: "{{ eval_app_host }}"
       tags: ['3scale']
-    - 
+    -
+      name: Configure 3Scale Users
+      include_role:
+        name: 3scale
+        tasks_from: users
+      tags: ['3scale']
+    -
       name: Install webapp
       include_role:
         name: webapp

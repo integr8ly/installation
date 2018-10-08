@@ -5,6 +5,6 @@
 - name: Configure RH-SSO Openshift Client
   import_tasks: client.yml
 
-- name: Create RH-SSO evaluations user
-  import_tasks: user.yml
+- name: Create RH-SSO users
+  import_tasks: users.yml
 

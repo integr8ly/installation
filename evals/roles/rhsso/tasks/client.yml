@@ -10,20 +10,7 @@
     rhsso_redirect_uri: "{{ openshift_master_url }}"
   when: rhsso_redirect_uri == ""
 
-- name: Retrieve RH-SSO admin user password
-  shell: oc get dc/sso -o jsonpath='{.spec.template.spec.containers[?(@.name=="sso")].env[?(@.name=="SSO_ADMIN_PASSWORD")].value}' -n {{ rhsso_namespace }}
-  register: rhsso_admin_password_cmd
-
-- name: Generate RH-SSO auth token for admin user
-  uri:
-    url: "https://{{ rhsso_route }}/auth/realms/{{ rhsso_admin_realm }}/protocol/openid-connect/token"
-    method: POST
-    body: "client_id=admin-cli&username={{ rhsso_admin_username }}&password={{ rhsso_admin_password_cmd.stdout }}&grant_type=password"
-    validate_certs: "{{ rhsso_validate_certs }}"
-  register: rhsso_auth_response
-  retries: 20
-  delay: 2
-  until: rhsso_auth_response.status == 200
+- import_tasks: admin_token.yml
 
 - name: Generate client template
   template:
@@ -38,7 +25,7 @@
     validate_certs: "{{ rhsso_validate_certs }}"
     body_format: json
     headers:
-      Authorization: "Bearer {{ rhsso_auth_response.json.access_token }}"
+      Authorization: "Bearer {{ rhsso_admin_token }}"
     status_code: [201, 409]
 
 - name: Get client secret
@@ -47,7 +34,7 @@
     method: GET
     validate_certs: "{{ rhsso_validate_certs }}"
     headers:
-      Authorization: "Bearer {{ rhsso_auth_response.json.access_token }}"
+      Authorization: "Bearer {{ rhsso_admin_token }}"
     status_code: 200
     return_content: yes
   register: client_config
