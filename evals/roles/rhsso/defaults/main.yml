@@ -29,7 +29,7 @@ rhsso_disable_htpasswd_identity_provider: true
 
 rhsso_identity_provider_self_signed_certs: "{{ eval_self_signed_certs | default(true) }}"
 rhsso_identity_provider_ca_cert_path: ca.crt
-rhsso_master_restart_shim_path: /usr/local/bin/master-restart
+rhsso_master_restart_shim_path: "{{ eval_master_restart_shim_path | default('/usr/local/bin/master-restart') }}"
 
 rhsso_openshift_webconsole_namespace: openshift-web-console
 rhsso_openshift_webconsole_configmap: webconsole-config

@@ -111,23 +111,6 @@ ansible-playbook -i inventories/hosts playbooks/enmasse.yml
 Once the playbook has completed a service named `EnMasse (standard)` will be available
 in the Service Catalog. This can be provisioned into your namespace to use EnMasse.
 
-#### Run Che install playbook
-
-Set the following variables:
-
-* `che_route_suffix` - The router suffix of the OpenShift cluster.
-* `che_keycloak_host` - The route to the previously created SSO, without protocol.
-* `che_keycloak_user` - Username to authenticate as, this would be the admin user by default.
-* `che_keycloak_password` - Password of the user.
-* `che_namespace` - The namesapce to provision che into.
-* `che_infra_namespace` - This can usually be the same as `che_namespace`.
-
-```shell
-oc login https://<openshift-master-url>
-cd evals/
-ansible-playbook -i inventories/hosts playbooks/che-install.yml
-```
-
 #### Run Launcher install playbook
 
 The Launcher playbook also requires information about the existing SSO that was
@@ -135,7 +118,7 @@ provisioned previously. It needs to know the route of the SSO. This can be
 retrieved using:
 
 ```shell
-oc get route secure-sso -o jsonpath='{.spec.host}' -n rhsso
+oc get route secure-sso -o jsonpath='{.spec.host}' -n sso
 ```
 
 It also needs to know the realm to interact with. By default this would be
@@ -149,6 +132,8 @@ running the playbook.
 * `launcher_openshift_sso_realm` - The realm to create resources in the SSO, this would be `openshift` by default.
 * `launcher_openshift_sso_username` - Username to authenticate as, this would be the admin user by default.
 * `launcher_openshift_sso_password` - Password of the user.
+* `launcher_github_client_id` - The `Client ID` of the created GitHub OAuth Application.
+* `launcher_github_client_secret` - The `Client Secret` of the created GitHub OAuth Application.
 
 If using self signed certs set `launcher_sso_validate_certs` to `no/false`.
 Without this, an error will be thrown similar to this:
@@ -168,6 +153,28 @@ ansible-playbook -i inventories/hosts playbooks/launcher.yml
 Once the playbook has completed it will print a debug message saying to update
 the `Authorization callback URL` of the GitHub OAuth Application. Once this is
 done the launcher setup has finished.
+
+
+#### Run Che install playbook
+
+The Che install playbook also currently requires information about an existing Launcher SSO. If you have not provisioned launcher yet, please refer to the [Run Launcher install playbook](#run-launcher-install-playbook) section. Once launcher has been provisioned, the `che_keycloak_host` can be retrieved using:
+
+```shell
+oc get route secure-launcher-sso -o jsonpath='{.spec.host}' -n launcher
+```
+
+Specify the following variables in the inventory files or as `--extra-vars` when running the playbook.
+
+* `che_route_suffix` - The router suffix of the OpenShift cluster.
+* `che_keycloak_host` - The route to the previously created SSO, without protocol.
+* `che_keycloak_user` - Username to authenticate as, this would be the admin user by default.
+* `che_keycloak_password` - Password of the `che_keycloak_user` user.
+
+```shell
+oc login https://<openshift-master-url>
+cd evals/
+ansible-playbook -i inventories/hosts playbooks/che-install.yml
+```
 
 #### Run 3Scale install playbook
 

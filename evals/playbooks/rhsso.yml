@@ -1,6 +1,8 @@
 ---
 - hosts: master
   gather_facts: no
+  vars_files:
+    - ../roles/rhsso/defaults/main.yml
   tasks:
     - name: Retrieve master public URL
       slurp:

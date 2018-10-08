@@ -64,7 +64,7 @@
 - name: restart openshift master services
   shell: "{{ rhsso_master_restart_shim_path }} {{ item }}"
   become: yes
-  when: webapp_master_config_update.changed or sso_master_config_update.changed
+  when: sso_master_config_update.changed
   with_items:
   - api
   - controllers
