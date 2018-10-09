@@ -30,4 +30,4 @@
       register: nexus_pods
       retries: 60
       delay: 5
-      until: nexus_pods.stdout == "1"
+      until: '"1" in nexus_pods.stdout'
