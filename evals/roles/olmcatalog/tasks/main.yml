@@ -1,0 +1,13 @@
+---
+- name: Remove any left over resources to ensure clean install
+  import_tasks: uninstall.yml
+
+- name: Add managed service catalog data for OLM
+  shell: "oc create -f {{ managed_service_catalog_data }} -n {{ olm_namespace }}"
+  register: data_output
+  failed_when: data_output.rc != 0
+
+- name: Add managed service CatalogSource for OLM
+  shell: "oc create -f {{ managed_service_catalog_source }} -n {{ olm_namespace }}"
+  register: source_output
+  failed_when: source_output.rc != 0

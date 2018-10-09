@@ -204,6 +204,18 @@
         name: amq
       tags: ['amq']
 
+    -
+      name: Populate OLM catalog
+      include_role:
+        name: olmcatalog
+      tags: ['olmcatalog']
+
+    -
+      name: Create Managed Services Controller
+      include_role:
+        name: mscontroller
+      tags: ['mscontroller']
+
 - hosts: master
   gather_facts: no
   tasks:

@@ -1,0 +1,12 @@
+---
+- name: Delete ManagedServiceNamespace CRD
+  shell: "oc delete -f {{ managed_service_namespace_crd }}"
+  failed_when: false
+
+- name: Delete roles
+  shell: "oc delete -f {{ mscontroller_roles }} -n {{ mscontroller_namespace }}"
+  failed_when: false
+
+- name: Delete deployment
+  shell: "oc delete -f {{ mscontroller_deployment }} -n {{ mscontroller_namespace }}"
+  failed_when: false

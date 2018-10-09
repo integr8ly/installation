@@ -1,0 +1,8 @@
+---
+- name: Delete catalog data
+  shell: "oc delete -f {{ managed_service_catalog_data }} -n {{ olm_namespace }}"
+  failed_when: false
+
+- name: Delete CatalogSource
+  shell: "oc delete -f {{ managed_service_catalog_source }} -n {{ olm_namespace }}"
+  failed_when: false

@@ -1,0 +1,18 @@
+---
+- name: Remove any left over resources to ensure clean install
+  import_tasks: uninstall.yml
+
+- name: Create ManagedServiceNamespace CRD
+  shell: "oc create -f {{ managed_service_namespace_crd }}"
+  register: crd_output
+  failed_when: crd_output.rc != 0
+
+- name: Create managed service controller roles
+  shell: "oc create -f {{ mscontroller_roles }} -n {{ mscontroller_namespace }}"
+  register: role_output
+  failed_when: role_output.rc != 0
+
+- name: Create managed service controller deployment
+  shell: "oc create -f {{ mscontroller_deployment }} -n {{ mscontroller_namespace }}"
+  register: deploy_output
+  failed_when: deploy_output.rc != 0
