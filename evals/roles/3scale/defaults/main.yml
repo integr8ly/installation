@@ -29,4 +29,4 @@ threescale_cluster_admin_email: admin@example.com
 threescale_cluster_admin_old_username: admin
 threescale_cluster_admin_new_username: "{{ threescale_cluster_admin_email }}"
 
-threescale_pvc_system_storageclassname: efs
+threescale_pvc_rwx_storageclassname: efs

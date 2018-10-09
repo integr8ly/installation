@@ -16,20 +16,26 @@
 - import_tasks: resources.yml
   when: threescale_resources_exist.stderr == "No resources found."
 
+- name: "Check for storage class: {{ threescale_pvc_rwx_storageclassname }}"
+  shell: oc get storageclass {{ threescale_pvc_rwx_storageclassname }}
+  register: storageclass_exists
+  failed_when: storageclass_exists.stderr != '' and 'NotFound' not in storageclass_exists.stderr
+
 # Temporary Workaround until 3Scale update their AMP template
 # to support storageclass names (https://issues.jboss.org/browse/THREESCALE-1323)
 - name: Remove original system-storage PVC
   shell: oc delete pvc system-storage -n {{ threescale_namespace }}
-  when: threescale_resources_exist.stderr == "No resources found."
+  when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
 
 - name: Generate system-storage pvc template
   template:
     src: "system-storage-pvc.yml.j2"
     dest: /tmp/system-storage-pvc.yml
+  when: storageclass_exists.rc == 0
 
-- name: "Create system-storage PVC with storageClassName: {{ threescale_pvc_system_storageclassname }}"
+- name: "Create system-storage PVC with storageClassName: {{ threescale_pvc_rwx_storageclassname }}"
   shell: oc create -f /tmp/system-storage-pvc.yml
-  when: threescale_resources_exist.stderr == "No resources found."
+  when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
 
 - name: "Verify 3Scale deployment succeeded"
   shell: sleep 5; oc get pods --namespace {{ threescale_namespace }}  |  grep  "deploy"
