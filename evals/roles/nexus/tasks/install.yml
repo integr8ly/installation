@@ -14,7 +14,7 @@
   failed_when: false
 
 - 
-  when: running_nexus_pods.stdout != "1"
+  when: '"1" not in running_nexus_pods.stdout'
   block:
     - name: Deploy nexus
       shell: "oc new-app {{ nexus_image }} -n {{ nexus_namespace }}"
