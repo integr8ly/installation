@@ -1,5 +1,5 @@
 ---
 mscontroller_namespace: managed-service-admin
-mscontroller_roles: https://raw.githubusercontent.com/integr8ly/managed-service-controller/managed-services-admin-v0.0.1/deploy/rbac.yaml
-mscontroller_deployment: https://raw.githubusercontent.com/integr8ly/managed-service-controller/managed-services-admin-v0.0.1/deploy/operator.yaml
-managed_service_namespace_crd: https://raw.githubusercontent.com/integr8ly/managed-service-controller/managed-services-admin-v0.0.1/deploy/crd.yaml
+mscontroller_roles: https://raw.githubusercontent.com/integr8ly/managed-service-controller/v0.0.1/deploy/rbac.yaml
+mscontroller_deployment: https://raw.githubusercontent.com/integr8ly/managed-service-controller/v0.0.1/deploy/operator.yaml
+managed_service_namespace_crd: https://raw.githubusercontent.com/integr8ly/managed-service-controller/v0.0.1/deploy/crd.yaml
