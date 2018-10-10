@@ -228,7 +228,7 @@
         tasks_from: identityprovider
       vars:
         rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
-      tags: ['rhsso', 'remote']
+      tags: ['rhsso-idp']
 
 - hosts: localhost
   gather_facts: no
