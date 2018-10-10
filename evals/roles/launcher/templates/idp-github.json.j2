@@ -1,0 +1,20 @@
+{
+   "alias":"github",
+   "providerId":"github",
+   "enabled":true,
+   "updateProfileFirstLoginMode":"on",
+   "trustEmail":true,
+   "storeToken":true,
+   "addReadTokenRoleOnCreate":true,
+   "authenticateByDefault":false,
+   "linkOnly":false,
+   "firstBrokerLoginFlowAlias":"first broker login",
+   "config":{
+      "hideOnLoginPage":"true",
+      "clientId":"{{ github_client_id }}",
+      "disableUserInfo":"",
+      "clientSecret":"{{ github_client_secret }}",
+      "defaultScope":"{{ launcher_github_default_scopes }}",
+      "useJwksUrl":"true"
+   }
+}
