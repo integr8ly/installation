@@ -16,3 +16,13 @@
   shell: "oc create -f {{ mscontroller_deployment }} -n {{ mscontroller_namespace }}"
   register: deploy_output
   failed_when: deploy_output.rc != 0
+
+- name: Create integration controller enmasse role
+  shell: "oc create -f {{ enmasse_role }}"
+  register: role_output
+  failed_when: role_output.rc != 0
+
+- name: Create integration controller routes services roles
+  shell: "oc create -f {{ route_services_role }}"
+  register: role_output
+  failed_when: role_output.rc != 0

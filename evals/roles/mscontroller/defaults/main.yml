@@ -3,3 +3,5 @@ mscontroller_namespace: managed-services-admin
 mscontroller_roles: https://raw.githubusercontent.com/integr8ly/managed-service-controller/v0.0.1/deploy/rbac.yaml
 mscontroller_deployment: https://raw.githubusercontent.com/integr8ly/managed-service-controller/v0.0.1/deploy/operator.yaml
 managed_service_namespace_crd: https://raw.githubusercontent.com/integr8ly/managed-service-controller/v0.0.1/deploy/crd.yaml
+enmasse_role: https://raw.githubusercontent.com/integr8ly/integration-controller/v0.0.1/deploy/enmasse/enmasse-cluster-role.yaml
+route_services_role: https://raw.githubusercontent.com/integr8ly/integration-controller/v0.0.1/deploy/applications/route-services-viewer-cluster-role.yaml

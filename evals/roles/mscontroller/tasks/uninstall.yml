@@ -7,6 +7,14 @@
   shell: "oc delete -f {{ mscontroller_roles }} -n {{ mscontroller_namespace }}"
   failed_when: false
 
+- name: Delete enmasse role
+  shell: "oc delete -f {{ enmasse_role }}"
+  failed_when: false
+
+- name: Delete service route viewer role
+  shell: "oc delete -f {{ route_services_role }}"
+  failed_when: false
+
 - name: Delete deployment
   shell: "oc delete -f {{ mscontroller_deployment }} -n {{ mscontroller_namespace }}"
   failed_when: false
