@@ -12,3 +12,7 @@ ansible_user=ec2-user
 
 [master]
 127.0.0.1
+
+
+[enmasse]
+localhost ansible_connection=local
