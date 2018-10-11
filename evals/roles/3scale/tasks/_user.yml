@@ -33,3 +33,33 @@
     body: "access_token={{ threescale_admin_token }}"
     validate_certs: "{{ threescale_sso_validate_certs }}"
     status_code: [200]
+
+- set_fact:
+    w2_route_name: "wt2-{{ email | regex_replace('[@,\\.]', '-') }}"
+
+- name: Check WT2 route exists
+  shell: oc get route/{{ w2_route_name }} -n {{ threescale_namespace }}
+  register: wt2_route_cmd
+  failed_when: false
+
+- name: Create WT2 route
+  shell:
+    cmd: |
+      cat <<EOF | oc apply -n {{ threescale_namespace }} -f -
+        apiVersion: v1
+        kind: Route
+        metadata:
+            labels:
+              app: 3scale
+            name: "{{ w2_route_name }}"
+        spec:
+            port:
+              targetPort: gateway
+            tls:
+              insecureEdgeTerminationPolicy: None
+              termination: edge
+            to:
+              kind: Service
+              name: apicast-staging
+      EOF
+  when: wt2_route_cmd.stderr != '' and 'NotFound' in wt2_route_cmd.stderr
