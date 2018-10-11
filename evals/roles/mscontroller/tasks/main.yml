@@ -37,11 +37,11 @@
 
 - name: Check if managed service controller deployment exists
   shell: "oc get deployment {{ mscontroller_deployment_name }} -n {{ mscontroller_namespace }}"
-  register: msbroker_deploy_exist
+  register: mscontroller_deploy_exist
   failed_when: false
 
 - name: Create managed service controller deployment
   shell: "oc create -f {{ mscontroller_deployment }} -n {{ mscontroller_namespace }}"
   register: deploy_output
   failed_when: deploy_output.rc != 0
-  when: msbroker_deploy_exist.rc != 0
+  when: mscontroller_deploy_exist.rc != 0
