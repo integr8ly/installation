@@ -52,13 +52,13 @@
     -
       name: Uninstall managed services controller
       include_role:
-        name: msbroker
+        name: mscontroller
         tasks_from: uninstall
       tags: ['mscontroller']
     -
       name: Uninstall OLM Catalog
       include_role:
-        name: msbroker
+        name: olmcatalog
         tasks_from: uninstall
       tags: ['olmcatalog']
     - 
