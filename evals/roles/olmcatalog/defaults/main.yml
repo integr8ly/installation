@@ -1,4 +1,4 @@
 ---
-managed_service_catalog_data: https://raw.githubusercontent.com/integr8ly/managed-service-controller/v0.0.1/manifests/managed-service-operators.v0.0.1.configmap.yaml
-managed_service_catalog_source: https://raw.githubusercontent.com/integr8ly/managed-service-controller/v0.0.1/manifests/managed-service-operators.v0.0.1.catalogsource.yaml
+managed_service_catalog_data: https://raw.githubusercontent.com/integr8ly/managed-service-controller/v0.0.1/manifests/managed-service-operators.configmap.yaml
+managed_service_catalog_source: https://raw.githubusercontent.com/integr8ly/managed-service-controller/v0.0.1/manifests/managed-service-operators.catalogsource.yaml
 olm_namespace: kube-system

@@ -49,6 +49,18 @@
         name: msbroker
         tasks_from: uninstall
       tags: ['msbroker']
+    -
+      name: Uninstall managed services controller
+      include_role:
+        name: msbroker
+        tasks_from: uninstall
+      tags: ['mscontroller']
+    -
+      name: Uninstall OLM Catalog
+      include_role:
+        name: msbroker
+        tasks_from: uninstall
+      tags: ['olmcatalog']
     - 
       name: Uninstall 3scale
       include_role:

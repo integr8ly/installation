@@ -1,6 +1,19 @@
 ---
-- name: Remove any left over resources to ensure clean install
-  import_tasks: uninstall.yml
+- name: Delete ManagedServiceNamespace CRD
+  shell: "oc delete -f {{ managed_service_namespace_crd }}"
+  failed_when: false
+
+- name: Delete roles
+  shell: "oc delete -f {{ mscontroller_roles }} -n {{ mscontroller_namespace }}"
+  failed_when: false
+
+- name: Delete integration controller enmasse role
+  shell: "oc delete -f {{ enmasse_role }}"
+  failed_when: false
+
+- name: Delete integration controller routes services roles
+  shell: "oc delete -f {{ route_services_role }}"
+  failed_when: false
 
 - name: Create ManagedServiceNamespace CRD
   shell: "oc create -f {{ managed_service_namespace_crd }}"
@@ -12,11 +25,6 @@
   register: role_output
   failed_when: role_output.rc != 0
 
-- name: Create managed service controller deployment
-  shell: "oc create -f {{ mscontroller_deployment }} -n {{ mscontroller_namespace }}"
-  register: deploy_output
-  failed_when: deploy_output.rc != 0
-
 - name: Create integration controller enmasse role
   shell: "oc create -f {{ enmasse_role }}"
   register: role_output
@@ -26,3 +34,13 @@
   shell: "oc create -f {{ route_services_role }}"
   register: role_output
   failed_when: role_output.rc != 0
+
+- name: Check if managed service controller deployment exists
+  shell: "oc get deployment {{ mscontroller_deployment_name }} -n {{ mscontroller_namespace }}"
+  register: msbroker_deploy_exist
+
+- name: Create managed service controller deployment
+  shell: "oc create -f {{ mscontroller_deployment }} -n {{ mscontroller_namespace }}"
+  register: deploy_output
+  failed_when: deploy_output.rc != 0
+  when: msbroker_deploy_exist.rc != 0
