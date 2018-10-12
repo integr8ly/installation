@@ -3,5 +3,9 @@ msbroker_namespace: managed-service-broker
 msbroker_image_org: quay.io/integreatly
 msbroker_image_tag: 1.1.1
 msbroker_template_url: https://raw.githubusercontent.com/integr8ly/managed-service-broker/066322c1be62267ebbe54b9828d8fca2a3cf5633/templates/broker.template.yaml
+msbroker_clusterrole: managed-service
+msbroker_clusterrolebinding: default-cluster-account-managed-service
+msbroker_deployment_name: msb
+msbroker_servicebroker_name: managed-service-broker
 required_crds:
   - https://raw.githubusercontent.com/integr8ly/syndesis/master/install/operator/deploy/syndesis-crd.yml
