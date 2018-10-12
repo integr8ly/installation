@@ -30,3 +30,6 @@ launcher_github_default_scopes: "admin:repo_hook,read:org,public_repo"
 
 launcher_catalog_git_repo: https://github.com/integr8ly/launcher-booster-catalog
 launcher_catalog_git_ref: master
+
+github_client_id: ""
+github_client_secret: ""
