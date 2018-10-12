@@ -8,8 +8,19 @@
   shell: echo {{ openshift_master_url }} | cut -d '/' -f3
   register: openshift_host
 
+- name: Get SSO route
+  shell: oc get route secure-sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
+  register: sso_route
+
 - name: Create webapp from template
-  shell: oc process -n {{ webapp_namespace }} -f {{ webapp_template }} --param=OPENSHIFT_HOST={{ openshift_host.stdout }} --param=WEBAPP_IMAGE={{ webapp_image_url }} --param=WEBAPP_IMAGE_TAG={{ webapp_image_tag }}  | oc create -n {{ webapp_namespace }} -f -
+  shell: >
+    oc process -n {{ webapp_namespace }} -f {{ webapp_template }}
+    --param=OPENSHIFT_HOST={{ openshift_host.stdout }}
+    --param=WEBAPP_IMAGE={{ webapp_image_url }}
+    --param=SSO_ROUTE={{ sso_route.stdout }}
+    --param=WEBAPP_IMAGE_TAG={{ webapp_image_tag }}  |
+    oc create -n {{ webapp_namespace }}
+    -f -
   when: webapp_exists_cmd.rc != 0
 
 - name: Get webapp secure route

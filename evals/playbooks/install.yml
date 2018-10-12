@@ -29,11 +29,15 @@
         name: rhsso
       vars:
         rhsso_redirect_uri: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+        apps_redirect_uri: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
       tags: ['rhsso']
     -
       name: Gather rhsso data
       block: 
         -
+          # Setting Openshift SSO env vars e.g.
+          # - eval_rhsso_admin_username
+          # - eval_rhsso_admin_password
           name: Retrieve rhsso env vars
           shell: "oc get dc/sso \
                   -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \

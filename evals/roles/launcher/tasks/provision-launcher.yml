@@ -32,7 +32,7 @@
   register: launcher_openshift_sso_auth_response
   retries: 20
   delay: 2
-  until: launcher_sso_auth_response.status == 200
+  until: launcher_openshift_sso_auth_response.status == 200
 
 - template:
     src: client-openshift-confidential.json.j2
