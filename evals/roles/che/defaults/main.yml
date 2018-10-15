@@ -5,7 +5,7 @@
 che_namespace: "{{ eval_che_namespace | default('che') }}"
 che_infra_namespace: ''
 che_infra_pvc_strategy: 'common'
-che_infra_pvc_quantity: '20Gi'
+che_infra_pvc_quantity: '10Gi'
 che_username: "{{ eval_username | default('evals@example.com') }}"
 che_template_folder: /tmp/che-templates
 che_app_label: che
