@@ -1,31 +1,15 @@
 ---
+- name: Delete managed service broker resources in {{ msbroker_namespace }}
+  shell: oc process -n {{ msbroker_namespace }} -f {{ msbroker_template_url }} --param=NAMESPACE={{ msbroker_namespace }} --param=ROUTE_SUFFIX="placeholder" --param=LAUNCHER_DASHBOARD_URL="placeholder" --param=CHE_DASHBOARD_URL="placeholder" --param=THREESCALE_DASHBOARD_URL="placeholder" --param=IMAGE_ORG={{ msbroker_image_org }} --param=IMAGE_TAG={{ msbroker_image_tag }} | oc delete -n {{ msbroker_namespace }} -f -
+  failed_when: false
+
 - name: "Delete project namespace: {{ msbroker_namespace }}"
   shell: oc delete project {{ msbroker_namespace }}
   register: output
-  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
-  changed_when: output.rc == 0
+  failed_when: false
 
 - name: Delete CRDs
-  shell: "oc delete crd {{ item }}"
+  shell: "oc delete -f {{ item }}"
   register: output
-  failed_when: output.stderr != '' and 'not found' not in output.stderr
-  changed_when: output.rc == 0
-  with_items: syndesises.syndesis.io
-
-- name: Clean up clusterservicebroker
-  shell: "oc delete clusterservicebrokers.servicecatalog.k8s.io managed-service-broker"
-  register: output
-  failed_when: output.stderr != '' and 'not found' not in output.stderr
-  changed_when: output.rc == 0
-
-- name: Clean up cluster role
-  shell: "oc delete clusterroles.rbac.authorization.k8s.io managed-service"
-  register: output
-  failed_when: output.stderr != '' and 'not found' not in output.stderr
-  changed_when: output.rc == 0
-
-- name: Clean up cluster role binding
-  shell: "oc delete clusterrolebindings.rbac.authorization.k8s.io default-cluster-account-managed-service"
-  register: output
-  failed_when: output.stderr != '' and 'not found' not in output.stderr
-  changed_when: output.rc == 0
+  failed_when: false
+  with_items: "{{ required_crds }}"
