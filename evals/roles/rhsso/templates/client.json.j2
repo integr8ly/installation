@@ -5,7 +5,9 @@
     "enabled": true,
     "clientAuthenticatorType": "client-secret",
     "redirectUris": [
-        "{{ rhsso_redirect_uri }}/*"
+        "https://{{ eval_webapp_url_prefix }}.{{ apps_redirect_uri }}",
+        "{{ rhsso_redirect_uri }}/*",
+        "http://localhost:3006*"
     ],
     "webOrigins": [],
     "notBefore": 0,

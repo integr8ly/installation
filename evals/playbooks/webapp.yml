@@ -4,7 +4,7 @@
   tasks:
     - name: Retrieve master public URL
       slurp:
-        src: "{{ rhsso_openshift_master_config_path }}"
+        src: "{{ rhsso_openshift_master_config_path | default(eval_openshift_master_config_path) }}"
       register: rhsso_master_config
       become: yes
 
