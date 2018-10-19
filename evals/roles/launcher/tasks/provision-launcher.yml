@@ -191,6 +191,9 @@
   shell: oc get route/launcher -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
   register: launcher_route
 
+- name: Set Launcher GitHub repo description env var
+  shell: oc set env dc/launcher-backend LAUNCHER_BACKEND_GIT_REPOSITORY_DESCRIPTION="{{github_repo_description}} (http://{{launcher_route.stdout}})"
+
 - copy:
     src: patch-launcher-frontend-memory.json
     dest: /tmp/patch-launcher-frontend-memory.json
