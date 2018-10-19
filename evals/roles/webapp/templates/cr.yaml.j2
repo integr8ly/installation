@@ -1,0 +1,16 @@
+apiVersion: "integreatly.org/v1alpha1"
+kind: "WebApp"
+metadata:
+  name: "tutorial-web-app-operator"
+  labels:
+    app: "{{ webapp_app_label }}"
+spec:
+  app_label: "{{ webapp_app_label }}"
+  template:
+    path: "{{ webapp_operator_template_path }}"
+    parameters:
+      IMAGE: "{{ webapp_image_url }}"
+      IMAGE_TAG: "{{ webapp_image_tag }}"
+      OAUTH_CLIENT_ID: "{{ webapp_client_id }}"
+      OPENSHIFT_HOST: "{{ openshift_host.stdout }}"
+      SSO_ROUTE: "{{ sso_route.stdout }}"

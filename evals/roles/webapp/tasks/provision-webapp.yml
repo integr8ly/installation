@@ -12,16 +12,34 @@
   shell: oc get route secure-sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
   register: sso_route
 
-- name: Create webapp from template
-  shell: >
-    oc process -n {{ webapp_namespace }} -f {{ webapp_template }}
-    --param=OPENSHIFT_HOST={{ openshift_host.stdout }}
-    --param=WEBAPP_IMAGE={{ webapp_image_url }}
-    --param=SSO_ROUTE={{ sso_route.stdout }}
-    --param=WEBAPP_IMAGE_TAG={{ webapp_image_tag }}  |
-    oc create -n {{ webapp_namespace }}
-    -f -
-  when: webapp_exists_cmd.rc != 0
+- name: Generate operator template files
+  template:
+    src: "{{ item }}.j2"
+    dest: /tmp/{{ item }}
+  with_items:
+    - rbac.yaml
+    - sa.yaml
+    - crd.yaml
+    - cr.yaml
+    - operator.yaml
+
+- name: Deploy operator resources
+  shell: "oc apply -f /tmp/{{ item }} -n {{ webapp_namespace }}"
+  with_items:
+    - rbac.yaml
+    - sa.yaml
+    - crd.yaml
+    - cr.yaml
+    - operator.yaml
+
+- name: Wait for pods
+  shell: sleep 5; oc get pods --namespace {{ webapp_namespace }}  |  grep  "deploy"
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
 
 - name: Get webapp secure route
   shell: oc get route/{{ webapp_route }} -o template --template \{\{.spec.host\}\} -n {{ webapp_namespace }}
@@ -39,18 +57,18 @@
 
 - name: Create template for OpenShift OAuth client
   template:
-    src: oauthclient.json.j2
-    dest: /tmp/oauthclient.json
+    src: oauthclient.yaml.j2
+    dest: /tmp/oauthclient.yaml
 
 - name: Check if OpenShift OAuth client already exists
-  shell: oc get oauthclient {{ webapp_client_id }}
+  shell: oc get oauthclient {{ webapp_client_id }} -n {{ eval_rhsso_namespace }}
   register: webapp_oauthclient_check_cmd
   changed_when: false
   failed_when: false
 
 - name: Remove OpenShift OAuth client
-  shell: oc delete oauthclient {{ webapp_client_id }}
+  shell: oc delete oauthclient {{ webapp_client_id }} -n {{ eval_rhsso_namespace }}
   when: webapp_oauthclient_check_cmd.rc == 0
 
 - name: Create OpenShift OAuth client
-  shell: oc create -f /tmp/oauthclient.json
+  shell: oc create -f /tmp/oauthclient.yaml -n {{ eval_rhsso_namespace }}
