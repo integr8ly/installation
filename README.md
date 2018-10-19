@@ -69,6 +69,8 @@ All products can be installed using the ```install.yml``` playbook located in th
 Before running the installer, please consider the following variables:
 
 * `eval_self_signed_certs` - Whether the OpenShift cluster uses self-signed certs or not. Defaults to `true`.
+* `github_client_id` - GitHub OAuth client ID to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled.
+* `github_client_secret` - GitHub OAuth client secret to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled.
 
 Run the playbook:
 
