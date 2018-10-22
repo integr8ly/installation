@@ -111,6 +111,39 @@
       Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
     status_code: [201, 409]
 
+- name: Create Launcher admin user
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/users"
+    method: POST
+    body: "{{ lookup('template', 'admin-user.json.j2') }}"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: [201, 409]
+
+- name: "Get Launcher admin user"
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/users?first=0&max=1&search={{ launcher_sso_admin_email }}"
+    method: GET
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    return_content: yes
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: 200
+  register: get_launcher_admin_user
+
+- name: Update Launcher admin user credentials
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/users/{{ get_launcher_admin_user.json[0].id }}/reset-password"
+    method: PUT
+    body: "{{ lookup('template', 'password-reset.json.j2') }}"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: 204
+
 - name: Create GitHub identity provider in Launcher SSO
   uri:
     url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/identity-provider/instances"

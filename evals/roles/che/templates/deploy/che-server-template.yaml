@@ -148,6 +148,8 @@ objects:
                 optional: true
           - name: CHE_WORKSPACE_FEATURE_API
             value: "http://marketplace:80"
+          - name: CHE_SYSTEM_ADMIN__NAME
+            value: "${CHE_SYSTEM_ADMIN_NAME}"
           image: ${IMAGE_CHE}:${CHE_VERSION}
           imagePullPolicy: "${PULL_POLICY}"
           livenessProbe:
@@ -282,6 +284,10 @@ parameters:
 - name: CHE_OAUTH_GITHUB_CLIENTSECRET
   displayName: GitHub Client Secret
   description: GitHub oAuth app client servet. Applicable to Che single user only!
+  value: ''
+- name: CHE_SYSTEM_ADMIN_NAME
+  displayName: Che System Admin Name
+  description: Username to give admin permissions to by default
   value: ''
 labels:
   app: che
