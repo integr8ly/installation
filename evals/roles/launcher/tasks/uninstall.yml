@@ -1,3 +1,8 @@
+- name: "Delete Launcher oauthclient"
+  shell: oc delete oauthclient launcher
+  register: launcher_delete_oauthclient_cmd
+  failed_when: launcher_delete_oauthclient_cmd.stderr != '' and 'not found' not in launcher_delete_oauthclient_cmd.stderr
+  changed_when: launcher_delete_oauthclient_cmd.rc == 0
 
 - name: "Delete project namespace: {{ launcher_namespace }}"
   shell: oc delete project {{ launcher_namespace }}
