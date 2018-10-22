@@ -45,3 +45,5 @@
   delay: 10
   failed_when: result.stdout
   changed_when: False
+
+- import_tasks: access_token.yml
