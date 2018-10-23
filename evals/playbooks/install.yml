@@ -207,6 +207,15 @@
       include_role:
         name: amq
       tags: ['amq']
+- hosts: localhost
+  tasks:
+    - name: Install walkthrough 1
+      include_role:
+        name: walkthroughs
+        tasks_from: walkthrough_1
+    - name: Reboot template broker
+      include_role:
+        name: reboot_template_broker
 
 - hosts: master
   gather_facts: no
@@ -221,15 +230,6 @@
       vars:
         rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
       tags: ['rhsso', 'remote']
-
-- hosts: localhost
-  gather_facts: no
-  tasks:
-    - include_role:
-        name: walkthroughs
-        tasks_from: walkthrough_1
-    - include_role:
-        name: reboot_template_broker
 
 - hosts: localhost
   gather_facts: no
