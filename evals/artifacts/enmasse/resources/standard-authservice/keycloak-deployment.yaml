@@ -73,7 +73,7 @@ spec:
       - env:
         - name: KEYCLOAK_DIR
           value: /opt/jboss/keycloak
-        image: docker.io/enmasseproject/keycloak-plugin:0.21.0
+        image: docker.io/lulf/keycloak-plugin:0.21.0_5
         name: keycloak-plugin
         volumeMounts:
         - mountPath: /opt/jboss/keycloak/providers
