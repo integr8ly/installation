@@ -225,7 +225,7 @@
   register: launcher_route
 
 - name: Set Launcher GitHub repo description env var
-  shell: oc set env dc/launcher-backend LAUNCHER_BACKEND_GIT_REPOSITORY_DESCRIPTION="{{github_repo_description}} (http://{{launcher_route.stdout}})"
+  shell: oc set env -n {{ launcher_namespace }} dc/launcher-backend LAUNCHER_BACKEND_GIT_REPOSITORY_DESCRIPTION="{{github_repo_description}} (http://{{launcher_route.stdout}})"
 
 - copy:
     src: patch-launcher-frontend-memory.json
