@@ -1,0 +1,7 @@
+apiVersion: oauth.openshift.io/v1
+grantMethod: auto
+kind: OAuthClient
+metadata:
+  name: "{{ webapp_client_id }}"
+redirectURIs:
+  - "https://{{ webapp_secure_route }}"
