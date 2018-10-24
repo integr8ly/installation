@@ -56,6 +56,9 @@
         tasks_from: uninstall
       tags: ['3scale']
     - 
+      name: "Delete enmasse cluster service broker"
+      shell: oc delete clusterservicebroker enmasse
+    - 
       name: "Delete project namespace: {{ enmasse_namespace }}"
       shell: oc delete project {{ enmasse_namespace }}
       register: output
