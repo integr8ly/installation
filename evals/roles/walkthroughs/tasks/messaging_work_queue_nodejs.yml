@@ -10,3 +10,6 @@
   command: oc create -f /tmp/messaging_work_queue_nodejs.yml -n openshift
   register: out
   failed_when: out.stderr != "" and out.stderr.find("AlreadyExists") == -1
+  until: out.stderr != ""
+  retries: 5
+  delay: 10
