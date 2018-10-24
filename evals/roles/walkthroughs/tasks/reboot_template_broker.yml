@@ -1,0 +1,18 @@
+---
+# RELISTS THE TEMPLATE SERVICE BROKER
+- name: Get the current relist request value
+  shell: oc get clusterservicebroker template-service-broker -o yaml | grep relistRequests | tail -1  | awk '{print $2}'
+  register: get_relist_request_cmd
+
+- set_fact:
+    relist_requests_value: "{{ (get_relist_request_cmd.stdout|int) + 1 }}"
+
+- template:
+    src: template-service-broker-patch.yml.j2
+    dest: /tmp/template-service-broker-patch.yml
+
+- shell: cat /tmp/template-service-broker-patch.yml
+  register: template_service_broker_patch_content_cmd
+
+- name: Relist template service broker
+  shell: oc patch clusterservicebroker template-service-broker -p '{{ template_service_broker_patch_content_cmd.stdout }}' -n openshift

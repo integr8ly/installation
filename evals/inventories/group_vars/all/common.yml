@@ -1,5 +1,4 @@
 ---
-eval_action: install
 eval_namespace: eval
 eval_username: evals@example.com
 eval_openshift_master_config_path: /etc/origin/master/master-config.yaml
