@@ -15,4 +15,4 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: "{{ che_persistemt_volume_size }}"
+      storage: "{{ che_persistent_volume_size }}"

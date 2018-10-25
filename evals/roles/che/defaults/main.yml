@@ -32,7 +32,8 @@ che_keycloak_host: ''
 
 #pvc vars
 che_persistent_volume: true
-che_persistemt_volume_size: 1Gi
+che_persistent_volume_size: 1Gi
+che_persistent_volume_storageclassname: efs
 
 #postgre
 che_postgre_image_name: 'docker.io/eclipse/che-postgres'

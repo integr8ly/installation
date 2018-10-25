@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: claim-che-workspace
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+     storage: "{{che_infra_pvc_quantity}}"
+  storageClassName: "{{ che_persistent_volume_storageclassname }}"
