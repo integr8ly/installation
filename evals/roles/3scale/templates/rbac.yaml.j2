@@ -1,0 +1,68 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: 3scale-operator
+rules:
+- apiGroups:
+  - integreatly.org
+  resources:
+  - "*"
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - endpoints
+  - persistentvolumeclaims
+  - events
+  - configmaps
+  - secrets
+  - serviceaccounts
+  verbs:
+  - "*"
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - daemonsets
+  - replicasets
+  - statefulsets
+  verbs:
+  - "*"
+- apiGroups:
+  - template.openshift.io
+  resources:
+  - processedtemplates
+  verbs: [ get, list, create, update, delete, deletecollection, watch]
+- apiGroups:
+  - image.openshift.io
+  resources:
+  - imagestreams
+  verbs: [ get, list, create, update, delete, deletecollection, watch]
+- apiGroups:
+  - apps.openshift.io
+  resources:
+  - deploymentconfigs
+  verbs: [ get, list, create, update, delete, deletecollection, watch]
+- apiGroups:
+  - route.openshift.io
+  resources:
+  - routes
+  - routes/custom-host
+  verbs: [ get, list, create, update, delete, deletecollection, watch]
+
+---
+
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: default-account-3scale-operator
+subjects:
+- kind: ServiceAccount
+  name: default
+roleRef:
+  kind: Role
+  name: 3scale-operator
+  apiGroup: rbac.authorization.k8s.io

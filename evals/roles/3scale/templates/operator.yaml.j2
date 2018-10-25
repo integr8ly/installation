@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 3scale-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: 3scale-operator
+  template:
+    metadata:
+      labels:
+        name: 3scale-operator
+    spec:
+      containers:
+        - name: 3scale-operator
+          image: quay.io/integreatly/3scale-operator:0.0.1
+          ports:
+          - containerPort: 60000
+            name: metrics
+          command:
+          - 3scale-operator
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: OPERATOR_NAME
+              value: "3scale-operator"

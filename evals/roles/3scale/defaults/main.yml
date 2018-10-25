@@ -1,6 +1,8 @@
 ---
 threescale_namespace: "{{ eval_threescale_namespace | default('3scale') }}"
 threescale_route_suffix: ""
+
+#SSO
 threescale_sso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"
 threescale_sso_admin_username: admin
 threescale_sso_admin_realm: master
@@ -8,20 +10,18 @@ threescale_sso_realm: openshift
 threescale_sso_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
 threescale_sso_client_id: 3scale
 
+#Resource limits
 threescale_limit_range_name: 3scale-core-resource-limits
-
 threescale_limit_range_container_default_cpu: 500m
 threescale_limit_range_container_default_memory: 1536Mi
 threescale_limit_range_container_default_request_cpu: 50m
 threescale_limit_range_container_default_request_memory: 256Mi
 threescale_limit_range_container_max_memory: 32Gi
 threescale_limit_range_container_min_memory: 10Mi
-
-threescale_pvc_size_mysql: 100Gi
-
 threescale_limit_range_pod_max_memory: 32Gi
 threescale_limit_range_pod_min_memory: 6Mi
 
+#Users
 threescale_evals_email: evals@example.com
 threescale_evals_username: "{{ threescale_evals_email }}"
 threescale_evals_password: Password1
@@ -36,9 +36,8 @@ rhsso_seed_users_count: 50
 rhsso_seed_users_password: Password1
 
 threescale_cluster_admin_email: admin@example.com
-threescale_cluster_admin_old_username: admin
-threescale_cluster_admin_new_username: "{{ threescale_cluster_admin_email }}"
+threescale_cluster_admin_username: "{{ threescale_cluster_admin_email }}"
 
-threescale_pvc_rwx_storageclassname: efs
-
-threescale_master_access_token_secret_name: 3scale-master-access-token
+#Template Params
+threescale_pvc_size_mysql: 100Gi
+threescale_pvc_rwx_storageclassname: ""
