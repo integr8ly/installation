@@ -59,4 +59,5 @@
 -
   name: Include persistent volume tasks
   include_tasks: deploy-persistent-volume.yml
+  include_tasks: deploy-che-workspace-persistent-volume.yml
   when: che_persistent_volume|bool == true
