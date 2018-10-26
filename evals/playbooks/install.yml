@@ -134,7 +134,7 @@
       include_role:
         name: 3scale
       vars:
-        threescale_route_suffix: "{{ eval_app_host }}"
+        threescale_route_suffix: "amp.{{ eval_app_host }}"
       tags: ['3scale']
     - 
       name: Configure 3Scale SSO
@@ -142,7 +142,7 @@
         name: 3scale
         tasks_from: sso
       vars:
-        threescale_route_suffix: "{{ eval_app_host }}"
+        threescale_route_suffix: "amp.{{ eval_app_host }}"
       tags: ['3scale']
     -
       name: Configure 3Scale Users
