@@ -58,6 +58,8 @@
     - 
       name: "Delete enmasse cluster service broker"
       shell: oc delete clusterservicebroker enmasse
+      register: output
+      failed_when: output.stderr != '' and 'not found' not in output.stderr
     - 
       name: "Delete project namespace: {{ enmasse_namespace }}"
       shell: oc delete project {{ enmasse_namespace }}
