@@ -9,8 +9,13 @@
   shell: oc get all -n {{ threescale_namespace }}
   register: threescale_resources_exist
 
+- name: Create 3scale template from Ansible template
+  template:
+    src: amp.yaml.j2
+    dest: /tmp/amp.yaml
+
 - name: "Provision 3scale in namespace: {{ threescale_namespace }}"
-  shell: oc process -n {{ threescale_namespace }} -f {{ threescale_template_url }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} -p WILDCARD_POLICY=Subdomain | oc create -n {{ threescale_namespace }} -f -
+  shell: oc process -n {{ threescale_namespace }} -f /tmp/amp.yaml -p WILDCARD_DOMAIN={{ threescale_route_suffix }} -p WILDCARD_POLICY=Subdomain -p MYSQL_PVC_SIZE={{ threescale_pvc_size_mysql }} | oc create -n {{ threescale_namespace }} -f -
   when: threescale_resources_exist.stderr == "No resources found."
 
 - import_tasks: resources.yml

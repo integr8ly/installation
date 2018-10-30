@@ -1,7 +1,6 @@
 ---
 threescale_namespace: "{{ eval_threescale_namespace | default('3scale') }}"
 threescale_route_suffix: ""
-threescale_template_url: https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/2.2.0.GA/amp/amp.yml
 threescale_sso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"
 threescale_sso_admin_username: admin
 threescale_sso_admin_realm: master
@@ -17,6 +16,8 @@ threescale_limit_range_container_default_request_cpu: 50m
 threescale_limit_range_container_default_request_memory: 256Mi
 threescale_limit_range_container_max_memory: 32Gi
 threescale_limit_range_container_min_memory: 10Mi
+
+threescale_pvc_size_mysql: 100Gi
 
 threescale_limit_range_pod_max_memory: 32Gi
 threescale_limit_range_pod_min_memory: 6Mi
