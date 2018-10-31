@@ -178,7 +178,7 @@ Note: 3Scale requires access to ReadWriteMany PVs. As such, it will only work on
 ```shell
 oc login https://<openshift-master-url>
 cd evals/
-ansible-playbook -i inventories/hosts playbooks/3scale.yml -e threescale_route_suffix=amp.<openshift-router-suffix>
+ansible-playbook -i inventories/hosts playbooks/3scale.yml -e threescale_route_suffix=<openshift-router-suffix>
 ```
 
 ##### Run Webapp install playbook
