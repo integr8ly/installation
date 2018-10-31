@@ -1,0 +1,20 @@
+-
+  name: Check if che pvc is created
+  shell: "oc get pvc/claim-che-workspace -n {{ che_namespace }}"
+  register: che_pvc_cmd
+  failed_when: false
+
+- name: "Check for storage class: {{ che_persistent_volume_storageclassname }}"
+  shell: oc get storageclass {{ che_persistent_volume_storageclassname }}
+  register: storageclass_exists
+  failed_when: storageclass_exists.stderr != '' and 'NotFound' not in storageclass_exists.stderr  
+
+- name: Generate claim-che-workspace pvc template
+  template:
+    src: "deploy/pvc/che-workspace-pvc.yml.j2"
+    dest: /tmp/che-workspace-pvc.yml
+  when: storageclass_exists.rc == 0
+
+- name: "Create claim-che-workspace PVC with storageClassName: {{ che_persistent_volume_storageclassname }}"
+  shell: oc create -f /tmp/che-workspace-pvc.yml
+  when: storageclass_exists.rc == 0 and 'NotFound' in  che_pvc_cmd.stderr
