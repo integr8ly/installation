@@ -182,7 +182,9 @@ objects:
           resources:
             limits:
               memory: 1Gi
+              cpu: 500m
             requests:
+              cpu: 500m
               memory: 256Mi
           terminationMessagePath: "/dev/termination-log"
           terminationMessagePolicy: File
