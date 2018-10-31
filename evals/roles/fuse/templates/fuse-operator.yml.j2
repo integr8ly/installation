@@ -1,0 +1,19 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: syndesis
+    syndesis.io/app: syndesis
+    syndesis.io/type: operator
+    syndesis.io/component: syndesis-operator
+  name: fuse-online-operator
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - from:
+      kind: DockerImage
+      name: "{{ fuse_registry }}/{{ fuse_repository }}/fuse-online-operator:{{ fuse_image_tag }}"
+    importPolicy:
+      scheduled: true
+    name: "{{ fuse_image_version }}"

@@ -1,10 +1,21 @@
 ---
-# SETUP FUSE ON OPENSHIFT IMAGE STREAMS AND TEMPLATES
-- name: Create Fuse on OpenShift image streams
-  shell: oc create -f {{ fuse_imagestreams_url }} -n openshift
-  register: create_fuse_imagestreams_cmd
-  failed_when: create_fuse_imagestreams_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_imagestreams_cmd.stderr
+# SETUP FUSE OPERATOR AND FUSE ON OPENSHIFT IMAGES
+- name: Generate fuse operator image stream template
+  template:
+    src: "fuse-operator.yml.j2"
+    dest: /tmp/fuse-operator.yml
 
+- name: Create Fuse image streams
+  shell: "oc create -f {{ item }} -n openshift"
+  register: create_fuse_imagestream_cmd
+  failed_when: create_fuse_imagestream_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_imagestream_cmd.stderr
+  changed_when: create_fuse_imagestream_cmd.rc == 0
+  with_items:
+    - "/tmp/fuse-operator.yml"
+    - "{{ fuse_operator_imagestreams_url }}"
+    - "{{ fuse_on_openshift_imagestreams_url }}"
+
+# SETUP FUSE ON OPENSHIFT TEMPLATES
 - name: Create Fuse quickstart templates
   shell: oc create -f {{ fuse_templates_url }}/{{ item }} -n openshift
   with_items:
@@ -30,6 +41,7 @@
     - "spring-boot-cxf-jaxws-template.json"
   register: create_fuse_quickstart_template_cmd
   failed_when: create_fuse_quickstart_template_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_quickstart_template_cmd.stderr
+  changed_when: create_fuse_quickstart_template_cmd.rc == 0
 
 - name: Create Fuse Console templates
   shell: oc create -f {{ fuse_templates_hawtio_url }}/{{ item }} -n openshift
@@ -38,3 +50,4 @@
     - "fis-console-namespace-template.json"
   register: create_fuse_console_template_cmd
   failed_when: create_fuse_console_template_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_console_template_cmd.stderr
+  changed_when: create_fuse_console_template_cmd.rc == 0
