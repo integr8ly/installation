@@ -1,0 +1,7 @@
+apiVersion: integreatly.org/v1alpha1
+kind: Gitea
+metadata:
+  name: gitea
+spec:
+  hostname: "{{ gitea_namespace }}.{{ gitea_route_suffix }}"
+  deployProxy: True

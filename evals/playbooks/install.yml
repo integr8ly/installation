@@ -136,6 +136,13 @@
       vars:
         threescale_route_suffix: "amp.{{ eval_app_host }}"
       tags: ['3scale']
+    - 
+      name: Install Gitea
+      include_role:
+        name: gitea
+      vars:
+        gitea_route_suffix: "{{ eval_app_host }}"
+      tags: ['gitea']
     -
       name: Install webapp
       include_role:
@@ -193,6 +200,7 @@
       include_role:
         name: amq
       tags: ['amq']
+
 - hosts: localhost
   tasks:
     - name: Install walkthrough 1
