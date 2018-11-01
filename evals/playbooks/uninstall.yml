@@ -107,5 +107,5 @@
       name: Uninstall rhsso
       include_role:
         name: rhsso
-        tasks_from: reconfigure_master
+        tasks_from: remove_identityprovider
       tags: ['rhsso']

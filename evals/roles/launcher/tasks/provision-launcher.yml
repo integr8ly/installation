@@ -3,7 +3,7 @@
     launcher_sso_openshift_idp_client_secret: "{{ 99999 | random | to_uuid }}"
 
 - name: Get Launcher SSO secure route
-  shell: oc get route/secure-{{ launcher_sso_prefix }} -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
+  shell: oc get route/{{ launcher_sso_prefix }} -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
   register: rhsso_secure_route
   retries: 60
   delay: 5

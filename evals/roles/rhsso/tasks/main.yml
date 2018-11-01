@@ -1,10 +1,91 @@
 ---
-- name: Install RH-SSO
-  import_tasks: install.yml
+- name: "Create project namespace: {{ rhsso_namespace }}"
+  shell: oc new-project {{ rhsso_namespace }}
+  register: output
+  failed_when: output.stderr != '' and 'already exists' not in output.stderr
+  changed_when: output.rc == 0
 
-- name: Configure RH-SSO Openshift Client
-  import_tasks: client.yml
+- name: "Ensure 1.2 tag is present for redhat sso in openshift namespace"
+  shell: oc tag --source=docker registry.access.redhat.com/redhat-sso-7/sso72-openshift:1.2 openshift/redhat-sso72-openshift:1.2
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 1
+  failed_when: not result.stdout
+  changed_when: False
 
-- name: Create RH-SSO users
-  import_tasks: users.yml
+- name: "Ensure 1.2 tag has an imported image in openshift namespace"
+  shell: oc -n openshift import-image redhat-sso72-openshift:1.2
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 1
+  failed_when: not result.stdout
+  changed_when: False
 
+- name: "Create required objects"
+  shell: "oc create -f https://raw.githubusercontent.com/{{rhsso_operator_repo}}/keycloak-operator/{{rhsso_operator_commit_tag}}/deploy/{{ item }} -n {{ rhsso_namespace }}"
+  with_items: "{{ rhsso_operator_required_objects }}"
+  register: rhsso_required_objects_result
+  failed_when: rhsso_required_objects_result.stderr != '' and 'AlreadyExists' not in rhsso_required_objects_result.stderr
+
+- name: "Create operator deployment config template"
+  template:
+    src: "operator-dc.yaml"
+    dest: /tmp/operator-dc.yaml
+
+- name: "create operator deployment config"
+  shell: "oc create -f /tmp/operator-dc.yaml -n {{ rhsso_namespace }}"
+  register: rhsso_dc
+  failed_when: rhsso_dc.stderr != '' and 'AlreadyExists' not in rhsso_dc.stderr
+
+- name: "Create keycloak resource template"
+  template:
+    src: "keycloak.json.j2"
+    dest: "/tmp/keycloak.json"
+
+- name: "Create keycloak resource"
+  shell: oc create -f /tmp/keycloak.json -n {{ rhsso_namespace }}
+  register: rhsso_keycloak
+  failed_when: rhsso_keycloak.stderr != '' and 'AlreadyExists' not in rhsso_keycloak.stderr
+
+- name: "Generate secret for rhsso client"
+  set_fact:
+    rhsso_client_secret: "{{ (ansible_date_time.epoch + rhsso_namespace) | hash('sha512') }}"
+
+- name: "include threescale vars"
+  include_vars: ../../3scale/defaults/main.yml
+
+- name: "Generate secret for 3scale client"
+  set_fact:
+    threescale_client_secret: "{{ (ansible_date_time.epoch + threescale_namespace) | hash('sha512') }}"
+
+- name: "Create keycloak realm resource template"
+  template:
+    src: "keycloak-realm.json.j2"
+    dest: "/tmp/keycloak-realm.json"
+
+- name: Seed evaluation users
+  include: _inject_user.yml template="/tmp/keycloak-realm.json" email={{ rhsso_seed_users_email_format|format(item|int) }} username={{ rhsso_seed_users_name_format|format(item|int)}} password={{ rhsso_seed_users_password }}
+  with_sequence: count={{ rhsso_seed_users_count }}
+
+- name: "Create keycloak realm resource"
+  shell: oc create -f /tmp/keycloak-realm.json -n {{ rhsso_namespace }}
+  register: rhsso_kcr
+  failed_when: rhsso_kcr.stderr != '' and 'AlreadyExists' not in rhsso_kcr.stderr
+
+
+- name: "Verify rhsso realm is provisioned"
+  shell: sleep 5; oc get keycloakrealm {{ rhsso_realm }} -o template --template \{\{.status.phase\}\}  -n {{ rhsso_namespace }}  |  grep  'reconcile'
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 10
+  failed_when: not result.stdout
+  changed_when: False
+
+- name: configure logout
+  import_tasks: logout.yml
+
+- name: Add cluster admin role to evals admin
+  shell: oc adm policy add-cluster-role-to-user cluster-admin {{rhsso_evals_admin_username}}

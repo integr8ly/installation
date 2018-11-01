@@ -1,0 +1,19 @@
+{
+    "enabled":true,
+    "attributes":{},
+    "username":"{{ username }}",
+    "emailVerified":true,
+    "email":"{{ email }}",
+    "password": "{{ password }}",
+    "realmRoles": [
+        "offline_access",
+        "uma_authorization"
+    ],
+    "clientRoles": {
+        "account": [
+            "manage-account",
+            "view-profile"
+        ]
+    },
+    "outputSecret": "{{ username | replace("@", "-")}}-credentials"
+}

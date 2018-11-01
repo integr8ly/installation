@@ -14,18 +14,12 @@
         openshift_route_suffix: "{{ (rhsso_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
     
 - hosts: local
-  gather_facts: no
+  gather_facts: true
   roles:
     - role: rhsso
       vars:
         rhsso_redirect_uri: "{{ hostvars['RHSSO_VARS']['openshift_master_url'] }}"
         apps_redirect_uri: "{{ hostvars['RHSSO_VARS']['openshift_route_suffix'] }}"
-  tasks:
-    - include_role:
-        name: rhsso
-        tasks_from: logout
-      vars:
-        rhsso_redirect_uri: "{{ hostvars['RHSSO_VARS']['openshift_master_url'] }}"
 
 - hosts: master
   gather_facts: no
