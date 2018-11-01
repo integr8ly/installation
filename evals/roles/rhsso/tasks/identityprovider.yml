@@ -36,7 +36,7 @@
     backup: yes
     block: |2
         - name: rh_sso
-          challenge: false
+          challenge: true
           login: true
           mappingInfo: add
           provider:
