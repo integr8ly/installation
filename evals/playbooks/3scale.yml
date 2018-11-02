@@ -18,4 +18,4 @@
   roles:
   - role: 3scale
     vars:
-      threescale_route_suffix: "amp.{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+      threescale_route_suffix: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
