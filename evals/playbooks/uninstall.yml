@@ -56,6 +56,12 @@
         tasks_from: uninstall
       tags: ['3scale']
     - 
+      name: Uninstall Gitea
+      include_role:
+        name: gitea
+        tasks_from: uninstall
+      tags: ['gitea']
+    - 
       name: "Delete enmasse cluster service broker"
       shell: oc delete clusterservicebroker enmasse
       register: output
