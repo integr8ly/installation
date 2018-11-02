@@ -7,6 +7,7 @@
 
 - import_tasks: resources.yml
 - import_tasks: sso.yml
+- import_tasks: routes.yml
 
 - name: Generate operator template files
   template:
