@@ -1,13 +1,12 @@
 apiVersion: integreatly.org/v1alpha1
 kind: ThreeScale
 metadata:
-  name: 3scale-operator
+  name: 3scale
   labels:
-    app: 3scale-operator
+    app: 3scale
 spec:
   routeSuffix: "{{ threescale_route_suffix }}"
   rwxStorageClass: "{{ threescale_pvc_rwx_storageclassname }}"
-  wildcardPolicy: "Subdomain"
   mysqlPvcSize: "{{ threescale_pvc_size_mysql }}"
   adminUsername: {{ threescale_cluster_admin_username }}
   adminEmail: {{ threescale_cluster_admin_email }}

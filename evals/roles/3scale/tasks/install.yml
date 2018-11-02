@@ -28,7 +28,7 @@
     - operator.yaml
 
 - name: "Verify 3Scale deployment succeeded"
-  shell: sleep 5; oc get threescale/3scale-operator -o template --template \{\{.status.ready\}\} --namespace {{ threescale_namespace }}  |  grep  true
+  shell: sleep 5; oc get threescale/3scale -o template --template \{\{.status.ready\}\} --namespace {{ threescale_namespace }}  |  grep  true
   register: result
   until: result.stdout
   retries: 50
