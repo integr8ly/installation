@@ -9,6 +9,15 @@
 - import_tasks: sso.yml
 - import_tasks: routes.yml
 
+- name: "Check for storage class: {{ threescale_pvc_rwx_storageclassname }}"
+  shell: oc get storageclass {{ threescale_pvc_rwx_storageclassname }}
+  register: storageclass_exists
+  failed_when: storageclass_exists.stderr != '' and 'NotFound' not in storageclass_exists.stderr
+
+- set_fact:
+    threescale_pvc_rwx_storageclassname: ""
+  when: not storageclass_exists.rc == 0
+
 - name: Generate operator template files
   template:
     src: "{{ item }}.j2"
