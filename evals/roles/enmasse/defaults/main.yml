@@ -1,8 +1,12 @@
 ---
 enmasse_namespace: enmasse
+enmasse_version: '0.24.1'
 enmasse_multitenant: true
 enmasse_enable_rbac: true
+enmasse_api_server: true
+enmasse_register_api_server: true
 enmasse_service_catalog: true
 enmasse_keycloak_admin_password: admin
 enmasse_authentication_services: ["standard"]
-enmasse_deploy_infra: true
+enmasse_clean_artifacts: true
+enmasse_enable_monitoring: false

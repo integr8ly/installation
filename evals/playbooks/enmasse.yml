@@ -1,10 +1,5 @@
-- name: Provision EnMasse
-  import_playbook: "{{ playbook_dir }}/../artifacts/enmasse/ansible/playbooks/openshift/enmasse-playbook.yml"
-  vars:
-    namespace: "{{ enmasse_namespace }}"
-    multitenant: "{{ enmasse_multitenant }}"
-    enable_rbac: "{{ enmasse_enable_rbac }}"
-    service_catalog: "{{ enmasse_service_catalog }}"
-    keycloak_admin_password: "{{ enmasse_keycloak_admin_password }}"
-    authentication_services: "{{ enmasse_authentication_services }}"
-  when: enmasse_deploy_infra | default('true') | bool
+---    
+- hosts: local
+  gather_facts: no
+  roles:
+    - role: enmasse
