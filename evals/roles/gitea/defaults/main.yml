@@ -1,8 +1,6 @@
 gitea_namespace: gitea
 
 gitea_resources:
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/master/deploy/service_account.yaml # Will need to point at tagged version
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/master/deploy/role.yaml # Will need to point at tagged version
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/master/deploy/role_binding.yaml # Will need to point at tagged version
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/master/deploy/crds/integreatly_v1alpha1_gitea_crd.yaml # Will need to point at tagged version
+  - https://raw.githubusercontent.com/integr8ly/gitea-operator/master/deploy/rbac.yaml # Will need to point at tagged version
+  - https://raw.githubusercontent.com/integr8ly/gitea-operator/master/deploy/crd.yaml # Will need to point at tagged version
   - https://raw.githubusercontent.com/integr8ly/gitea-operator/master/deploy/operator.yaml # Will need to point at tagged version
