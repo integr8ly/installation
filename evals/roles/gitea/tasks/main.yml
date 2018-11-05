@@ -5,6 +5,10 @@
   register: gitea_create_namespace_cmd
   failed_when: gitea_create_namespace_cmd.stderr != '' and 'AlreadyExists' not in gitea_create_namespace_cmd.stderr
 
+- name: Generate Gitea token
+  set_fact:
+    gitea_token: "{{ 99999999999999 | random | hash('sha256') }}"
+
 - name: Generate Gitea custom resource template
   template:
     src: "gitea-cr.yml.j2"
@@ -24,3 +28,13 @@
   delay: 5
   failed_when: gitea_pods_not_ready.stdout
   changed_when: False
+
+# SET GITEA TOKEN ENV VAR IN THE WEBAPP 
+- name: Check if webapp is installed
+  shell: oc get dc/tutorial-web-app -n {{ webapp_namespace }}
+  register: check_webapp_installed_cmd
+  failed_when: False
+
+- name: Set webapp Gitea token env var
+  shell: oc set env dc/tutorial-web-app GITEA_TOKEN="{{ gitea_token }}" -n {{ webapp_namespace }}
+  when: check_webapp_installed_cmd.rc == 0

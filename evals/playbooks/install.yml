@@ -136,13 +136,6 @@
       vars:
         threescale_route_suffix: "{{ eval_app_host }}"
       tags: ['3scale']
-    - 
-      name: Install Gitea
-      include_role:
-        name: gitea
-      vars:
-        gitea_route_suffix: "{{ eval_app_host }}"
-      tags: ['gitea']
     -
       name: Install webapp
       include_role:
@@ -151,6 +144,13 @@
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
       tags: ['webapp']
       when: eval_action == 'install'
+    - 
+      name: Install Gitea
+      include_role:
+        name: gitea
+      vars:
+        gitea_route_suffix: "{{ eval_app_host }}"
+      tags: ['gitea']
     - 
       name: Install managed services broker
       include_role:
@@ -195,14 +195,13 @@
       vars:
         rhsso_redirect_uri: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
       tags: ['rhsso']
-    -
-      name: Setup AMQ Templates
-      include_role:
-        name: amq
-      tags: ['amq']
 
 - hosts: localhost
   tasks:
+    - name: Setup AMQ Templates
+      include_role:
+        name: amq
+      tags: ['amq']
     - name: Install walkthrough 1
       include_role:
         name: walkthroughs
