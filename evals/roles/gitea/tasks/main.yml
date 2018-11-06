@@ -5,6 +5,10 @@
   register: gitea_create_namespace_cmd
   failed_when: gitea_create_namespace_cmd.stderr != '' and 'AlreadyExists' not in gitea_create_namespace_cmd.stderr
 
+- name: Create Gitea resources
+  shell: oc apply -f {{ item }} -n {{ gitea_namespace }}
+  with_items: "{{ gitea_resources }}"
+
 - name: Generate Gitea token
   set_fact:
     gitea_token: "{{ 99999999999999 | random | hash('sha256') }}"
@@ -13,12 +17,12 @@
   template:
     src: "gitea-cr.yml.j2"
     dest: /tmp/gitea-cr.yml
-
-- name: Create Gitea resources
-  shell: oc apply -f {{ item }} -n {{ gitea_namespace }}
-  with_items: 
-    - "{{ gitea_resources }}"
-    - "/tmp/gitea-cr.yml"
+  
+- name: Create Gitea custom resource
+  shell: oc create -f /tmp/gitea-cr.yml -n {{ gitea_namespace }}
+  register: create_gitea_custom_resource_cmd
+  failed_when: create_gitea_custom_resource_cmd.stderr != '' and 'AlreadyExists' not in create_gitea_custom_resource_cmd.stderr
+  changed_when: create_gitea_custom_resource_cmd.rc == 0
 
 - name: Wait for Gitea pods to be ready
   shell: sleep 5; oc get pods --namespace {{ gitea_namespace }}  |  grep  "0/1"
@@ -35,6 +39,14 @@
   register: check_webapp_installed_cmd
   failed_when: False
 
-- name: Set webapp Gitea token env var
-  shell: oc set env dc/tutorial-web-app GITEA_TOKEN="{{ gitea_token }}" -n {{ webapp_namespace }}
-  when: check_webapp_installed_cmd.rc == 0
+# Only set the Gitea token env var if the gitea custom resource was created
+- name: Set Gitea token env var for the webapp
+  block:
+    - 
+      name: Get Gitea token from the gitea custom resource
+      shell: oc describe Gitea gitea -n gitea | grep 'Token' | awk '{print $4}'
+      register: get_gitea_token_cmd
+    - 
+      name: Set webapp Gitea token env var
+      shell: oc set env dc/tutorial-web-app GITEA_TOKEN="{{ get_gitea_token_cmd.stdout }}" -n {{ webapp_namespace }}
+  when: check_webapp_installed_cmd.rc == 0 and create_gitea_custom_resource_cmd.rc == 0
