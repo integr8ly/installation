@@ -1,0 +1,109 @@
+[local:vars]
+ansible_connection=local
+
+# The openshift apps suffix
+ocp_apps_domain="{{eval_app_host}}"
+seed_user_count="{{eval_seed_users_count}}"
+
+# Cluster RHSSO Variables
+
+# The password for the admin user in admin realm
+rhsso_admin_password="{{eval_rhsso_admin_password}}"
+# The admin user for the admin realm
+rhsso_admin_user="{{eval_rhsso_admin_username}}"
+# The route to the cluster RH-SSO
+rhsso_route="{{rhsso_secure_route}}"
+# The realm being used for logging into the cluster
+rhsso_realm="{{rhsso_realm}}"
+# The admin realm 
+rhsso_admin_realm="{{rhsso_admin_realm}}"
+# The evals cluster admin email
+rhsso_cluster_admin_email="{{rhsso_cluster_admin_email}}"
+# The evals cluster admin username
+rhsso_cluster_admin_username="{{ rhsso_cluster_admin_email }}"
+# The evals cluster admin password
+rhsso_cluster_admin_password="{{rhsso_cluster_admin_password}}"
+# The namespace the cluster rhsso is installed into 
+rhsso_namespace="{{eval_rhsso_namespace}}"
+# This is the number of evals users we set up for the cluster
+rhsso_seed_users_count="{{eval_seed_users_count}}"
+# This is the format used for the seed user emails
+rhsso_seed_users_email_format={{rhsso_seed_users_email_format}}
+# This is the format used for the usernames
+rhsso_seed_users_name_format={{rhsso_seed_users_name_format}}
+
+# 3scale Variables
+
+# The namespace threescale is deployed too
+threescale_namespace="{{threescale_namespace}}"
+# The RHSSO client id used by threescale
+threescale_sso_client_id="{{threescale_sso_client_id}}"
+# The cluster admin for threescale (logged in via rhsso)
+threescale_cluster_admin_username="{{threescale_cluster_admin_username}}"
+# the master token used for api calls to threescale
+threescale_master_token="{{threescale_master_token}}"
+# the admin token used for api calls to threescale
+threescale_admin_token="{{threescale_admin_token}}"
+# the threescale admin route 
+threescale_system_admin_route="{{threescale_system_admin_route}}"
+# the realm where threescale checks for users
+threescale_sso_realm="{{threescale_sso_realm}}"
+
+# CHE Variables
+
+# The namespace che is installed to 
+che_namespace="{{che_namespace}}"
+# The route for che api 
+che_route="{{che_route}}"
+# The realm che uses for auth 
+che_keycloak_realm="{{eval_launcher_sso_realm}}"
+# the keycloak client to use for getting a token to act against che API
+che_keycloak_client_id="{{che_keycloak_client_id}}"
+# the keycloak route for che authentication
+che_keycloak_route="{{launcher_sso_route}}"
+# The che admin keycloak password to get an auth token to interact with the che API
+che_keycloak_password="{{eval_launcher_sso_admin_password}}"
+# The che admin keycloak user to get an auth token to interact with the che API
+che_keycloak_user="{{eval_launcher_sso_admin_username}}"
+# che launcher realm admin 
+che_launcher_sso_username="{{launcher_sso_admin_username}}"
+# che launcher realm admin password 
+che_launcher_sso_password="{{launcher_sso_admin_password}}"
+
+
+
+# Nexus Variables
+nexus_namespace="{{nexus_namespace}}"
+
+# Launcher Variables
+launcher_namespace="{{launcher_namespace}}"
+# Launcher Route 
+launcher_route="{{launcher_route}}"
+# launchers sso route 
+launcher_sso_route="{{launcher_sso_route}}"
+# The launcher admin sso password
+launcher_sso_password="{{eval_launcher_sso_admin_password}}"
+# The launcher admin sso user
+launcher_sso_user="{{eval_launcher_sso_admin_username}}"
+
+# GITEA
+# the namespace gittea is installed into
+gitea_namespace="{{gitea_namespace}}"
+# the route to gitea
+gitea_route="{{gitea_route}}"
+
+
+# WEB APP 
+webapp_namespace="{{webapp_namespace}}"
+webapp_route="{{webapp_route}}"
+webapp_extra_services_configmap="{{webapp_extra_services_configmap}}"
+
+# EnMasse
+
+enmasse_namespace="{{enmasse_namespace}}"
+enmasse_rest_route="{{enmasse_rest_route}}"
+
+
+[local]
+127.0.0.1
+
