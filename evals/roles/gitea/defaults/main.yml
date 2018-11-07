@@ -1,6 +1,8 @@
 gitea_namespace: gitea
-
+gitea_resource_tag: master # Will need to point at tagged version
 gitea_resources:
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/master/deploy/rbac.yaml # Will need to point at tagged version
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/master/deploy/crd.yaml # Will need to point at tagged version
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/master/deploy/operator.yaml # Will need to point at tagged version
+  - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_resource_tag}}/deploy/rbac.yaml
+  - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_resource_tag}}/deploy/crd.yaml
+  - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_resource_tag}}/deploy/operator.yaml
+
+webapp_namespace: webapp

@@ -4,3 +4,6 @@
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
   changed_when: output.rc == 0
+
+- name: "Delete Gitea token env var from the webapp"
+  shell: oc env dc/tutorial-web-app GITEA_TOKEN- -n {{ webapp_namespace }}
