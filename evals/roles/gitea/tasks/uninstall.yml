@@ -5,5 +5,11 @@
   failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
   changed_when: output.rc == 0
 
+- name: "Check if webapp is available"
+  shell: oc get dc/tutorial-web-app -n {{ webapp_namespace }}
+  register: check_webapp_available_cmd
+  failed_when: false
+  
 - name: "Delete Gitea token env var from the webapp"
   shell: oc env dc/tutorial-web-app GITEA_TOKEN- -n {{ webapp_namespace }}
+  when: check_webapp_available_cmd.rc == 0
