@@ -1,0 +1,71 @@
+- name: Ensure template folder exists
+  file:
+    path: "{{ apicurio_template_folder }}/crds"
+    state: directory
+
+- name: Write templates in target "{{ apicurio_template_folder }}"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ apicurio_template_folder }}/{{ item }}"
+  with_items:
+    - service_account.yaml
+    - role.yaml
+    - role_binding.yaml
+    - operator.yaml
+    - crds/integreatly_v1alpha1_apicuriodeployment_crd.yaml
+    - crds/integreatly_v1alpha1_apicuriodeployment_cr.yaml
+
+- name: Create apicurio namespace
+  shell: "oc new-project {{ apicurio_namespace }}"
+  failed_when: project_cmd.rc != 0 and project_cmd.rc != 1
+  register: project_cmd
+
+-
+  name:  Check if operator is already deployed
+  shell: "oc get dc -l app=apicurio-operator -o jsonpath='{.items[0].metadata.name}' -n {{ apicurio_namespace }}"
+  register: apicurio_operator_cmd
+  failed_when: false
+
+- name: Apply apicurio operator dependencies
+  shell: "oc apply -f {{ item }} -n {{ apicurio_namespace }}"
+  args:
+    chdir: "{{ apicurio_template_folder }}"
+  with_items:
+    - service_account.yaml
+    - role.yaml
+    - role_binding.yaml
+
+- name: Apply apicurio deployment CRD and CR
+  shell: "oc apply -f {{ item }} -n {{ apicurio_namespace }}"
+  args:
+    chdir: "{{ apicurio_template_folder }}/crds"
+  with_items:
+    - integreatly_v1alpha1_apicuriodeployment_crd.yaml
+    - integreatly_v1alpha1_apicuriodeployment_cr.yaml
+
+- name: Deploy apicurio operator
+  block:
+    - name: Apply apicurio operator template
+      shell: "oc apply \
+        -f operator.yaml \
+        -n {{ apicurio_namespace }}"
+      args:
+        chdir: "{{ apicurio_template_folder }}"
+    - name: Wait for apicurio operator deployment
+      shell: sleep 5; oc get pods --n {{ apicurio_namespace }}  |  grep  "deploy"
+      register: result
+      until: not result.stdout
+      retries: 50
+      delay: 10
+      failed_when: result.stdout
+      changed_when: False
+  when: apicurio_operator_cmd.rc != 0
+
+- name: Wait for apicurio deployment
+  shell: sleep 5; oc get pods --n {{ apicurio_namespace }}  |  grep  "deploy"
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False

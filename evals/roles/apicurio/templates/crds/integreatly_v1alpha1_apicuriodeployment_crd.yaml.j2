@@ -1,0 +1,49 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: apicuriodeployments.integreatly.org
+spec:
+  group: integreatly.org
+  names:
+    kind: ApicurioDeployment
+    listKind: ApicurioDeploymentList
+    plural: apicuriodeployments
+    singular: apicuriodeployment
+  scope: Namespaced
+  version: v1alpha1
+  additionalPrinterColumns:
+    - name: status
+      description: apicurio deployment current status
+      type: string
+      JSONPath: .status.message
+    - name: version
+      type: string
+      description: apicurio version
+      JSONPath: .spec.version
+    - name: created
+      description: apicurio deployment date creation
+      type: date
+      JSONPath: .metadata.creationTimestamp
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          properties:
+            template:
+              type: string
+            version:
+              type: string
+            app_domain:
+              type: string
+            external_auth_url:
+              type: string
+            auth_realm:
+              type: string
+            jvm_heap:
+              type: array
+            mem_limit:
+              type: array
+          required:
+            - template
+            - version
+            - app_domain

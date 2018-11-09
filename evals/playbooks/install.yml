@@ -20,7 +20,7 @@
   gather_facts: true
   tasks:
     - name: Expose vars
-      include_vars: "../roles/nexus/defaults/main.yml"    
+      include_vars: "../roles/nexus/defaults/main.yml"
     - name: Install Nexus
       include_role:
         name: nexus
@@ -28,7 +28,7 @@
       tags: ['nexus']
     - name: Expose vars
       include_vars: "../roles/rhsso/defaults/main.yml"
-    - 
+    -
       name: Install launcher SSO
       include_role:
         name: launcher
@@ -75,9 +75,9 @@
       name: Set eval_app_host var
       set_fact:
         eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
-    
+
     - name: Expose vars
-      include_vars: "../roles/launcher/defaults/main.yml"        
+      include_vars: "../roles/launcher/defaults/main.yml"
     -
       name: Install launcher
       include_role:
@@ -118,8 +118,8 @@
       tags: ['bootstrap']
 
     - name: Expose vars
-      include_vars: "../roles/che/defaults/main.yml"                    
-    - 
+      include_vars: "../roles/che/defaults/main.yml"
+    -
       name: Install che
       include_role:
         name: che
@@ -145,9 +145,9 @@
         che_keycloak_host: "{{ eval_launcher_sso_host }}"
       tags: ['che']
       when: eval_action == 'uninstall'
-    
+
     - name: Expose vars
-      include_vars: "../roles/3scale/defaults/main.yml"              
+      include_vars: "../roles/3scale/defaults/main.yml"
     -
       name: Install 3Scale
       include_role:
@@ -156,7 +156,17 @@
         threescale_route_suffix: "{{ eval_app_host }}"
       tags: ['3scale']
     - name: Expose vars
-      include_vars: "../roles/webapp/defaults/main.yml"                
+      include_vars: "../roles/webapp/defaults/main.yml"
+    -
+      name: Install apicurio
+      include_role:
+        name: apicurio
+      vars:
+        apicurio_app_domain: "{{ eval_app_host }}"
+        apicurio_kc_host: "{{ eval_rhsso_host }}"
+        apicurio_kc_username: "{{ eval_rhsso_admin_username }}"
+        apicurio_kc_password: "{{ eval_rhsso_admin_password }}"
+      tags: ['apicurio']
     -
       name: Install webapp
       include_role:
@@ -167,8 +177,8 @@
       when: eval_action == 'install'
 
     - name: Expose vars
-      include_vars: "../roles/gitea/defaults/main.yml"              
-    - 
+      include_vars: "../roles/gitea/defaults/main.yml"
+    -
       name: Install Gitea
       include_role:
         name: gitea
