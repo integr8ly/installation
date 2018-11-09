@@ -1,0 +1,45 @@
+---
+- name: Ensure template folder exists
+  file:
+    path: "{{ apicurio_template_folder }}/keycloak"
+    state: directory
+
+- name: Set apicurio keycloak redirect uris
+  set_fact:
+    apicurio_kc_redirect_uris: "{{ apicurio_kc_redirect_uris | default([]) + [item] }}"
+  with_items:
+    - "{{ apicurio_studio_basename }}.{{ apicurio_app_domain }}"
+    - "{{ apicurio_studio_basename }}.{{ apicurio_app_domain }}/*"
+    - "{{ apicurio_api_basename }}.{{ apicurio_app_domain }}"
+    - "{{ apicurio_api_basename }}.{{ apicurio_app_domain }}/*"
+
+- name: Write keycloak client template in target "{{ apicurio_template_folder }}"
+  template:
+    src: "keycloak/client.json.j2"
+    dest: "{{ apicurio_template_folder }}/keycloak/client.json"
+
+- name: Set apicurio keycloak client path var
+  set_fact:
+    apicurio_kc_cient_json_path: "{{ apicurio_template_folder }}/keycloak/client.json"
+
+- name: Generate RH-SSO auth token for admin user
+  uri:
+    url: "https://{{ apicurio_kc_host }}/auth/realms/master/protocol/openid-connect/token"
+    method: POST
+    body: "client_id=admin-cli&username={{ apicurio_kc_username }}&password={{ apicurio_kc_password }}&grant_type=password"
+    validate_certs: "{{ apicurio_validate_certs }}"
+  register: apicurio_kc__auth_response
+  retries: 10
+  delay: 2
+  until: apicurio_kc__auth_response.status == 200
+
+- name: Create public client in {{ apicurio_kc_realm }} realm
+  uri:
+    url: "https://{{ apicurio_kc_host }}/auth/admin/realms/{{ apicurio_kc_realm }}/clients"
+    method: POST
+    body: "{{ lookup('file', apicurio_kc_cient_json_path) }}"
+    validate_certs: "{{ apicurio_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ apicurio_kc__auth_response.json.access_token }}"
+    status_code: [201, 409]

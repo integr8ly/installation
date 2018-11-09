@@ -143,6 +143,23 @@
       vars:
         threescale_route_suffix: "{{ eval_app_host }}"
       tags: ['3scale']
+    - 
+      name: Install Gitea
+      include_role:
+        name: gitea
+      vars:
+        gitea_route_suffix: "{{ eval_app_host }}"
+      tags: ['gitea']
+    - 
+      name: Install apicurio
+      include_role:
+        name: apicurio
+      vars:
+        apicurio_app_domain: "{{ eval_app_host }}"
+        apicurio_kc_host: "{{ eval_rhsso_host }}"
+        apicurio_kc_username: "{{ eval_rhsso_admin_username }}"
+        apicurio_kc_password: "{{ eval_rhsso_admin_password }}"
+      tags: ['apicurio']
     -
       name: Install webapp
       include_role:

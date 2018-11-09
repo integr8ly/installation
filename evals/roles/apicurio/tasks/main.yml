@@ -1,0 +1,6 @@
+---
+- name: Create keycloak client
+  import_tasks: keycloak-client.yml
+
+- name: Install apicurio
+  import_tasks: install.yml

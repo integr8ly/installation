@@ -1,0 +1,17 @@
+apicurio_template_folder: /tmp/apicurio
+apicurio_kc_client_id: apicurio-studio
+apicurio_namespace: apicurio
+apicurio_operator_image: "quay.io/integreatly/apicurio-operator:latest"
+apicurio_operator_image_pull_policy: Always
+apicurio_version: 0.2.18.Final
+apicurion_jvm_heap_min: 768m
+apicurion_jvm_heap_max: 2048m
+apicurio_api_mem_request: 800mi
+apicurio_api_mem_limit: 2048m
+apicurio_basename: apicurio-studio
+apicurio_studio_basename: "{{ apicurio_basename }}"
+apicurio_api_basename: "{{ apicurio_basename }}-api"
+apicurio_ws_basename: "{{ apicurio_basename }}-ws"
+apicurio_kc_realm: openshift
+apicurio_validate_certs: false
+apicurio_template: apicurio-template.yml
