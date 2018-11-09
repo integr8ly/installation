@@ -1,0 +1,52 @@
+---
+# CLEANUP FUSE OPERATOR AND FUSE ON OPENSHIFT IMAGE STREAMS
+- name: Generate fuse operator image stream template
+  template:
+    src: "fuse-operator.yml.j2"
+    dest: /tmp/fuse-operator.yml
+
+- name: Delete Fuse image streams
+  shell: "oc delete -f {{ item }} -n openshift"
+  register: delete_fuse_imagestream_cmd
+  failed_when: delete_fuse_imagestream_cmd.stderr != '' and 'NotFound' not in delete_fuse_imagestream_cmd.stderr
+  changed_when: delete_fuse_imagestream_cmd.rc == 0
+  with_items:
+    - "/tmp/fuse-operator.yml"
+    - "{{ fuse_operator_imagestreams_url }}"
+    - "{{ fuse_on_openshift_imagestreams_url }}"
+
+
+# CLEANUP FUSE ON OPENSHIFT TEMPLATES
+- name: Delete Fuse quickstart templates
+  shell: oc delete -f {{ fuse_templates_url }}/{{ item }} -n openshift
+  with_items:
+    - "eap-camel-amq-template.json"
+    - "eap-camel-cdi-template.json"
+    - "eap-camel-cxf-jaxrs-template.json"
+    - "eap-camel-cxf-jaxws-template.json"
+    - "eap-camel-jpa-template.json"
+    - "karaf-camel-amq-template.json"
+    - "karaf-camel-log-template.json"
+    - "karaf-camel-rest-sql-template.json"
+    - "karaf-cxf-rest-template.json"
+    - "spring-boot-camel-amq-template.json"
+    - "spring-boot-camel-config-template.json"
+    - "spring-boot-camel-drools-template.json"
+    - "spring-boot-camel-infinispan-template.json"
+    - "spring-boot-camel-rest-sql-template.json"
+    - "spring-boot-camel-teiid-template.json"
+    - "spring-boot-camel-template.json"
+    - "spring-boot-camel-xa-template.json"
+    - "spring-boot-camel-xml-template.json"
+    - "spring-boot-cxf-jaxrs-template.json"
+    - "spring-boot-cxf-jaxws-template.json"
+  register: delete_fuse_quickstart_template_cmd
+  failed_when: delete_fuse_quickstart_template_cmd.stderr != '' and 'NotFound' not in delete_fuse_quickstart_template_cmd.stderr
+
+- name: Delete Fuse Console templates
+  shell: oc delete -f {{ fuse_templates_hawtio_url }}/{{ item }} -n openshift
+  with_items:
+    - "fis-console-cluster-template.json"
+    - "fis-console-namespace-template.json"
+  register: delete_fuse_console_template_cmd
+  failed_when: delete_fuse_console_template_cmd.stderr != '' and 'NotFound' not in delete_fuse_console_template_cmd.stderr

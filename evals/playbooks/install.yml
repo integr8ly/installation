@@ -209,6 +209,11 @@
     - name: Reboot template broker
       include_role:
         name: reboot_template_broker
+    - 
+      name: Setup Fuse on OpenShift
+      include_role:
+        name: fuse
+      tags: ['fuse']
 
 - hosts: master
   gather_facts: no
