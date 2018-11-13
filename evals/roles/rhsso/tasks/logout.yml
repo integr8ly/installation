@@ -15,7 +15,7 @@
 - name: Set loggingPublicURL in exported webconsole configmap
   replace:
     path: "/tmp/{{ rhsso_openshift_webconsole_configmap }}.yaml"
-    regexp: 'logoutPublicURL: \'''
+    regexp: "logoutPublicURL: ''"
     replace: "logoutPublicURL: https://{{ rhsso_route }}/auth/realms/{{ rhsso_realm }}/protocol/openid-connect/logout?redirect_uri={{ rhsso_redirect_uri }}/console"
   when: rhsso_openshift_update_webconsole_configmap
 
