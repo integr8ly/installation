@@ -152,7 +152,7 @@ objects:
       provider: snowdrop
       version: "BOOSTER_VERSION"
       group: io.openshift.booster
-    name: spring-boot-rest-http-crud
+    name: crud
   spec:
     port:
       targetPort: 8080
