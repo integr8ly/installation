@@ -23,7 +23,9 @@
     src: "{{ item }}.j2"
     dest: /tmp/{{ item }}
   with_items:
-    - rbac.yaml
+    - service_account.yaml
+    - role.yaml
+    - role_binding.yaml
     - crd.yaml
     - cr.yaml
     - operator.yaml
@@ -31,7 +33,9 @@
 - name: Deploy operator resources
   shell: "oc apply -f /tmp/{{ item }} -n {{ threescale_namespace }}"
   with_items:
-    - rbac.yaml
+    - service_account.yaml
+    - role.yaml
+    - role_binding.yaml
     - crd.yaml
     - cr.yaml
     - operator.yaml
