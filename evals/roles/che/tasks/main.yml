@@ -8,10 +8,16 @@
   failed_when: project_cmd.rc != 0 and project_cmd.rc != 1
 
 -
+  name: Remove LimitRange if any is defined
+  shell: oc delete LimitRange/che-core-resource-limits -n {{ che_namespace }}
+  register: limitrange_cmd
+  failed_when: limitrange_cmd.rc != 0 and limitrange_cmd.rc != 1
+
+-
   name: Create infra namespace
   shell: "oc new-project {{ che_infra_namespace }}"
   register: project_infra_cmd
-  failed_when: project_cmd.rc != 0 and project_cmd.rc != 1
+  failed_when: project_infra_cmd.rc != 0 and project_infra_cmd.rc != 1
   when: che_infra_namespace is defined
 
 -
