@@ -1,4 +1,11 @@
 ---
+- name: Get RH-SSO secure route
+  local_action: command oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ rhsso_namespace }}
+  register: rhsso_secure_route
+
+- set_fact:
+    rhsso_route: "{{ rhsso_secure_route.stdout }}"
+
 - name: Check if loggingPublicURL parameter already set
   shell: oc get configmap {{ rhsso_openshift_webconsole_configmap }} -o yaml -n {{ rhsso_openshift_webconsole_namespace }} | grep {{ rhsso_route }}
   register: webconsole_configmap_rhsso

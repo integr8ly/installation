@@ -9,7 +9,7 @@
   register: openshift_host
 
 - name: Get SSO route
-  shell: oc get route secure-sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
+  shell: oc get route sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
   register: sso_route
 
 - name: Generate operator template files
