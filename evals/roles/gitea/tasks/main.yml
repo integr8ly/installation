@@ -24,14 +24,12 @@
   failed_when: create_gitea_custom_resource_cmd.stderr != '' and 'AlreadyExists' not in create_gitea_custom_resource_cmd.stderr
   changed_when: create_gitea_custom_resource_cmd.rc == 0
 
-- name: Wait for Gitea pods to be ready
-  shell: sleep 5; oc get pods --namespace {{ gitea_namespace }}  |  grep  "0/1"
-  register: gitea_pods_not_ready
-  until: not gitea_pods_not_ready.stdout
-  retries: 20
+- name: "Wait for Gitea pods to be ready"
+  shell: "oc get pods --namespace={{ gitea_namespace }} --selector='deployment=gitea' -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w"
+  register: gitea_result
+  until: gitea_result.stdout.find("1") != -1
+  retries: 30
   delay: 5
-  failed_when: gitea_pods_not_ready.stdout
-  changed_when: False
 
 - name: Get the name of the gitea pod
   shell: oc get pods --selector='deployment=gitea' -o jsonpath='{.items[0].metadata.name}'
@@ -66,7 +64,7 @@
 
 - name: Extract sha value from admin token result
   set_fact:
-    gitea_token: "{{ admin_token_result.json | from_json | json_query('sha1') }}"
+    gitea_token: "{{ admin_token_result.json | json_query('sha1') }}"
 
 - name: Print out the gitea admin token
   debug:
