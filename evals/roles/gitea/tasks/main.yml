@@ -39,7 +39,7 @@
 
 - name: Create a random password for the gitea admin user
   set_fact:
-    - gitea_admin_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+    gitea_admin_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 
 - name: Print out the gitea admin password in the installer logs
   debug:
@@ -50,17 +50,23 @@
 
 - name: Create an admin token for the admin user
   uri:
-    url: "http://{{ gitea_admin_username }}:{{ gitea_admin_password }}@{{ gitea_namespace }}.{{ gitea_route_suffix }}/api/v1/users/{{ gitea_admin_username }}/tokens"
-    method: post
+    url: "http://{{ gitea_namespace }}.{{ gitea_route_suffix }}/api/v1/users/{{ gitea_admin_username }}/tokens"
+    method: POST
     headers:
       Accept: "application/json"
       Content-Type: "application/json"
-    body: '{"name": "adminkey"}'
+    body: {"name": "admintoken"}
+    body_format: json
+    force_basic_auth: yes
+    user: "{{ gitea_admin_username }}"
+    password: "{{ gitea_admin_password }}"
+    return_content: yes
+    status_code: 201
   register: admin_token_result
 
 - name: Extract sha value from admin token result
   set_fact:
-    gitea_token: "{{ admin_token_result.stdout | from_json | json_query('sha1') }}"
+    gitea_token: "{{ admin_token_result.json | from_json | json_query('sha1') }}"
 
 - name: Print out the gitea admin token
   debug:

@@ -1,5 +1,5 @@
 gitea_namespace: gitea
-gitea_resource_tag: master # Will need to point at tagged version
+gitea_resource_tag: admin-user # Will need to point at tagged version
 gitea_resources:
   - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_resource_tag}}/deploy/service_account.yaml
   - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_resource_tag}}/deploy/role.yaml
