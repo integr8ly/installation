@@ -49,8 +49,9 @@
   shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ gitea_admin_username }} --password={{ gitea_admin_password }} --admin --email=pbraun@redhat.com --config /home/gitea/conf/app.ini"
 
 - name: Create an admin token for the admin user
-  uri: "http://{{ gitea_admin_username }}:{{ gitea_admin_password }}@{{ gitea_namespace }}.{{ gitea_route_suffix }}/api/v1/users/giteaadmin/tokens"
-    method: POST
+  uri:
+    url: "http://{{ gitea_admin_username }}:{{ gitea_admin_password }}@{{ gitea_namespace }}.{{ gitea_route_suffix }}/api/v1/users/{{ gitea_admin_username }}/tokens"
+    method: post
     headers:
       Accept: "application/json"
       Content-Type: "application/json"
