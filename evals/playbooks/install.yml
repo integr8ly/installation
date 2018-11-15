@@ -203,10 +203,10 @@
       include_role:
         name: amq
       tags: ['amq']
-    - name: Install walkthrough 1
+    - name: Install walkthroughs
       include_role:
         name: walkthroughs
-        tasks_from: walkthrough_1
+        tasks_from: walkthroughs
     - name: Reboot template broker
       include_role:
         name: reboot_template_broker

@@ -4,6 +4,6 @@
   tasks:
     - include_role:
         name: walkthroughs
-        tasks_from: walkthrough_1
+        tasks_from: walkthroughs
     - include_role:
         name: reboot_template_broker

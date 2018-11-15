@@ -1,0 +1,7 @@
+---
+- name: Add walkthrough apps to the catalog
+  include_tasks: '{{ item  }}.yml'
+  with_items:
+    - "messaging_work_queue_nodejs"
+    - "crud_spboot_example"
+    - "location_soap"
