@@ -5,6 +5,10 @@
   register: gitea_create_namespace_cmd
   failed_when: gitea_create_namespace_cmd.stderr != '' and 'AlreadyExists' not in gitea_create_namespace_cmd.stderr
 
+# oc exec doesn't accept a namespace argument so make sure we are using the correct one
+- name: Make sure we are using the gitea namespace
+  shell: "oc project {{ gitea_namespace }}"
+
 - name: Create Gitea resources
   shell: oc apply -f {{ item }} -n {{ gitea_namespace }}
   with_items: "{{ gitea_resources }}"
@@ -28,7 +32,7 @@
   delay: 5
 
 - name: Get the name of the gitea pod
-  shell: oc get pods --selector='deployment=gitea' -o jsonpath='{.items[0].metadata.name}'
+  shell: "oc get pods --namespace={{ gitea_namespace }} --selector='deployment=gitea' -o jsonpath='{.items[0].metadata.name}'"
   register: gitea_pod_name
 
 - name: Create a random password for the gitea admin user
@@ -41,15 +45,46 @@
 
 - name: Create the gitea admin user
   shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ gitea_admin_username }} --password={{ gitea_admin_password }} --admin --email=pbraun@redhat.com --config /home/gitea/conf/app.ini"
+  register: create_admin_user_cmd
+  failed_when: create_admin_user_cmd.stderr != '' and 'already exists' not in create_admin_user_cmd.stderr
+  changed_when: create_admin_user_cmd.rc == 0
 
-- name: Create an admin token for the admin user
+- name: Update the admin user password in case it was regenerated
+  shell: oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin change-password --username={{ gitea_admin_username }} --password={{ gitea_admin_password }} --config /home/gitea/conf/app.ini
+
+- name: Fetch all old tokens
+  uri:
+    url: "http://{{ gitea_namespace }}.{{ gitea_route_suffix }}/api/v1/users/{{ gitea_admin_username }}/tokens"
+    method: GET
+    headers:
+      Accept: "application/json"
+      Content-Type: "application/json"
+    force_basic_auth: yes
+    user: "{{ gitea_admin_username }}"
+    password: "{{ gitea_admin_password }}"
+  register: gitea_old_access_tokens
+
+- name: Delete all old access tokens
+  uri:
+    url: "http://{{ gitea_namespace }}.{{ gitea_route_suffix }}/api/v1/users/{{ gitea_admin_username }}/tokens/{{ item.id }}"
+    method: DELETE
+    headers:
+      Accept: "application/json"
+      Content-Type: "application/json"
+    force_basic_auth: yes
+    user: "{{ gitea_admin_username }}"
+    password: "{{ gitea_admin_password }}"
+    status_code: 204
+  with_items: "{{ gitea_old_access_tokens.json }}"
+
+- name: Create a new admin token for the admin user
   uri:
     url: "http://{{ gitea_namespace }}.{{ gitea_route_suffix }}/api/v1/users/{{ gitea_admin_username }}/tokens"
     method: POST
     headers:
       Accept: "application/json"
       Content-Type: "application/json"
-    body: {"name": "admintoken"}
+    body: {"name": "{{ gitea_admin_token }}"}
     body_format: json
     force_basic_auth: yes
     user: "{{ gitea_admin_username }}"
@@ -68,6 +103,9 @@
 
 - name: Create gitea walkthrough users
   shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name=evals{{ item }} --password=Password1 --email=evals{{ item }}@example.com --config /home/gitea/conf/app.ini"
+  register: create_walkthrough_user_cmd
+  failed_when: create_walkthrough_user_cmd.stderr != '' and 'already exists' not in create_walkthrough_user_cmd.stderr
+  changed_when: create_walkthrough_user_cmd.rc == 0
   with_sequence: count={{ eval_seed_users_count }}
 
 # SET GITEA TOKEN ENV VAR IN THE WEBAPP 
