@@ -137,7 +137,7 @@ provisioned previously. It needs to know the route of the SSO. This can be
 retrieved using:
 
 ```shell
-oc get route secure-sso -o jsonpath='{.spec.host}' -n rhsso
+oc get route sso -o jsonpath='{.spec.host}' -n rhsso
 ```
 
 It also needs to know the realm to interact with. By default this would be

@@ -35,22 +35,11 @@
   shell: "oc get pods --namespace={{ gitea_namespace }} --selector='deployment=gitea' -o jsonpath='{.items[0].metadata.name}'"
   register: gitea_pod_name
 
-- name: Create a random password for the gitea admin user
-  set_fact:
-    gitea_admin_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
-
-- name: Print out the gitea admin password in the installer logs
-  debug:
-    msg: "Gitea Admin credentials are {{ gitea_admin_username }} / {{ gitea_admin_password }}"
-
 - name: Create the gitea admin user
-  shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ gitea_admin_username }} --password={{ gitea_admin_password }} --admin --email=pbraun@redhat.com --config /home/gitea/conf/app.ini"
+  shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ gitea_admin_username }} --password={{ gitea_admin_password }} --admin --email=admin@example.com --config /home/gitea/conf/app.ini"
   register: create_admin_user_cmd
   failed_when: create_admin_user_cmd.stderr != '' and 'already exists' not in create_admin_user_cmd.stderr
   changed_when: create_admin_user_cmd.rc == 0
-
-- name: Update the admin user password in case it was regenerated
-  shell: oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin change-password --username={{ gitea_admin_username }} --password={{ gitea_admin_password }} --config /home/gitea/conf/app.ini
 
 - name: Fetch all old tokens
   uri:
@@ -108,6 +97,20 @@
   changed_when: create_walkthrough_user_cmd.rc == 0
   with_sequence: count={{ eval_seed_users_count }}
 
+- name: Create a user for the evals admin
+  shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name=evals-admin --password=Password1 --email=evals-admin@example.com --config /home/gitea/conf/app.ini"
+  register: create_eval_admin_user_cmd
+  failed_when: create_eval_admin_user_cmd.stderr != '' and 'already exists' not in create_eval_admin_user_cmd.stderr
+  changed_when: create_eval_admin_user_cmd.rc == 0
+
+- name: Get the gitea ingress host
+  shell: oc get ingress --namespace=gitea --selector='app=gitea' -o jsonpath='{.items[0].spec.rules[0].host}'
+  register: gitea_ingress_host
+
+- name: Set gitea host as webapp env var
+  shell: oc set env dc/tutorial-web-app GITEA_HOST="{{ gitea_ingress_host.stdout }}" -n {{ webapp_namespace }} --overwrite=true
+  when: gitea_ingress_host.stdout != ''
+
 # SET GITEA TOKEN ENV VAR IN THE WEBAPP 
 - name: Check if webapp is installed
   shell: oc get dc/tutorial-web-app -n {{ webapp_namespace }}
@@ -116,5 +119,5 @@
 
 # Only set the Gitea token env var if the gitea custom resource was created
 - name: Set Gitea token env var for the webapp
-  shell: oc set env dc/tutorial-web-app GITEA_TOKEN="{{ gitea_token }}" -n {{ webapp_namespace }}
-  when: check_webapp_installed_cmd.rc == 0 and create_gitea_custom_resource_cmd.rc == 0
+  shell: oc set env dc/tutorial-web-app GITEA_TOKEN="{{ gitea_token }}" -n {{ webapp_namespace }} --overwrite=true
+  when: check_webapp_installed_cmd.rc == 0

@@ -1,0 +1,28 @@
+---
+- name: "[user generation: {{ username }}] load template json"
+  include_vars:
+    file: "{{ template }}"
+    name: template_json
+
+- name: "[user generation: {{ username }}] Generate user json"
+  template:
+    src: user_template.json.j2
+    dest: /tmp/user_template.json
+
+- name: "[user generation: {{ username }}] load user json"
+  include_vars:
+    file: /tmp/user_template.json
+    name: user_json
+
+- name: "[user generation: {{ username }}] add user to realm template {{template}}"
+  json_modify:
+    data: "{{ template_json }}"
+    pointer: "/spec/users"
+    action: extend
+    extend: 
+      - "{{ user_json }}"
+  register: modified_template_json
+
+- name: "[user generation: {{ username }}] update template on disk"
+  copy: content="{{ modified_template_json.result | to_nice_json }}" dest="{{ template }}"
+
