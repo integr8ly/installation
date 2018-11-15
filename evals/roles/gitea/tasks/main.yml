@@ -33,6 +33,38 @@
   failed_when: gitea_pods_not_ready.stdout
   changed_when: False
 
+- name: Get the name of the gitea pod
+  shell: oc get pods --selector='deployment=gitea' -o jsonpath='{.items[0].metadata.name}'
+  register: gitea_pod_name
+
+- name: Create a random password for the gitea admin user
+  set_fact:
+    - gitea_admin_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+
+- name: Print out the gitea admin password in the installer logs
+  debug:
+    msg: "Gitea Admin credentials are {{ gitea_admin_username }} / {{ gitea_admin_password }}"
+
+- name: Create the gitea admin user
+  shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ gitea_admin_username }} --password={{ gitea_admin_password }} --admin --email=pbraun@redhat.com --config /home/gitea/conf/app.ini"
+
+- name: Create an admin token for the admin user
+  uri: "http://{{ gitea_admin_username }}:{{ gitea_admin_password }}@{{ gitea_namespace }}.{{ gitea_route_suffix }}/api/v1/users/giteaadmin/tokens"
+    method: POST
+    headers:
+      Accept: "application/json"
+      Content-Type: "application/json"
+    body: '{"name": "adminkey"}'
+  register: admin_token_result
+
+- name: Extract sha value from admin token result
+  set_fact:
+    gitea_token: "{{ admin_token_result.stdout | from_json | json_query('sha1') }}"
+
+- name: Print out the gitea admin token
+  debug:
+    msg: "Gitea admin token is {{ gitea_token }}"
+
 # SET GITEA TOKEN ENV VAR IN THE WEBAPP 
 - name: Check if webapp is installed
   shell: oc get dc/tutorial-web-app -n {{ webapp_namespace }}
@@ -41,12 +73,5 @@
 
 # Only set the Gitea token env var if the gitea custom resource was created
 - name: Set Gitea token env var for the webapp
-  block:
-    - 
-      name: Get Gitea token from the gitea custom resource
-      shell: oc describe Gitea gitea -n gitea | grep 'Token' | awk '{print $4}'
-      register: get_gitea_token_cmd
-    - 
-      name: Set webapp Gitea token env var
-      shell: oc set env dc/tutorial-web-app GITEA_TOKEN="{{ get_gitea_token_cmd.stdout }}" -n {{ webapp_namespace }}
+  shell: oc set env dc/tutorial-web-app GITEA_TOKEN="{{ gitea_token }}" -n {{ webapp_namespace }}
   when: check_webapp_installed_cmd.rc == 0 and create_gitea_custom_resource_cmd.rc == 0
