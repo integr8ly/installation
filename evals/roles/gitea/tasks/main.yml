@@ -9,10 +9,6 @@
   shell: oc apply -f {{ item }} -n {{ gitea_namespace }}
   with_items: "{{ gitea_resources }}"
 
-- name: Generate Gitea token
-  set_fact:
-    gitea_token: "{{ 99999999999999 | random | hash('sha256') }}"
-
 - name: Generate Gitea custom resource template
   template:
     src: "gitea-cr.yml.j2"
@@ -69,6 +65,10 @@
 - name: Print out the gitea admin token
   debug:
     msg: "Gitea admin token is {{ gitea_token }}"
+
+- name: Create gitea walkthrough users
+  shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name=evals{{ item }} --password=Password1 --email=evals{{ item }}@example.com --config /home/gitea/conf/app.ini"
+  with_sequence: count={{ eval_seed_users_count }}
 
 # SET GITEA TOKEN ENV VAR IN THE WEBAPP 
 - name: Check if webapp is installed
