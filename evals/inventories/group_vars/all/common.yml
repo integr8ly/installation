@@ -11,3 +11,4 @@ eval_threescale_namespace: 3scale
 eval_launcher_namespace: launcher
 eval_launcher_sso_realm: launcher_realm
 eval_webapp_url_prefix: tutorial-web-app-webapp
+eval_seed_users_count: 50

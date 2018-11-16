@@ -32,7 +32,7 @@ rhsso_evals_admin_password: Password1
 
 rhsso_seed_users_email_format: evals%02d@example.com
 rhsso_seed_users_name_format: evals%02d@example.com
-rhsso_seed_users_count: 50
+rhsso_seed_users_count: "{{ eval_seed_users_count }}"
 rhsso_seed_users_password: Password1
 
 threescale_cluster_admin_email: admin@example.com
