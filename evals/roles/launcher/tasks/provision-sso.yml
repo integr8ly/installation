@@ -1,4 +1,13 @@
 ---
+- name: Check if namespace exists
+  shell: oc get namespace {{ launcher_namespace }}
+  failed_when: false
+  register: launcher_check_namespace_exists_cmd
+
+- name: Create launcher namespace
+  shell: oc new-project {{ launcher_namespace }}
+  when: launcher_check_namespace_exists_cmd.rc != 0
+
 - name: Check if deployment config {{ launcher_sso_prefix }} exists
   shell: "oc get dc {{ launcher_sso_prefix }} -n {{ launcher_namespace }}"
   failed_when: false

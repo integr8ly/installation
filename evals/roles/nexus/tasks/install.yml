@@ -28,6 +28,6 @@
     - name: Wait for nexus to be ready
       shell: "oc get pods -n {{ nexus_namespace }} | grep 'nexus' | grep -v 'deploy' | grep '1/1' | wc -l"
       register: nexus_pods
-      retries: 60
+      retries: 360
       delay: 5
       until: '"1" in nexus_pods.stdout'

@@ -60,6 +60,23 @@
   set_fact:
     threescale_client_secret: "{{ (ansible_date_time.epoch + threescale_namespace) | hash('sha512') }}"
 
+- name: "include launcher vars"
+  include_vars: ../../launcher/defaults/main.yml
+
+- name: Get Launcher SSO secure route
+  shell: oc get route/{{ launcher_sso_prefix }} -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
+  register: rhsso_secure_route
+  retries: 60
+  delay: 5
+  until: rhsso_secure_route.rc == 0
+
+- name: "Generate secret for launcher client"
+  set_fact:
+    launcher_client_secret: "{{ (ansible_date_time.epoch + launcher_namespace) | hash('sha512') }}"
+
+- set_fact:
+    launcher_sso_route: "{{ rhsso_secure_route.stdout }}"
+
 - name: "Create keycloak realm resource template"
   template:
     src: "keycloak-realm.json.j2"
@@ -74,7 +91,6 @@
   register: rhsso_kcr
   failed_when: rhsso_kcr.stderr != '' and 'AlreadyExists' not in rhsso_kcr.stderr
 
-
 - name: "Verify rhsso realm is provisioned"
   shell: sleep 5; oc get keycloakrealm {{ rhsso_realm }} -o template --template \{\{.status.phase\}\}  -n {{ rhsso_namespace }}  |  grep  'reconcile'
   register: result
@@ -88,4 +104,4 @@
   import_tasks: logout.yml
 
 - name: Add cluster admin role to evals admin
-  shell: oc adm policy add-cluster-role-to-user cluster-admin {{rhsso_evals_admin_username}}
+  shell: oc adm policy add-cluster-role-to-user cluster-admin {{rhsso_cluster_admin_username}}
