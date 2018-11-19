@@ -13,7 +13,7 @@
   register: running_nexus_pods
   failed_when: false
 
-- 
+-
   when: '"1" not in running_nexus_pods.stdout'
   block:
     - name: Deploy nexus
