@@ -107,10 +107,6 @@
   shell: oc get ingress --namespace=gitea --selector='app=gitea' -o jsonpath='{.items[0].spec.rules[0].host}'
   register: gitea_ingress_host
 
-- name: Set gitea host as webapp env var
-  shell: oc set env dc/tutorial-web-app GITEA_HOST="{{ gitea_ingress_host.stdout }}" -n {{ webapp_namespace }} --overwrite=true
-  when: gitea_ingress_host.stdout != ''
-
 # SET GITEA TOKEN ENV VAR IN THE WEBAPP
 - name: Check if webapp is installed
   shell: oc get dc/tutorial-web-app -n {{ webapp_namespace }}
@@ -121,3 +117,7 @@
 - name: Set Gitea token env var for the webapp
   shell: oc set env dc/tutorial-web-app GITEA_TOKEN="{{ gitea_token }}" -n {{ webapp_namespace }} --overwrite=true
   when: check_webapp_installed_cmd.rc == 0
+
+- name: Set gitea host as webapp env var
+  shell: oc set env dc/tutorial-web-app GITEA_HOST="http://{{ gitea_ingress_host.stdout }}" -n {{ webapp_namespace }} --overwrite=true
+  when: gitea_ingress_host.stdout != '' and check_webapp_installed_cmd.rc == 0
