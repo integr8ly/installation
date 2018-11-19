@@ -27,6 +27,25 @@
                         "view-profile"
                     ]
                 },
+                "outputSecret": "evals-admin-user-credentials"
+            },
+            {
+                "enabled":true,
+                "attributes":{},
+                "username":"{{ rhsso_cluster_admin_username }}",
+                "emailVerified":true,
+                "email":"{{ rhsso_cluster_admin_email }}",
+                "password": "{{ rhsso_cluster_admin_password }}",
+                "realmRoles": [
+                    "offline_access",
+                    "uma_authorization"
+                ],
+                "clientRoles": {
+                    "account": [
+                        "manage-account",
+                        "view-profile"
+                    ]
+                },
                 "outputSecret": "admin-user-credentials"
             },
             {
@@ -195,6 +214,133 @@
                         }
                     }
                 ]
+            },
+            {
+                "clientId": "{{launcher_sso_keycloak_client_id}}",
+                "id": "{{launcher_sso_keycloak_client_id}}",
+                "outputSecret": "{{launcher_sso_keycloak_client_id}}-client",
+                "secret": "{{launcher_client_secret}}",
+                "name": "Launcher Cloud Service Cluster Users",
+                "rootUrl": "https://{{ launcher_sso_route }}",
+                "adminUrl": "https://{{ launcher_sso_route }}",
+                "surrogateAuthRequired": false,
+                "enabled": true,
+                "clientAuthenticatorType": "client-secret",
+                "redirectUris": [
+                    "https://{{ launcher_sso_route }}",
+                    "https://{{ launcher_sso_route }}/*"
+                ],
+                "webOrigins": [
+                    "https://{{ launcher_sso_route }}",
+                    "https://{{ launcher_sso_route }}/*"
+                ],
+                "notBefore": 0,
+                "bearerOnly": false,
+                "consentRequired": false,
+                "standardFlowEnabled": true,
+                "implicitFlowEnabled": false,
+                "directAccessGrantsEnabled": false,
+                "serviceAccountsEnabled": false,
+                "publicClient": false,
+                "frontchannelLogout": false,
+                "protocol": "openid-connect",
+                "defaultRoles":[
+                    "read-token",
+                ],
+                "fullScopeAllowed": true,
+                "nodeReRegistrationTimeout": 0,
+                "protocolMappers": [
+                    {
+                        "name": "family name",
+                        "protocol": "openid-connect",
+                        "protocolMapper": "oidc-usermodel-property-mapper",
+                        "consentRequired": true,
+                        "consentText": "${familyName}",
+                        "config": {
+                            "userinfo.token.claim": "true",
+                            "user.attribute": "lastName",
+                            "id.token.claim": "true",
+                            "access.token.claim": "true",
+                            "claim.name": "family_name",
+                            "jsonType.label": "String"
+                        }
+                    },
+                    {
+                        "name": "given name",
+                        "protocol": "openid-connect",
+                        "protocolMapper": "oidc-usermodel-property-mapper",
+                        "consentRequired": true,
+                        "consentText": "${givenName}",
+                        "config": {
+                            "userinfo.token.claim": "true",
+                            "user.attribute": "firstName",
+                            "id.token.claim": "true",
+                            "access.token.claim": "true",
+                            "claim.name": "given_name",
+                            "jsonType.label": "String"
+                        }
+                    },
+                    {
+                        "name": "username",
+                        "protocol": "openid-connect",
+                        "protocolMapper": "oidc-usermodel-property-mapper",
+                        "consentRequired": true,
+                        "consentText": "${username}",
+                        "config": {
+                            "userinfo.token.claim": "true",
+                            "user.attribute": "username",
+                            "id.token.claim": "true",
+                            "access.token.claim": "true",
+                            "claim.name": "preferred_username",
+                            "jsonType.label": "String"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "protocol": "openid-connect",
+                        "protocolMapper": "oidc-usermodel-property-mapper",
+                        "consentRequired": true,
+                        "consentText": "${email}",
+                        "config": {
+                            "userinfo.token.claim": "true",
+                            "user.attribute": "email",
+                            "id.token.claim": "true",
+                            "access.token.claim": "true",
+                            "claim.name": "email",
+                            "jsonType.label": "String"
+                        }
+                    },
+                    {
+                        "name": "full name",
+                        "protocol": "openid-connect",
+                        "protocolMapper": "oidc-full-name-mapper",
+                        "consentRequired": true,
+                        "consentText": "${fullName}",
+                        "config": {
+                            "id.token.claim": "true",
+                            "access.token.claim": "true"
+                        }
+                    },
+                    {
+                        "name": "role list",
+                        "protocol": "saml",
+                        "protocolMapper": "saml-role-list-mapper",
+                        "consentRequired": false,
+                        "config": {
+                            "single": "false",
+                            "attribute.nameformat": "Basic",
+                            "attribute.name": "Role"
+                        }
+                    }
+                ],
+                "useTemplateConfig": false,
+                "useTemplateScope": false,
+                "useTemplateMappers": false,
+                "access": {
+                    "view": true,
+                    "configure": true,
+                    "manage": true
+                }
             }
         ]
     }

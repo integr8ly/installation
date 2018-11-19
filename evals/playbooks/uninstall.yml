@@ -27,6 +27,9 @@
         -
           name: Delete namespaces
           shell: "oc delete namespace {{ item }}"
+          register: output
+          failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
+          changed_when: output.rc == 0
           with_items: "{{ namespaces_output.stdout_lines }}"
     -
       name: Uninstall launcher

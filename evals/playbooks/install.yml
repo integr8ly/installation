@@ -19,11 +19,17 @@
 - hosts: localhost
   gather_facts: true
   tasks:
-    - name: Install Nexus
+    - 
+      name: Install Nexus
       include_role:
         name: nexus
         tasks_from: install
       tags: ['nexus']
+    - 
+      name: Install launcher SSO
+      include_role:
+        name: launcher
+        tasks_from: provision-sso
     - 
       name: Install rhsso
       include_role:
