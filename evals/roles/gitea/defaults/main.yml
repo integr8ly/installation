@@ -8,3 +8,6 @@ gitea_resources:
   - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_resource_tag}}/deploy/operator.yaml
 
 webapp_namespace: webapp
+gitea_admin_username: giteaadmin
+gitea_admin_token: admintoken
+gitea_admin_password: Password1

@@ -29,7 +29,7 @@ rhsso_operator_required_objects:
 
 rhsso_seed_users_email_format: evals%02d@example.com
 rhsso_seed_users_name_format: evals%02d@example.com
-rhsso_seed_users_count: 50
+rhsso_seed_users_count: "{{ eval_seed_users_count }}"
 rhsso_seed_users_password: Password1
 
 rhsso_evals_email: evals@example.com
