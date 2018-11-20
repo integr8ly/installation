@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
+- hosts: master
   tasks:
     - 
       when: keep_namespaces is undefined or not keep_namespaces | bool
