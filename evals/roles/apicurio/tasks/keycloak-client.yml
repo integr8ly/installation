@@ -8,10 +8,10 @@
   set_fact:
     apicurio_kc_redirect_uris: "{{ apicurio_kc_redirect_uris | default([]) + [item] }}"
   with_items:
-    - "{{ apicurio_studio_basename }}.{{ apicurio_app_domain }}"
-    - "{{ apicurio_studio_basename }}.{{ apicurio_app_domain }}/*"
-    - "{{ apicurio_api_basename }}.{{ apicurio_app_domain }}"
-    - "{{ apicurio_api_basename }}.{{ apicurio_app_domain }}/*"
+    - "{{apicurio_protocol}}://{{ apicurio_studio_basename }}.{{ apicurio_app_domain }}"
+    - "{{apicurio_protocol}}://{{ apicurio_studio_basename }}.{{ apicurio_app_domain }}/*"
+    - "{{apicurio_protocol}}://{{ apicurio_api_basename }}.{{ apicurio_app_domain }}"
+    - "{{apicurio_protocol}}://{{ apicurio_api_basename }}.{{ apicurio_app_domain }}/*"
 
 - name: Write keycloak client template in target "{{ apicurio_template_folder }}"
   template:
