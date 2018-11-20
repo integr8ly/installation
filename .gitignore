@@ -1,2 +1,3 @@
 *.retry
 .DS_Store
+.idea/*
