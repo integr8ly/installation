@@ -36,20 +36,20 @@ rules:
   - template.openshift.io
   resources:
   - processedtemplates
-  verbs: [ get, list, create, update, delete, deletecollection, watch]
+  verbs: ["*"]
 - apiGroups:
   - image.openshift.io
   resources:
   - imagestreams
-  verbs: [ get, list, create, update, delete, deletecollection, watch]
+  verbs: ["*"]
 - apiGroups:
   - apps.openshift.io
   resources:
   - deploymentconfigs
-  verbs: [ get, list, create, update, delete, deletecollection, watch]
+  verbs: ["*"]
 - apiGroups:
   - route.openshift.io
   resources:
   - routes
   - routes/custom-host
-  verbs: [ get, list, create, update, delete, deletecollection, watch]
+  verbs: ["*"]

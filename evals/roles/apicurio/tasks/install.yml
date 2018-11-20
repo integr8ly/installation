@@ -52,7 +52,7 @@
       args:
         chdir: "{{ apicurio_template_folder }}"
     - name: Wait for apicurio operator deployment
-      shell: sleep 5; oc get pods --n {{ apicurio_namespace }}  |  grep  "deploy"
+      shell: sleep 5; oc get pods -n {{ apicurio_namespace }}  |  grep  "deploy"
       register: result
       until: not result.stdout
       retries: 50
@@ -62,7 +62,7 @@
   when: apicurio_operator_cmd.rc != 0
 
 - name: Wait for apicurio deployment
-  shell: sleep 5; oc get pods --n {{ apicurio_namespace }}  |  grep  "deploy"
+  shell: sleep 5; oc get pods -n {{ apicurio_namespace }}  |  grep  "deploy"
   register: result
   until: not result.stdout
   retries: 50

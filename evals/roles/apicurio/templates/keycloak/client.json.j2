@@ -1,6 +1,7 @@
 {
     "id": "{{ apicurio_kc_client_id }}",
     "clientId": "{{ apicurio_kc_client_id }}",
+    "baseUrl": "{{apicurio_protocol}}://{{ apicurio_api_basename }}.{{ apicurio_app_domain }}",
     "surrogateAuthRequired": false,
     "enabled": true,
     "clientAuthenticatorType": "client-secret",
@@ -13,7 +14,7 @@
     "implicitFlowEnabled": false,
     "directAccessGrantsEnabled": true,
     "serviceAccountsEnabled": false,
-    "publicClient": false,
+    "publicClient": true,
     "frontchannelLogout": false,
     "protocol": "openid-connect",
     "attributes": {
