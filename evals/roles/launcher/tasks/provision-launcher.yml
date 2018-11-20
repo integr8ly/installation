@@ -17,7 +17,7 @@
   until: launcher_sso_auth_response.status == 200
 
 - name: Retrieve secret for launcher openshift sso client
-  shell: oc get secret {{ launcher_sso_keycloak_client_id }}-client -n {{ rhsso_namespace }} -o template --template=\{\{.data.secret\}\} | base64 -d
+  shell: oc get secret {{ launcher_sso_keycloak_client_id }}-client -n {{ rhsso_namespace }} -o template --template=\{\{.data.secret\}\}
   register: openshift_client_secret_response
   failed_when: openshift_client_secret_response.stderr != ""
   until: openshift_client_secret_response.stdout
