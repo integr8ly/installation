@@ -93,3 +93,6 @@
 
 - name: Create secret with custom inventory
   shell: oc create secret generic manifest --from-file=/tmp/generated_inventory --type=ansible/inventory -n {{webapp_namespace}}
+
+- name: remove generated template
+    file: path='/tmp/generated_inventory' state=absent  
