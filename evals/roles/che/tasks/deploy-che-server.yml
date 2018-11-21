@@ -31,10 +31,10 @@
           -p 'CHE_KEYCLOAK_AUTH__SERVER__URL={{ che_protocol }}://{{ che_keycloak_host }}/auth' \
           -p 'CHE_KEYCLOAK_REALM={{ che_keycloak_realm }}' \
           -p 'CHE_KEYCLOAK_CLIENT__ID={{ che_keycloak_client_id }}' \
-          -p 'CHE_INFRA_KUBERNETES_MASTER__URL={{ che_infra_namespace }}'
-          -p 'CHE_INFRA_KUBERNETES_PVC_STRATEGY={{ che_infra_pvc_strategy }}'
-          -p 'CHE_INFRA_KUBERNETES_PVC_QUANTITY={{ che_infra_pvc_quantity }}'
-          -p 'CHE_SYSTEM_ADMIN_NAME={{ che_system_admin_name }}'
+          -p 'CHE_INFRA_KUBERNETES_MASTER__URL={{ che_infra_namespace }}' \
+          -p 'CHE_INFRA_KUBERNETES_PVC_STRATEGY={{ che_infra_pvc_strategy }}' \
+          -p 'CHE_INFRA_KUBERNETES_PVC_QUANTITY={{ che_infra_pvc_quantity }}' \
+          -p 'CHE_SYSTEM_ADMIN_NAME={{ che_system_admin_name }}' \
           -f {{ che_template_folder }}/deploy/che-server-template.yaml \
           -n {{ che_namespace }}"
 

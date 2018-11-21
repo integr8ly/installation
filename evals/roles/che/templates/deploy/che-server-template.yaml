@@ -46,6 +46,18 @@ objects:
       kind: Service
       name: che-host
 - apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    labels:
+      app: che
+    name: che-data-volume
+  spec:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: "${CHE_INFRA_KUBERNETES_PVC_QUANTITY}"
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     name: che
@@ -186,9 +198,16 @@ objects:
               memory: 256Mi
           terminationMessagePath: "/dev/termination-log"
           terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data
+            name: che-data-volume
         restartPolicy: Always
         serviceAccountName: che
         terminationGracePeriodSeconds: 360
+        volumes:
+        - name: che-data-volume
+          persistentVolumeClaim:
+            claimName: che-data-volume
     triggers:
     - type: ConfigChange
 
