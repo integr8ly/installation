@@ -1,0 +1,11 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: 3scale-operator
+subjects:
+- kind: ServiceAccount
+  name: 3scale-operator
+roleRef:
+  kind: Role
+  name: 3scale-operator
+  apiGroup: rbac.authorization.k8s.io
