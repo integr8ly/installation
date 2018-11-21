@@ -10,7 +10,7 @@ Integreatly
   - [Prerequisites](#prerequisites)
   - [Installation Steps](#installation-steps)
     - [1. Clone installation GIT repository locally](#1-clone-installation-git-repository-locally)
-    - [2. Update inventory hosts file](#2-update-inventory-hosts-file)
+    - [2. Create the inventory hosts file](#2-create-the-inventory-hosts-file)
     - [3. Check the connection with the OpenShift cluster](#3-check-the-connection-with-the-openshift-cluster)
     - [4. Run Install Playbooks](#4-run-install-playbooks)
       - [Install all products from a single playbook](#install-all-products-from-a-single-playbook)
@@ -70,7 +70,15 @@ The following section demonstrates how to install each of the products listed ab
 git clone https://github.com/integr8ly/installation.git
 ```
 
-### 2. Update inventory hosts file
+### 2. Create the inventory hosts file
+
+* Create the host file based on the template(`../evals/inventories/hosts.default`). Following the an example.
+
+```shell
+$ cp evals/inventories/hosts.template evals/inventories/hosts
+```
+
+* Update the host file to connect in your OpenShift cluster
 
 Prior to running the playbooks the master hostname and associated SSH username **must** be set in the inventory host file to match the target cluster configuration. The following example sets the SSH username to ```evals``` and the master hostname to ```master.evals.example.com```:
 

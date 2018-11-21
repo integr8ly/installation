@@ -1,3 +1,4 @@
 *.retry
 .DS_Store
 .idea/*
+evals/inventories/hosts
