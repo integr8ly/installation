@@ -159,6 +159,8 @@ $ cd evals/
 $ $ ansible-playbook -i inventories/hosts playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
 ```
 
+**IMPORTANT:** Once the installation has finished you will no longer be able to login via the Openshift console or oc cli as the admin if there is an sso redirect in place. The new admin user is `admin@example.com` password is `Password1`
+
 **NOTE:** The following playbook will install Integreatly without to enable GitHub authorization for Launcher.
 
 ```shell
@@ -178,6 +180,7 @@ ok: [127.0.0.1] => {
 
 The `http://localhost` placeholder added in the GitHub OAuth App should be replaced with this value.
 
+
 #### Install each product individually
 
 Each product has an associated install playbook available from the ```evals/playbooks/``` directory.
@@ -192,7 +195,7 @@ $ ansible-playbook -i inventories/hosts playbooks/rhsso.yml
 
 Upon completion, a new identity provider named ```rh_sso``` should be presented on the Openshift master console login screen.
 
-Default login credentials are evals@example.com / Password1
+**NOTE**: The default login credentials are `evals@example.com` / `Password1`
 
 To configure custom account credentials, simply override the rhsso role environment variables by specifying user parameters as part of the install command:
 
@@ -337,7 +340,7 @@ $ doctoc README.md
   | Field | Value |
   | --- | --- |
   | Region | Choose your regions |
-  | City or Customer | Add a name with will be used to create the URL as https://master.<value>.openshiftworkshop.com |
+  | City or Customer | Add a name with will be used to create the URL as `https://master.value.openshiftworkshop.com` |
   | FDC/Campaign/Deal Reg ID | 000000 |
   | Openshift Version | Select the Openshift Version that you would like to use (E.g 3.10.14) |
   | Notes | Any value |
