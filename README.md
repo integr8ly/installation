@@ -56,6 +56,7 @@ These products include:
 * Openshift CLI (OC) v3.10
 * SSH Access to Openshift master(s)
 * Cluster administrator permissions
+* The ssh user defined in the inventory, `ansible_user`, needs have sudo permission
 
 ## Installation Steps
 
