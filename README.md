@@ -17,6 +17,7 @@ Integreatly
         - [1. Create GitHub OAuth to enable GitHub authorization for Launcher](#1-create-github-oauth-to-enable-github-authorization-for-launcher)
         - [2. Run the playbook](#2-run-the-playbook)
         - [3. Add the generated `Authorization callback URL` to GitHub OAuth](#3-add-the-generated-authorization-callback-url-to-github-oauth)
+        - [4. Check the installation](#4-check-the-installation)
       - [Install each product individually](#install-each-product-individually)
         - [Run Single Sign On install playbook](#run-single-sign-on-install-playbook)
         - [Run EnMasse install playbook](#run-enmasse-install-playbook)
@@ -159,8 +160,6 @@ $ cd evals/
 $ $ ansible-playbook -i inventories/hosts playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
 ```
 
-**IMPORTANT:** Once the installation has finished you will no longer be able to login via the Openshift console or oc cli as the admin if there is an sso redirect in place. The new admin user is `admin@example.com` password is `Password1`
-
 **NOTE:** The following playbook will install Integreatly without to enable GitHub authorization for Launcher.
 
 ```shell
@@ -179,6 +178,22 @@ ok: [127.0.0.1] => {
 ```
 
 The `http://localhost` placeholder added in the GitHub OAuth App should be replaced with this value.
+
+##### 4. Check the installation
+
+**IMPORTANT:** Once the installation has finished you will no longer be able to login via the Openshift console or oc cli as the admin if there is an sso redirect in place. The new admin user is `admin@example.com` password is `Password1`
+
+The URL for the Integraly view is `https://tutorial-web-app-webapp.apps.<domain>/` (e.g `https://tutorial-web-app-webapp.apps.example.openshiftworkshop.com/` when the master is `https://master.example.openshiftworkshop.com/` )
+
+Following an example of this interface.
+
+**NOTE:** The project [Webapp](https://github.com/integr8ly/tutorial-web-app) is responsible for the Integraly interface. You can find the URL looking for the router created for this project. As the following example.
+
+Also, with the evals users created by the installer is possible to check the services in the OpenShift catalog.
+
+**NOTE**: The default login credentials are `evals@example.com` / `Password1`
+
+Following an example.
 
 
 #### Install each product individually
@@ -293,6 +308,7 @@ $ oc login https://<openshift-master-url>
 $ cd evals/
 $ ansible-playbook -i inventories/hosts playbooks/webapp.yml
 ```
+
 
 ## Uninstallation steps
 
