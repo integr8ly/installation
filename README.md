@@ -138,7 +138,10 @@ Before running the installer, please consider the following variables:
 ##### 1. Create GitHub OAuth to enable GitHub authorization for Launcher
 
 * Login into GitHub
-* Go to `Settings >> Developer Settings >> New OAuth App`
+* Go to `Settings >> Developer Settings >> New OAuth App`. Following an image as example to ilustrate this area.
+
+<img width="1033" alt="screenshot 2018-11-21 at 16 59 45" src="https://user-images.githubusercontent.com/7708031/48856646-dea13780-edae-11e8-9999-16b61dcc05ca.png">
+
 * Add the following fields values
 
 | Field | Value |
@@ -150,7 +153,9 @@ Before running the installer, please consider the following variables:
 **NOTE:** The callback URL is a placeholder for now and will be changed after the installation playbook is finished.
 
 * Click on `Register Application`
-* The values found in GitHub OAuth App, `Client ID` and `Client Secret`, will be required in the next step to install Integreatly enabling GitHub authorization for Launcher.
+* The values found in GitHub OAuth App, `Client ID` and `Client Secret`, will be required in the next step to install Integreatly enabling GitHub authorization for Launcher. Following an example of this screen.
+
+<img width="985" alt="screenshot 2018-11-21 at 17 03 52" src="https://user-images.githubusercontent.com/7708031/48856868-7141d680-edaf-11e8-836f-4d533f8ed402.png">
 
 ##### 2. Run the playbook
 
@@ -177,7 +182,9 @@ ok: [127.0.0.1] => {
 }
 ```
 
-The `http://localhost` placeholder added in the GitHub OAuth App should be replaced with this value.
+The `http://localhost` placeholder added in the GitHub OAuth App should be replaced with this value. Following an example.
+
+<img width="544" alt="screenshot 2018-11-21 at 17 05 41" src="https://user-images.githubusercontent.com/7708031/48856981-c1209d80-edaf-11e8-9d23-f550c7ec31be.png">
 
 ##### 4. Check the installation
 
@@ -185,16 +192,21 @@ The `http://localhost` placeholder added in the GitHub OAuth App should be repla
 
 The URL for the Integraly view is `https://tutorial-web-app-webapp.apps.<domain>/` (e.g `https://tutorial-web-app-webapp.apps.example.openshiftworkshop.com/` when the master is `https://master.example.openshiftworkshop.com/` )
 
-Following an example of this interface.
+Following an image to ilustrate its interface.
+
+<img width="1530" alt="integralyview" src="https://user-images.githubusercontent.com/7708031/48856455-528f1000-edae-11e8-8c1a-f0b37a1049ce.png">
 
 **NOTE:** The project [Webapp](https://github.com/integr8ly/tutorial-web-app) is responsible for the Integraly interface. You can find the URL looking for the router created for this project. As the following example.
+
+<img width="1525" alt="webapprouterview" src="https://user-images.githubusercontent.com/7708031/48856461-5884f100-edae-11e8-92ca-ef4c93f8961f.png">
 
 Also, with the evals users created by the installer is possible to check the services in the OpenShift catalog.
 
 **NOTE**: The default login credentials are `evals@example.com` / `Password1`
 
-Following an example.
+Following an image of this console as example.
 
+<img width="1533" alt="evalsocpconsole" src="https://user-images.githubusercontent.com/7708031/48856465-5ae74b00-edae-11e8-954d-2267a5d5d5d2.png">
 
 #### Install each product individually
 
@@ -349,8 +361,13 @@ $ doctoc README.md
 ## Using Red Hat Product Demo System to have an OpenShift instance (Valid just for partners and redhatters)
 
 * Login to https://rhpds.redhat.com/
-* Go to `RHPDS >> Change Group` and select `rhpds-access`.
-* Go to `Services >> Catalog` and choose the Service `Workshop >> Integreatly Workshop`
+* Go to `RHPDS >> Change Group` and select `rhpds-access`. Following an example.
+
+<img width="358" alt="screenshot 2018-11-21 at 17 08 25" src="https://user-images.githubusercontent.com/7708031/48857134-165caf00-edb0-11e8-8a00-7d03342b9a4d.png">
+* Go to `Services >> Catalog` and choose the Service `Workshop >> Integreatly Workshop`. Following an example.
+
+<img width="310" alt="screenshot 2018-11-21 at 17 07 20" src="https://user-images.githubusercontent.com/7708031/48857073-f0370f00-edaf-11e8-9990-8f4baa32fb81.png">
+
 * Following information to request this service.
 
   | Field | Value |
@@ -364,3 +381,9 @@ $ doctoc README.md
 **NOTE:** To move forward and request the OpenShift instance is required click on in the checkbox.
 
 After 30 minutes you will receive a mail titled as `Your Red Hat Product Demo System service provision request for <your cluster> has completed.` . At the bottom of the email, you will see the Web App URL and admin username/password to have access to this cluster.
+
+**NOTE:** Also, it is possible request an instance with Integreatly already installed. Following the image to shows the Service to request it in the `Services >> Catalog`. 
+
+<img width="374" alt="screenshot 2018-11-21 at 17 10 27" src="https://user-images.githubusercontent.com/7708031/48857267-5cb20e00-edb0-11e8-9113-cbfb7504a4b1.png">
+
+
