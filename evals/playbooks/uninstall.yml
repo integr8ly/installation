@@ -76,9 +76,6 @@
       failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
       changed_when: output.rc == 0
     - 
-      name: Delete users
-      shell: oc delete user admin@example.com evals@example.com
-    - 
       name: Uninstall the webapp
       include_role:
         name: webapp
