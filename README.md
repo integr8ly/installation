@@ -27,8 +27,9 @@ Integreatly
   - [Uninstallation steps](#uninstallation-steps)
   - [Troubleshooting](#troubleshooting)
     - [Message `"You need to install \"jmespath\" prior to running json_query filter"` is shown when the installation fails](#message-you-need-to-install-%5Cjmespath%5C-prior-to-running-json_query-filter-is-shown-when-the-installation-fails)
-- [Contribution with Integreatly](#contribution-with-integreatly)
+- [Contributing with Integreatly](#contributing-with-integreatly)
   - [Updating index of README.md](#updating-index-of-readmemd)
+  - [Using Red Hat Product Demo System to have an OpenShift instance (Valid just for partners and redhatters)](#using-red-hat-product-demo-system-to-have-an-openshift-instance-valid-just-for-partners-and-redhatters)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -314,7 +315,7 @@ $ pip install jmespath
 
 **NOTE:** The module need to be installed in the same version of python used by Ansible. Use the command `$ ansible --version` to check this path.
 
-# Contribution with Integreatly
+# Contributing with Integreatly
 
 ## Updating index of README.md
 
@@ -324,3 +325,22 @@ Use the [doctoc](https://www.npmjs.com/package/doctoc) to update the index. Foll
 $ npm install -g doctoc
 $ doctoc README.md
 ```
+
+## Using Red Hat Product Demo System to have an OpenShift instance (Valid just for partners and redhatters)
+
+* Login to https://rhpds.redhat.com/
+* Go to `RHPDS >> Change Group` and select `rhpds-access`.
+* Go to `Services >> Catalog` and choose the Service `Workshop >> Integreatly Workshop`
+* Following information to request this service.
+
+  | Field | Value |
+  | --- | --- |
+  | Region | Choose your regions |
+  | City or Customer | Add a name with will be used to create the URL as https://master.<value>.openshiftworkshop.com |
+  | FDC/Campaign/Deal Reg ID | 000000 |
+  | Openshift Version | Select the Openshift Version that you would like to use (E.g 3.10.14) |
+  | Notes | Any value |
+
+**NOTE:** To move forward and request the OpenShift instance is required click on in the checkbox.
+
+After 30 minutes you will receive a mail titled as `Your Red Hat Product Demo System service provision request for <your cluster> has completed.` . At the bottom of the email, you will see the Web App URL and admin username/password to have access to this cluster.
