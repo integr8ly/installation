@@ -70,8 +70,8 @@
       register: output
       failed_when: output.stderr != '' and 'not found' not in output.stderr
     - 
-      name: "Delete project namespace: {{ enmasse_namespace }}"
-      shell: oc delete project {{ enmasse_namespace }}
+      name: "Delete project namespace: {{ enmasse_namespace }} | default('enmasse')"
+      shell: "oc delete project {{ enmasse_namespace }} | default('enmasse')"
       register: output
       failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
       changed_when: output.rc == 0
