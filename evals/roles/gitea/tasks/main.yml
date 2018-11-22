@@ -28,7 +28,7 @@
   shell: "oc get pods --namespace={{ gitea_namespace }} --selector='deployment=gitea' -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w"
   register: gitea_result
   until: gitea_result.stdout.find("1") != -1
-  retries: 30
+  retries: 90
   delay: 5
 
 - name: Get the name of the gitea pod
