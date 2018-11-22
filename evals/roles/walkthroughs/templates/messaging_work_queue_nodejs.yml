@@ -92,7 +92,7 @@ objects:
           envFrom:
           - configMapRef:
               name: messaging-service
-          image: quay.io/integreatly/nodejs-messaging-work-queue:latest
+          image: quay.io/integreatly/nodejs-messaging-work-queue:3.0.0
           imagePullPolicy: Always
           livenessProbe:
             httpGet:

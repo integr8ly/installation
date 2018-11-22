@@ -1,0 +1,12 @@
+[enmasse]
+localhost ansible_connection=local
+
+[enmasse:vars]
+namespace={{ enmasse_namespace }}
+enable_rbac={{ enmasse_enable_rbac }}
+api_server={{ enmasse_api_server }}
+service_catalog={{ enmasse_service_catalog }}
+register_api_server={{ enmasse_register_api_server }}
+keycloak_admin_password={{ enmasse_keycloak_admin_password }}
+authentication_services={{ enmasse_authentication_services }}
+enable_monitoring={{ enmasse_enable_monitoring }}

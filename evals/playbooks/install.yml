@@ -169,30 +169,9 @@
         threescale_namespace: "{{ eval_threescale_namespace }}"
       tags: ['msbroker']
     -
-      name: Link enmasse resources folder
-      file:
-        src: "{{ playbook_dir }}/../artifacts/enmasse/resources"
-        dest: "{{ playbook_dir }}/resources"
-        state: link
-      tags: ['enmasse']
-    -
       name: Install enmasse
       include_role:
         name: enmasse
-      vars:
-        namespace: "{{ enmasse_namespace }}"
-        multitenant: "{{ enmasse_multitenant }}"
-        enable_rbac: "{{ enmasse_enable_rbac }}"
-        service_catalog: "{{ enmasse_service_catalog }}"
-        keycloak_admin_password: "{{ eval_rhsso_admin_password }}"
-        authentication_services: "{{ enmasse_authentication_services }}"
-      when: enmasse_deploy_infra | default('true') | bool
-      tags: ['enmasse']
-    -
-      name: Unlink enmasse resources folder
-      file:
-        path: "{{ playbook_dir }}/resources"
-        state: absent
       tags: ['enmasse']
     -
       name: Configure SSO Logout URL
