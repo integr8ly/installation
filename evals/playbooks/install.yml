@@ -61,7 +61,7 @@
           with_items: "{{ _eval_rhsso_dc_cmd.results }}"
         -
           name: Retrieve cluster rhsso host
-          shell: "oc get route/sso -o jsonpath='{.spec.host}' -n {{ eval_rhsso_namespace }}"
+          shell: "oc get route/secure-sso -o jsonpath='{.spec.host}' -n {{ eval_rhsso_namespace }}"
           register: eval_sso_host_cmd
         -
           name: Set rhsso host var
@@ -102,7 +102,7 @@
       tags: ['bootstrap']
     -
       name: Retrieve launcher sso hostvars
-      shell: "oc get route/launcher-sso -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
+      shell: "oc get route/secure-launcher-sso -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
       register: eval_launcher_sso_host_cmd
       tags: ['bootstrap']
     -

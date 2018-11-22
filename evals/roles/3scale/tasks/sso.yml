@@ -1,6 +1,6 @@
 ---
 - name: Get RH-SSO secure route
-  shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ threescale_sso_namespace }}
+  shell: oc get route/secure-sso -o template --template \{\{.spec.host\}\} -n {{ threescale_sso_namespace }}
   register: sso_secure_route
 
 ## all of this is to get the client secret out of the openshift secret it is stored in, where it might be "null"

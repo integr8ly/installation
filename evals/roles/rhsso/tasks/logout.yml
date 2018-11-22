@@ -1,6 +1,6 @@
 ---
 - name: Get RH-SSO secure route
-  local_action: command oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ rhsso_namespace }}
+  local_action: command oc get route/secure-sso -o template --template \{\{.spec.host\}\} -n {{ rhsso_namespace }}
   register: rhsso_secure_route
 
 - set_fact:
