@@ -16,3 +16,4 @@ apicurio_kc_realm: openshift
 apicurio_validate_certs: false
 apicurio_template: apicurio-template.yml
 apicurio_protocol: https
+apicurio_keycloak_namespace: sso

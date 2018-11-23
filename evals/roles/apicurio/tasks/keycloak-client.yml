@@ -22,24 +22,24 @@
   set_fact:
     apicurio_kc_cient_json_path: "{{ apicurio_template_folder }}/keycloak/client.json"
 
-- name: Generate RH-SSO auth token for admin user
-  uri:
-    url: "https://{{ apicurio_kc_host }}/auth/realms/master/protocol/openid-connect/token"
-    method: POST
-    body: "client_id=admin-cli&username={{ apicurio_kc_username }}&password={{ apicurio_kc_password }}&grant_type=password"
-    validate_certs: "{{ apicurio_validate_certs }}"
-  register: apicurio_kc__auth_response
-  retries: 10
-  delay: 2
-  until: apicurio_kc__auth_response.status == 200
+-
+  name: Retrieve existing keycloakrealm cr
+  shell: "oc get keycloakrealm/{{ apicurio_kc_realm }} -n  {{ apicurio_keycloak_namespace }} -o json"
+  register: sso_kc_realm_cmd
 
-- name: Create public client in {{ apicurio_kc_realm }} realm
-  uri:
-    url: "https://{{ apicurio_kc_host }}/auth/admin/realms/{{ apicurio_kc_realm }}/clients"
-    method: POST
-    body: "{{ lookup('file', apicurio_kc_cient_json_path) }}"
-    validate_certs: "{{ apicurio_validate_certs }}"
-    body_format: json
-    headers:
-      Authorization: "Bearer {{ apicurio_kc__auth_response.json.access_token }}"
-    status_code: [201, 409]
+-
+  name: Set apicurio client id var
+  set_fact:
+    apicurio_kc_client: "{{ item.id }}"
+  with_items: "{{ (sso_kc_realm_cmd.stdout | from_json).spec.clients }}"
+  when: item.id == apicurio_kc_client_id
+- 
+  name: Inject apicurio client in CR if it does not exist
+  shell: "oc patch keycloakrealm {{ apicurio_kc_realm }} -n {{ apicurio_keycloak_namespace }} --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/clients/-\", \"value\": {{ lookup('file', apicurio_kc_cient_json_path) }}}]'"
+  register: result
+  until: not result.stderr
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  changed_when: result.stdout
+  when: apicurio_kc_client is undefined
