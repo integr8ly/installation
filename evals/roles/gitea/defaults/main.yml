@@ -1,10 +1,12 @@
 gitea_namespace: gitea
-gitea_git_ref: 0.0.2
+gitea_git_ref: v0.0.2
+gitea_operator_image_url: quay.io/integreatly/gitea-operator
+gitea_operator_image_tag: 0.0.2
 gitea_resources:
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/v{{gitea_git_ref}}/deploy/service_account.yaml
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/v{{gitea_git_ref}}/deploy/role.yaml
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/v{{gitea_git_ref}}/deploy/role_binding.yaml
-  - https://raw.githubusercontent.com/integr8ly/gitea-operator/v{{gitea_git_ref}}/deploy/crds/crd.yaml
+  - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_git_ref}}/deploy/service_account.yaml
+  - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_git_ref}}/deploy/role.yaml
+  - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_git_ref}}/deploy/role_binding.yaml
+  - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_git_ref}}/deploy/crds/crd.yaml
 
 webapp_namespace: webapp
 gitea_admin_username: giteaadmin
