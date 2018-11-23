@@ -1,7 +1,3 @@
 ---
-- name: Create keycloak client
-  import_tasks: keycloak-client.yml
-  when: apicurio_kc_host is defined
-
 - name: Install apicurio
   import_tasks: install.yml
