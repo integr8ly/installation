@@ -356,7 +356,13 @@ The issue means that python version used by Ansible has not this required module
 $ pip install jsonpointer
 ```
 
-Also, the varible `ansible_python_interpreter` can be used in the host file in order to tell to Ansible what version of python should be used by it. (E.g `ansible_python_interpreter=python`)
+Also, may be required use the varible `ansible_python_interpreter` in the host file to fix it. Following an example.
+
+```yum
+[local:vars]
+ansible_connection=local
+ansible_python_interpreter=python
+```
 
 **NOTE:** The module need to be installed in the same version of python used by Ansible. Use the command `$ ansible --version` to check this path.
 
