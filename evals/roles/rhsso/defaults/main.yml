@@ -1,4 +1,7 @@
 ---
+rhsso_keycloak_operator_image: "quay.io/integreatly/keycloak-operator"
+rhsso_keycloak_operator_tag: "0.0.2"
+
 rhsso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"
 
 rhsso_admin_username: admin

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: keycloak-operator
-          image: quay.io/integreatly/keycloak-operator:0.0.2
+          image: {{ rhsso_keycloak_operator_image }}:{{ rhsso_keycloak_operator_tag }}
           ports:
           - containerPort: 60000
             name: metrics
