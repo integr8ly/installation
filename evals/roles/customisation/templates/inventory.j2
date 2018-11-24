@@ -100,7 +100,7 @@ webapp_extra_services_configmap="{{webapp_extra_services_configmap}}"
 
 # EnMasse
 
-enmasse_namespace="{{enmasse_namespace}}"
+enmasse_namespace="{{ enmasse_namespace | default('enmasse') }}"
 enmasse_rest_route="{{enmasse_rest_route}}"
 
 

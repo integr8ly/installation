@@ -59,7 +59,7 @@
   register: che_route_cmd
 
 - set_fact: 
-    che_route: "{{che_route_cmd.stdout}}"        
+    che_route: "{{che_route_cmd.stdout}}"
 
 - name: Get enmasse rest  route
   shell: oc get route/restapi -o template --template \{\{.spec.host\}\} -n {{ enmasse_namespace | default('enmasse') }}
