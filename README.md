@@ -119,6 +119,12 @@ master.example.openshiftworkshop.com | SUCCESS => {
 
 ### 4. Run Install Playbooks
 
+Before run the scripts it is required login via oc client tool to the master/OCP. Following an example.
+
+```shell
+oc login master.example.openshiftworkshop.com -u <user> -p <password>
+```
+
 There are currently two options for installing:
 
 * [Install all products from a single playbook](#install-all-products-from-a-single-playbook)
