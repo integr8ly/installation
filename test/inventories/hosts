@@ -1,0 +1,14 @@
+[local:vars]
+ansible_connection=local
+
+[local]
+127.0.0.1
+
+[OSEv3:children]
+master
+
+[OSEv3:vars]
+ansible_user=ec2-user
+
+[master]
+127.0.0.1

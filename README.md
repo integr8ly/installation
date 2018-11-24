@@ -27,7 +27,8 @@ Integreatly
         - [Run Webapp install playbook](#run-webapp-install-playbook)
   - [Uninstallation steps](#uninstallation-steps)
   - [Troubleshooting](#troubleshooting)
-    - [Message `"You need to install \"jmespath\" prior to running json_query filter"` is shown when the installation fails](#message-you-need-to-install-%5Cjmespath%5C-prior-to-running-json_query-filter-is-shown-when-the-installation-fails)
+    - [Message `You need to install \"jmespath\" prior to running json_query filter` is shown when the installation fails](#message-you-need-to-install-%5Cjmespath%5C-prior-to-running-json_query-filter-is-shown-when-the-installation-fails)
+    - [Message `jsonpointer module is not available`is shown when the installation fails](#message-jsonpointer-module-is-not-availableis-shown-when-the-installation-fails)
 - [Contributing with Integreatly](#contributing-with-integreatly)
   - [Updating index of README.md](#updating-index-of-readmemd)
   - [Using Red Hat Product Demo System to have an OpenShift instance (Valid just for partners and redhatters)](#using-red-hat-product-demo-system-to-have-an-openshift-instance-valid-just-for-partners-and-redhatters)
@@ -117,6 +118,12 @@ master.example.openshiftworkshop.com | SUCCESS => {
 ```
 
 ### 4. Run Install Playbooks
+
+Before run the scripts it is required login via oc client tool to the master/OCP. Following an example.
+
+```shell
+oc login master.example.openshiftworkshop.com -u <user> -p <password>
+```
 
 There are currently two options for installing:
 
@@ -337,15 +344,34 @@ By default this will delete all user-created namespaces as well, if you wish to 
 
 ## Troubleshooting
 
-### Message `"You need to install \"jmespath\" prior to running json_query filter"` is shown when the installation fails
+### Message `You need to install \"jmespath\" prior to running json_query filter` is shown when the installation fails
 
-The issue means that python version where the ansible is installed did not have this required module. In order to fix it is required to install the missing module. Following the command to install it via `pip`.
+The issue means that python version used by Ansible has not this required module. In order to fix it is required to install the missing module. Following the command to install it via `pip`.
 
 ```shell
 $ pip install jmespath
 ```
 
 **NOTE:** The module need to be installed in the same version of python used by Ansible. Use the command `$ ansible --version` to check this path.
+
+### Message `jsonpointer module is not available`is shown when the installation fails
+
+The issue means that python version used by Ansible has not this required module.  In order to fix it is required to install the missing module. Following the command to install it via `pip`.
+
+```shell
+$ pip install jsonpointer
+```
+
+Also, may be required use the varible `ansible_python_interpreter` in the host file to fix it. Following an example.
+
+```yum
+[local:vars]
+ansible_connection=local
+ansible_python_interpreter=python
+```
+
+**NOTE:** The module need to be installed in the same version of python used by Ansible. Use the command `$ ansible --version` to check this path.
+
 
 # Contributing with Integreatly
 

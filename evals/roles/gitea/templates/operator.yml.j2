@@ -1,34 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: keycloak-operator
+  name: gitea-operator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: keycloak-operator
+      name: gitea-operator
   template:
     metadata:
       labels:
-        name: keycloak-operator
+        name: gitea-operator
     spec:
+      serviceAccountName: gitea-operator
       containers:
-        - name: keycloak-operator
-          image: {{ rhsso_keycloak_operator_image }}:{{ rhsso_keycloak_operator_tag }}
+        - name: gitea-operator
+          image: {{ gitea_operator_image_url }}:{{ gitea_operator_image_tag }}
           ports:
           - containerPort: 60000
             name: metrics
           command:
-          - keycloak-operator
+          - gitea-operator
           imagePullPolicy: Always
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: OPERATOR_NAME
-              value: "keycloak-operator"
-            - name: CONSUMER_NAMESPACES
+            - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.namespace
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "gitea-operator"
+            - name: TEMPLATE_PATH
+              value: "/usr/local/bin/templates"
