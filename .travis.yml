@@ -7,5 +7,6 @@ before_install:
 install:
 - pip install ansible
 script:
-- ansible-playbook -i test/inventories/hosts evals/playbooks/install.yml --syntax-check
-- ansible-playbook -i test/inventories/hosts evals/playbooks/uninstall.yml --syntax-check
+- cd evals/
+- ansible-playbook -i ../test/inventories/hosts playbooks/install.yml --syntax-check
+- ansible-playbook -i ../test/inventories/hosts playbooks/install.yml --syntax-check
