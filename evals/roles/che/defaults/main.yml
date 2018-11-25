@@ -49,3 +49,9 @@ che_keycloak_update_password: 'admin'
 che_keycloak_port: 443
 
 delete_keycloak_user: true
+
+#Resource limits
+che_resources_limits_memory: 3Gi
+che_resources_limits_cpu: 3000m
+che_resources_request_cpu: 500m
+che_resources_request_memory: 800Mi

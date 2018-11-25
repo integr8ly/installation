@@ -193,9 +193,11 @@ objects:
             protocol: TCP
           resources:
             limits:
-              memory: 1Gi
+              memory: "{{che_resources_limits_memory}}"
+              cpu: "{{che_resources_limits_cpu}}"
             requests:
-              memory: 256Mi
+              memory: "{{che_resources_request_memory}}"
+              cpu: "{{che_resources_request_cpu}}"
           terminationMessagePath: "/dev/termination-log"
           terminationMessagePolicy: File
           volumeMounts:
