@@ -17,7 +17,6 @@ Integreatly
         - [1. Create GitHub OAuth to enable GitHub authorization for Launcher](#1-create-github-oauth-to-enable-github-authorization-for-launcher)
         - [2. Run the playbook](#2-run-the-playbook)
         - [3. Add the generated `Authorization callback URL` to GitHub OAuth](#3-add-the-generated-authorization-callback-url-to-github-oauth)
-        - [4. Check the installation](#4-check-the-installation)
       - [Install each product individually](#install-each-product-individually)
         - [Run Single Sign On install playbook](#run-single-sign-on-install-playbook)
         - [Run EnMasse install playbook](#run-enmasse-install-playbook)
@@ -25,6 +24,7 @@ Integreatly
         - [Run Launcher install playbook](#run-launcher-install-playbook)
         - [Run 3Scale install playbook](#run-3scale-install-playbook)
         - [Run Webapp install playbook](#run-webapp-install-playbook)
+    - [5. Check the installation](#5-check-the-installation)
   - [Uninstallation steps](#uninstallation-steps)
   - [Troubleshooting](#troubleshooting)
     - [Message `You need to install \"jmespath\" prior to running json_query filter` is shown when the installation fails](#message-you-need-to-install-%5Cjmespath%5C-prior-to-running-json_query-filter-is-shown-when-the-installation-fails)
@@ -32,6 +32,7 @@ Integreatly
 - [Contributing with Integreatly](#contributing-with-integreatly)
   - [Updating index of README.md](#updating-index-of-readmemd)
   - [Using Red Hat Product Demo System to have an OpenShift instance (Valid just for partners and redhatters)](#using-red-hat-product-demo-system-to-have-an-openshift-instance-valid-just-for-partners-and-redhatters)
+    - [Installing from RHPDS](#installing-from-rhpds)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -193,28 +194,6 @@ The `http://localhost` placeholder added in the GitHub OAuth App should be repla
 
 <img width="544" alt="screenshot 2018-11-21 at 17 05 41" src="https://user-images.githubusercontent.com/7708031/48856981-c1209d80-edaf-11e8-9d23-f550c7ec31be.png">
 
-##### 4. Check the installation
-
-**IMPORTANT:** Once the installation has finished you will no longer be able to login via the Openshift console or oc cli as the admin if there is an sso redirect in place. The new admin user is `admin@example.com` password is `Password1`
-
-The URL for the Integraly view is `https://tutorial-web-app-webapp.apps.<domain>/` (e.g `https://tutorial-web-app-webapp.apps.example.openshiftworkshop.com/` when the master is `https://master.example.openshiftworkshop.com/` )
-
-Following an image to ilustrate its interface.
-
-<img width="1530" alt="integralyview" src="https://user-images.githubusercontent.com/7708031/48856455-528f1000-edae-11e8-8c1a-f0b37a1049ce.png">
-
-**NOTE:** The project [Webapp](https://github.com/integr8ly/tutorial-web-app) is responsible for the Integraly interface. You can find the URL looking for the router created for this project. As the following example.
-
-<img width="1525" alt="webapprouterview" src="https://user-images.githubusercontent.com/7708031/48856461-5884f100-edae-11e8-92ca-ef4c93f8961f.png">
-
-Also, with the evals users created by the installer is possible to check the services in the OpenShift catalog.
-
-**NOTE**: The default login credentials are `evals@example.com` / `Password1`
-
-Following an image of this console as example.
-
-<img width="1533" alt="evalsocpconsole" src="https://user-images.githubusercontent.com/7708031/48856465-5ae74b00-edae-11e8-954d-2267a5d5d5d2.png">
-
 #### Install each product individually
 
 Each product has an associated install playbook available from the ```evals/playbooks/``` directory.
@@ -328,6 +307,27 @@ $ cd evals/
 $ ansible-playbook -i inventories/hosts playbooks/webapp.yml
 ```
 
+### 5. Check the installation
+
+**IMPORTANT:** Once the installation has finished you will no longer be able to login via the Openshift console or oc cli as the admin if there is an sso redirect in place. The new admin user is `admin@example.com` password is `Password1`
+
+The URL for the Integraly view is `https://tutorial-web-app-webapp.apps.<domain>/` (e.g `https://tutorial-web-app-webapp.apps.example.openshiftworkshop.com/` when the master is `https://master.example.openshiftworkshop.com/` )
+
+Following an image to ilustrate its interface.
+
+<img width="1530" alt="integralyview" src="https://user-images.githubusercontent.com/7708031/48856455-528f1000-edae-11e8-8c1a-f0b37a1049ce.png">
+
+**NOTE:** The project [Webapp](https://github.com/integr8ly/tutorial-web-app) is responsible for the Integraly interface. You can find the URL looking for the router created for this project. As the following example.
+
+<img width="1525" alt="webapprouterview" src="https://user-images.githubusercontent.com/7708031/48856461-5884f100-edae-11e8-92ca-ef4c93f8961f.png">
+
+Also, with the evals users created by the installer is possible to check the services in the OpenShift catalog.
+
+**NOTE**: The default login credentials are `evals@example.com` / `Password1`
+
+Following an image of this console as example.
+
+<img width="1533" alt="evalsocpconsole" src="https://user-images.githubusercontent.com/7708031/48856465-5ae74b00-edae-11e8-954d-2267a5d5d5d2.png">
 
 ## Uninstallation steps
 
@@ -412,4 +412,13 @@ After 30 minutes you will receive a mail titled as `Your Red Hat Product Demo Sy
 
 <img width="374" alt="screenshot 2018-11-21 at 17 10 27" src="https://user-images.githubusercontent.com/7708031/48857267-5cb20e00-edb0-11e8-9113-cbfb7504a4b1.png">
 
+### Installing from RHPDS
+
+The installation can be performed from RHPDS directly. Following the steps.
+
+* Following the steps sent in the email from RHPDS
+* Connect via SSH into your RHPDS environment
+* Get the master URL via the command `oc get nodes`
+* Use the root user by running `sudo -i`
+* Following the [Installation Steps](#installation-steps)
 
