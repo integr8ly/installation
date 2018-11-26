@@ -1,0 +1,12 @@
+apiVersion: integreatly.org/v1alpha1
+kind: ApicurioDeployment
+metadata:
+  name: integreatly-apicuriodeployment
+spec:
+  template: {{ apicurio_template }}
+  version: {{ apicurio_version }}
+  app_domain: {{ apicurio_app_domain }}  
+  auth_realm: {{ apicurio_kc_realm }}
+  external_auth_url: {{ apicurio_kc_host | default('') }}
+  jvm_heap: ["768m", "2048m"]
+  mem_limit: ["800Mi", "4Gi"]

@@ -1,0 +1,55 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  creationTimestamp: null
+  name: apicurio-operator
+rules:
+- apiGroups:
+  - integreatly.org
+  resources:
+  - "*"
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - endpoints
+  - persistentvolumeclaims
+  - events
+  - configmaps
+  - secrets
+  - serviceaccounts
+  verbs:
+  - "*"
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - daemonsets
+  - replicasets
+  - statefulsets
+  verbs:
+  - "*"
+- apiGroups:
+  - template.openshift.io
+  resources:
+  - processedtemplates
+  verbs: ["*"]
+- apiGroups:
+  - image.openshift.io
+  resources:
+  - imagestreams
+  verbs: ["*"]
+- apiGroups:
+  - apps.openshift.io
+  resources:
+  - deploymentconfigs
+  verbs: ["*"]
+- apiGroups:
+  - route.openshift.io
+  resources:
+  - routes
+  - routes/custom-host
+  verbs: ["*"]

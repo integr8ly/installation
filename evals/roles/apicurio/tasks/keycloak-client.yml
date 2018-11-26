@@ -1,0 +1,45 @@
+---
+- name: Ensure template folder exists
+  file:
+    path: "{{ apicurio_template_folder }}/keycloak"
+    state: directory
+
+- name: Set apicurio keycloak redirect uris
+  set_fact:
+    apicurio_kc_redirect_uris: "{{ apicurio_kc_redirect_uris | default([]) + [item] }}"
+  with_items:
+    - "{{apicurio_protocol}}://{{ apicurio_studio_basename }}.{{ apicurio_app_domain }}"
+    - "{{apicurio_protocol}}://{{ apicurio_studio_basename }}.{{ apicurio_app_domain }}/*"
+    - "{{apicurio_protocol}}://{{ apicurio_api_basename }}.{{ apicurio_app_domain }}"
+    - "{{apicurio_protocol}}://{{ apicurio_api_basename }}.{{ apicurio_app_domain }}/*"
+
+- name: Write keycloak client template in target "{{ apicurio_template_folder }}"
+  template:
+    src: "keycloak/client.json.j2"
+    dest: "{{ apicurio_template_folder }}/keycloak/client.json"
+
+- name: Set apicurio keycloak client path var
+  set_fact:
+    apicurio_kc_cient_json_path: "{{ apicurio_template_folder }}/keycloak/client.json"
+
+-
+  name: Retrieve existing keycloakrealm cr
+  shell: "oc get keycloakrealm/{{ apicurio_kc_realm }} -n  {{ apicurio_keycloak_namespace }} -o json"
+  register: sso_kc_realm_cmd
+
+-
+  name: Set apicurio client id var
+  set_fact:
+    apicurio_kc_client: "{{ item.id }}"
+  with_items: "{{ (sso_kc_realm_cmd.stdout | from_json).spec.clients }}"
+  when: item.id == apicurio_kc_client_id
+- 
+  name: Inject apicurio client in CR if it does not exist
+  shell: "oc patch keycloakrealm {{ apicurio_kc_realm }} -n {{ apicurio_keycloak_namespace }} --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/clients/-\", \"value\": {{ lookup('file', apicurio_kc_cient_json_path) }}}]'"
+  register: result
+  until: not result.stderr
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  changed_when: result.stdout
+  when: apicurio_kc_client is undefined
