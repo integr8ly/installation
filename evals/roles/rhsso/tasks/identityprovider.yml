@@ -17,12 +17,12 @@
   when: client_secret_raw.stdout == "null"
 
 - name: decode client secret
-  shell: echo {{ client_secret_raw.stdout }} | cut -f2 -d '"' | base64 -d
+  shell: echo {{ client_secret_raw.stdout }} | cut -f2 -d '"'
   register: client_secret_decoded_raw
   when: client_secret_raw.stdout != "null"
 
 - set_fact:
-    client_secret: "{{ client_secret_decoded_raw.stdout }}"
+    client_secret: "{{ client_secret_decoded_raw.stdout | b64decode }}"
   when: client_secret_raw.stdout != "null"
 ## finished getting client secret from openshift secret now
 
