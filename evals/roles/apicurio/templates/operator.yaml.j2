@@ -16,7 +16,7 @@ spec:
       containers:
         - name: apicurio-operator
           # Replace this with the built image name
-          image: {{ apicurio_operator_image }}
+          image: "{{ apicurio_operator_image_url }}:{{ apicurio_operator_image_tag }}"
           ports:
           - containerPort: 60000
             name: metrics
