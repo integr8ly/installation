@@ -64,17 +64,12 @@
         name: gitea
         tasks_from: uninstall
       tags: ['gitea']
-    - 
-      name: "Delete enmasse cluster service broker"
-      shell: oc delete clusterservicebroker enmasse
-      register: output
-      failed_when: output.stderr != '' and 'not found' not in output.stderr
-    - 
-      name: "Delete project namespace: {{ enmasse_namespace | default('enmasse') }} "
-      shell: "oc delete project {{ enmasse_namespace | default('enmasse')}} "
-      register: output
-      failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
-      changed_when: output.rc == 0
+    -
+      name: Uninstall enmasse
+      include_role:
+        name: enmasse
+        tasks_from: uninstall
+      tags: ['enmasse']
     - 
       name: Uninstall the webapp
       include_role:
