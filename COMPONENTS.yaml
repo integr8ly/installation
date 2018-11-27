@@ -1,0 +1,39 @@
+---
+
+components:
+  - name: 3scale-operator
+    gitUrl: git@github.com:integr8ly/3scale-operator.git
+    ansible:
+      role: 3scale
+      imageTagVar: threescale_operator_image_tag
+  - name: gitea-operator
+    gitUrl: git@github.com:integr8ly/gitea-operator.git
+    ansible:
+      role: gitea
+      imageTagVar: gitea_operator_image_tag
+  - name: managed-service-broker
+    gitUrl: git@github.com:integr8ly/managed-service-broker.git
+    ansible:
+      role: msbroker
+      imageTagVar: msbroker_image_tag
+  - name: keycloak-operator
+    gitUrl: git@github.com:integr8ly/keycloak-operator.git
+    ansible:
+      role: rhsso
+      imageTagVar: rhsso_keycloak_operator_tag
+  - name: tutorial-web-app-operator
+    gitUrl: git@github.com:integr8ly/tutorial-web-app-operator.git
+    ansible:
+      role: webapp
+      imageTagVar: webapp_operator_image_tag
+  - name: tutorial-web-app
+    gitUrl: git@github.com:integr8ly/tutorial-web-app.git
+    skipImageTag: true
+    ansible:
+      role: webapp
+      imageTagVar: webapp_image_tag
+  - name: apicurio-operator
+    gitUrl: git@github.com:integr8ly/apicurio-operator.git
+    ansible:
+      role: apicurio
+      imageTagVar: apicurio_operator_image_tag
