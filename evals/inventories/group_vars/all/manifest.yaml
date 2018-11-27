@@ -1,0 +1,69 @@
+---
+
+# no particular version of threescale here as it is controlled by the operator. changing the operator version will change the 3scale version
+threescale: true
+threescale_operator_release_tag: '0.0.4'
+threescale_operator_resources: 'https://raw.githubusercontent.com/integr8ly/3scale-operator/{{threescale_operator_release_tag}}/deploy'
+threescale_version: '2.2.0.GA' # not currently used but is the version installed by the operator
+#threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
+
+amq: true
+amq_release_tag: '71-1.0.TP'
+amq_version: '7.1' # this is not currently used as part of the install but is the version from the above release tag
+amq_imagestream: 'https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/{{amq_release_tag}}/amq-broker-7-image-streams.yaml'
+amq_template: 'https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/{{amq_release_tag}}/templates/amq-broker-{{amq_release_tag.split("-")[0]}}-persistence.yaml'
+
+#note che cannot be installed without launcher being present currently
+che: true
+che_version: '6.9.0'
+# these should be used once issue https://github.com/eclipse/che/issues/12065 is in place or worked around. But currently not used
+che_template: 'https://raw.githubusercontent.com/eclipse/che/{{che_version}}/deploy/openshift/templates/che-server-template.yaml'
+che_postgres_template: 'https://github.com/eclipse/che/blob/{{che_version}}/deploy/openshift/templates/multi/postgres-template.yaml'
+
+enmasse: true
+enmasse_version: '0.24.1'
+enmasse_release_location: 'https://github.com/EnMasseProject/enmasse/releases/download/{{ enmasse_version }}/enmasse-{{ enmasse_version }}.tgz'
+
+fuse: true
+fuse_version: '7.1' #not currently used as the operator decides what to install
+fuse_release_tag: 'application-templates-2.1.fuse-710017-redhat-00006' # this is the release tag for fuse on openshift in github
+
+fuse_online: true
+fuse_online_release_tag: '1.4.8' # this is the release in github that is used for 7.1
+fuse_online_operator_resources: 'https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources/fuse-online-operator.yml'
+
+
+launcher: true
+# https://github.com/fabric8-launcher/launcher-openshift-templates/issues/46
+# we will need to set this during a release to the latest commit hash on master to ensure it doesn't change under us example: c1efdf1
+launcher_backend_image_tag: 'Set launcher sso host var'
+# we will need to set this during a release to the latest commit hash on master to ensure it doesn't change under us example: 0a941c1
+launcher_frontent_image_tag: 'latest'
+launcher_version: 'master' # note we are using master as this is what is expected by launcher https://github.com/fabric8-launcher/launcher-openshift-templates/issues/46
+launcher_template: 'https://raw.githubusercontent.com/f abric8-launcher/launcher-openshift-templates/{{launcher_version}}/openshift/launcher-template.yaml'
+
+#not currently used but is the version installed by the operator
+# rhsso is not an optional component
+rh_sso_version: '7.2.2.GA'
+rh_sso_opertor_release_tag: '0.0.2'
+rh_sso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rh_sso_opertor_release_tag}}/deploy/'
+
+
+gitea: true
+gitea_version: '1.6.0' # not currently used for installation reflect current installation (https://github.com/integr8ly/gitea-operator/issues/25)
+gitea_operator_release_tag: 'v0.0.2'
+gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_operator_release_tag}}/deploy/operator.yaml'
+
+webapp: true
+webapp_version: '1.0.0'
+webapp_operator_release_tag: 'master'
+webapp_operator_resources: 'https://raw.githubusercontent.com/integr8ly/tutorial-web-app-operator/{{webapp_operator_release_tag}}/deploy/'
+
+apicurio: true
+apicurio_version: '0.2.18.Final'
+apicurio_operator_release_tag: 'master'
+apicurio_operator_resources: 'https://raw.githubusercontent.com/integr8ly/apicurio-operator/{{apicurio_operator_release_tag}}/deploy/operator.yaml'
+
+
+nexus: true
+nexus_version: '2.14.11-01'

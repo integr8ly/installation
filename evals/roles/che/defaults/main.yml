@@ -27,7 +27,7 @@ che_update_strategy: 'Recreate'
 che_image_pull_policy: IfNotPresent
 che_create_subfolder_pv: false
 che_keycloak_realm: ''
-che_keycloak_client_id: 'che-client'
+che_keycloak_client_id: 'che-public'
 che_keycloak_host: ''
 
 #pvc vars

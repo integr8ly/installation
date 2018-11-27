@@ -24,20 +24,11 @@
   changed_when: False
 
 - name: "Create required objects"
-  shell: "oc create -f https://raw.githubusercontent.com/{{rhsso_operator_repo}}/keycloak-operator/{{rhsso_operator_commit_tag}}/deploy/{{ item }} -n {{ rhsso_namespace }}"
+  shell: "oc create -f {{rh_sso_operator_resources}}{{ item }} -n {{ rhsso_namespace }}"
   with_items: "{{ rhsso_operator_required_objects }}"
   register: rhsso_required_objects_result
   failed_when: rhsso_required_objects_result.stderr != '' and 'AlreadyExists' not in rhsso_required_objects_result.stderr
 
-- name: "Create operator deployment config template"
-  template:
-    src: "operator-dc.yaml"
-    dest: /tmp/operator-dc.yaml
-
-- name: "create operator deployment config"
-  shell: "oc create -f /tmp/operator-dc.yaml -n {{ rhsso_namespace }}"
-  register: rhsso_dc
-  failed_when: rhsso_dc.stderr != '' and 'AlreadyExists' not in rhsso_dc.stderr
 
 - name: "Create keycloak resource template"
   template:
@@ -69,13 +60,16 @@
   retries: 60
   delay: 5
   until: rhsso_secure_route.rc == 0
+  when: launcher
 
 - name: "Generate secret for launcher client"
   set_fact:
     launcher_client_secret: "{{ (ansible_date_time.epoch + launcher_namespace) | hash('sha512') }}"
+  when: launcher
 
 - set_fact:
     launcher_sso_route: "{{ rhsso_secure_route.stdout }}"
+  when: launcher
 
 - name: "Create keycloak realm resource template"
   template:

@@ -6,7 +6,7 @@
 
 - name: "Retrieve EnMasse {{ enmasse_version }} artifact"
   get_url:
-    url: "https://github.com/EnMasseProject/enmasse/releases/download/{{ enmasse_version }}/enmasse-{{ enmasse_version }}.tgz"
+    url: "{{enmasse_release_location}}"
     dest: "/tmp/enmasse-{{ enmasse_version }}.tgz"
   when: 
     enmasse_artifact.stat.exists == False

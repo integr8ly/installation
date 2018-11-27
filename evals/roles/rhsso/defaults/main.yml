@@ -29,6 +29,7 @@ rhsso_operator_required_objects:
   - rbac.yaml
   - Keycloak_crd.yaml
   - KeycloakRealm_crd.yaml
+  - operator.yaml
 
 rhsso_seed_users_email_format: evals%02d@example.com
 rhsso_seed_users_name_format: evals%02d@example.com

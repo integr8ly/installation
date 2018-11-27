@@ -32,6 +32,7 @@ rhsso_seed_users_email_format={{rhsso_seed_users_email_format}}
 # This is the format used for the usernames
 rhsso_seed_users_name_format={{rhsso_seed_users_name_format}}
 
+{% if threescale %}
 # 3scale Variables
 
 # The namespace threescale is deployed to
@@ -49,12 +50,15 @@ threescale_system_admin_route="{{threescale_system_admin_route}}"
 # the realm where threescale checks for users
 threescale_sso_realm="{{threescale_sso_realm}}"
 
+{% endif %}
+
+{% if che and launcher %}
 # CHE Variables
 
 # The namespace che is installed to 
 che_namespace="{{che_namespace}}"
 # The route for che api 
-che_route="{{che_route}}"
+che_route="{{che_secure_route}}"
 # The realm che uses for auth 
 che_keycloak_realm="{{eval_launcher_sso_realm}}"
 # the keycloak client to use for getting a token to act against che API
@@ -70,11 +74,12 @@ che_launcher_sso_username="{{launcher_sso_admin_username}}"
 # che launcher realm admin password 
 che_launcher_sso_password="{{launcher_sso_admin_password}}"
 
-
+{% endif %}
 
 # Nexus Variables
 nexus_namespace="{{nexus_namespace}}"
 
+{% if launcher %}
 # Launcher Variables
 launcher_namespace="{{launcher_namespace}}"
 # Launcher Route 
@@ -85,24 +90,39 @@ launcher_sso_route="{{launcher_sso_route}}"
 launcher_sso_password="{{eval_launcher_sso_admin_password}}"
 # The launcher admin sso user
 launcher_sso_user="{{eval_launcher_sso_admin_username}}"
+{% endif %}
 
+{% if gitea %}
 # GITEA
 # the namespace gittea is installed into
 gitea_namespace="{{gitea_namespace}}"
 # the route to gitea
 gitea_route="{{gitea_route}}"
+gitea_admin_username="{{gitea_admin_username}}"
+gitea_admin_token="{{gitea_admin_token}}"
+gitea_admin_password={{gitea_admin_password}}"
 
+{% endif %}
 
 # WEB APP 
 webapp_namespace="{{webapp_namespace}}"
 webapp_route="{{webapp_route}}"
 webapp_extra_services_configmap="{{webapp_extra_services_configmap}}"
 
+{% if enmasse %}
 # EnMasse
 
 enmasse_namespace="{{ enmasse_namespace | default('enmasse') }}"
 enmasse_rest_route="{{enmasse_rest_route}}"
+{% endif %}
 
+
+{% if apicurio %}
+apicurio_namespace="{{apicurio_namespace}}"
+apicurio_kc_realm="{{ apicurio_kc_realm }}"
+apicurio_route="{{apicurio_secure_api_route}}"
+
+{% endif %}
 
 [local]
 127.0.0.1

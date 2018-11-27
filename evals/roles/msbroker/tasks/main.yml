@@ -2,26 +2,34 @@
 - name: Get Launcher dashboard url
   shell: oc get route/launcher -o jsonpath='{.spec.host}' -n {{ launcher_namespace }}
   register: launcher_host_cmd
+  when: launcher
 - set_fact:
     launcher_dashboard_url: "http://{{ launcher_host_cmd.stdout}}"
+  when: launcher
 
 - name: Get Che dashboard url
   shell: oc get route/che -o jsonpath='{.spec.host}' -n {{ che_namespace }}
   register: che_host_cmd
+  when: che and launcher
 - set_fact:
     che_dashboard_url: "https://{{ che_host_cmd.stdout}}"
+  when: che and launcher
+
 
 - name: Get 3scale dashboard url
   shell: oc get route/system-provider-admin-route -o jsonpath='{.spec.host}' -n {{ threescale_namespace }}
   register: threescale_host_cmd
+  when: threescale
 - set_fact:
     threescale_dashboard_url: "https://{{ threescale_host_cmd.stdout}}"
+  when: threescale
 
 - name: Get apicurio dashboard url
   shell: oc get route/apicurio-studio-ui -o jsonpath='{.spec.host}' -n {{ apicurio_namespace }}
   register: apicurio_host_cmd
 - set_fact:
     apicurio_dashboard_url: "https://{{ apicurio_host_cmd.stdout}}"
+  when: apicurio
 
 # Create managed-service-broker namespace
 - name: Check if {{ msbroker_namespace }} namespace exists
@@ -42,6 +50,14 @@
 - name: Create CRDs
   shell: "oc create -f {{ item }}"
   with_items: "{{ required_crds }}"
+
+- set_fact:
+    fuse_online_enabled: "true"
+  when: fuse_online
+
+- set_fact:
+    fuse_online_enabled: "false"
+  when: not fuse_online
 
 - name: Create managed service broker template in {{ msbroker_namespace }}
   shell: "oc process -n {{ msbroker_namespace }} \

@@ -1,6 +1,5 @@
 ---
 enmasse_namespace: enmasse
-enmasse_version: '0.24.1'
 enmasse_multitenant: true
 enmasse_enable_rbac: true
 enmasse_api_server: true

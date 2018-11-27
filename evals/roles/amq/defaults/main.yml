@@ -1,5 +1,3 @@
 ---
 amq_template_namespace: openshift
 
-amq_imagestream: https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/71-1.0.TP/amq-broker-7-image-streams.yaml
-amq_template: https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/71-1.0.TP/templates/amq-broker-71-persistence.yaml

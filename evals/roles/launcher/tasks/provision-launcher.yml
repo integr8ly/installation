@@ -121,7 +121,7 @@
   failed_when: false
 
 - name: Create Launcher from template
-  shell: oc process -n {{ launcher_namespace }} -f {{ launcher_template }} --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_USERNAME= --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_PASSWORD= --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_API_URL= --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_CONSOLE_URL= --param=LAUNCHER_KEYCLOAK_URL=https://{{ launcher_sso_route }}/auth --param=LAUNCHER_KEYCLOAK_REALM={{ launcher_sso_realm }} --param=LAUNCHER_KEYCLOAK_CLIENT_ID=launcher-public --param=LAUNCHER_BOOSTER_CATALOG_REPOSITORY={{ launcher_catalog_git_repo }} --param=LAUNCHER_BOOSTER_CATALOG_REF={{ launcher_catalog_git_ref }} --param=FRONTEND_IMAGE_TAG={{ launcher_frontend_image_tag }} | oc create -n {{ launcher_namespace }} -f -
+  shell: oc process -n {{ launcher_namespace }} -f {{ launcher_template }} --param=CREATOR_BACKEND_MEMORY_REQUEST=10mi --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_USERNAME= --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_PASSWORD= --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_API_URL= --param=LAUNCHER_MISSIONCONTROL_OPENSHIFT_CONSOLE_URL= --param=LAUNCHER_KEYCLOAK_URL=https://{{ launcher_sso_route }}/auth --param=LAUNCHER_KEYCLOAK_REALM={{ launcher_sso_realm }} --param=LAUNCHER_KEYCLOAK_CLIENT_ID=launcher-public --param=LAUNCHER_BOOSTER_CATALOG_REPOSITORY={{ launcher_catalog_git_repo }} --param=LAUNCHER_BOOSTER_CATALOG_REF={{ launcher_catalog_git_ref }} --param=FRONTEND_IMAGE_TAG={{ launcher_frontend_image_tag }} | oc create -n {{ launcher_namespace }} -f -
   when: launcher_exists_cmd.rc != 0
 
 - name: Get Launcher route

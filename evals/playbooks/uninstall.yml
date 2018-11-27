@@ -43,6 +43,14 @@
         name: launcher
         tasks_from: uninstall
       tags: ['launcher']
+      when: launcher
+    -
+      name: Uninstall amq
+      include_role:
+        name: amq
+        tasks_from: uninstall
+      tags: ['amq']
+      when: amp
     -
       name: Uninstall che
       include_role:
@@ -52,6 +60,7 @@
         delete_keycloak_user: false
         che_delete_namespace: true
       tags: ['che']
+      when: che
     - 
       name: Uninstall managed services broker
       include_role:
@@ -64,6 +73,7 @@
         name: 3scale
         tasks_from: uninstall
       tags: ['3scale']
+      when: threescale
     - 
       name: Uninstall Gitea
       include_role:
@@ -76,12 +86,14 @@
         name: enmasse
         tasks_from: uninstall
       tags: ['enmasse']
+      when: enmasse
     - 
       name: Uninstall the webapp
       include_role:
         name: webapp
         tasks_from: uninstall
       tags: ['webapp']
+      when: webapp
     - 
       name: Uninstall rhsso
       include_role:
@@ -94,12 +106,14 @@
         name: nexus
         tasks_from: uninstall
       tags: ['nexus']
+      when: nexus
     -
       name: Uninstall Fuse
       include_role:
         name: fuse
         tasks_from: uninstall
       tags: ['fuse']
+      when: fuse
 
 
 - hosts: master

@@ -84,6 +84,7 @@
                 "standardFlowEnabled": true,
                 "directAccessGrantsEnabled": true
             },
+            {% if threescale %}
             {
                 "id": "{{ threescale_namespace }}",
                 "clientId": "{{ threescale_namespace }}",
@@ -216,6 +217,8 @@
                     }
                 ]
             },
+            {% endif %}
+            {% if launcher %}
             {
                 "clientId": "{{launcher_sso_keycloak_client_id}}",
                 "id": "{{launcher_sso_keycloak_client_id}}",
@@ -343,6 +346,7 @@
                     "manage": true
                 }
             },
+            {% endif %}
             {
                 "id": "apicurio-studio",
                 "outputSecret": "apicurio-sso-client",
