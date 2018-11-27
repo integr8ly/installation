@@ -1,0 +1,40 @@
+---
+
+ansibleRepo: https://github.com/integr8ly/installation
+
+components:
+  - name: 3scale-operator
+    gitUrl: https://github.com/integr8ly/3scale-operator
+    ansible:
+      role: 3scale
+      imageTagVar: threescale_operator_image_tag
+  - name: gitea-operator
+    gitUrl: https://github.com/integr8ly/gitea-operator
+    ansible:
+      role: gitea
+      imageTagVar: gitea_operator_image_tag
+  - name: managed-service-broker
+    gitUrl: https://github.com/integr8ly/managed-service-broker
+    ansible:
+      role: msbroker
+      imageTagVar: msbroker_image_tag
+  - name: keycloak-operator
+    gitUrl: https://github.com/integr8ly/keycloak-operator
+    ansible:
+      role: rhsso
+      imageTagVar: rhsso_keycloak_operator_tag
+  - name: tutorial-web-app-operator
+    gitUrl: https://github.com/integr8ly/tutorial-web-app-operator
+    ansible:
+      role: webapp
+      imageTagVar: webapp_operator_image_tag
+  - name: tutorial-web-app
+    gitUrl: https://github.com/integr8ly/tutorial-web-app
+    ansible:
+      role: webapp
+      imageTagVar: webapp_image_tag
+  - name: apicurio-operator
+    gitUrl: https://github.com/integr8ly/apicurio-operator
+    ansible:
+      role: apicurio
+      imageTagVar: apicurio_operator_image_tag
