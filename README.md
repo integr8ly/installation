@@ -1,4 +1,4 @@
-Integreatly
+Integreatly test for INT-6
 ===========
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
