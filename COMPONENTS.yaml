@@ -31,8 +31,8 @@ components:
 #    ansible:
 #      role: webapp
 #      imageTagVar: webapp_image_tag
-  - name: apicurio-operator
-    gitUrl: git@github.com:integr8ly/apicurio-operator.git
-    ansible:
-      role: apicurio
-      imageTagVar: apicurio_operator_image_tag
+#  - name: apicurio-operator
+#    gitUrl: git@github.com:integr8ly/apicurio-operator.git
+#    ansible:
+#      role: apicurio
+#      imageTagVar: apicurio_operator_image_tag
