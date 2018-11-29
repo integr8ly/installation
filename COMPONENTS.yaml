@@ -16,11 +16,11 @@ components:
 #    ansible:
 #      role: msbroker
 #      imageTagVar: msbroker_image_tag
-#  - name: keycloak-operator
-#    gitUrl: https://github.com/integr8ly/keycloak-operator
-#    ansible:
-#      role: rhsso
-#      imageTagVar: rhsso_keycloak_operator_tag
+  - name: keycloak-operator
+    gitUrl: https://github.com/integr8ly/keycloak-operator
+    ansible:
+      role: rhsso
+      imageTagVar: rhsso_keycloak_operator_tag
 #  - name: tutorial-web-app-operator
 #    gitUrl: https://github.com/integr8ly/tutorial-web-app-operator
 #    ansible:
@@ -31,8 +31,8 @@ components:
 #    ansible:
 #      role: webapp
 #      imageTagVar: webapp_image_tag
-#  - name: apicurio-operator
-#    gitUrl: https://github.com/integr8ly/apicurio-operator
-#    ansible:
-#      role: apicurio
-#      imageTagVar: apicurio_operator_image_tag
+  - name: apicurio-operator
+    gitUrl: https://github.com/integr8ly/apicurio-operator
+    ansible:
+      role: apicurio
+      imageTagVar: apicurio_operator_image_tag
