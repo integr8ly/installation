@@ -1,0 +1,141 @@
+---
+- hosts: localhost
+  gather_facts: true
+  tasks:
+    - name: Expose vars
+      include_vars: "../roles/nexus/defaults/main.yml"
+    - name: Install Nexus
+      include_role:
+        name: nexus
+        tasks_from: install
+      tags: ['nexus']
+    - name: Expose vars
+      include_vars: "../roles/rhsso/defaults/main.yml"
+    -
+      name: Set eval_app_host var
+      set_fact:
+        eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+    - name: Expose vars
+      include_vars: "../roles/launcher/defaults/main.yml"
+    -
+      name: Install launcher
+      include_role:
+        name: launcher
+      vars:
+        launcher_openshift_sso_username: "{{ eval_rhsso_admin_username }}"
+        launcher_openshift_sso_password: "{{ eval_rhsso_admin_password }}"
+        launcher_openshift_sso_route: "{{ eval_rhsso_host }}"
+        launcher_sso_validate_certs: "{{ eval_sso_validate_certs }}"
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+      tags: ['launcher']
+    -
+      name: Retrieve launcher sso env vars
+      shell: "oc get dc/launcher-sso \
+        -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
+        -n {{ eval_launcher_namespace }}"
+      with_items:
+        - 'SSO_SERVICE_USERNAME'
+        - 'SSO_SERVICE_PASSWORD'
+        - 'SSO_ADMIN_USERNAME'
+        - 'SSO_ADMIN_PASSWORD'
+      register: _eval_launcher_sso_dc_cmd
+      tags: ['bootstrap']
+    -
+      name: Set launcher sso playbook vars
+      set_fact: "eval_launcher_{{ item.item | lower }}={{ item.stdout }}"
+      with_items: "{{ _eval_launcher_sso_dc_cmd.results }}"
+      tags: ['bootstrap']
+    -
+      name: Retrieve launcher sso hostvars
+      shell: "oc get route/launcher-sso -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
+      register: eval_launcher_sso_host_cmd
+      tags: ['bootstrap']
+    -
+      name: Set launcher sso host var
+      set_fact:
+        eval_launcher_sso_host: "{{ eval_launcher_sso_host_cmd.stdout }}"
+      tags: ['bootstrap']
+
+    - name: Expose vars
+      include_vars: "../roles/che/defaults/main.yml"
+    -
+      name: Install che
+      include_role:
+        name: che
+      vars:
+        che_keycloak_user: "{{ eval_launcher_sso_admin_username }}"
+        che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"
+        che_keycloak_host: "{{ eval_launcher_sso_host }}"
+        che_route_suffix: "{{ eval_app_host }}"
+        che_protocol: https
+        che_ws_protocol: wss
+        che_keycloak_realm: "{{ eval_launcher_sso_realm }}"
+        che_keycloak_client_id: che-client
+      tags: ['che']
+      when: eval_action == 'install'
+    -
+      name: Uninstall che
+      include_role:
+        name: che
+        tasks_from: uninstall
+      vars:
+        che_keycloak_user: "{{ eval_launcher_sso_admin_username }}"
+        che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"
+        che_keycloak_host: "{{ eval_launcher_sso_host }}"
+      tags: ['che']
+      when: eval_action == 'uninstall'
+
+    - name: Expose vars
+      include_vars: "../roles/3scale/defaults/main.yml"
+    -
+      name: Install 3Scale
+      include_role:
+        name: 3scale
+      vars:
+        threescale_route_suffix: "{{ eval_app_host }}"
+      tags: ['3scale']
+    - name: Expose vars
+      include_vars: "../roles/webapp/defaults/main.yml"
+    -
+      name: Install apicurio
+      include_role:
+        name: apicurio
+      vars:
+        apicurio_app_domain: "{{ eval_app_host }}"
+        apicurio_kc_host: "{{ eval_rhsso_host }}"
+        apicurio_kc_username: "{{ eval_rhsso_admin_username }}"
+        apicurio_kc_password: "{{ eval_rhsso_admin_password }}"
+      tags: ['apicurio']
+    -
+      name: Install webapp
+      include_role:
+        name: webapp
+      vars:
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+      tags: ['webapp']
+      when: eval_action == 'install'
+
+    - name: Expose vars
+      include_vars: "../roles/gitea/defaults/main.yml"
+    -
+      name: Install Gitea
+      include_role:
+        name: gitea
+      vars:
+        gitea_route_suffix: "{{ eval_app_host }}"
+      tags: ['gitea']
+    -
+      name: Install managed services broker
+      include_role:
+        name: msbroker
+      vars:
+        route_suffix: "{{ eval_app_host }}"
+        launcher_namespace: "{{ eval_launcher_namespace }}"
+        che_namespace: "{{ eval_che_namespace }}"
+        threescale_namespace: "{{ eval_threescale_namespace }}"
+      tags: ['msbroker']
+    -
+      name: Install enmasse
+      include_role:
+        name: enmasse
+      tags: ['enmasse']
