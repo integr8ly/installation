@@ -9,8 +9,8 @@ spec:
   template:
     path: "{{ webapp_operator_template_path }}"
     parameters:
-      IMAGE: "{{ webapp_image_url }}"
-      IMAGE_TAG: "{{ webapp_image_tag }}"
-      OAUTH_CLIENT_ID: "{{ webapp_client_id }}"
+      WEBAPP_IMAGE: "{{ webapp_image_url }}"
+      WEBAPP_IMAGE_TAG: "{{ webapp_image_tag }}"
+      OPENSHIFT_OAUTHCLIENT_ID: "{{ webapp_client_id }}"
       OPENSHIFT_HOST: "{{ openshift_host.stdout }}"
       SSO_ROUTE: "{{ sso_route.stdout }}"
