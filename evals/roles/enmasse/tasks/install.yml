@@ -7,7 +7,7 @@
 - name: Set enmasse_download_url var to use beta url
   set_fact:
     enmasse_download_url: "{{ enmasse_beta_download_url }}"
-  when: enmasse_use_beta | bool |  == True
+  when: enmasse_use_beta | bool  == True
 
 - name: "Retrieve EnMasse {{ enmasse_version }} artifact"
   get_url:
