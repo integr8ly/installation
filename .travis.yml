@@ -9,4 +9,4 @@ install:
 script:
 - cd evals/
 - ansible-playbook -i ../test/inventories/hosts playbooks/install.yml --syntax-check
-- ansible-playbook -i ../test/inventories/hosts playbooks/install.yml --syntax-check
+- ansible-playbook -i ../test/inventories/hosts playbooks/uninstall.yml --syntax-check
