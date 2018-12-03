@@ -2,7 +2,7 @@ apicurio_template_folder: /tmp/apicurio
 apicurio_kc_client_id: apicurio-studio
 apicurio_namespace: apicurio
 apicurio_operator_image_url: 'quay.io/integreatly/apicurio-operator'
-apicurio_operator_image_tag: 'latest'
+apicurio_operator_image_tag: release-9.14.0
 apicurio_operator_image_pull_policy: Always
 apicurio_version: 0.2.18.Final
 apicurion_jvm_heap_min: 768m
