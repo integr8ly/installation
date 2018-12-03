@@ -5,7 +5,7 @@
 - set_fact:
     launcher_sso_openshift_idp_client_secret: "{{ 99999 | random | to_uuid }}"
 
-- name: Generate Launcher SSO auth token for admin user
+- name: Generate Launcher SSO auth token for admin user on {{ launcher_sso_route }}
   uri:
     url: "https://{{ launcher_sso_route }}/auth/realms/master/protocol/openid-connect/token"
     method: POST

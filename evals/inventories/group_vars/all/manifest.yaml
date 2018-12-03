@@ -8,8 +8,8 @@ threescale_version: '2.2.0.GA' # not currently used but is the version installed
 #threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
 
 amq: true
-amq_release_tag: '71-1.0.TP'
-amq_version: '7.1' # this is not currently used as part of the install but is the version from the above release tag
+amq_release_tag: '72-1.1.GA'
+amq_version: '7.2' # this is not currently used as part of the install but is the version from the above release tag
 amq_imagestream: 'https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/{{amq_release_tag}}/amq-broker-7-image-streams.yaml'
 amq_template: 'https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/{{amq_release_tag}}/templates/amq-broker-{{amq_release_tag.split("-")[0]}}-persistence.yaml'
 
@@ -25,8 +25,8 @@ enmasse_version: '0.24.1'
 enmasse_release_location: 'https://github.com/EnMasseProject/enmasse/releases/download/{{ enmasse_version }}/enmasse-{{ enmasse_version }}.tgz'
 
 fuse: true
-fuse_version: '7.1' #not currently used as the operator decides what to install
-fuse_release_tag: 'application-templates-2.1.fuse-710017-redhat-00006' # this is the release tag for fuse on openshift in github
+fuse_version: '7.2' #not currently used as the operator decides what to install
+fuse_release_tag: 'application-templates-2.1.fuse-720018-redhat-00001' # this is the release tag for fuse on openshift in github
 
 fuse_online: true
 fuse_online_release_tag: '1.4.8' # this is the release in github that is used for 7.1

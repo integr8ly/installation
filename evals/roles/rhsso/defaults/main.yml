@@ -33,7 +33,7 @@ rhsso_operator_required_crd_objects:
   - KeycloakRealm_crd.yaml
 
 rhsso_seed_users_email_format: evals%02d@example.com
-rhsso_seed_users_name_format: evals%02d@example.com
+rhsso_seed_users_name_format: evals%02d
 rhsso_seed_users_count: "{{ eval_seed_users_count }}"
 rhsso_seed_users_password: Password1
 

@@ -5,7 +5,7 @@
   failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
   changed_when: output.rc == 0
 
-- name: "Delete keycloak realm"
+- name: "Delete keycloak"
   shell: "oc delete keycloak rhsso -n {{ rhsso_namespace }}"
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
