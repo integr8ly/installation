@@ -4,12 +4,13 @@
     - 
       when: keep_namespaces is undefined or not keep_namespaces | bool
       block:
-        - 
+        -
           name: Check that the jq exists
           stat:
             path: /usr/bin/jq
           failed_when: false
           register: jq_binary
+          when: ansible_os_family != "Darwin"
 
         - 
           name: download jq
@@ -18,7 +19,12 @@
             url: https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
             dest: /usr/bin/jq
             mode: 0555
-          when: jq_binary.stat.exists == False 
+          when: ansible_os_family != "Darwin" and jq_binary.stat.exists == False
+
+        -
+          name: brew install jq
+          shell: brew install jq
+          when: ansible_os_family == "Darwin"
 
         - 
           name: Get namespaces to clean up
