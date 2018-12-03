@@ -116,6 +116,9 @@
         apicurio_kc_password: "{{ eval_rhsso_admin_password }}"
       tags: ['apicurio']
       when: apicurio
+
+    - name: Expose vars
+      include_vars: "../roles/apicurio/defaults/main.yml"
     -
       name: Install webapp
       include_role:
