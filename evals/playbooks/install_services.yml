@@ -9,6 +9,8 @@
         name: nexus
         tasks_from: install
       tags: ['nexus']
+      when: nexus
+
     - name: Expose vars
       include_vars: "../roles/rhsso/defaults/main.yml"
     -
@@ -28,6 +30,7 @@
         launcher_sso_validate_certs: "{{ eval_sso_validate_certs }}"
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
       tags: ['launcher']
+      when: launcher
     -
       name: Retrieve launcher sso env vars
       shell: "oc get dc/launcher-sso \
@@ -40,21 +43,25 @@
         - 'SSO_ADMIN_PASSWORD'
       register: _eval_launcher_sso_dc_cmd
       tags: ['bootstrap']
+      when: launcher
     -
       name: Set launcher sso playbook vars
       set_fact: "eval_launcher_{{ item.item | lower }}={{ item.stdout }}"
       with_items: "{{ _eval_launcher_sso_dc_cmd.results }}"
       tags: ['bootstrap']
+      when: launcher
     -
       name: Retrieve launcher sso hostvars
       shell: "oc get route/launcher-sso -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
       register: eval_launcher_sso_host_cmd
       tags: ['bootstrap']
+      when: launcher
     -
       name: Set launcher sso host var
       set_fact:
         eval_launcher_sso_host: "{{ eval_launcher_sso_host_cmd.stdout }}"
       tags: ['bootstrap']
+      when: launcher
 
     - name: Expose vars
       include_vars: "../roles/che/defaults/main.yml"
@@ -72,7 +79,7 @@
         che_keycloak_realm: "{{ eval_launcher_sso_realm }}"
         che_keycloak_client_id: che-client
       tags: ['che']
-      when: eval_action == 'install'
+      when: eval_action == 'install' and che and launcher
     -
       name: Uninstall che
       include_role:
@@ -83,7 +90,7 @@
         che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"
         che_keycloak_host: "{{ eval_launcher_sso_host }}"
       tags: ['che']
-      when: eval_action == 'uninstall'
+      when: eval_action == 'uninstall' and che and launcher
 
     - name: Expose vars
       include_vars: "../roles/3scale/defaults/main.yml"
@@ -94,6 +101,8 @@
       vars:
         threescale_route_suffix: "{{ eval_app_host }}"
       tags: ['3scale']
+      when: threescale
+
     - name: Expose vars
       include_vars: "../roles/webapp/defaults/main.yml"
     -
@@ -106,6 +115,7 @@
         apicurio_kc_username: "{{ eval_rhsso_admin_username }}"
         apicurio_kc_password: "{{ eval_rhsso_admin_password }}"
       tags: ['apicurio']
+      when: apicurio
     -
       name: Install webapp
       include_role:
@@ -113,7 +123,7 @@
       vars:
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
       tags: ['webapp']
-      when: eval_action == 'install'
+      when: eval_action == 'install' and webapp
 
     - name: Expose vars
       include_vars: "../roles/gitea/defaults/main.yml"
@@ -124,6 +134,7 @@
       vars:
         gitea_route_suffix: "{{ eval_app_host }}"
       tags: ['gitea']
+      when: gitea
     -
       name: Install managed services broker
       include_role:
@@ -140,3 +151,4 @@
       include_role:
         name: enmasse
       tags: ['enmasse']
+      when: enmasse

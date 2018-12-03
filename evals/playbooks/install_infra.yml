@@ -5,6 +5,7 @@
       include_role:
         name: amq
       tags: ['amq']
+      when: amq
     - name: Install walkthroughs
       include_role:
         name: walkthroughs
@@ -17,3 +18,4 @@
       include_role:
         name: fuse
       tags: ['fuse']
+      when: fuse
