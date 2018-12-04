@@ -32,6 +32,12 @@
           changed_when: output.rc == 0
           with_items: "{{ namespaces_output.stdout_lines }}"
     -
+      name: Uninstall apicurio
+      include_role:
+        name: apicurio
+        tasks_from: uninstall
+      tags: ['apicurio']
+    -
       name: Uninstall launcher
       include_role:
         name: launcher
