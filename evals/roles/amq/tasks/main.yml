@@ -8,7 +8,7 @@
 
 
 - name: Create AMQ Templates
-  shell: oc create -n {{ amq_template_namespace }} -f {{ item }}
+  shell: oc replace --force -n {{ amq_template_namespace }} -f {{ item }}
   register: cmd_amq_template
   failed_when: cmd_amq_template.stderr != '' and 'already exists' not in cmd_amq_imagestream.stderr
   changed_when: cmd_amq_template.rc == 0
