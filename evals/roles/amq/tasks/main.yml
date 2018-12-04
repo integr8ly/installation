@@ -4,7 +4,7 @@
   register: cmd_amq_imagestream
   failed_when: cmd_amq_imagestream.stderr != '' and 'already exists' not in cmd_amq_imagestream.stderr
   changed_when: cmd_amq_imagestream.rc == 0
-  with_items: {{amq_imagestreams}}
+  with_items: "{{amq_imagestreams}}"
 
 
 - name: Create AMQ Templates
@@ -12,4 +12,4 @@
   register: cmd_amq_template
   failed_when: cmd_amq_template.stderr != '' and 'already exists' not in cmd_amq_imagestream.stderr
   changed_when: cmd_amq_template.rc == 0
-  with_items: {{amq_templates}}
+  with_items: "{{amq_templates}}"
