@@ -4,7 +4,6 @@ fuse_image_tag: 1.1-6
 fuse_image_version: 1.4
 fuse_release_tag: application-templates-2.1.fuse-720018-redhat-00001
 
-
 fuse_operator_imagestreams_url: https://raw.githubusercontent.com/syndesisio/fuse-online-install/1.5/resources/fuse-online-image-streams.yml
 
 fuse_resource_base: https://raw.githubusercontent.com/jboss-fuse/application-templates/{{fuse_release_tag}}
