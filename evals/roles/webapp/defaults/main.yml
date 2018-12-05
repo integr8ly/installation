@@ -5,10 +5,10 @@ webapp_client_id: tutorial-web-app
 webapp_route: tutorial-web-app
 webapp_app_label: tutorial-web-app
 webapp_image_url: quay.io/integreatly/tutorial-web-app
-webapp_image_tag: 1.0.0
+webapp_image_tag: release-9.21.0
 #operator vars
 webapp_operator_image_url: 'quay.io/integreatly/tutorial-web-app-operator'
-webapp_operator_image_tag: 'master'
+webapp_operator_image_tag: release-9.21.0
 webapp_operator_template_path: '/home/tutorial-web-app-operator/deploy/template/tutorial-web-app.yml'
 #openshift vars
 webapp_openshift_master_config_path: "{{ eval_openshift_master_config_path | default('/etc/origin/master/master-config.yaml') }}"
