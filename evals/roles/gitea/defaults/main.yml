@@ -1,7 +1,7 @@
 gitea_namespace: gitea
-gitea_git_ref: v0.0.2
+gitea_git_ref: master
 gitea_operator_image_url: quay.io/integreatly/gitea-operator
-gitea_operator_image_tag: 0.0.2
+gitea_operator_image_tag: master
 gitea_resources:
   - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_git_ref}}/deploy/service_account.yaml
   - https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_git_ref}}/deploy/role.yaml
