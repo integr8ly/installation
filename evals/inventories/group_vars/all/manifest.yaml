@@ -29,7 +29,7 @@ fuse_version: '7.2' #not currently used as the operator decides what to install
 fuse_release_tag: 'application-templates-2.1.fuse-720018-redhat-00001' # this is the release tag for fuse on openshift in github
 
 fuse_online: true
-fuse_online_release_tag: '1.4.8' # this is the release in github that is used for 7.1
+fuse_online_release_tag: '1.5' # this is the release in github that is used for 7.1
 fuse_online_operator_resources: 'https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources/fuse-online-operator.yml'
 
 
