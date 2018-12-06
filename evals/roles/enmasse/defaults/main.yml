@@ -10,3 +10,6 @@ enmasse_keycloak_admin_password: admin
 enmasse_authentication_services: ["standard"]
 enmasse_clean_artifacts: true
 enmasse_enable_monitoring: false
+enmasse_download_url: "https://github.com/EnMasseProject/enmasse/releases/download/{{ enmasse_version }}/enmasse-{{ enmasse_version }}.tgz"
+enmasse_beta_download_url: https://access.redhat.com/sites/default/files/announcements/install_and_examples_1.zip
+enmasse_use_beta: true

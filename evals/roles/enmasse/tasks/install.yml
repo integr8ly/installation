@@ -4,10 +4,15 @@
     path: "/tmp/enmasse-{{ enmasse_version }}.tgz"
   register: enmasse_artifact
 
+- name: Set enmasse_download_url var to use beta url
+  set_fact:
+    enmasse_download_url: "{{ enmasse_beta_download_url }}"
+  when: enmasse_use_beta | bool  == True
+
 - name: "Retrieve EnMasse {{ enmasse_version }} artifact"
   get_url:
-    url: "https://github.com/EnMasseProject/enmasse/releases/download/{{ enmasse_version }}/enmasse-{{ enmasse_version }}.tgz"
-    dest: "/tmp/enmasse-{{ enmasse_version }}.tgz"
+    url: "{{ enmasse_download_url }}"
+    dest: "/tmp/enmasse-{{ enmasse_version }}.zip"
   when: 
     enmasse_artifact.stat.exists == False
 
@@ -15,10 +20,15 @@
   shell: brew install gnu-tar
   when: ansible_os_family == "Darwin"
 
+- name: Ensure tmp dir exists
+  file:
+    path: /tmp/enmasse-{{ enmasse_version }}
+    state: directory
+
 - name: Extract EnMasse artifact contents
   unarchive:
-    src: "/tmp/enmasse-{{ enmasse_version }}.tgz"
-    dest: /tmp/
+    src: "/tmp/enmasse-{{ enmasse_version }}.zip"
+    dest: /tmp/enmasse-{{ enmasse_version }}
 
 - name: Add EnMasse configurations to hosts file
   blockinfile:
