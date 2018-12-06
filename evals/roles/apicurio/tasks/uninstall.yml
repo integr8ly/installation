@@ -1,6 +1,6 @@
 ---
 - name: "Delete Apicurio Deployment Resource"
-  shell: oc delete apicuriodeployment integreatly-apicuriodeployment
+  shell: oc delete apicuriodeployment integreatly-apicuriodeployment -n {{ apicurio_namespace | default('apicurio') }}
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
 

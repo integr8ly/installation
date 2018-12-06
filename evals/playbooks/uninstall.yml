@@ -37,6 +37,7 @@
         name: apicurio
         tasks_from: uninstall
       tags: ['apicurio']
+      when: apicurio
     -
       name: Uninstall launcher
       include_role:
@@ -50,7 +51,7 @@
         name: amq
         tasks_from: uninstall
       tags: ['amq']
-      when: amp
+      when: amq
     -
       name: Uninstall che
       include_role:
