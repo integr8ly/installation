@@ -19,7 +19,7 @@
       "authorizationUrl":"https://{{ launcher_openshift_sso_route }}/auth/realms/{{ launcher_openshift_sso_realm }}/protocol/openid-connect/auth",
       "disableUserInfo":"",
       "logoutUrl":"https://{{ launcher_openshift_sso_route }}/auth/realms/{{ launcher_openshift_sso_realm }}/protocol/openid-connect/logout",
-      "clientSecret": "{{ openshift_client_secret_response.stdout }}",
+      "clientSecret": "{{ client_secret }}",
       "backchannelSupported":"",
       "useJwksUrl":"true"
    }
