@@ -1,3 +1,9 @@
+---
+- name: "Delete Apicurio Deployment Resource"
+  shell: oc delete apicuriodeployment integreatly-apicuriodeployment
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
+
 - name: "Delete project namespace: {{ apicurio_namespace | default('apicurio') }} "
   shell: "oc delete project {{ apicurio_namespace | default('apicurio')}} "
   register: output
