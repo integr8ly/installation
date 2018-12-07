@@ -76,7 +76,7 @@
 
 
 - name: Get Launcher SSO secure route
-  shell: oc get route $(oc get routes -n {{launcher_namespace}} | grep "reencrypt" | awk '\{\{ print $1 \}\}')  -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
+  shell: oc get route/{{ sso_secure_route_name.stdout }} -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
   register: rhsso_secure_route
   retries: 60
   delay: 5
