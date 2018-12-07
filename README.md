@@ -178,13 +178,13 @@ Before running the installer, please consider the following variables:
 ```shell
 $ oc login https://<openshift-master-url> -u <user> -p <password>
 $ cd evals/
-$ $ ansible-playbook -i inventories/hosts playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
+$ $ ansible-playbook -i inventories/hosts.template playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
 ```
 
 **NOTE:** The following playbook will install Integreatly without to enable GitHub authorization for Launcher.
 
 ```shell
-$ ansible-playbook -i inventories/hosts playbooks/install.yml
+$ ansible-playbook -i inventories/hosts.template playbooks/install.yml
 ```
 
 ##### 3. Add the generated `Authorization callback URL` to GitHub OAuth
@@ -251,7 +251,7 @@ Set the following variables:
 ```shell
 $ oc login https://<openshift-master-url>
 $ cd evals/
-$ ansible-playbook -i inventories/hosts playbooks/che-install.yml
+$ ansible-playbook -i inventories/hosts.template playbooks/che-install.yml
 ```
 
 ##### Run Launcher install playbook
@@ -342,7 +342,7 @@ Following an image of this console as example.
 Run the uninstall.yml playbook from inside the evals directory:
 ```shell
 $ cd evals/
-$ ansible-playbook -i inventories/hosts playbooks/uninstall.yml
+$ ansible-playbook -i inventories/hosts.template playbooks/uninstall.yml
 ```
 
 By default this will delete all user-created namespaces as well, if you wish to keep these namespaces then add the following flag:
