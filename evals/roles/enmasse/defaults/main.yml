@@ -1,5 +1,6 @@
 ---
 enmasse_namespace: enmasse
+enmasse_version: 'beta'
 enmasse_multitenant: true
 enmasse_enable_rbac: true
 enmasse_api_server: true
