@@ -52,7 +52,13 @@
   shell: ansible-playbook -i {{ inventory_file }} /tmp/{{enmasse_playbook_location}}
   args:
     chdir: "../"
-  when: enmasse_resources_exist.stderr == "No resources found."
+  when: enmasse_resources_exist.stderr == "No resources found." and  enmasse_use_beta | bool != True
+
+- name: "Provision EnMasse {{ enmasse_version }}"
+  shell: ansible-playbook -i {{ inventory_file }} /tmp/enmasse-"{{ enmasse_version }}"/install_and_examples/ansible/playbooks/openshift/deploy_all.yml
+  args:
+    chdir: "../"
+  when: enmasse_resources_exist.stderr == "No resources found." and  enmasse_use_beta | bool == True
 
 - name: "Verify EnMasse deployment succeeded"
   shell: sleep 5; oc get pods --namespace {{ enmasse_namespace }}  |  grep  "deploy"
