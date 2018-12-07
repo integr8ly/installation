@@ -87,7 +87,7 @@
   vars:
     template: "/tmp/keycloak-realm.json"
     email: "{{ rhsso_seed_users_email_format|format(item|int) }}"
-    username: "{ rhsso_seed_users_name_format|format(item|int)}}"
+    username: "{{ rhsso_seed_users_name_format|format(item|int)}}"
     password: "{{ rhsso_seed_users_password }}"
   with_sequence: count={{ rhsso_seed_users_count }}
 
