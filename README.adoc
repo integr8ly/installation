@@ -1,0 +1,452 @@
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+:toc:
+:toc-placement!:
+
+= Integreatly
+
+= Index
+
+:toc:
+toc::[]
+
+= Overview
+
+The purpose of this repository is to provide a set of Ansible playbooks that can be used to install a range of Red Hat middleware products on Openshift.
+
+These products include:
+
+* Single Sign On
+* Managed Services Broker
+* EnMasse
+* Eclipse Che
+* Launcher
+* 3Scale
+
+= Installing Integreatly
+
+== Prerequisites
+
+.Prerequisites
+|===
+|Requirement |Version
+|Ansible
+|>= v2.6
+|Openshift Container Platform
+|>= v3.10
+|Openshift CLI (OC)
+|>= v3.10
+|===
+
+
+[WARNING]
+====
+* SSH Access to Openshift master(s)
+* Cluster administrator permissions
+* The ssh user defined in the inventory, `ansible_user`, needs have sudo permission
+====
+
+== Installation Steps
+
+The following section demonstrates how to install each of the products listed above on an existing Openshift cluster.
+
+:numbered:
+== Clone installation GIT repository locally
+
+[source,shell]
+----
+git clone https://github.com/integr8ly/installation.git
+----
+
+== Create the inventory hosts file
+
+. Create the host file based on the template(`../evals/inventories/hosts.default`). Following the an example.
++
+[source,shell]
+----
+$ cp evals/inventories/hosts.template evals/inventories/hosts
+----
+. Update the host file to connect in your OpenShift cluster
++
+Prior to running the playbooks the master hostname and associated SSH username *must* be set in the inventory host file to match the target cluster configuration. The following example sets the SSH username to *evals* and the master hostname to *master.evals.example.com*:
++
+[source]
+----
+~/installation/evals/inventories/hosts
+
+[local:vars]
+ansible_connection=local
+
+[local]
+127.0.0.1
+
+[OSEv3:children]
+master
+
+[OSEv3:vars]
+ansible_user=evals
+
+[master]
+master.evals.example.com
+----
++
+NOTE: It is possible to add the variable `ansible_ssh_private_key_file` for the master host when the ssh connection requires a public key.(E.g`ansible_ssh_private_key_file=~/.ssh/ocp-workshop.pem`)
+
+== Check the connection with the OpenShift cluster
+
+Run the following command in order to check the connection with the OpenShift cluster from the `/installation/evals`.
+
+[source,shell]
+----
+$ ansible -m ping all
+----
+
+Following an example of the expected output.
+
+[source,shell]
+----
+$ ansible -m ping all
+127.0.0.1 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+master.example.openshiftworkshop.com | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+----
+
+== Run Install Playbooks
+
+Before run the scripts it is required login via oc client tool to the master/OCP. Following an example.
+
+[source,shell]
+----
+oc login master.example.openshiftworkshop.com -u <user> -p <password>
+----
+
+There are currently two options for installing:
+
+. link:#41-install-all-products-from-a-single-playbook[Install all products from a single playbook]
+. link:#42-install-each-product-individually[Install each product individually]
+
+=== Install all products from a single playbook
+
+All products can be installed using the *install.yml* playbook located in the *evals/playbooks/* directory.
+
+Before running the installer, please consider the following variables:
+
+.Install playbook variables
+|===
+| Variable | Description
+| eval_self_signed_certs | Whether the OpenShift cluster uses self-signed certs or not. Defaults to `true`
+| github_client_id | GitHub OAuth client ID to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
+| github_client_secret | GitHub OAuth client secret to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
+|===
+
+
+==== Create GitHub OAuth to enable GitHub authorization for Launcher
+
+. Login into GitHub
+. Go to `Settings >> Developer Settings >> New OAuth App`. Following an image as example to ilustrate this area.
++
+image::https://user-images.githubusercontent.com/7708031/48856646-dea13780-edae-11e8-9999-16b61dcc05ca.png[GitHub OAuth App]
+
+. Add the following fields values
++
+.Fields values descriptions
+|===
+|Field |Value
+|Application Name
+|Any value
+|Home Page URL
+|http://localhost
+|Authorization callback URL
+|http://localhost
+|===
++
+IMPORTANT: The callback URL is a placeholder for now and will be changed after the installation playbook is finished.
+
+. Click on `Register Application`
+. The values found in GitHub OAuth App, `Client ID` and `Client Secret`, will be required in the next step to install Integreatly enabling GitHub authorization for Launcher. Following an example of this screen.
++
+image::https://user-images.githubusercontent.com/7708031/48856868-7141d680-edaf-11e8-836f-4d533f8ed402.png[GitHub OAuth App Fields]
+
+==== Run the playbook
+
+[source,shell]
+----
+$ oc login https://<openshift-master-url> -u <user> -p <password>
+$ cd evals/
+$ $ ansible-playbook -i inventories/hosts playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
+----
+
+TIP: The following playbook will install Integreatly without to enable GitHub authorization for Launcher.
+
+[source,shell]
+----
+$ ansible-playbook -i inventories/hosts playbooks/install.yml
+----
+
+==== Add the generated `Authorization callback URL` to GitHub OAuth
+
+Following and example of the output made at the end of the playbook with this URL.
+
+[source,shell]
+----
+TASK [debug] *************************************************************************************************************************************************************************************************
+ok: [127.0.0.1] => {
+    "msg": "All services have been provisioned successfully. Please add 'https://launcher-sso-launcher.apps.example.openshiftworkshop.com/auth/realms/launcher_realm/broker/github/endpoint' as the Authorization callback URL of your GitHub OAuth Application."
+}
+----
+
+The `http://localhost` placeholder added in the GitHub OAuth App should be replaced with this value. Following an example.
+
+image::https://user-images.githubusercontent.com/7708031/48856981-c1209d80-edaf-11e8-9d23-f550c7ec31be.png[GitHub OAuth auhotizationn callback URL]
+
+=== Install each product individually
+
+Each product has an associated install playbook available from the *evals/playbooks/* directory.
+
+==== Run Single Sign On install playbook
+
+[source,shell]
+----
+$ oc login https://<openshift-master-url>
+$ cd evals/
+$ ansible-playbook -i inventories/hosts playbooks/rhsso.yml
+----
+
+Upon completion, a new identity provider named *rh_sso* should be presented on the Openshift master console login screen.
+
+WARNING: The default login credentials are `evals@example.com` / `Password1`
+
+To configure custom account credentials, simply override the rhsso role environment variables by specifying user parameters as part of the install command:
+
+[source,shell]
+----
+$ ansible-playbook -i inventories/hosts playbooks/rhsso.yml -e rhsso_evals_username=<username> -e rhsso_evals_password=<password>
+----
+
+==== Run EnMasse install playbook
+
+[source,shell]
+----
+$ oc login https://<openshift-master-url>
+$ cd evals/
+$ ansible-playbook -i inventories/hosts playbooks/enmasse.yml
+----
+
+Once the playbook has completed a service named `EnMasse (standard)` will be available
+in the Service Catalog. This can be provisioned into your namespace to use EnMasse.
+
+==== Run Che install playbook
+
+Set the following variables:
+
+.Che installer playbook variables
+|===
+| Variable | Description
+| che_route_suffix | The router suffix of the OpenShift cluster
+| che_keycloak_host | The route to the previously created SSO, without protocol
+| che_keycloak_user | Username to authenticate as, this would be the admin user by defaul
+| che_keycloak_password | Password of the user
+| che_namespace | The namesapce to provision che into
+| che_infra_namespace | This can usually be the same as `che_namespace`
+|===
+
+
+[source,shell]
+----
+$ oc login https://<openshift-master-url>
+$ cd evals/
+$ ansible-playbook -i inventories/hosts playbooks/che-install.yml
+----
+
+==== Run Launcher install playbook
+
+The Launcher playbook also requires information about the existing SSO that was
+provisioned previously. It needs to know the route of the SSO. This can be
+retrieved using:
+
+[source,shell]
+----
+$ oc get route sso -o jsonpath='{.spec.host}' -n rhsso
+----
+
+It also needs to know the realm to interact with. By default this would be
+`openshift`. Finally it needs the credentials of a user to login as, by default
+this would be the `admin` user created by the SSO playbook.
+
+Specify the following variables in the inventory files or as `--extra-vars` when
+running the playbook.
+
+.Launcher installer playbook variables
+|===
+| Variable | Description
+| launcher_openshift_sso_route | The route to the previously created SSO, without protocol
+| launcher_openshift_sso_realm | The realm to create resources in the SSO, this would be `openshift` by default
+| launcher_openshift_sso_username | Username to authenticate as, this would be the admin user by default
+| launcher_openshift_sso_password | Password of the user
+|===
+
+
+If using self signed certs set `launcher_sso_validate_certs` to `no/false`.
+Without this, an error will be thrown similar to this:
+
+----
+fatal: [127.0.0.1]: FAILED! => {"msg": "The conditional check 'launcher_sso_auth_response.status == 200' failed. The error was: error while evaluating conditional (launcher_sso_auth_response.status == 200): 'dict object' has no attribute 'status'"}
+----
+
+Next, run the playbook.
+
+[source,shell]
+----
+$ oc login https://<openshift-master-url>
+$ cd evals
+$ ansible-playbook -i inventories/hosts playbooks/launcher.yml
+----
+
+Once the playbook has completed it will print a debug message saying to update
+the `Authorization callback URL` of the GitHub OAuth Application. Once this is
+done the launcher setup has finished.
+
+==== Run 3Scale install playbook
+
+WARNING: 3Scale requires access to ReadWriteMany PVs. As such, it will only work on Openshift clusters that have RWX PVs available.
+
+[source,shell]
+----
+$ oc login https://<openshift-master-url>
+$ cd evals/
+$ ansible-playbook -i inventories/hosts playbooks/3scale.yml -e threescale_route_suffix=<openshift-router-suffix>
+----
+
+==== Run Webapp install playbook
+
+[source,shell]
+----
+$ oc login https://<openshift-master-url>
+$ cd evals/
+$ ansible-playbook -i inventories/hosts playbooks/webapp.yml
+----
+
+== Check the installation
+
+IMPORTANT: Once the installation has finished you will no longer be able to login via the Openshift console or oc cli as the admin if there is an sso redirect in place. The new admin user is `admin@example.com` password is `Password1`
+
+The URL for the Integraly view is `https://tutorial-web-app-webapp.apps.<domain>/` (e.g `https://tutorial-web-app-webapp.apps.example.openshiftworkshop.com/` when the master is `https://master.example.openshiftworkshop.com/` )
+
+Following an image to ilustrate its interface.
+
+image::https://user-images.githubusercontent.com/7708031/48856455-528f1000-edae-11e8-8c1a-f0b37a1049ce.png[integr8ly WebApp]
+
+TIP: The project https://github.com/integr8ly/tutorial-web-app[Webapp] is responsible for the Integraly interface. You can find the URL looking for the router created for this project. As the following example.
+
+image::https://user-images.githubusercontent.com/7708031/48856461-5884f100-edae-11e8-92ca-ef4c93f8961f.png[integr8ly WebApp Router]
+
+Also, with the *evals* users created by the installer is possible to check the services in the OpenShift catalog.
+
+IMPORTANT: The default login credentials are `evals@example.com` / `Password1`
+
+Following an image of this console as example.
+
+image::https://user-images.githubusercontent.com/7708031/48856465-5ae74b00-edae-11e8-954d-2267a5d5d5d2.png[OCP Console with integr8ly]
+
+:numbered!:
+== Uninstall steps
+
+Run the uninstall.yml playbook from inside the evals directory:
+[source,shell]
+----
+$ cd evals/
+$ ansible-playbook -i inventories/hosts playbooks/uninstall.yml
+----
+
+By default this will delete all user-created namespaces as well, if you wish to keep these namespaces then add the following flag:
+----
+-e keep_namespaces=true
+----
+
+== Troubleshooting
+
+=== Message "You need to install \"jmespath\" prior to running json_query filter" is shown when the installation fails
+
+The issue means that python version used by Ansible has not this required module. In order to fix it is required to install the missing module. Following the command to install it via `pip`.
+
+[source,shell]
+----
+$ pip install jmespath
+----
+
+NOTE: The module need to be installed in the same version of python used by Ansible. Use the command `$ ansible --version` to check this path.
+
+=== Message "jsonpointer module is not available" is shown when the installation fails
+
+The issue means that python version used by Ansible has not this required module.  In order to fix it is required to install the missing module. Following the command to install it via `pip`.
+
+[source,shell]
+----
+$ pip install jsonpointer
+----
+
+Also, may be required use the varible `ansible_python_interpreter` in the host file to fix it. Following an example.
+
+[source,yum]
+----
+[local:vars]
+ansible_connection=local
+ansible_python_interpreter=python
+----
+
+TIP: The module need to be installed in the same version of python used by Ansible. Use the command `$ ansible --version` to check this path.
+
+
+= Contributing with Integreatly
+
+== Using Red Hat Product Demo System to have an OpenShift instance (Valid just for partners and redhatters)
+
+. Login to https://rhpds.redhat.com/
+. Go to `RHPDS >> Change Group` and select `rhpds-access`. Following an example.
++
+image::https://user-images.githubusercontent.com/7708031/48857134-165caf00-edb0-11e8-8a00-7d03342b9a4d.png[RHPDS change group]
+
+. Go to `Services >> Catalog` and choose the Service `Workshop >> Integreatly Workshop`. Following an example.
++
+image::https://user-images.githubusercontent.com/7708031/48857073-f0370f00-edaf-11e8-9990-8f4baa32fb81.png[RHPDS Services]
++
+. Following information to request this service.
++
+.Values to fill the fields
+|===
+| Field | Value
+| Region | Choose your regions
+| City or Customer | Add a name with will be used to create the URL as `https://master.value.openshiftworkshop.com`
+| FDC/Campaign/Deal Reg ID | 000000
+| Openshift Version | Select the Openshift Version that you would like to use (E.g 3.10.14)
+| Notes | Any value
+|===
++
+TIP: To move forward and request the OpenShift instance is required click on in the checkbox.
++
+After 30 minutes you will receive a mail titled as `Your Red Hat Product Demo System service provision request for <your cluster> has completed.` . At the bottom of the email, you will see the Web App URL and admin username/password to have access to this cluster.
++
+TIP: Also, it is possible request an instance with Integreatly already installed. Following the image to shows the Service to request it in the `Services >> Catalog`.
++
+image::https://user-images.githubusercontent.com/7708031/48857267-5cb20e00-edb0-11e8-9113-cbfb7504a4b1.png[RHPDS Service to install OCP]
+
+=== Installing from RHPDS
+
+The installation can be performed from RHPDS directly. Following the steps.
+
+. Following the steps sent in the email from RHPDS
+. Connect via SSH into your RHPDS environment
+. Get the master URL via the command `oc get nodes`
+. Use the root user by running `sudo -i`
+. Following the link:#installation-steps[Installation Steps]
