@@ -84,19 +84,6 @@
         che_ws_protocol: wss
         che_keycloak_realm: "{{ eval_launcher_sso_realm }}"
       tags: ['che']
-      when: eval_action == 'install' and che and launcher
-    -
-      name: Uninstall che
-      include_role:
-        name: che
-        tasks_from: uninstall
-      vars:
-        che_keycloak_user: "{{ eval_launcher_sso_admin_username }}"
-        che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"
-        che_keycloak_host: "{{ eval_launcher_sso_host }}"
-      tags: ['che']
-      when: eval_action == 'uninstall' and che and launcher
-
     - name: Expose vars
       include_vars: "../roles/3scale/defaults/main.yml"
     -
@@ -143,8 +130,6 @@
       vars:
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
       tags: ['webapp']
-      when: eval_action == 'install' and webapp
-
     - name: Expose vars
       include_vars: "../roles/gitea/defaults/main.yml"
     -
