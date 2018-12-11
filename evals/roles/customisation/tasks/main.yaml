@@ -151,6 +151,16 @@
     webapp_route: "{{webapp_route.stdout}}"
   when: webapp
 
+
+- name: Get threescale admin  route
+  shell: oc get route/system-master-admin -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
+  register: threescale_system_admin_route
+  when: threescale
+
+- set_fact: 
+    threescale_system_admin_route: "{{threescale_system_admin_route.stdout}}"
+  when: threescale
+
 - name: Get launcher  route
   shell: oc get route/launcher -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
   register: launcher_route_cmd
