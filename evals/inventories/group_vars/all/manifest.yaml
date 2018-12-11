@@ -1,11 +1,11 @@
 ---
 
-# no particular version of threescale here as it is controlled by the operator. changing the operator version will change the 3scale version
+# threescale version is controlled by the operator. Changing the operator version will change the 3scale version
 threescale: true
-threescale_operator_release_tag: '0.0.4'
+threescale_operator_release_tag: '0.0.5' # This will need to be updated to point to the correct tag once the changes in the 3scale-operator has been merged.
 threescale_operator_resources: 'https://raw.githubusercontent.com/integr8ly/3scale-operator/{{threescale_operator_release_tag}}/deploy'
-threescale_version: '2.2.0.GA' # not currently used but is the version installed by the operator
-#threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
+threescale_version: '2.4.0.GA' # not currently used but is the version installed by the operator
+threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
 
 amq: true
 amq_release_tag: '72-1.1.GA'

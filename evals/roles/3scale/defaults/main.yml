@@ -36,12 +36,12 @@ rhsso_seed_users_count: "{{ eval_seed_users_count }}"
 rhsso_seed_users_password: Password1
 
 threescale_cluster_admin_email: admin@example.com
-threescale_cluster_admin_username: "{{ threescale_cluster_admin_email }}"
+threescale_cluster_admin_username: "admin"
 
 #Template Params
 threescale_pvc_size_mysql: 100Gi
 threescale_pvc_rwx_storageclassname: efs
 
 #Operator
-threescale_operator_image_url: 'quay.io/integreatly/3scale-operator'
-threescale_operator_image_tag: master
+threescale_operator_image_url: 'quay.io/jameelb/3scale-operator' # This will need to be updated to point to the correct image once the changes in the 3scale-operator has been merged.
+threescale_operator_image_tag: 0.0.5 # This will need to be updated to point to the correct tag once the changes in the 3scale-operator has been merged.
