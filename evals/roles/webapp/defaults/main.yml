@@ -6,7 +6,7 @@ webapp_route: tutorial-web-app
 webapp_app_label: tutorial-web-app
 webapp_image_url: quay.io/integreatly/tutorial-web-app
 webapp_image_tag: master
-webapp_walkthrough_locations: "https://github.com/integr8ly/tutorial-web-app-walkthroughs.git,https://github.com/integr8ly/example-customisations.git"
+webapp_walkthrough_locations: "https://github.com/integr8ly/tutorial-web-app-walkthroughs.git#{{ webapp_image_tag }},https://github.com/integr8ly/example-customisations.git#{{ webapp_image_tag }}"
 #operator vars
 webapp_operator_image_url: 'quay.io/integreatly/tutorial-web-app-operator'
 webapp_operator_image_tag: master
