@@ -46,6 +46,8 @@ components:
     ansible:
       role: webapp
       imageTagVar: webapp_image_tag
+  - name: tutorial-web-app-walkthroughs
+    gitUrl: git@github.com:integr8ly/tutorial-web-app-walkthroughs.git
   - name: apicurio-operator
     gitUrl: git@github.com:integr8ly/apicurio-operator.git
     imageUrl: quay.io/integreatly/apicurio-operator
