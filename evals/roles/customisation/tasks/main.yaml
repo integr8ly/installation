@@ -1,79 +1,245 @@
+
 - name: Retrieve 3Scale admin auth token
   shell: oc describe dc/system-app -n 3scale | grep ADMIN_ACCESS_TOKEN | tail -1 | awk '{print $2}'
   register: admin_auth_config
 - set_fact:
-    threescale_admin_token: "{{ admin_auth_config.stdout }}"  
+    threescale_admin_token: "{{ admin_auth_config.stdout }}"
+  when: threescale
 
 - name: Retrieve 3Scale master auth token
   shell:  oc describe dc/system-app -n 3scale | grep MASTER_ACCESS_TOKEN | head -1 | awk -F '"' '{print $2}'
-  register: master_auth_config        
- 
+  register: master_auth_config
+  when: threescale
+
+- name: Get threescale admin  route
+  shell: oc get route/system-master-admin-route -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
+  register: threescale_system_admin_route
+  when: threescale
 - set_fact:
-    threescale_master_token: "{{master_auth_config.stdout}}"      
+    threescale_system_admin_route: "{{threescale_system_admin_route.stdout}}"
+  when: threescale
+
+- name: Get threescale version installed by operator
+  shell: oc get threescale 3scale -n {{threescale_namespace}} -o=template --template \{\{.status.version\}\}
+  register: threescale_version_cmc
+  when: threescale
+- set_fact:
+    threescale_version: "{{threescale_version_cmc.stdout}}"
+  when: threescale
+
+- name: Get 3scale dashboard url
+  shell: oc get route/system-provider-admin-route -o jsonpath='{.spec.host}' -n {{ threescale_namespace }}
+  register: threescale_host_cmd
+  when: threescale
+- set_fact:
+    threescale_dashboard_url: "https://{{ threescale_host_cmd.stdout}}"
+  when: threescale
+
+- name: set threescale component
+  set_fact:
+    threescale_manifest:
+      name: 3scale
+      version: "{{threescale_version}}"
+      host: "{{threescale_dashboard_url}}"
+  when: threescale
+
+
+- set_fact:
+    components: "{{components}} + [{{threescale_manifest}}] "
+  when: threescale
+
+- set_fact:
+    threescale_master_token: "{{master_auth_config.stdout}}"
+  when: threescale
+
+- name: Get apicurio ui secure route
+  shell: oc get route/apicurio-studio-ui -o template --template \{\{.spec.host\}\} -n {{ apicurio_namespace }}
+  register: api_curio_ui_route
+  when: apicurio
+
+- set_fact:
+    apicurio_secure_ui_route: "https://{{api_curio_ui_route.stdout}}"
+  when: apicurio
+
+- name: Get apicurio api secure route
+  shell: oc get route/apicurio-studio-api -o template --template \{\{.spec.host\}\} -n {{ apicurio_namespace }}
+  register: api_curio_api_route
+  when: apicurio
+
+- set_fact:
+    apicurio_secure_api_route: "https://{{api_curio_api_route.stdout}}"
+  when: apicurio
+
+- name: set apicurio component
+  set_fact:
+    apicurio_manifest:
+      name: apicurio
+      version: "{{apicurio_version}}"
+      host: "{{apicurio_secure_ui_route}}"
+  when: apicurio
+
+- set_fact:
+    components: "{{components}} + [{{apicurio_manifest}}] "
+  when: apicurio
 
 - name: Get Che secure route
   shell: oc get route/che -o template --template \{\{.spec.host\}\} -n {{ che_namespace }}
   register: che_secure_route
+  when: che and launcher
 
 - set_fact: 
-    che_secure_route: "{{che_secure_route.stdout}}"
+    che_secure_route: "https://{{che_secure_route.stdout}}"
+  when: che and launcher
+
+- name: set che component
+  set_fact:
+    che_manifest:
+      name: che
+      version: "{{che_version}}"
+      host: "{{che_secure_route}}"
+  when: che and launcher
+
+- set_fact:
+    components: "{{components}} + [{{che_manifest}}] "
+  when: che and launcher
+
 
 - name: Get RH-SSO secure route
   shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ rhsso_namespace }}
   register: rhsso_secure_route
 
 - set_fact: 
-    rhsso_secure_route: "{{rhsso_secure_route.stdout}}"
+    rhsso_secure_route: "https://{{rhsso_secure_route.stdout}}"
+
+- name: set rhsso component
+  set_fact:
+    rhsso_manifest:
+      name: rh-sso
+      version: "{{rh_sso_version}}"
+      host: "{{rhsso_secure_route}}"
+
+- set_fact:
+    components: "{{components}} + [{{rhsso_manifest}}] "
 
 - name: Get Gitea route
   shell: oc get routes -n {{ gitea_namespace }} -o=jsonpath={.items[0].spec.host} 
   register: gitea_route
+  when: gitea
 
 - set_fact: 
-    gitea_route: "{{gitea_route.stdout}}"    
+    gitea_route: "https://{{gitea_route.stdout}}"
+  when: gitea
+
+- name: set gitea component
+  set_fact:
+    gitea_manifest:
+      name: gitea
+      version: "{{gitea_version}}"
+      host: "{{gitea_route}}"
+  when: gitea
+
+- set_fact:
+    components: "{{components}} + [{{gitea_manifest}}] "
+  when: gitea
 
 - name: Get Integreatly WebApp route
   shell: oc get route/tutorial-web-app -o template --template \{\{.spec.host\}\} -n {{ webapp_namespace }}
   register: webapp_route
+  when: webapp
 
 - set_fact: 
-    webapp_route: "{{webapp_route.stdout}}"        
-
-
-- name: Get threescale admin  route
-  shell: oc get route/system-master-admin-route -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
-  register: threescale_system_admin_route
-
-- set_fact: 
-    threescale_system_admin_route: "{{threescale_system_admin_route.stdout}}"    
+    webapp_route: "{{webapp_route.stdout}}"
+  when: webapp
 
 - name: Get launcher  route
   shell: oc get route/launcher -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
   register: launcher_route_cmd
+  when: launcher
 
 - set_fact: 
-    launcher_route: "{{launcher_route_cmd.stdout}}"    
+    launcher_route: "https://{{launcher_route_cmd.stdout}}"
+  when: launcher
 
-- name: Get che  route
-  shell: oc get route/che -o template --template \{\{.spec.host\}\} -n {{ che_namespace }}
-  register: che_route_cmd
+- name: set launcher component
+  set_fact:
+    launcher_manifest:
+      name: launcher
+      version: "{{launcher_version}}"
+      host: "{{launcher_route}}"
+  when: launcher
 
-- set_fact: 
-    che_route: "{{che_route_cmd.stdout}}"
+- set_fact:
+    components: "{{components}} + [{{launcher_manifest}}] "
+  when: launcher
 
-- name: Get enmasse rest  route
+
+- name: set amq component
+  set_fact:
+    amq_manifest:
+      name: amq
+      version: "{{amq_version}}"
+      host: ""
+  when: amq
+
+- set_fact:
+    components: "{{components}} + [{{amq_manifest}}] "
+  when: amq
+
+- name: set fuse online component
+  set_fact:
+    fuse_online_manifest:
+      name: fuse_online
+      version: "{{fuse_version}}"
+      host: ""
+  when: fuse_online
+
+- set_fact:
+    components: "{{components}} + [{{fuse_online_manifest}}] "
+  when: fuse_online
+
+- name: set fuse component
+  set_fact:
+    fuse_on_openshift_manifest:
+      name: fuse_openshift
+      version: "{{fuse_version}}"
+      host: ""
+  when: fuse
+
+- set_fact:
+    components: "{{components}} + [{{fuse_on_openshift_manifest}}] "
+  when: fuse
+
+
+
+- name: Get enmasse rest route
   shell: oc get route/restapi -o template --template \{\{.spec.host\}\} -n {{ enmasse_namespace | default('enmasse') }}
   register: enmsase_route_cmd
+  when: enmasse
 
 - set_fact: 
-    enmasse_rest_route: "{{enmsase_route_cmd.stdout}}"            
+    enmasse_rest_route: "https://{{enmsase_route_cmd.stdout}}"
+  when: enmasse
+
+- name: set enmasse component
+  set_fact:
+    enmasse_manifest:
+      name: enmasse
+      version: "{{fuse_version}}"
+      host: "{{enmasse_rest_route}}"
+  when: enmasse
+
+- set_fact:
+    components: "{{components}} + [{{enmasse_manifest}}] "
+  when: enmasse
 
 - name: Retrieve launcher sso hostvars
   shell: "oc get route/{{launcher_sso_prefix}} -o jsonpath='{.spec.host}' -n {{ launcher_namespace }}"
   register: launcher_sso_host_cmd
+  when: launcher
 
 - set_fact: 
-    launcher_sso_route: "{{launcher_sso_host_cmd.stdout}}"          
+    launcher_sso_route: "https://{{launcher_sso_host_cmd.stdout}}"
+  when: launcher
 
 
 
@@ -82,17 +248,47 @@
     src: "inventory.j2"
     dest: /tmp/generated_inventory
 
-- name: Check if secret exists    
+- name: Generate custom manifest
+  template:
+    src: "manifest.j2"
+    dest: /tmp/generated_manifest
+
+- name: Check if webapp namespace exists
+  shell: oc get namespace {{ webapp_namespace }}
+  failed_when: false
+  register: webapp_check_namespace_exists_cmd
+
+- name: Create webapp namespace
+  shell: oc new-project {{ webapp_namespace }}
+  when: webapp_check_namespace_exists_cmd.rc != 0
+
+
+- name: Check if manifest secret exists
   shell: oc get secret manifest -n {{webapp_namespace}}
-  register: inventory_secret
-  failed_when: inventory_secret.stderr != '' and 'NotFound' not in inventory_secret.stderr
+  register: manifest_secret
+  failed_when: manifest_secret.stderr != '' and 'NotFound' not in manifest_secret.stderr
 
 - name: Delete secret if it exists
   shell: oc delete secret manifest -n {{webapp_namespace}}
-  when:   inventory_secret.stderr == ""
+  when:   manifest_secret.stderr == ""
+
+- name: Create manifest secret
+  shell: oc create secret generic manifest --from-file=/tmp/generated_manifest --type=application/json -n {{webapp_namespace}}
+
+- name: Check if inventory secret exists
+  shell: oc get secret inventory -n {{webapp_namespace}}
+  register: inventory_secret
+  failed_when: inventory_secret.stderr != '' and 'NotFound' not in inventory_secret.stderr
+
+- name: Delete inventory secret if it exists
+  shell: oc delete secret inventory -n {{webapp_namespace}}
+  when:  inventory_secret.stderr == ""
 
 - name: Create secret with custom inventory
-  shell: oc create secret generic manifest --from-file=/tmp/generated_inventory --type=ansible/inventory -n {{webapp_namespace}}
+  shell: oc create secret generic inventory --from-file=/tmp/generated_inventory --type=ansible/inventory -n {{webapp_namespace}}
 
 - name: remove generated template
   file: path='/tmp/generated_inventory' state=absent
+
+- name: remove generated template
+  file: path='/tmp/generated_manifest' state=absent

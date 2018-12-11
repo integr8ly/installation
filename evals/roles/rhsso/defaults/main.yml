@@ -1,6 +1,6 @@
 ---
-rhsso_keycloak_operator_image: "quay.io/integreatly/keycloak-operator"
-rhsso_keycloak_operator_tag: master
+rhsso_keycloak_operator_image_url: "quay.io/integreatly/keycloak-operator"
+rhsso_keycloak_operator_image_tag: master
 
 rhsso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"
 

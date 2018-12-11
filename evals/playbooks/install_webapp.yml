@@ -6,9 +6,11 @@
         name: webapp
         tasks_from: cors
       tags: ['webapp', 'remote']
+      when: webapp
     - include_role:
         name: rhsso
         tasks_from: identityprovider
       vars:
         rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
       tags: ['rhsso', 'remote']
+      when: webapp

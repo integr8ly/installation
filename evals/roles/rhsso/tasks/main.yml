@@ -69,13 +69,16 @@
   retries: 60
   delay: 5
   until: rhsso_secure_route.rc == 0
+  when: launcher
 
 - name: "Generate secret for launcher client"
   set_fact:
     launcher_client_secret: "{{ (ansible_date_time.epoch + launcher_namespace) | hash('sha512') }}"
+  when: launcher
 
 - set_fact:
     launcher_sso_route: "{{ rhsso_secure_route.stdout }}"
+  when: launcher
 
 - name: "Create keycloak realm resource template"
   template:

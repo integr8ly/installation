@@ -1,5 +1,23 @@
 # Customising an Integreatly Cluster
 
+## Modifying what is poured into a cluster
+
+You can change what is installed by default by modifying the ```inventories/group_vars/all/manifest.yaml```
+
+Each component has a flag that will stop it from being installed into the cluster.
+
+Each component also has a version. At this point this version is just a reflection of what is installed and cannot be used to install newer versions.
+
+**Note on Disabling Launcher**
+Currently Che is linked to launcher's sso instance. If you choose not to install launcher, che will also not be installed. 
+
+
+**Note on RH-SSO**
+Installing backing RH-SSO is not optional
+
+
+## Adding new components and customising existing components
+
 # Prerequisites 
 
 - Familiar with Ansible
@@ -13,7 +31,7 @@ Each Integreatly cluster has a secret in the webapp namespace with an inventory 
 can be used to help you add customisations using ansible playbooks.
 
 ``` 
-oc get secret manifest -n webapp --template '{{index .data "generated_inventory"}}'  | base64 -D > inventory
+oc get secret inventory -n webapp --template '{{index .data "generated_inventory"}}'  | base64 -D > inventory
 
 ```
 

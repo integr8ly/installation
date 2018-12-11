@@ -9,6 +9,7 @@
       include_role:
         name: launcher
         tasks_from: provision-sso
+      when: launcher
     -
       name: Install rhsso
       include_role:

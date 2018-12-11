@@ -1,0 +1,14 @@
+{
+    "components":[
+        {% for c in components %}
+            {
+                "name": "{{c.name}}",
+                "version": "{{c.version}}",
+                "host": "{{c.host}}"
+            }
+            {% if not loop.last %}
+            ,
+            {% endif %}
+        {% endfor %}
+    ]
+}
