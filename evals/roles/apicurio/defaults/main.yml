@@ -1,3 +1,4 @@
+apicurio_name: integreatly-apicuriodeployment
 apicurio_template_folder: /tmp/apicurio
 apicurio_kc_client_id: apicurio-studio
 apicurio_namespace: apicurio

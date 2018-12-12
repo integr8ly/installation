@@ -1,11 +1,20 @@
 ---
 - name: "Delete Apicurio Deployment Resource"
-  shell: oc delete apicuriodeployment integreatly-apicuriodeployment -n {{ apicurio_namespace | default('apicurio') }}
+  shell: oc delete apicuriodeployment {{ apicurio_name }} -n {{ apicurio_namespace }}
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
 
-- name: "Delete project namespace: {{ apicurio_namespace | default('apicurio') }} "
-  shell: "oc delete project {{ apicurio_namespace | default('apicurio')}} "
+- name: Wait for apicurio deletion ({{ apicurio_name }})
+  shell: oc get apicuriodeployment {{ apicurio_name }} -n {{ apicurio_namespace }}
+  register: apicurio_get_cmd
+  until: not apicurio_get_cmd.stdout
+  retries: 50
+  delay: 10
+  failed_when: apicurio_get_cmd.stdout
+  changed_when: False
+
+- name: "Delete project namespace: {{ apicurio_namespace }} "
+  shell: "oc delete project {{ apicurio_namespace }} "
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
   changed_when: output.rc == 0 
