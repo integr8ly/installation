@@ -27,6 +27,8 @@ rhsso_operator_commit_tag: master
 
 rhsso_operator_required_objects:
   - rbac.yaml
+
+rhsso_operator_required_crd_objects:
   - Keycloak_crd.yaml
   - KeycloakRealm_crd.yaml
 
