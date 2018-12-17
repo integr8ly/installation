@@ -29,6 +29,12 @@
   register: rhsso_required_objects_result
   failed_when: rhsso_required_objects_result.stderr != '' and 'AlreadyExists' not in rhsso_required_objects_result.stderr
 
+- name: "Create required cr objects"
+  shell: "oc create -f https://raw.githubusercontent.com/{{rhsso_operator_repo}}/keycloak-operator/{{rhsso_operator_commit_tag}}/deploy/crds/{{ item }} -n {{ rhsso_namespace }}"
+  with_items: "{{ rhsso_operator_required_crd_objects }}"
+  register: rhsso_required_crd_objects_result
+  failed_when: rhsso_required_crd_objects_result.stderr != '' and 'AlreadyExists' not in rhsso_required_crd_objects_result.stderr
+
 - name: "Create operator deployment config template"
   template:
     src: "operator-dc.yaml"
