@@ -1,8 +1,9 @@
 ---
 - name: Read master config
   slurp:
-    src: /home/jsarnovs/work/master-config.yaml
+    src: "{{ webapp_openshift_master_config_path }}"
   register: masterconf
+  become: yes
 
 - name: Add webapp route to corsAllowedOrigins in master config, matching indentation of existing items
   blockinfile:
