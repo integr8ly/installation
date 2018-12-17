@@ -36,7 +36,7 @@ rhsso_seed_users_count: "{{ eval_seed_users_count }}"
 rhsso_seed_users_password: Password1
 
 threescale_cluster_admin_email: admin@example.com
-threescale_cluster_admin_username: "{{ threescale_cluster_admin_email }}"
+threescale_cluster_admin_username: "admin"
 
 #Template Params
 threescale_pvc_size_mysql: 100Gi
