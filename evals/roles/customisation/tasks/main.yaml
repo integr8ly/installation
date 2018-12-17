@@ -12,7 +12,7 @@
   when: threescale
 
 - name: Get threescale admin  route
-  shell: oc get route/system-master-admin-route -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
+  shell: oc get route/system-master -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
   register: threescale_system_admin_route
   when: threescale
 - set_fact:
@@ -28,7 +28,7 @@
   when: threescale
 
 - name: Get 3scale dashboard url
-  shell: oc get route/system-provider-admin-route -o jsonpath='{.spec.host}' -n {{ threescale_namespace }}
+  shell: oc get route/system-provider-admin -o jsonpath='{.spec.host}' -n {{ threescale_namespace }}
   register: threescale_host_cmd
   when: threescale
 - set_fact:
@@ -153,7 +153,7 @@
 
 
 - name: Get threescale admin  route
-  shell: oc get route/system-master-admin-route -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
+  shell: oc get route/system-master -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
   register: threescale_system_admin_route
   when: threescale
 
