@@ -17,7 +17,7 @@
 
 
 - name: Get 3scale dashboard url
-  shell: oc get route/system-provider-admin -o jsonpath='{.spec.host}' -n {{ threescale_namespace }}
+  shell: oc get route/system-provider-admin-route -o jsonpath='{.spec.host}' -n {{ threescale_namespace }}
   register: threescale_host_cmd
   when: threescale
 - set_fact:
