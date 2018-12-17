@@ -21,7 +21,7 @@ che_template: 'https://raw.githubusercontent.com/eclipse/che/{{che_version}}/dep
 che_postgres_template: 'https://github.com/eclipse/che/blob/{{che_version}}/deploy/openshift/templates/multi/postgres-template.yaml'
 
 enmasse: true
-enmasse_version: '0.24.1'
+enmasse_version: 'beta'
 enmasse_release_location: 'https://github.com/EnMasseProject/enmasse/releases/download/{{ enmasse_version }}/enmasse-{{ enmasse_version }}.tgz'
 
 fuse: true
