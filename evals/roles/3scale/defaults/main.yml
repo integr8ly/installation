@@ -31,7 +31,7 @@ rhsso_evals_admin_username: "{{ rhsso_evals_admin_email }}"
 rhsso_evals_admin_password: Password1
 
 rhsso_seed_users_email_format: evals%02d@example.com
-rhsso_seed_users_name_format: evals%02d@example.com
+rhsso_seed_users_name_format: evals%02d
 rhsso_seed_users_count: "{{ eval_seed_users_count }}"
 rhsso_seed_users_password: Password1
 

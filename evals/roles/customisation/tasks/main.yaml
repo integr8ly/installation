@@ -147,7 +147,7 @@
   register: webapp_route
   when: webapp
 
-- set_fact: 
+- set_fact:
     webapp_route: "{{webapp_route.stdout}}"
   when: webapp
 
