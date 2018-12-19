@@ -59,11 +59,8 @@ webapp_version: '1.0.0'
 webapp_operator_release_tag: 'master'
 webapp_operator_resources: 'https://raw.githubusercontent.com/integr8ly/tutorial-web-app-operator/{{webapp_operator_release_tag}}/deploy/'
 
-apicurio: true
-apicurio_version: '0.2.18.Final'
-apicurio_operator_release_tag: 'master'
-apicurio_operator_resources: 'https://raw.githubusercontent.com/integr8ly/apicurio-operator/{{apicurio_operator_release_tag}}/deploy/operator.yaml'
-
+apicurito: true
+apicurito_version: '0.2.18.Final'
 
 nexus: true
 nexus_version: '2.14.11-01'

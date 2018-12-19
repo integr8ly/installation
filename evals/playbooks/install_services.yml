@@ -102,23 +102,25 @@
         threescale_route_suffix: "{{ eval_app_host }}"
       tags: ['3scale']
       when: threescale
-
-    - name: Expose vars
+    -
+      name: Expose vars
       include_vars: "../roles/webapp/defaults/main.yml"
     -
-      name: Install apicurio
+      name: Install enmasse
       include_role:
-        name: apicurio
+        name: enmasse
+      tags: ['enmasse']
+      when: enmasse
+    - name: Install apicurito
+      include_role:
+        name: apicurito
       vars:
-        apicurio_app_domain: "{{ eval_app_host }}"
-        apicurio_kc_host: "{{ eval_rhsso_host }}"
-        apicurio_kc_username: "{{ eval_rhsso_admin_username }}"
-        apicurio_kc_password: "{{ eval_rhsso_admin_password }}"
-      tags: ['apicurio']
-      when: apicurio
+        apicurito_route_suffix: "{{ eval_app_host }}"
+      tags: ['apicurito']
+      when: apicurito
 
     - name: Expose vars
-      include_vars: "../roles/apicurio/defaults/main.yml"
+      include_vars: "../roles/apicurito/defaults/main.yml"
     -
       name: Install webapp
       include_role:
@@ -147,11 +149,5 @@
         launcher_namespace: "{{ eval_launcher_namespace }}"
         che_namespace: "{{ eval_che_namespace }}"
         threescale_namespace: "{{ eval_threescale_namespace }}"
-        apicurio_namespace: "{{ eval_apicurio_namespace }}"
+        apicurio_namespace: "{{ eval_apicurito_namespace }}"
       tags: ['msbroker']
-    -
-      name: Install enmasse
-      include_role:
-        name: enmasse
-      tags: ['enmasse']
-      when: enmasse
