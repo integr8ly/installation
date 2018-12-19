@@ -24,12 +24,12 @@
     threescale_dashboard_url: "https://{{ threescale_host_cmd.stdout}}"
   when: threescale
 
-- name: Get apicurio dashboard url
-  shell: oc get route/apicurio-studio-ui -o jsonpath='{.spec.host}' -n {{ apicurio_namespace }}
-  register: apicurio_host_cmd
+- name: Get apicurito dashboard url
+  shell: oc get route/apicurito -o jsonpath='{.spec.host}' -n {{ apicurito_namespace }}
+  register: apicurito_host_cmd
 - set_fact:
-    apicurio_dashboard_url: "https://{{ apicurio_host_cmd.stdout}}"
-  when: apicurio
+    apicurito_dashboard_url: "https://{{ apicurito_host_cmd.stdout}}"
+  when: apicurito
 
 # Create managed-service-broker namespace
 - name: Check if {{ msbroker_namespace }} namespace exists
@@ -67,7 +67,7 @@
   --param=LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url }} \
   --param=CHE_DASHBOARD_URL={{ che_dashboard_url }} \
   --param=THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url }} \
-  --param=APICURIO_DASHBOARD_URL={{ apicurio_dashboard_url }} \
+  --param=APICURIO_DASHBOARD_URL={{ apicurito_dashboard_url }} \
   --param=IMAGE_ORG={{ msbroker_image_org }} \
   --param=IMAGE_TAG={{ msbroker_image_tag }} | oc create -n {{ msbroker_namespace }} -f -"
   register: create_msb_resources_cmd

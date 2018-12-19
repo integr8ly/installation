@@ -52,35 +52,26 @@
     threescale_master_token: "{{master_auth_config.stdout}}"
   when: threescale
 
-- name: Get apicurio ui secure route
-  shell: oc get route/apicurio-studio-ui -o template --template \{\{.spec.host\}\} -n {{ apicurio_namespace }}
-  register: api_curio_ui_route
-  when: apicurio
+- name: Get apicurito ui secure route
+  shell: oc get route/apicurito -o template --template \{\{.spec.host\}\} -n {{ eval_apicurito_namespace }}
+  register: apicurito_ui_route
+  when: apicurito
 
 - set_fact:
-    apicurio_secure_ui_route: "https://{{api_curio_ui_route.stdout}}"
-  when: apicurio
+    apicurito_secure_ui_route: "https://{{apicurito_ui_route.stdout}}"
+  when: apicurito
 
-- name: Get apicurio api secure route
-  shell: oc get route/apicurio-studio-api -o template --template \{\{.spec.host\}\} -n {{ apicurio_namespace }}
-  register: api_curio_api_route
-  when: apicurio
-
-- set_fact:
-    apicurio_secure_api_route: "https://{{api_curio_api_route.stdout}}"
-  when: apicurio
-
-- name: set apicurio component
+- name: set apicurito component
   set_fact:
-    apicurio_manifest:
-      name: apicurio
-      version: "{{apicurio_version}}"
-      host: "{{apicurio_secure_ui_route}}"
-  when: apicurio
+    apicurito_manifest:
+      name: apicurito
+      version: "{{apicurito_version}}"
+      host: "{{apicurito_secure_ui_route}}"
+  when: apicurito
 
 - set_fact:
-    components: "{{components}} + [{{apicurio_manifest}}] "
-  when: apicurio
+    components: "{{components}} + [{{apicurito_manifest}}] "
+  when: apicurito
 
 - name: Get Che secure route
   shell: oc get route/che -o template --template \{\{.spec.host\}\} -n {{ che_namespace }}
