@@ -5,7 +5,7 @@
       when: keep_namespaces is undefined or not keep_namespaces | bool
       block:
         - 
-          name: Check that the jq exists
+          name: Check that jq exists
           stat:
             path: /usr/bin/jq
           failed_when: false
