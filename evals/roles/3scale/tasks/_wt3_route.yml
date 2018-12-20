@@ -1,7 +1,7 @@
 ---
 
 - set_fact:
-    wt3_route_name: "wt3-{{ email | regex_replace('[@,\\.]', '-') }}"
+    wt3_route_name: "wt3-{{ username }}"
 
 - name: Check WT3 route exists
   shell: oc get route/{{ wt3_route_name }} -n {{ threescale_namespace }}
