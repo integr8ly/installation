@@ -23,11 +23,11 @@ threescale_limit_range_pod_min_memory: 6Mi
 
 #Users
 threescale_evals_email: evals@example.com
-threescale_evals_username: "{{ threescale_evals_email }}"
+threescale_evals_username: evals
 threescale_evals_password: Password1
 
 rhsso_evals_admin_email: evals-admin@example.com
-rhsso_evals_admin_username: "{{ rhsso_evals_admin_email }}"
+rhsso_evals_admin_username: evals-admin
 rhsso_evals_admin_password: Password1
 
 rhsso_seed_users_email_format: evals%02d@example.com
@@ -36,7 +36,7 @@ rhsso_seed_users_count: "{{ eval_seed_users_count }}"
 rhsso_seed_users_password: Password1
 
 threescale_cluster_admin_email: admin@example.com
-threescale_cluster_admin_username: "{{ threescale_cluster_admin_email }}"
+threescale_cluster_admin_username: "admin"
 
 #Template Params
 threescale_pvc_size_mysql: 100Gi
