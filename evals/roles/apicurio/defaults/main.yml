@@ -3,7 +3,7 @@ apicurio_template_folder: /tmp/apicurio
 apicurio_kc_client_id: apicurio-studio
 apicurio_namespace: apicurio
 apicurio_operator_image_url: 'quay.io/integreatly/apicurio-operator'
-apicurio_operator_image_tag: master
+apicurio_operator_image_tag: release-9.28.0
 apicurio_operator_image_pull_policy: Always
 apicurion_jvm_heap_min: 768m
 apicurion_jvm_heap_max: 2048m
