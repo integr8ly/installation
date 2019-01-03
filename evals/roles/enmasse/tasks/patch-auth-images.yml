@@ -1,0 +1,31 @@
+# PATCH ENMASSE AUTH IMAGES https://issues.jboss.org/browse/INTLY-332
+- copy:
+    src: patch-keycloak-controller-image.json
+    dest: /tmp/patch-keycloak-controller-image.json
+
+- name: Store contents of the keycloak-controller image patch
+  shell: cat /tmp/patch-keycloak-controller-image.json
+  register: keycloak_controller_image_contents
+
+- name: "Patch keycloak-controller image"
+  shell: oc patch deployment/keycloak-controller -p '{{ keycloak_controller_image_contents.stdout }}' -n {{ enmasse_namespace }}
+
+- copy:
+    src: patch-keycloak-plugin-image.json
+    dest: /tmp/patch-keycloak-plugin-image.json
+
+- name: Store contents of keycloak-plugin image patch
+  shell: cat /tmp/patch-keycloak-plugin-image.json
+  register: keycloak_plugin_image_contents
+
+- name: "Patch keycloak-plugin image"
+  shell: oc patch deployment/keycloak -p '{{ keycloak_plugin_image_contents.stdout }}' -n {{ enmasse_namespace }}
+
+- name: "Verify patched deployments are ready"
+  shell: sleep 5; oc get pods | awk '{print $2}' | grep '0/1'
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
