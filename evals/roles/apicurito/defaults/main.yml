@@ -1,0 +1,6 @@
+apicurito_namespace: apicurito
+apicurito_template: apicurito
+apicurito_template_namespace: openshift
+apicurito_template_file: /tmp/apicurito-template.yaml
+apicurito_template_file_format: yaml
+apicurito_route_hostname: apicurito-app

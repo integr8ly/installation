@@ -8,7 +8,7 @@ eval_sso_validate_certs: false
 eval_che_namespace: che
 eval_rhsso_namespace: sso
 eval_threescale_namespace: 3scale
-eval_apicurio_namespace: apicurio
+eval_apicurito_namespace: apicurito
 eval_launcher_namespace: launcher
 eval_launcher_sso_realm: launcher_realm
 eval_webapp_url_prefix: tutorial-web-app-webapp
