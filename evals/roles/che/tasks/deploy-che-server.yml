@@ -5,6 +5,8 @@
     -
       name: Retrieve cluster cert
       shell: "echo -n '' | openssl s_client -showcerts -connect {{ che_keycloak_host }}:{{ che_keycloak_port }} | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p'"
+      args:
+        warn: no
       register: che_ssl_cmd
     -
       name: Check if cluster cert exists
