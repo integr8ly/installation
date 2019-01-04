@@ -48,3 +48,5 @@
   delay: 10
   failed_when: not result.stdout
   changed_when: False
+
+- import_tasks: service_discovery.yml

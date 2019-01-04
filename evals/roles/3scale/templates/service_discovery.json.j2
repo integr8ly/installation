@@ -1,0 +1,1 @@
+{"data":{"service_discovery.yml": "production:\n  enabled: true\n  server_scheme: 'https'\n  server_host: 'kubernetes.default.svc.cluster.local'\n  server_port: 443\n  authentication_method: oauth\n  oauth_server_type: builtin\n  client_id: '{{ threescale_oauth_client_id }}'\n  client_secret: '{{ client_secret }}'\n  timeout: 1\n  open_timeout: 1\n  max_retry: 5\n"}}
