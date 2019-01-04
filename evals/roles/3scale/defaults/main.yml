@@ -9,6 +9,7 @@ threescale_sso_admin_realm: master
 threescale_sso_realm: openshift
 threescale_sso_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
 threescale_sso_client_id: 3scale
+threescale_oauth_client_id: 3scale
 
 #Resource limits
 threescale_limit_range_name: 3scale-core-resource-limits

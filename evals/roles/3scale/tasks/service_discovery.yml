@@ -1,0 +1,36 @@
+---
+- name: Generate service discovery template files
+  template:
+    src: "{{ item }}.j2"
+    dest: /tmp/{{ item }}
+  with_items:
+  - oauth-client.yaml
+  - service_discovery.json
+
+- name: Delete any previous OAuth client
+  shell: oc delete oauthclient "{{ threescale_oauth_client_id }}"
+  failed_when: false
+
+- name: Create OAuth client
+  shell: oc apply -f /tmp/oauth-client.yaml
+
+- name: Create service discovery configuration
+  shell: cat /tmp/service_discovery.json
+  register: service_discovery_config
+
+- name: Set service discovery configuration
+  shell: "oc patch configmap system -p '{{ service_discovery_config.stdout }}' -n {{ threescale_namespace }}"
+  register: result
+  failed_when: not result.stdout
+
+- name: Redeploy system-app
+  shell: oc rollout latest system-app -n {{ threescale_namespace }}
+  register: result
+  failed_when: not result.stdout
+  changed_when: False
+
+- name: Redeploy system-sidekiq
+  shell: oc rollout latest system-sidekiq -n {{ threescale_namespace }}
+  register: result
+  failed_when: not result.stdout
+  changed_when: False

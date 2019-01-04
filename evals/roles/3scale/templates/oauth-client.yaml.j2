@@ -1,0 +1,8 @@
+kind: OAuthClient
+apiVersion: v1
+metadata:
+  name: 3scale
+secret: "{{ client_secret }}"
+redirectURIs:
+- "https://master.{{ threescale_route_suffix }}"
+grantMethod: prompt
