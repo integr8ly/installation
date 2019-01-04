@@ -24,7 +24,7 @@
   changed_when: False
 
 - name: "Create keycloak RBAC"
-  shell: "oc create -f https://raw.githubusercontent.com/integr8ly/keycloak-operator/09ced921bb928fa83199399c79d51c0e3531bb6a/deploy/rbac.yaml -n {{ rhsso_namespace }}"
+  shell: "oc create -f https://raw.githubusercontent.com/{{ rhsso_operator_repo }}/keycloak-operator/{{ rhsso_operator_commit_tag }}/deploy/rbac.yaml -n {{ rhsso_namespace }}"
   register: rhsso_rbac_result
   failed_when: rhsso_rbac_result.stderr != '' and 'AlreadyExists' not in rhsso_rbac_result.stderr
 
