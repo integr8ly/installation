@@ -21,11 +21,6 @@ components:
       role: msbroker
       imageTagVar: msbroker_image_tag
       gitTagVar: msbroker_git_ref
-  - name: syndesis
-    gitUrl: git@github.com:integr8ly/syndesis.git
-    ansible:
-      role: msbroker
-      gitTagVar: msbroker_git_ref
   - name: keycloak-operator
     gitUrl: git@github.com:integr8ly/keycloak-operator.git
     imageUrl: quay.io/integreatly/keycloak-operator
@@ -39,8 +34,3 @@ components:
     ansible:
       role: webapp
       imageTagVar: webapp_operator_image_tag
-  - name: tutorial-web-app-walkthroughs
-    gitUrl: git@github.com:integr8ly/tutorial-web-app-walkthroughs.git
-  - name: apicurito
-    ansible:
-      role: apicurito
