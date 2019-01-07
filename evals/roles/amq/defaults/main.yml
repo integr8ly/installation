@@ -1,6 +1,4 @@
 ---
-amq_release_tag: '72-1.1.GA'
-amq_template_short_tag: '72'
 amq_template_namespace: openshift
 
 amq_imagestreams:
