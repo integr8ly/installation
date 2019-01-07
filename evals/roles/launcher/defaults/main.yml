@@ -1,8 +1,6 @@
 ---
 launcher_namespace: "{{ eval_launcher_namespace | default('launcher') }}"
 
-launcher_frontend_image_tag: a00064f
-
 launcher_sso_serviceclass: sso72-x509-postgresql-persistent
 launcher_sso_serviceinstance_name: launcher-sso-instance
 launcher_sso_username: admin
