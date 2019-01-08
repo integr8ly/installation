@@ -6,7 +6,7 @@
 - set_fact:
     rhsso_route: "{{ rhsso_secure_route.stdout }}"
 
-- name: Check if loggingPublicURL parameter already set
+- name: Check if logoutPublicURL parameter already set
   shell: oc get configmap {{ rhsso_openshift_webconsole_configmap }} -o yaml -n {{ rhsso_openshift_webconsole_namespace }} | grep {{ rhsso_route }}
   register: webconsole_configmap_rhsso
   failed_when: webconsole_configmap_rhsso.stderr != ''
@@ -19,7 +19,7 @@
   shell: oc get configmap {{ rhsso_openshift_webconsole_configmap }} -o yaml -n {{ rhsso_openshift_webconsole_namespace }} > /tmp/{{ rhsso_openshift_webconsole_configmap }}.yaml
   when: rhsso_openshift_update_webconsole_configmap
 
-- name: Set loggingPublicURL in exported webconsole configmap
+- name: Set logoutPublicURL in exported webconsole configmap
   replace:
     path: "/tmp/{{ rhsso_openshift_webconsole_configmap }}.yaml"
     regexp: "logoutPublicURL: ''"
