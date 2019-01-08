@@ -9,4 +9,4 @@ msbroker_clusterrolebinding: default-cluster-account-managed-service
 msbroker_deployment_name: msb
 msbroker_servicebroker_name: managed-service-broker
 required_crds:
-  - "https://raw.githubusercontent.com/integr8ly/syndesis/{{ msbroker_git_ref }}/install/operator/deploy/syndesis-crd.yml"
+  - "https://raw.githubusercontent.com/syndesisio/fuse-online-install/1.5/resources/syndesis-crd.yml"

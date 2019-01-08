@@ -277,12 +277,12 @@ parameters:
   displayName: Git Repository URL
   name: GIT_REPO
   required: true
-  value: https://github.com/integr8ly/location-soap.git
+  value: '{{ location_soap_source_repo_url }}'
 - description: Set this to a branch name, tag or other ref of your repository if you
     are not using the default branch.
   displayName: Git Reference
   name: GIT_REF
-  value: master
+  value: '{{ location_soap_source_repo_ref }}'
 - description: Path within Git project to build; empty for root project directory.
   displayName: CONTEXT DIR
   name: CONTEXT_DIR
