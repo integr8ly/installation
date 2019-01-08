@@ -1,38 +1,55 @@
 ---
 
 # threescale version is controlled by the operator. Changing the operator version will change the 3scale version
+
+# controls whether threescale is installed or not.
 threescale: true
+# below threescale variables below are not currently used. They define where and what to pull in from github. These will be important as we look to break out and decouple the resources from the installer ###############
 threescale_operator_release_tag: 'master'
 threescale_operator_resources: 'https://raw.githubusercontent.com/integr8ly/3scale-operator/{{threescale_operator_release_tag}}/deploy'
-threescale_version: '2.4.0.GA' # not currently used but is the version installed by the operator
+# not currently used but records the version installed by the operator, this should come from the status block
+threescale_version: '2.4.0.GA'
 threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
 
+#controls whether amq is installed or not
 amq: true
+# This is not currently used as part of the install but is the version from the above release tag
+amq_version: '7.2'
+#controls the the github release to pull the imagestreams and templates from
 amq_release_tag: '72-1.1.GA'
-amq_version: '7.2' # this is not currently used as part of the install but is the version from the above release tag
-amq_imagestream: 'https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/{{amq_release_tag}}/amq-broker-7-image-streams.yaml'
-amq_template: 'https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/{{amq_release_tag}}/templates/amq-broker-{{amq_release_tag.split("-")[0]}}-persistence.yaml'
+#the short tag is needed as it is referenced in the urls
+amq_template_short_tag: '72'
 
+
+#controls whether che is installed or not
 #note che cannot be installed without launcher being present currently
 che: true
 che_version: '6.9.0'
+####### che variables below are not currently used. They define where and what to pull in from github. These will be important as we look to break out and decouple the resources from the installer ###############
 # these should be used once issue https://github.com/eclipse/che/issues/12065 is in place or worked around. But currently not used
 che_template: 'https://raw.githubusercontent.com/eclipse/che/{{che_version}}/deploy/openshift/templates/che-server-template.yaml'
 che_postgres_template: 'https://github.com/eclipse/che/blob/{{che_version}}/deploy/openshift/templates/multi/postgres-template.yaml'
 
+#controls whether enmasse is installed or not
 enmasse: true
 enmasse_version: 'beta'
-enmasse_release_location: 'https://github.com/EnMasseProject/enmasse/releases/download/{{ enmasse_version }}/enmasse-{{ enmasse_version }}.tgz'
+# This is used to indicate where to pull the artifact from for installing EnMasse.
+enmasse_download_url: 'https://github.com/EnMasseProject/enmasse/releases/download/{{ enmasse_version }}/enmasse-{{ enmasse_version }}.tgz'
 
+#controls whether fuse is installed or not
 fuse: true
-fuse_version: '7.2' #not currently used as the operator decides what to install
-fuse_release_tag: 'application-templates-2.1.fuse-720018-redhat-00001' # this is the release tag for fuse on openshift in github
+#This is the release tag for fuse on openshift in github currently used to pull in the templates and image streams
+fuse_release_tag: 'application-templates-2.1.fuse-720018-redhat-00001'
+#not currently used as the operator decides what to install
+fuse_version: '7.2'
 
+#controls whether Fuse Online is installed or not
 fuse_online: true
-fuse_online_release_tag: '1.4.8' # this is the release in github that is used for 7.1
+# Below Fuse vars are not currently used but will be used to source the resources needed to do the install.
+fuse_online_release_tag: '1.5'
 fuse_online_operator_resources: 'https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources/fuse-online-operator.yml'
 
-
+#controls whether Launcher is installed or not.
 launcher: true
 # https://github.com/fabric8-launcher/launcher-openshift-templates/issues/46
 # we will need to set this during a release to the latest commit hash on master to ensure it doesn't change under us example: c1efdf1
@@ -45,22 +62,27 @@ launcher_template: 'https://raw.githubusercontent.com/fabric8-launcher/launcher-
 #not currently used but is the version installed by the operator
 # rhsso is not an optional component
 rh_sso_version: '7.2.2.GA'
+#below vars not currently used but will be used to pull in the new versions of RH-SSO once we decouple the resources from the installer.
 rh_sso_opertor_release_tag: '0.0.2'
 rh_sso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rh_sso_opertor_release_tag}}/deploy/'
 
-
+#controls whether gitea is installed or not
 gitea: true
 gitea_version: '1.6.0' # not currently used for installation reflect current installation (https://github.com/integr8ly/gitea-operator/issues/25)
+#below vars are not currently used but will be used once we source resources from outside of the installer
 gitea_operator_release_tag: 'v0.0.2'
 gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_operator_release_tag}}/deploy/operator.yaml'
 
+#controls whether webapp is installed or not
 webapp: true
+#below vars are not currently used but reflect the current state. In the future they will be used when we source resources from outside of the installer
 webapp_version: '1.0.0'
 webapp_operator_release_tag: 'master'
 webapp_operator_resources: 'https://raw.githubusercontent.com/integr8ly/tutorial-web-app-operator/{{webapp_operator_release_tag}}/deploy/'
 
+#controls whether apicurito is installed or not
 apicurito: true
 apicurito_version: '0.2.18.Final'
-
+#controls whether nexus is installed or not
 nexus: true
 nexus_version: '2.14.11-01'
