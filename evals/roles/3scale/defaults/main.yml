@@ -45,4 +45,4 @@ threescale_pvc_rwx_storageclassname: efs
 
 #Operator
 threescale_operator_image_url: 'quay.io/integreatly/3scale-operator'
-threescale_operator_image_tag: master
+threescale_operator_image_tag: release-1.1.0-rc1
