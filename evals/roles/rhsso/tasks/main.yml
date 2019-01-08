@@ -74,14 +74,18 @@
 - name: "include launcher vars"
   include_vars: ../../launcher/defaults/main.yml
 
-
-- name: Get Launcher SSO secure route
-  shell: oc get route/{{ launcher_sso_prefix }} -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
-  register: rhsso_secure_route
+- name: Find encrypted RH-SSO route
+  shell: for route in $(oc get routes -n {{ launcher_namespace }} | awk '{print $1}' | grep -v 'NAME'); do term=$(oc get route $route -n {{ launcher_namespace }} -o template --template \{\{.spec.tls.termination\}\}); if [ "$term" == "edge" ] || [ "$term" == "reencrypt" ]; then echo $route; break; fi; done
+  register: rhsso_secure_route_name
   retries: 60
   delay: 5
-  until: rhsso_secure_route.rc == 0
+  failed_when: rhsso_secure_route_name.stdout == ''
+  until: rhsso_secure_route_name.stdout != ''
   when: launcher
+
+- name: Get RH-SSO secure route
+  local_action: command oc get route/{{ rhsso_secure_route_name.stdout }} -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
+  register: rhsso_secure_route
 
 - name: "Generate secret for launcher client"
   set_fact:

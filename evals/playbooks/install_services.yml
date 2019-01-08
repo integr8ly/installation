@@ -51,8 +51,14 @@
       tags: ['bootstrap']
       when: launcher
     -
+      name: Find encrypted RH-SSO route
+      shell: for route in $(oc get routes -n {{ eval_launcher_namespace }} | awk '{print $1}' | grep -v 'NAME'); do term=$(oc get route $route -n {{ eval_launcher_namespace }} -o template --template \{\{.spec.tls.termination\}\}); if [ "$term" == "edge" ] || [ "$term" == "reencrypt" ]; then echo $route; break; fi; done
+      register: rhsso_secure_route_name
+      failed_when: rhsso_secure_route_name.stdout == ''
+      when: launcher
+    -
       name: Retrieve launcher sso hostvars
-      shell: "oc get route/launcher-sso -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
+      shell: "oc get route/{{ rhsso_secure_route_name.stdout }} -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
       register: eval_launcher_sso_host_cmd
       tags: ['bootstrap']
       when: launcher

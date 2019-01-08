@@ -94,9 +94,13 @@
     components: "{{components}} + [{{che_manifest}}] "
   when: che and launcher
 
+- name: Find encrypted RH-SSO route
+  shell: for route in $(oc get routes -n {{ rhsso_namespace}} | awk '{print $1}' | grep -v 'NAME'); do term=$(oc get route $route -n {{ rhsso_namespace }} -o template --template \{\{.spec.tls.termination\}\}); if [ "$term" == "edge" ] || [ "$term" == "reencrypt" ]; then echo $route; break; fi; done
+  register: rhsso_secure_route_name
+  failed_when: rhsso_secure_route_name.stdout == ''
 
 - name: Get RH-SSO secure route
-  shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ rhsso_namespace }}
+  local_action: command oc get route/{{ rhsso_secure_route_name.stdout }} -o template --template \{\{.spec.host\}\} -n {{ rhsso_namespace }}
   register: rhsso_secure_route
 
 - set_fact: 
