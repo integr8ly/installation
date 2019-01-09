@@ -1,9 +1,15 @@
 ---
 - name: Create {{ apicurito_namespace }} namespace
   shell: oc create namespace {{ apicurito_namespace }}
+  register: project_cmd
+  failed_when: project_cmd.stderr != '' and 'AlreadyExists' not in project_cmd.stderr
 
 - name: Download template from cluster
   shell: "oc get template {{ apicurito_template }} -n {{ apicurito_template_namespace }} -o {{ apicurito_template_file_format }} > {{ apicurito_template_file }}"
 
 - name: Install apicurito
-  shell: "oc process -f {{ apicurito_template_file }} --param=ROUTE_HOSTNAME={{ apicurito_route_hostname }}.{{ apicurito_route_suffix }} | oc create -f - -n {{ apicurito_namespace }}"
+  shell: "oc process \
+  -f {{ apicurito_template_file }} \
+  --param=ROUTE_HOSTNAME={{ apicurito_route_hostname }}.{{ apicurito_route_suffix }} | oc create -f - -n {{ apicurito_namespace }}"
+  register: create_apicurito_cmd
+  failed_when: create_apicurito_cmd.stderr != '' and 'AlreadyExists' not in create_apicurito_cmd.stderr
