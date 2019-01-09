@@ -83,7 +83,6 @@
         che_protocol: https
         che_ws_protocol: wss
         che_keycloak_realm: "{{ eval_launcher_sso_realm }}"
-        che_keycloak_client_id: che-client
       tags: ['che']
       when: eval_action == 'install' and che and launcher
     -
