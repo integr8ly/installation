@@ -143,7 +143,7 @@
   when: webapp
 
 - set_fact:
-    webapp_route: "{{webapp_route.stdout}}"
+    webapp_route: "https://{{webapp_route.stdout}}"
   when: webapp
 
 - name: Get launcher  route
