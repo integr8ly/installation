@@ -1,9 +1,8 @@
 ---
 - hosts: localhost
   gather_facts: no
-  vars:
-    components: []
-  roles:
-    - role: customisation
-
-
+  tasks:
+    - include_role:
+        name: customisation
+      vars:
+         components: []
