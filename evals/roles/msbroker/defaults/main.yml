@@ -1,8 +1,8 @@
 ---
 msbroker_namespace: managed-service-broker
 msbroker_image_org: quay.io/integreatly
-msbroker_image_tag: release-1.1.0-rc1
-msbroker_git_ref: release-1.1.0-rc1
+msbroker_image_tag: release-1.1.0-rc2
+msbroker_git_ref: release-1.1.0-rc2
 msbroker_template_url: "https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_git_ref }}/templates/broker.template.yaml"
 msbroker_clusterrole: managed-service
 msbroker_clusterrolebinding: default-cluster-account-managed-service
