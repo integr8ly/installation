@@ -20,6 +20,12 @@
   shell: brew install gnu-tar
   when: ansible_os_family == "Darwin"
 
+- name: Install unzip if not present
+  yum:
+    name: unzip
+    state: installed
+  when: ansible_os_family != "Darwin"
+
 - name: Ensure tmp dir exists
   file:
     path: /tmp/enmasse-{{ enmasse_version }}
