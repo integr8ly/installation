@@ -126,9 +126,18 @@
 
 # Only set the Gitea token env var if the gitea custom resource was created
 - name: Set Gitea token env var for the webapp
-  shell: oc set env dc/tutorial-web-app GITEA_TOKEN="{{ gitea_token }}" -n {{ webapp_namespace }} --overwrite=true
-  when: check_webapp_installed_cmd.rc == 0
+  shell: "oc set env dc/tutorial-web-app \
+  GITEA_TOKEN='{{ gitea_token }}' \
+  GITEA_HOST='http://{{ gitea_ingress_host.stdout }}' \
+  -n {{ webapp_namespace }} \
+  --overwrite=true"
+  when: check_webapp_installed_cmd.rc == 0 and gitea_ingress_host.stdout != ''
 
-- name: Set gitea host as webapp env var
-  shell: oc set env dc/tutorial-web-app GITEA_HOST="http://{{ gitea_ingress_host.stdout }}" -n {{ webapp_namespace }} --overwrite=true
-  when: gitea_ingress_host.stdout != '' and check_webapp_installed_cmd.rc == 0
+- name: Wait for pods
+  shell: sleep 5; oc get pods --namespace {{ webapp_namespace }}  |  grep  "Creating"
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
