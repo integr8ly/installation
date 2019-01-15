@@ -26,6 +26,14 @@
   shell: "oc new-app --template={{ launcher_sso_serviceclass }} -n {{ launcher_namespace }} -p SSO_ADMIN_PASSWORD={{ launcher_sso_username }} -p SSO_ADMIN_USERNAME={{ launcher_sso_username }} -p SSO_REALM={{ launcher_sso_realm }} -p APPLICATION_NAME={{ launcher_sso_prefix }}"
   when: launcher_sso_exists_cmd.rc != 0
 
+- name: search for errored pods
+  shell: oc get pods --namespace {{ launcher_namespace }}  |  grep  "deploy" | cut -d " " -f 1
+  register: old_pods
+
+- name: Delete any errored pods
+  shell: oc delete pod --namespace {{ launcher_namespace }} {{ old_pods.stdout }}
+  when: old_pods.stdout != ""
+
 - name: "Verify Launcher SSO deployment succeeded"
   shell: sleep 5; oc get pods --namespace {{ launcher_namespace }}  |  grep  "deploy"
   register: result
