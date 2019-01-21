@@ -54,3 +54,6 @@
 - name: "Delete user identities"
   shell:  "oc delete identities {{ identities.stdout | replace('\n', ' ') }}"
   when: identities.stdout != ''
+
+- name: "delete integreatly role"
+  shell: "oc delete clusterrole integreatly-evals-admin"
