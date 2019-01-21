@@ -1,0 +1,19 @@
+---
+# Remove walkthrough apps from the catalog
+- name: Remove crud spring boot app from the catalog
+  command: oc delete template/spring-boot-rest-http-crud -n openshift
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+  
+- name: Remove location soap app from the catalog
+  command: oc delete template/location-soap -n openshift
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+
+- name: Remove messaging work queue nodejs from the catalog
+  command: oc delete template/nodejs-messaging-work-queue-frontend -n openshift
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
