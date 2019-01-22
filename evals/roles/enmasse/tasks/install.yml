@@ -24,6 +24,7 @@
   yum:
     name: unzip
     state: installed
+  become: yes
   when: ansible_os_family != "Darwin"
 
 - name: Ensure tmp dir exists
