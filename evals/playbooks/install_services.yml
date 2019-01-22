@@ -111,6 +111,16 @@
       name: Expose vars
       include_vars: "../roles/webapp/defaults/main.yml"
     -
+      name: "Ensure postgresql:9.6 is imported in openshift namespace for enmasse"
+      shell: oc -n openshift import-image postgresql:9.6
+      register: result
+      until: result.stdout
+      retries: 50
+      delay: 1
+      failed_when: not result.stdout
+      changed_when: False
+      when: enmasse
+    -
       name: Install enmasse
       include_role:
         name: enmasse
