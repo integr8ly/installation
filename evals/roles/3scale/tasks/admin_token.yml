@@ -1,0 +1,8 @@
+---
+- name: Retrieve 3Scale admin auth token
+  shell: oc describe dc/system-app -n {{ threescale_namespace }} | grep ADMIN_ACCESS_TOKEN | tail -1 | awk '{print $2}'
+  register: admin_auth_config
+
+- set_fact:
+    threescale_admin_token: "{{ admin_auth_config.stdout }}"
+    threescale_admin_route: "3scale-admin.{{ threescale_route_suffix }}"

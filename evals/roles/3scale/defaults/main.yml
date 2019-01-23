@@ -38,11 +38,10 @@ rhsso_seed_users_password: Password1
 
 threescale_cluster_admin_email: admin@example.com
 threescale_cluster_admin_username: "admin"
+threescale_cluster_admin_old_username: admin
+threescale_cluster_admin_new_username: "{{ threescale_cluster_admin_email }}"
 
 #Template Params
-threescale_pvc_size_mysql: 100Gi
 threescale_pvc_rwx_storageclassname: efs
 
-#Operator
-threescale_operator_image_url: 'quay.io/integreatly/3scale-operator'
-threescale_operator_image_tag: master
+threescale_master_access_token_secret_name: 3scale-master-access-token

@@ -5,8 +5,23 @@
   failed_when: threescale_namespace_exists.stderr != '' and 'already exists' not in threescale_namespace_exists.stderr
   changed_when: threescale_namespace_exists.rc == 0
 
+- name: Check namespace for existing resources
+  shell: oc get all -n {{ threescale_namespace }}
+  register: threescale_resources_exist
+
+- name: Check for errored deploy pods
+  shell: oc get pods --namespace {{ threescale_namespace }}  |  grep  "deploy" | grep "Failed" | cut -d " " -f 1
+  register: errored_deploy_pods
+
+- name: Delete errored deploy pods
+  shell: oc delete pod --namespace {{ threescale_namespace }} {{ errored_deploy_pods.stdout }}
+  when: errored_deploy_pods.stdout != ""
+
+- name: "Provision 3scale in namespace: {{ threescale_namespace }}"
+  shell: oc process -n {{ threescale_namespace }} -f {{ threescale_template }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} | oc create -n {{ threescale_namespace }} -f -
+  when: threescale_resources_exist.stderr == "No resources found."
+
 - import_tasks: resources.yml
-- import_tasks: sso.yml
 - import_tasks: routes.yml
 
 - name: "Check for storage class: {{ threescale_pvc_rwx_storageclassname }}"
@@ -14,39 +29,32 @@
   register: storageclass_exists
   failed_when: storageclass_exists.stderr != '' and 'NotFound' not in storageclass_exists.stderr
 
-- set_fact:
-    threescale_pvc_rwx_storageclassname: ""
-  when: not storageclass_exists.rc == 0
+# Temporary Workaround until 3Scale update their AMP template
+# to support storageclass names (https://issues.jboss.org/browse/THREESCALE-1323)
+- name: Remove original system-storage PVC
+  shell: oc delete pvc system-storage -n {{ threescale_namespace }}
+  when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
 
-- name: Generate operator template files
+- name: Generate system-storage pvc template
   template:
-    src: "{{ item }}.j2"
-    dest: /tmp/{{ item }}
-  with_items:
-    - service_account.yaml
-    - role.yaml
-    - role_binding.yaml
-    - crd.yaml
-    - cr.yaml
-    - operator.yaml
+    src: "system-storage-pvc.yml.j2"
+    dest: /tmp/system-storage-pvc.yml
+  when: storageclass_exists.rc == 0
 
-- name: Deploy operator resources
-  shell: "oc apply -f /tmp/{{ item }} -n {{ threescale_namespace }}"
-  with_items:
-    - service_account.yaml
-    - role.yaml
-    - role_binding.yaml
-    - crd.yaml
-    - cr.yaml
-    - operator.yaml
+- name: "Create system-storage PVC with storageClassName: {{ threescale_pvc_rwx_storageclassname }}"
+  shell: oc create -f /tmp/system-storage-pvc.yml
+  when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
 
 - name: "Verify 3Scale deployment succeeded"
-  shell: sleep 5; oc get threescale/3scale -o template --template \{\{.status.ready\}\} --namespace {{ threescale_namespace }}  |  grep  true
+  shell: sleep 5; oc get pods --namespace {{ threescale_namespace }}  |  grep  "deploy"
   register: result
-  until: result.stdout
+  until: not result.stdout
   retries: 50
   delay: 10
-  failed_when: not result.stdout
+  failed_when: result.stdout
   changed_when: False
 
+- import_tasks: sso.yml
+- import_tasks: access_token.yml
 - import_tasks: service_discovery.yml
+- import_tasks: users.yml

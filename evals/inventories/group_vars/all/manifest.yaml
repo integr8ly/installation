@@ -5,10 +5,8 @@
 # controls whether threescale is installed or not.
 threescale: true
 # below threescale variables below are not currently used. They define where and what to pull in from github. These will be important as we look to break out and decouple the resources from the installer ###############
-threescale_operator_release_tag: 'master'
-threescale_operator_resources: 'https://raw.githubusercontent.com/integr8ly/3scale-operator/{{threescale_operator_release_tag}}/deploy'
 # not currently used but records the version installed by the operator, this should come from the status block
-threescale_version: '2.4.0.GA'
+threescale_version: '2.2.0.GA'
 threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
 
 #controls whether amq is installed or not

@@ -1,0 +1,42 @@
+---
+
+- name: "Get user ID: {{ username }}"
+  xml:
+    path: /tmp/3scale_users.xml
+    xpath: /users/user[email[text()='{{ email }}']]/id
+    content: text
+  register: eval_user_xml
+  ignore_errors: True
+
+- set_fact:
+    eval_user_id: "{{ eval_user_xml.matches.0.id|int }}"
+  when: eval_user_xml is defined and eval_user_xml.matches is defined
+
+- name: "Create user: {{ username }}"
+  uri:
+    url: "https://{{ threescale_admin_route }}/admin/api/users.json"
+    method: POST
+    body: "access_token={{ threescale_admin_token }}&username={{ username }}&email={{ email }}&password={{ password }}"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    status_code: 201
+  when: eval_user_xml.failed
+  register: created_eval_user
+  until: ('status' in created_eval_user) and (created_eval_user.status == 201)
+  retries: 3
+  delay: 5
+
+- set_fact:
+    eval_user_id: "{{ created_eval_user.json.user.id }}"
+  when: created_eval_user is defined and created_eval_user.json is defined
+
+- name: "Promote user to admin: {{ username }}"
+  uri:
+    url: "https://{{ threescale_admin_route }}/admin/api/users/{{ eval_user_id }}/admin.xml"
+    method: PUT
+    body: "access_token={{ threescale_admin_token }}"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    status_code: 200
+  register: result
+  until: ('status' in result) and (result.status == 200)
+  retries: 3
+  delay: 5

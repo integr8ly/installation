@@ -1,12 +1,6 @@
 ---
 
 components:
-  - name: 3scale-operator
-    gitUrl: git@github.com:integr8ly/3scale-operator.git
-    imageUrl: quay.io/integreatly/3scale-operator
-    ansible:
-      role: 3scale
-      imageTagVar: threescale_operator_image_tag
   - name: gitea-operator
     gitUrl: git@github.com:integr8ly/gitea-operator.git
     imageUrl: quay.io/integreatly/gitea-operator
