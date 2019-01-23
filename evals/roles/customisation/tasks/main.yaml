@@ -1,4 +1,8 @@
 
+- name: Create a list to store the manifest for each component that will be installed
+  set_fact:
+    component_manifests: []
+
 - name: Retrieve 3Scale admin auth token
   shell: oc describe dc/system-app -n 3scale | grep ADMIN_ACCESS_TOKEN | tail -1 | awk '{print $2}'
   register: admin_auth_config
@@ -38,14 +42,14 @@
 - name: set threescale component
   set_fact:
     threescale_manifest:
-      name: 3scale
+    - name: 3scale
       version: "{{threescale_version}}"
       host: "{{threescale_dashboard_url}}"
   when: threescale
 
 
 - set_fact:
-    components: "{{components}} + [{{threescale_manifest}}] "
+    component_manifests: "{{component_manifests}} + {{threescale_manifest}}"
   when: threescale
 
 - set_fact:
@@ -64,13 +68,13 @@
 - name: set apicurito component
   set_fact:
     apicurito_manifest:
-      name: apicurito
+    - name: apicurito
       version: "{{apicurito_version}}"
       host: "{{apicurito_secure_ui_route}}"
   when: apicurito
 
 - set_fact:
-    components: "{{components}} + [{{apicurito_manifest}}] "
+    component_manifests: "{{component_manifests}} + {{apicurito_manifest}}"
   when: apicurito
 
 - name: Get Che secure route
@@ -85,13 +89,13 @@
 - name: set che component
   set_fact:
     che_manifest:
-      name: che
+    - name: che
       version: "{{che_version}}"
       host: "{{che_secure_route}}"
   when: che and launcher
 
 - set_fact:
-    components: "{{components}} + [{{che_manifest}}] "
+    component_manifests: "{{component_manifests}} + {{che_manifest}}"
   when: che and launcher
 
 - name: Find encrypted RH-SSO route
@@ -109,12 +113,12 @@
 - name: set rhsso component
   set_fact:
     rhsso_manifest:
-      name: rh-sso
+    - name: rh-sso
       version: "{{rh_sso_version}}"
       host: "{{rhsso_secure_route}}"
 
 - set_fact:
-    components: "{{components}} + [{{rhsso_manifest}}] "
+    component_manifests: "{{component_manifests}} + {{rhsso_manifest}}"
 
 - name: Get Gitea route
   shell: oc get routes -n {{ gitea_namespace }} -o=jsonpath={.items[0].spec.host} 
@@ -128,13 +132,13 @@
 - name: set gitea component
   set_fact:
     gitea_manifest:
-      name: gitea
+    - name: gitea
       version: "{{gitea_version}}"
       host: "{{gitea_route}}"
   when: gitea
 
 - set_fact:
-    components: "{{components}} + [{{gitea_manifest}}] "
+    component_manifests: "{{component_manifests}} + {{gitea_manifest}}"
   when: gitea
 
 - name: Get Integreatly WebApp route
@@ -158,50 +162,50 @@
 - name: set launcher component
   set_fact:
     launcher_manifest:
-      name: launcher
+    - name: launcher
       version: "{{launcher_version}}"
       host: "{{launcher_route}}"
   when: launcher
 
 - set_fact:
-    components: "{{components}} + [{{launcher_manifest}}] "
+    component_manifests: "{{component_manifests}} + {{launcher_manifest}}"
   when: launcher
 
 
 - name: set amq component
   set_fact:
     amq_manifest:
-      name: amq
+    - name: amq
       version: "{{amq_version}}"
       host: ""
   when: amq
 
 - set_fact:
-    components: "{{components}} + [{{amq_manifest}}] "
+    component_manifests: "{{component_manifests}} + {{amq_manifest}}"
   when: amq
 
 - name: set fuse online component
   set_fact:
     fuse_online_manifest:
-      name: fuse_online
+    - name: fuse_online
       version: "{{fuse_version}}"
       host: ""
   when: fuse_online
 
 - set_fact:
-    components: "{{components}} + [{{fuse_online_manifest}}] "
+    component_manifests: "{{component_manifests}} + {{fuse_online_manifest}}"
   when: fuse_online
 
 - name: set fuse component
   set_fact:
     fuse_on_openshift_manifest:
-      name: fuse_openshift
+    - name: fuse_openshift
       version: "{{fuse_version}}"
       host: ""
   when: fuse
 
 - set_fact:
-    components: "{{components}} + [{{fuse_on_openshift_manifest}}] "
+    component_manifests: "{{component_manifests}} + {{fuse_on_openshift_manifest}}"
   when: fuse
 
 
@@ -218,13 +222,13 @@
 - name: set enmasse component
   set_fact:
     enmasse_manifest:
-      name: enmasse
+    - name: enmasse
       version: "{{fuse_version}}"
       host: "{{enmasse_rest_route}}"
   when: enmasse
 
 - set_fact:
-    components: "{{components}} + [{{enmasse_manifest}}] "
+    component_manifests: "{{component_manifests}} + {{enmasse_manifest}}"
   when: enmasse
 
 - name: Retrieve launcher sso hostvars
@@ -236,12 +240,14 @@
     launcher_sso_route: "https://{{launcher_sso_host_cmd.stdout}}"
   when: launcher
 
-
-
 - name: Generate custom inventory
   template:
     src: "inventory.j2"
     dest: /tmp/generated_inventory
+
+- name: The manifests of the installed components
+  debug:
+    msg: "{{component_manifests}}"
 
 - name: Generate custom manifest
   template:
