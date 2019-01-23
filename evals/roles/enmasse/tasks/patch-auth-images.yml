@@ -9,6 +9,9 @@
 
 - name: "Patch keycloak-controller image"
   shell: oc patch deployment/keycloak-controller -p '{{ keycloak_controller_image_contents.stdout }}' -n {{ enmasse_namespace }}
+  register: patch_kc_controller_output
+  failed_when: patch_kc_controller_output.rc != 0 and not "not patched" in patch_kc_controller_output.stdout # oc versions less than 3.11 will return rc 1 if there was no change after patching
+  changed_when: patch_kc_controller_output.rc == 0
 
 - copy:
     src: patch-keycloak-plugin-image.json
@@ -20,6 +23,9 @@
 
 - name: "Patch keycloak-plugin image"
   shell: oc patch deployment/keycloak -p '{{ keycloak_plugin_image_contents.stdout }}' -n {{ enmasse_namespace }}
+  register: patch_kc_plugin_output
+  failed_when: patch_kc_plugin_output.rc != 0 and not "not patched" in patch_kc_plugin_output.stdout # oc versions less than 3.11 will return rc 1 if there was no change after patching
+  changed_when: patch_kc_plugin_output.rc == 0
 
 - name: "Verify patched deployments are ready"
   shell: sleep 5; oc get pods | awk '{print $2}' | grep '0/1'
