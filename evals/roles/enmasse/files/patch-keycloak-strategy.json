@@ -1,0 +1,1 @@
+{ "spec": { "strategy": { "rollingUpdate": null, "type": "Recreate" }}}
