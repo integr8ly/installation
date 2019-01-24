@@ -1,6 +1,6 @@
 ---
 - name: Retrieve 3Scale admin auth token
-  shell: oc describe dc/system-app -n {{ threescale_namespace }} | grep ADMIN_ACCESS_TOKEN | tail -1 | awk '{print $2}'
+  shell: oc get secret/system-seed -n 3scale -o template --template=\{\{.data.ADMIN_ACCESS_TOKEN\}\} | base64 -d
   register: admin_auth_config
 
 - set_fact:

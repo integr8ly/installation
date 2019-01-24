@@ -39,7 +39,7 @@ rhsso_seed_users_password: Password1
 threescale_cluster_admin_email: admin@example.com
 threescale_cluster_admin_username: "admin"
 threescale_cluster_admin_old_username: admin
-threescale_cluster_admin_new_username: "{{ threescale_cluster_admin_email }}"
+threescale_cluster_admin_new_username: "{{ threescale_cluster_admin_username }}"
 
 #Template Params
 threescale_pvc_rwx_storageclassname: efs
