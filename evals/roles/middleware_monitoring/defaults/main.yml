@@ -1,0 +1,30 @@
+---
+monitoring_namespace: middleware-monitoring
+monitoring_tmp_dir: /tmp
+monitoring_repo_raw: "https://raw.githubusercontent.com/integr8ly/application-monitoring-operator/{{ middleware_monitoring_operator_version | default('master') }}"
+# Resources to create via the oc tool.
+monitoring_resources:
+- "{{ monitoring_repo_raw }}/deploy/operator_roles/service_account.yaml"
+- "{{ monitoring_repo_raw }}/deploy/operator_roles/role.yaml"
+- "{{ monitoring_repo_raw }}/deploy/operator_roles/role_binding.yaml"
+- "{{ monitoring_repo_raw }}/deploy/crds/ApplicationMonitoring.yaml"
+- "{{ monitoring_repo_raw }}/deploy/examples/ApplicationMonitoring.yaml"
+- "{{ monitoring_repo_raw }}/deploy/operator.yaml"
+
+monitoring_resource_templates:
+# Grafana resources
+- "grafana_crd.yml"
+- "grafana_cluster_role.yml"
+- "grafana_cluster_role_binding.yml"
+- "grafana_dashboard_crd.yml"
+# Prometheus resources
+- "prometheus_crd.yml"
+- "prometheus_alert_manager_crd.yml"
+- "prometheus_service_monitor_crd.yml"
+- "prometheus_rule_crd.yml"
+- "prometheus_cluster_role_binding.yml"
+- "prometheus_cluster_role.yml"
+- "prometheus_operator_cluster_role_binding.yml"
+- "prometheus_operator_cluster_role.yml"
+- "alert_manager_cluster_role_binding.yml"
+- "alert_manager_cluster_role.yml"
