@@ -121,10 +121,6 @@
         name: walkthroughs
         tasks_from: uninstall
       tags: ['walkthroughs']
-    -
-      name: Reboot template broker
-      include_role:
-        name: reboot_template_broker
 
 - hosts: master
   tasks:
