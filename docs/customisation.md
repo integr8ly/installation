@@ -31,7 +31,7 @@ Each Integreatly cluster has a secret in the webapp namespace with an inventory 
 can be used to help you add customisations using ansible playbooks.
 
 ``` 
-oc get secret inventory -n webapp --template '{{index .data "generated_inventory"}}'  | base64 -D > inventory
+oc get secret inventory -n webapp --template '{{index .data "generated_inventory"}}'  | base64 --decode > inventory
 
 ```
 
