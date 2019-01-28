@@ -39,7 +39,7 @@
   become: yes
 
 - name: Remove htpasswd identity provider from master config
-  shell: "sed -i.bak '/- challenge: true/,/kind: HTPasswdPasswordIdentityProvider/d' {{ rhsso_openshift_master_config_path }}"
+  shell: "sed -i.bak '/identityProviders/,/masterCA/{//!d}' {{ rhsso_openshift_master_config_path }}"
   args:
     warn: no
   when: rhsso_disable_htpasswd_identity_provider
