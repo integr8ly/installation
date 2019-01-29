@@ -27,3 +27,12 @@
     threescale_sso_client_secret: "{{ client_secret }}"
     threescale_sso_site: "https://{{ sso_secure_route.stdout }}/auth/realms/{{ threescale_sso_realm }}"
 
+- import_tasks: admin_token.yml
+
+- name: Create 3Scale SSO provider
+  uri:
+    url: "https://{{ threescale_admin_route }}/admin/api/account/authentication_providers.xml"
+    method: POST
+    body: "access_token={{ threescale_admin_token }}&kind=keycloak&name=rhsso&client_id={{ threescale_sso_client_id }}&client_secret={{ threescale_sso_client_secret }}&site=https%3A%2F%2F{{ sso_secure_route.stdout }}%2Fauth%2Frealms%2F{{ threescale_sso_realm }}&skip_ssl_certificate_verification=true&published=true"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    status_code: [201, 422]

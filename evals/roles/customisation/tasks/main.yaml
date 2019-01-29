@@ -4,10 +4,9 @@
     component_manifests: []
 
 - name: Retrieve 3Scale admin auth token
-  shell: oc describe dc/system-app -n 3scale | grep ADMIN_ACCESS_TOKEN | tail -1 | awk '{print $2}'
-  register: admin_auth_config
-- set_fact:
-    threescale_admin_token: "{{ admin_auth_config.stdout }}"
+  include_role:
+    name: 3scale
+    tasks_from: admin_token
   when: threescale
 
 - name: Retrieve 3Scale master auth token
@@ -21,14 +20,6 @@
   when: threescale
 - set_fact:
     threescale_system_admin_route: "{{threescale_system_admin_route.stdout}}"
-  when: threescale
-
-- name: Get threescale version installed by operator
-  shell: oc get threescale 3scale -n {{threescale_namespace}} -o=template --template \{\{.status.version\}\}
-  register: threescale_version_cmc
-  when: threescale
-- set_fact:
-    threescale_version: "{{threescale_version_cmc.stdout}}"
   when: threescale
 
 - name: Get 3scale dashboard url

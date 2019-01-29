@@ -1,0 +1,40 @@
+---
+
+- import_tasks: admin_token.yml
+
+- name: Retrieve 3Scale users
+  uri:
+    url: "https://{{ threescale_admin_route }}/admin/api/users.xml"
+    method: GET
+    return_content: yes
+    dest: /tmp/3scale_users.xml
+    body: "access_token={{ threescale_admin_token }}"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    status_code: [200]
+
+- name: Retrieve default admin user ID
+  xml:
+    path: /tmp/3scale_users.xml
+    xpath: /users/user[username[text()='{{ threescale_cluster_admin_old_username }}']]/id
+    content: text
+  register: default_admin_user_xml
+  ignore_errors: True
+
+- name: Update default admin user account details
+  uri:
+    url: "https://{{ threescale_admin_route }}/admin/api/users/{{ default_admin_user_xml.matches.0.id|int }}.xml"
+    method: PUT
+    body: "access_token={{ threescale_admin_token }}&username={{ threescale_cluster_admin_new_username }}&email={{ threescale_cluster_admin_email }}"
+    validate_certs: "{{ threescale_sso_validate_certs }}"
+    status_code: [200]
+  when: default_admin_user_xml is defined and default_admin_user_xml.matches is defined
+
+- name: Create evaluation user
+  include: _user.yml email={{ threescale_evals_email }} username={{ threescale_evals_username }} password={{ threescale_evals_password }}
+
+- name: Create evaluation admin user
+  include: _user.yml email={{ rhsso_evals_admin_email }} username={{ rhsso_evals_admin_username }} password={{ rhsso_evals_admin_password }}
+
+- name: Seed evaluation users
+  include: _user.yml email={{ rhsso_seed_users_email_format|format(item|int) }} username={{ rhsso_seed_users_name_format|format(item|int) }} password={{ rhsso_seed_users_password }}
+  with_sequence: count={{ rhsso_seed_users_count }}

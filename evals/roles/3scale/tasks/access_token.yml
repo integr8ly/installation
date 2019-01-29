@@ -1,0 +1,18 @@
+---
+- name: Retrieve 3Scale master access token
+  shell: oc describe dc/system-app -n {{ threescale_namespace }} | grep MASTER_ACCESS_TOKEN | head -1 | awk -F '"' '{print $2}'
+  register: master_access_token_cmd
+
+- set_fact:
+    threescale_master_access_token: "{{ master_access_token_cmd.stdout }}"
+
+- name: Create 3Scale master access token secret file
+  template:
+    src: "master-access-token-secret.yml.j2"
+    dest: /tmp/master-access-token-secret.yaml
+
+- name: Create 3Scale master access token secret
+  command: "oc create -f /tmp/master-access-token-secret.yaml -n {{ threescale_namespace }}"
+  register: threescale_master_access_token_secret_exists
+  failed_when: threescale_master_access_token_secret_exists.stderr != '' and 'already exists' not in threescale_master_access_token_secret_exists.stderr
+  changed_when: threescale_master_access_token_secret_exists.rc == 0
