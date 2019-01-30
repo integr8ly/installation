@@ -127,5 +127,5 @@
 - name: configure logout
   import_tasks: logout.yml
 
-- name: Add cluster admin role to evals admin
-  shell: oc adm policy add-cluster-role-to-user cluster-admin {{rhsso_cluster_admin_username}}
+- name: apply roles to admins
+  import_tasks: apply_ocp_roles.yaml
