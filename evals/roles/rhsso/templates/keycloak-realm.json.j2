@@ -94,10 +94,10 @@
                 "secret": "{{threescale_client_secret}}",
                 "clientAuthenticatorType": "client-secret",
                 "redirectUris": [
-                    "https://3scale-admin.{{ apps_redirect_uri }}/*"
+                    "https://3scale-admin.{{ threescale_route_suffix }}/*"
                 ],
                 "standardFlowEnabled": true,
-                "rootUrl": "https://3scale-admin.{{ apps_redirect_uri }}",
+                "rootUrl": "https://3scale-admin.{{ threescale_route_suffix }}",
                 "fullScopeAllowed": true,
                 "access": {
                     "view": true,

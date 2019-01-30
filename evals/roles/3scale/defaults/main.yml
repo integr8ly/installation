@@ -51,3 +51,6 @@ threescale_storage_s3_aws_region: "{{ eval_threescale_storage_s3_aws_region | de
 threescale_storage_s3_aws_bucket: "{{ eval_threescale_storage_s3_aws_bucket | default('null') }}"
 
 threescale_master_access_token_secret_name: 3scale-master-access-token
+
+enable_wildcard_route: false
+wildcard_policy_param: ""

@@ -10,8 +10,12 @@
         become: yes
       - add_host:
           name: EVAL_VARS
-          eval_app_host: "{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
-          openshift_master_url: "{{ (eval_master_config['content'] | b64decode | from_yaml)['masterPublicURL'] }}"
+          eval_app_host: "amp.{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
+          when: eval_threescale_enable_wildcard_route	
+      - add_host:	
+          name: EVAL_VARS	
+          eval_app_host: "{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"	
+          when: not eval_threescale_enable_wildcard_route
 
 - name: Install 3Scale
   hosts: local
@@ -19,3 +23,4 @@
   - role: 3scale
     vars:
       threescale_route_suffix: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+      enable_wildcard_route: "{{ eval_threescale_enable_wildcard_route }}"

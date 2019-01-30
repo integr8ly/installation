@@ -20,20 +20,31 @@
   shell: oc delete pod --namespace {{ threescale_namespace }} {{ errored_deploy_pods.stdout }}
   when: errored_deploy_pods.stdout != ""
 
+# setup for enabling wildcard route
+- name: Allow router to accept wildcard routes
+  shell: oc set env dc/router ROUTER_ALLOW_WILDCARD_ROUTES=true -n default
+  when: enable_wildcard_route
+
+- set_fact:
+    wildcard_policy_param: "-p WILDCARD_POLICY=Subdomain"
+  when: enable_wildcard_route
+
 - name: "Provision 3scale in namespace: {{ threescale_namespace }}"
   block:
     - name: 'Install 3scale using filesystem template'
-      shell: oc process -n {{ threescale_namespace }} -f {{ threescale_template }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} | oc create -n {{ threescale_namespace }} -f -
+      shell: oc process -n {{ threescale_namespace }} -f {{ threescale_template }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} {{ wildcard_policy_param }}| oc create -n {{ threescale_namespace }} -f -
       when: threescale_file_upload_storage == "filesystem"
 
     - name: 'Install 3scale using s3 template'
       shell: >
-        oc process -n {{ threescale_namespace }} -f {{ threescale_template_s3 }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} -p FILE_UPLOAD_STORAGE={{ threescale_file_upload_storage }} -p AWS_BUCKET={{ threescale_storage_s3_aws_bucket }} -p AWS_REGION={{ threescale_storage_s3_aws_region }} -p AWS_ACCESS_KEY_ID={{ threescale_storage_s3_aws_access_key }} -p AWS_SECRET_ACCESS_KEY={{ threescale_storage_s3_aws_secret_key }}  | oc create -n {{ threescale_namespace }} -f -
+        oc process -n {{ threescale_namespace }} -f {{ threescale_template_s3 }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} {{ wildcard_policy_param }} -p FILE_UPLOAD_STORAGE={{ threescale_file_upload_storage }} -p AWS_BUCKET={{ threescale_storage_s3_aws_bucket }} -p AWS_REGION={{ threescale_storage_s3_aws_region }} -p AWS_ACCESS_KEY_ID={{ threescale_storage_s3_aws_access_key }} -p AWS_SECRET_ACCESS_KEY={{ threescale_storage_s3_aws_secret_key }}  | oc create -n {{ threescale_namespace }} -f -
       when: threescale_file_upload_storage == "s3"
   when: threescale_resources_exist.stderr == "No resources found."
 
 - import_tasks: resources.yml
+
 - import_tasks: routes.yml
+  when: not enable_wildcard_route
 
 - name: "Setup pv-based storage"
   block:
