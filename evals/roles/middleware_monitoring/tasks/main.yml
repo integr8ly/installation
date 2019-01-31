@@ -1,12 +1,8 @@
 ---
-- name: Check if monitoring namespace exists
-  shell: "oc get project {{ monitoring_namespace }}"
-  register: monitoring_namespace_check
-  failed_when: false
-
 - name: Create monitoring namespace
   shell: "oc new-project {{ monitoring_namespace }}"
-  when: monitoring_namespace_check.rc != 0
+  register: monitoring_namespace_create
+  failed_when: monitoring_namespace_create.stderr != '' and 'AlreadyExists' not in monitoring_namespace_create.stderr
 
 - include: ./create_resource_from_template.yml
   with_items: "{{ monitoring_resource_templates }}"
