@@ -7,8 +7,11 @@
   register: project_cmd
   failed_when: project_cmd.rc != 0 and project_cmd.rc != 1
 
-- name: Add monitoring label to namespace
-  shell: oc patch ns {{ che_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}"}}}'
+- name: Add labels to namespace
+  shell: oc patch ns {{ che_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
+  register: namespace_patch
+  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
+  changed_when: namespace_patch.rc == 0
 
 -
   name: Remove LimitRange if any is defined
@@ -23,8 +26,11 @@
   failed_when: project_infra_cmd.rc != 0 and project_infra_cmd.rc != 1
   when: che_infra_namespace is defined and che_infra_namespace != ""
 
-- name: Add monitoring label to namespace
-  shell: "oc patch ns {{ che_infra_namespace }} --patch '{\"metadata\":{\"labels\":{\"{{ monitoring_label_name }}\":\"{{ monitoring_label_value }}\"}}}'"
+- name: Add labels to namespace
+  shell: "oc patch ns {{ che_infra_namespace }} --patch '{\"metadata\":{\"labels\":{\"{{ monitoring_label_name }}\":\"{{ monitoring_label_value }}\", \"integreatly-middleware-service\":\"true\"}}}'"
+  register: namespace_patch
+  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
+  changed_when: namespace_patch.rc == 0
   when: che_infra_namespace is defined and che_infra_namespace != ""
 
 -

@@ -50,3 +50,16 @@
       name: Restart master controllers
       become: yes
       shell: /usr/local/bin/master-restart controllers
+
+# Delete users and identities created by rhsso
+-
+  name: "Get all users created by rhsso"
+  shell: oc get users | grep 'rh_sso' | awk '{print $1}'
+  register: users
+  failed_when: false
+
+-
+  name: "Delete users"
+  shell:  "oc delete users {{ users.stdout | replace('\n', ' ') }}"
+  when: users.stdout != ''
+  failed_when: false

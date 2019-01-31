@@ -76,6 +76,12 @@
   failed_when: result.stdout
   changed_when: False
 
+- name: Add labels to namespace
+  shell: oc patch ns {{ enmasse_namespace }} --patch '{"metadata":{"labels":{"integreatly-middleware-service":"true"}}}'
+  register: namespace_patch
+  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
+  changed_when: namespace_patch.rc == 0
+
 - name: Remove EnMasse configurations from hosts file
   blockinfile:
     block: "{{ lookup('template', 'enmasse_hosts.j2') }}"
