@@ -1,0 +1,6 @@
+---
+- hosts: master
+  gather_facts: no
+  roles:
+  - role: middleware_monitoring
+    when: middleware_monitoring | default(true) | bool

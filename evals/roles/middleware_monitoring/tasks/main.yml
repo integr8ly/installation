@@ -1,0 +1,17 @@
+---
+- name: Check if monitoring namespace exists
+  shell: "oc get project {{ monitoring_namespace }}"
+  register: monitoring_namespace_check
+  failed_when: false
+
+- name: Create monitoring namespace
+  shell: "oc new-project {{ monitoring_namespace }}"
+  when: monitoring_namespace_check.rc != 0
+
+- include: ./create_resource_from_template.yml
+  with_items: "{{ monitoring_resource_templates }}"
+
+- name: Create required operator resources
+  shell: "oc apply -f {{ item }} -n {{ monitoring_namespace }}"
+  register: monitoring_resource_create
+  with_items: "{{ monitoring_resources }}"

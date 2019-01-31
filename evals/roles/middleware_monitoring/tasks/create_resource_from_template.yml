@@ -1,0 +1,10 @@
+---
+- name: "Create resource file from template ({{ item }})"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ monitoring_tmp_dir }}/{{ item }}"
+- name: Create resource from file
+  shell: "oc create -f {{ monitoring_tmp_dir }}/{{ item }} -n {{ monitoring_namespace }}"
+  register: monitoring_resource_create
+  failed_when: monitoring_resource_create.stderr != '' and 'AlreadyExists' not in monitoring_resource_create.stderr
+  changed_when: monitoring_resource_create.rc == 0
