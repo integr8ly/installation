@@ -7,6 +7,9 @@
   register: project_cmd
   failed_when: project_cmd.rc != 0 and project_cmd.rc != 1
 
+- name: Add monitoring label to namespace
+  shell: oc patch ns {{ che_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}"}}}'
+
 -
   name: Remove LimitRange if any is defined
   shell: oc delete LimitRange/che-core-resource-limits -n {{ che_namespace }}
@@ -18,7 +21,11 @@
   shell: "oc new-project {{ che_infra_namespace }}"
   register: project_infra_cmd
   failed_when: project_infra_cmd.rc != 0 and project_infra_cmd.rc != 1
-  when: che_infra_namespace is defined
+  when: che_infra_namespace is defined and che_infra_namespace != ""
+
+- name: Add monitoring label to namespace
+  shell: "oc patch ns {{ che_infra_namespace }} --patch '{\"metadata\":{\"labels\":{\"{{ monitoring_label_name }}\":\"{{ monitoring_label_value }}\"}}}'"
+  when: che_infra_namespace is defined and che_infra_namespace != ""
 
 -
   name: Create template folder structure

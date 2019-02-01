@@ -41,6 +41,9 @@
   shell: oc new-project {{ msbroker_namespace }}
   when: msbroker_check_namespace_exists.rc != 0
 
+- name: Add monitoring label to namespace
+  shell: oc patch ns {{ msbroker_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}"}}}'
+
 - name: Ensure CRDs do not exist
   shell: "oc delete -f {{ item }}"
   register: output
