@@ -45,10 +45,9 @@ rules:
   resources:
   - services
   - endpoints
+  - services/finalizers
   verbs:
-  - get
-  - create
-  - update
+  - '*'
 - apiGroups:
   - ""
   resources:
