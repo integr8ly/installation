@@ -15,31 +15,32 @@
       failed_when: false
     -
       name: Create cluster cert
-      shell: "oc new-app -f {{ che_template_folder }}/deploy/multi/openshift-certificate-secret.yaml -p CERTIFICATE='{{ che_ssl_cmd.stdout }}' -n {{ che_namespace }}"
+      shell: "oc new-app -f {{che_cert_template}} -p CERTIFICATE='{{ che_ssl_cmd.stdout }}' -n {{ che_namespace }}"
       when: che_cert_cmd.rc != 0
-  when: che_protocol == 'https'
+  when: che_protocol == 'https' and eval_self_signed_certs|bool
 
 
 -
   name: Deploy che server
   shell: "oc new-app \
           -p 'ROUTING_SUFFIX={{ che_route_suffix }}' \
-          -p 'CHE_VERSION={{ che_image_tag }}' \
+          -p 'CHE_VERSION={{ che_version }}' \
           -p 'IMAGE_CHE={{ che_image_name }}' \
           -p 'PROTOCOL={{ che_protocol }}' \
           -p 'WS_PROTOCOL={{ che_ws_protocol }}' \
           -p 'TLS={{ che_tls }}' \
           -p 'CHE_MULTIUSER={{ che_multiuser }}' \
           -p 'CHE_KEYCLOAK_AUTH__SERVER__URL={{ che_protocol }}://{{ che_keycloak_host }}/auth' \
-          -p 'CHE_KEYCLOAK_REALM={{ che_keycloak_realm }}' \
-          -p 'CHE_KEYCLOAK_CLIENT__ID={{ che_keycloak_client_id }}' \
           -p 'CHE_INFRA_KUBERNETES_MASTER__URL={{ che_infra_namespace }}' \
           -p 'CHE_INFRA_KUBERNETES_PVC_STRATEGY={{ che_infra_pvc_strategy }}' \
           -p 'CHE_INFRA_KUBERNETES_PVC_QUANTITY={{ che_infra_pvc_quantity }}' \
-          -p 'CHE_SYSTEM_ADMIN_NAME={{ che_system_admin_name }}' \
-          -f {{ che_template_folder }}/deploy/che-server-template.yaml \
+          -f {{che_server_template}} \
           -n {{ che_namespace }}"
 
+- name: "patch che environment variables"
+  shell: "oc set env dc/che CHE_KEYCLOAK_REALM={{che_keycloak_realm}} CHE_KEYCLOAK_CLIENT__ID={{che_keycloak_client_id}} -n che"
+  register: oc_cmd
+  failed_when: oc_cmd.rc != 0
 -
   name: "Verify che server deployment succeeded"
   shell: sleep 5; oc get pods --namespace {{ che_namespace }}  |  grep  "deploy"

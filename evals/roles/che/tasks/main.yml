@@ -28,22 +28,6 @@
   when: che_infra_namespace is defined and che_infra_namespace != ""
 
 -
-  name: Create template folder structure
-  file:
-    path: "{{ che_template_folder }}/deploy/{{ item.path }}"
-    state: directory
-  with_filetree: "{{ role_path }}/templates/deploy"
-  when: item.state == 'directory'
-
--
-  name: Copy template files to temporary folder
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ che_template_folder }}/deploy/{{ item.path }}"
-  with_filetree: "{{ role_path }}/templates/deploy"
-  when: item.state == 'file'
-
--
   name: Include postgres tasks
   include_tasks: deploy-postgres.yml
   when: che_multiuser|bool == true
@@ -68,8 +52,3 @@
   name: Include keycloak tasks
   include_tasks: keycloak-client.yml
   when: che_multiuser|bool == true
-
--
-  name: Include persistent volume tasks
-  include_tasks: deploy-che-workspace-persistent-volume.yml
-  when: che_persistent_volume|bool == true

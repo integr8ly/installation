@@ -12,7 +12,10 @@ che_app_label: che
 che_delete_namespace: false
 che_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
 che_system_admin_name: launcheradmin
-
+che_route_template: '{{che_templates_location}}/https/che-route-tls.yaml'
+che_cert_template: '{{che_templates_location}}/multi/openshift-certificate-secret.yaml'
+che_server_template: '{{che_templates_location}}/che-server-template.yaml'
+che_postgres_template: '{{che_templates_location}}/multi/postgres-template.yaml'
 #server template vars
 che_route_suffix: "{{ eval_app_host | default('') }}"
 che_image_tag: '6.9.0-centos'
@@ -37,12 +40,10 @@ che_persistent_volume_storageclassname: efs
 
 #postgre
 che_postgre_image_name: 'docker.io/eclipse/che-postgres'
-che_postgre_image_tag: '6.9.0'
 
 #keycloak
 che_keycloak_user: admin
 che_keycloak_password: admin
-che_keycloak_image_tag: '6.9.0'
 che_keycloak_image_name: 'docker.io/eclipse/che-keycloak'
 che_keycloak_require_update_password: true
 che_keycloak_update_password: 'admin'
