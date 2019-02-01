@@ -7,7 +7,10 @@
 - name: Create {{ nexus_namespace }} namespace
   shell: oc new-project {{ nexus_namespace }}
   when: nexus_check_namespace_exists.rc != 0
-  
+
+- name: Add monitoring label to namespace
+  shell: oc patch ns {{ nexus_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}"}}}'
+
 - name: Check if nexus deploy exists
   shell: "oc get pods -n {{ nexus_namespace }} | grep 'nexus' | grep -v 'deploy' | grep '1/1' | wc -l"
   register: running_nexus_pods

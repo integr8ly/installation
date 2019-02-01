@@ -87,3 +87,6 @@ apicurito_version: '0.2.18.Final'
 #controls whether nexus is installed or not
 nexus: true
 nexus_version: '2.14.11-01'
+
+monitoring_label_name: "monitoring-key"
+monitoring_label_value: "middleware"

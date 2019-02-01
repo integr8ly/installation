@@ -7,3 +7,6 @@
 - name: Create webapp namespace
   shell: oc new-project {{ webapp_namespace }}
   when: webapp_check_namespace_exists_cmd.rc != 0
+
+- name: Add monitoring label to namespace
+  shell: oc patch ns {{ webapp_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}"}}}'

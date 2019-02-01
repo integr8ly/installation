@@ -8,6 +8,9 @@
   shell: oc new-project {{ launcher_namespace }}
   when: launcher_check_namespace_exists_cmd.rc != 0
 
+- name: Add monitoring label to namespace
+  shell: oc patch ns {{ launcher_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}"}}}'
+
 - name: Check if deployment config {{ launcher_sso_prefix }} exists
   shell: "oc get dc {{ launcher_sso_prefix }} -n {{ launcher_namespace }}"
   failed_when: false
