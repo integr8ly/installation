@@ -1,5 +1,5 @@
 ---
-- hosts: master
+- hosts: localhost
   gather_facts: no
   roles:
   - role: middleware_monitoring
