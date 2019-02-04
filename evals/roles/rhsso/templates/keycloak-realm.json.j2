@@ -9,6 +9,7 @@
         "realm": "{{ rhsso_realm }}",
         "displayName": "{{ rhsso_realm }}",
         "enabled": true,
+        "eventsListeners": ["{{ rhsso_realm_event_listeners | join('","') }}"],
         "users": [
             {
                 "enabled":true,
