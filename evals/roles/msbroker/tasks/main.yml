@@ -72,6 +72,7 @@
   --param=THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url }} \
   --param=APICURIO_DASHBOARD_URL={{ apicurito_dashboard_url }} \
   --param=IMAGE_ORG={{ msbroker_image_org }} \
-  --param=IMAGE_TAG={{ msbroker_image_tag }} | oc create -n {{ msbroker_namespace }} -f -"
+  --param=IMAGE_TAG={{ msbroker_image_tag }} \
+  --param MONITORING_KEY={{ monitoring_key }} | oc create -n {{ msbroker_namespace }} -f -"
   register: create_msb_resources_cmd
   failed_when: create_msb_resources_cmd.stderr != '' and 'AlreadyExists' not in create_msb_resources_cmd.stderr
