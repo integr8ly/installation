@@ -7,6 +7,8 @@ rhsso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"
 rhsso_admin_username: admin
 rhsso_admin_realm: master
 rhsso_realm: openshift
+rhsso_realm_event_listeners:
+  - metrics-listener
 rhsso_client_id: openshift-client
 rhsso_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
 rhsso_redirect_uri: ""
@@ -48,3 +50,6 @@ rhsso_evals_admin_password: Password1
 rhsso_cluster_admin_email: admin@example.com
 rhsso_cluster_admin_username: admin
 rhsso_cluster_admin_password: Password1
+
+rhsso_plugins:
+  - keycloak-metrics-spi
