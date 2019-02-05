@@ -99,6 +99,14 @@
     launcher_sso_route: "{{ rhsso_secure_route.stdout }}"
   when: launcher
 
+- set_fact:	
+    threescale_route_suffix: "amp.{{ apps_redirect_uri }}"	
+  when: enable_threescale_wildcard_route	
+
+- set_fact:	
+    threescale_route_suffix: "{{ apps_redirect_uri }}"	
+  when: not enable_threescale_wildcard_route
+
 - name: "Create keycloak realm resource template"
   template:
     src: "keycloak-realm.json.j2"

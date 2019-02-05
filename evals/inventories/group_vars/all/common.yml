@@ -14,10 +14,10 @@ eval_launcher_sso_realm: launcher_realm
 eval_webapp_url_prefix: tutorial-web-app-webapp
 eval_seed_users_count: 50
 
+eval_threescale_enable_wildcard_route: false
 # To use S3 storage instead of filesystem (PVC-based requiring ReadWriteMany)
 #eval_threescale_file_upload_storage: s3
 #eval_threescale_storage_s3_aws_access_key: <aws_access_key>
 #eval_threescale_storage_s3_aws_secret_key: <aws_secret_key>
 #eval_threescale_storage_s3_aws_region: <aws_region>
 #eval_threescale_storage_s3_aws_bucket: <s3_bucket_name>
-

@@ -99,12 +99,19 @@
 
     - name: Expose vars
       include_vars: "../roles/3scale/defaults/main.yml"
+    - set_fact:
+        threescale_wildcard_domain: "amp.{{ eval_app_host }}"
+      when: eval_threescale_enable_wildcard_route
+    - set_fact:
+        threescale_wildcard_domain: "{{ eval_app_host }}"
+      when: not eval_threescale_enable_wildcard_route
     -
       name: Install 3Scale
       include_role:
         name: 3scale
       vars:
-        threescale_route_suffix: "{{ eval_app_host }}"
+        threescale_route_suffix: "{{ threescale_wildcard_domain }}"
+        enable_wildcard_route: "{{ eval_threescale_enable_wildcard_route }}"
       tags: ['3scale']
       when: threescale
     -

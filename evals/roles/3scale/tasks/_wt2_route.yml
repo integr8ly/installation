@@ -19,6 +19,7 @@
               app: 3scale
             name: "{{ w2_route_name }}"
         spec:
+            host: "{{ w2_route_name }}-{{ threescale_namespace }}.{{ threescale_route_suffix }}"
             port:
               targetPort: gateway
             tls:

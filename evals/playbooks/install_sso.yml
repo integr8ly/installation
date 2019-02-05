@@ -17,6 +17,7 @@
       vars:
         rhsso_redirect_uri: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
         apps_redirect_uri: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+        enable_threescale_wildcard_route: "{{ eval_threescale_enable_wildcard_route }}"
       tags: ['rhsso']
     -
       name: Gather rhsso data

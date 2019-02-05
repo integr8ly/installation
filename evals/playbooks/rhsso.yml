@@ -20,6 +20,7 @@
       vars:
         rhsso_redirect_uri: "{{ hostvars['RHSSO_VARS']['openshift_master_url'] }}"
         apps_redirect_uri: "{{ hostvars['RHSSO_VARS']['openshift_route_suffix'] }}"
+        enable_threescale_wildcard_route: "{{ eval_threescale_enable_wildcard_route }}"
 
 - hosts: master
   gather_facts: no
