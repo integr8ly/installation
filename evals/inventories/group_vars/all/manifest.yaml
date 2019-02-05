@@ -8,6 +8,7 @@ threescale: true
 # not currently used but records the version installed by the operator, this should come from the status block
 threescale_version: '2.4.0.GA'
 threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
+threescale_template_s3: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp-s3.yml'
 
 #controls whether amq is installed or not
 amq: true
