@@ -2,6 +2,20 @@
 - hosts: master
   gather_facts: no
   tasks:
+    - name: generate admin password
+      set_fact:
+        adminPass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+
+    - name: Create integreatly-admin user
+      shell: htpasswd -b /etc/origin/master/htpasswd integreatly-admin {{adminPass}}
+      register: user_cmd
+      failed_when: user_cmd.rc != 0
+
+    - name: Give integreatly-admin user cluster admin
+      shell: oc adm policy add-cluster-role-to-user integreatly-admin clusteradmin
+      register: oc_cmd
+      failed_when: oc_cmd.rc != 0
+
     - block:
       -
         name: Retrieve master configurations
