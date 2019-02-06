@@ -1,0 +1,11 @@
+---
+- name: "Create namespace {{ kube_state_metrics_namespace }}"
+  shell: oc new-project {{ kube_state_metrics_namespace }}
+  register: create_namespace
+  failed_when: create_namespace.stderr != '' and 'AlreadyExists' not in create_namespace.stderr
+
+- name: Add monitoring label to namespace
+  shell: oc patch ns {{ kube_state_metrics_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}"}}}'
+
+- include: ./create_resource_from_template.yml
+  with_items: "{{ kube_state_metrics_templates }}"

@@ -1,0 +1,3 @@
+---
+- include: ./delete_resource_from_template.yml
+  with_items: "{{ kube_state_metrics_templates }}"

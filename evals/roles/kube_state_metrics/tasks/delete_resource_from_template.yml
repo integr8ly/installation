@@ -1,0 +1,10 @@
+---
+- name: "Delete resource file from template ({{ item }})"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ kube_state_metrics_tmp_dir }}/{{ item }}"
+- name: Delete resource from file
+  shell: "oc delete -f {{ kube_state_metrics_tmp_dir }}/{{ item }} -n {{ kube_state_metrics_namespace }}"
+  register: kube_state_metrics_resource_delete
+  failed_when: kube_state_metrics_resource_delete.stderr != '' and 'NotFound' not in kube_state_metrics_resource_delete.stderr
+  changed_when: kube_state_metrics_resource_delete.rc == 0

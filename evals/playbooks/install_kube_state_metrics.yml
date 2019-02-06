@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  gather_facts: no
+  roles:
+  - role: kube_state_metrics
+    when: kube_state_metrics | default(true) | bool
