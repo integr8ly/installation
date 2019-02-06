@@ -1,3 +1,11 @@
 ---
 - include: ./delete_resource_from_template.yml
   with_items: "{{ kube_state_metrics_templates }}"
+
+- name: "copy ksm template"
+  copy:
+    src: kube_state_metrics_alerts.yml
+    dest: /tmp/kube_state_metrics_alerts.yml
+
+- name: Delete ksm alerts
+  shell: "oc delete -f /tmp/kube_state_metrics_alerts.yml -n {{ kube_state_metrics_namespace }}"
