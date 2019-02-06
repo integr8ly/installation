@@ -2,20 +2,6 @@
 - hosts: master
   gather_facts: no
   tasks:
-    - name: generate admin password
-      set_fact:
-        adminPass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
-
-    - name: Create integreatly-admin user
-      shell: htpasswd -b /etc/origin/master/htpasswd integreatly-admin {{adminPass}}
-      register: user_cmd
-      failed_when: user_cmd.rc != 0
-
-    - name: Give integreatly-admin user cluster admin
-      shell: oc adm policy add-cluster-role-to-user integreatly-admin clusteradmin
-      register: oc_cmd
-      failed_when: oc_cmd.rc != 0
-
     - block:
       -
         name: Retrieve master configurations
@@ -31,6 +17,7 @@
       tags: ['bootstrap', 'remote']
 
 - import_playbook: "./openshift.yml"
+- import_playbook: "./user.yaml"
 - import_playbook: "./install_sso.yml"
 - import_playbook: "./install_infra.yml"
 - import_playbook: "./install_services.yml"
@@ -39,9 +26,21 @@
 - import_playbook: "./install_kube_state_metrics.yml"
 - import_playbook: "./generate-customisation-inventory.yml"
 
+- hosts: master
+  gather_facts: no
+  tasks:
+    - name: remove integreatly-admin user
+      shell: "htpasswd -D /etc/origin/master/htpasswd integreatly-admin"
+      become: yes
+      when: create_cluster_admin
 - hosts: localhost
   gather_facts: no
   tasks:
+    - name: switch back to system admin
+      shell: oc login -u system:admin
+      register: oc_cmd
+      failed_when: oc_cmd.rc != 0 and oc_cmd.rc != 1
+      when: create_cluster_admin
     - debug:
         msg: All services have been provisioned successfully.
     - debug:

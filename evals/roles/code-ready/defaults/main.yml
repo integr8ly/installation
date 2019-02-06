@@ -3,32 +3,17 @@
 
 #common vars
 che_namespace: "{{ eval_che_namespace | default('che') }}"
-che_infra_namespace: ''
-che_infra_pvc_strategy: 'common'
-che_infra_pvc_quantity: '10Gi'
-che_username: "{{ eval_username | default('evals@example.com') }}"
 che_template_folder: /tmp/che-templates
-che_app_label: che
-che_delete_namespace: false
 che_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
-che_system_admin_name: launcheradmin
 
 #server template vars
-che_route_suffix: "{{ eval_app_host | default('') }}"
-che_image_tag: '6.9.0-centos'
-che_image_name: 'docker.io/eclipse/che-server'
 che_protocol: https
 che_ws_protocol: wss
 che_multiuser: true
 che_tls: true
-che_infra_openshift_project: "{{ che_namespace }}"
-che_infra_pvc_size: 1Gi
-che_update_strategy: 'Recreate'
-che_image_pull_policy: IfNotPresent
-che_create_subfolder_pv: false
 che_keycloak_realm: ''
 che_keycloak_client_id: 'che-client'
-che_keycloak_host: ''
+che_keycloak_host: '{{che_protocol}}://{{eval_launcher_sso_host}}'
 
 #pvc vars
 che_persistent_volume: true

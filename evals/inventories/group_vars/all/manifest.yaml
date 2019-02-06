@@ -23,11 +23,10 @@ amq_template_short_tag: '72'
 #controls whether che is installed or not
 #note che cannot be installed without launcher being present currently
 che: true
-che_version: '6.9.0'
-####### che variables below are not currently used. They define where and what to pull in from github. These will be important as we look to break out and decouple the resources from the installer ###############
-# these should be used once issue https://github.com/eclipse/che/issues/12065 is in place or worked around. But currently not used
-che_template: 'https://raw.githubusercontent.com/eclipse/che/{{che_version}}/deploy/openshift/templates/che-server-template.yaml'
-che_postgres_template: 'https://github.com/eclipse/che/blob/{{che_version}}/deploy/openshift/templates/multi/postgres-template.yaml'
+che_version: '1.0.0.GA'
+# by default the GA installer uses the :latest tag so we need to set the tagged version in the config
+che_server_image: 'registry.access.redhat.com/codeready-workspaces/server:1.0'
+che_installer: 'https://raw.githubusercontent.com/redhat-developer/codeready-workspaces-deprecated/{{che_version}}/operator-installer/deploy.sh'
 
 #controls whether enmasse is installed or not
 enmasse: true

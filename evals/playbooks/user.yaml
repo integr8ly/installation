@@ -1,0 +1,53 @@
+---
+- hosts: master
+  gather_facts: no
+  tasks:
+  - block:
+      - debug:
+          msg: "Setting up a new cluster admin as create_cluster_admin is true"
+      - name: make sure we start as system admin
+        shell: oc login -u system:admin
+        register: oc_login
+        failed_when: oc_login.rc != 0
+
+      - name: generate admin password
+        set_fact:
+          adminPass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+      - add_host:
+          name: EVAL_VARS
+          adminPassword: "{{adminPass}}"
+      - name: Create integreatly-admin user
+        shell: htpasswd -b /etc/origin/master/htpasswd integreatly-admin {{adminPass}}
+        register: user_cmd
+        failed_when: user_cmd.rc != 0
+        become: true
+
+      - name: Give integreatly-admin user cluster admin
+        shell: oc adm policy add-cluster-role-to-user cluster-admin integreatly-admin
+        register: oc_cmd
+        failed_when: oc_cmd.rc != 0
+    when: create_cluster_admin
+
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - block:
+      - name: get server url
+        shell: oc whoami --show-server
+        register: server_cmd
+        failed_when: server_cmd.rc != 0
+
+      - name: Login with integreatly-admin user
+        shell: "oc login {{ server_cmd.stdout }} --username=integreatly-admin --password={{ hostvars['EVAL_VARS']['adminPassword'] }}"
+        register: oc_login
+        failed_when: oc_login.rc != 0 and '401 Unauthorized' not in oc_login.stdout
+        # after a installation has been run successfully once, we will have no htpasswd auth anymore so need to login as the admin via rhsso
+      - block:
+          - name: get password for admin user
+            script: "../../scripts/get_admin_secret.sh"
+            register: admin_password
+            failed_when: admin_password.rc != 0
+          - name: login with admin user via rhsso identity provider when htpasswd disabled
+            shell: "oc login {{ server_cmd.stdout }} --username=admin --password={{ admin_password.stdout }}"
+        when: oc_login.rc != 0 and '401 Unauthorized' in oc_login.stdout and create_cluster_admin
+      when: create_cluster_admin
