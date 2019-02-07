@@ -17,7 +17,7 @@
         when: jq_binary.stat.exists == False
 
       - name: Get namespaces to clean up
-        shell: oc get namespaces -o json | jq '.items[] | select(.metadata.annotations["openshift.io/requester"] != null and .metadata.annotations["openshift.io/requester"] != "system:admin") | .metadata.name' | grep -v "{{ eval_rhsso_namespace }}" | cut -f2 -d'"'
+        shell: oc get namespaces -o json | jq '.items[] | select(.metadata.annotations["openshift.io/requester"] != null and .metadata.annotations["openshift.io/requester"] != "system:admin" and .metadata.labels["integreatly-middleware-service"] != "true") | .metadata.name' | cut -f2 -d'"'
         register: namespaces_output
       - name: Delete namespaces
         shell: "oc delete namespace {{ item }}"

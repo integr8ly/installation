@@ -5,8 +5,11 @@
   register: gitea_create_namespace_cmd
   failed_when: gitea_create_namespace_cmd.stderr != '' and 'AlreadyExists' not in gitea_create_namespace_cmd.stderr
 
-- name: Add monitoring label to namespace
-  shell: oc patch ns {{ gitea_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}"}}}'
+- name: Add labels to namespace
+  shell: oc patch ns {{ gitea_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
+  register: namespace_patch
+  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
+  changed_when: namespace_patch.rc == 0
 
 # oc exec doesn't accept a namespace argument so make sure we are using the correct one
 - name: Make sure we are using the gitea namespace
