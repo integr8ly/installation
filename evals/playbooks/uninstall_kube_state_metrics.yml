@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - include_role:
+      name: kube_state_metrics
+      tasks_from: uninstall.yml

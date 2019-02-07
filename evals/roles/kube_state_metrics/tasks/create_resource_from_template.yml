@@ -1,0 +1,11 @@
+
+---
+- name: "Create resource file from template ({{ item }})"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ kube_state_metrics_tmp_dir }}/{{ item }}"
+- name: Create resource from file
+  shell: "oc create -f {{ kube_state_metrics_tmp_dir }}/{{ item }} -n {{ kube_state_metrics_namespace }}"
+  register: kube_state_metrics_resource_create
+  failed_when: kube_state_metrics_resource_create.stderr != '' and 'AlreadyExists' not in kube_state_metrics_resource_create.stderr
+  changed_when: kube_state_metrics_resource_create.rc == 0
