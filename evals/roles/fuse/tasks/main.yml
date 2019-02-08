@@ -1,18 +1,12 @@
 ---
 # SETUP FUSE OPERATOR AND FUSE ON OPENSHIFT IMAGES
-- name: Generate fuse operator image stream template
-  template:
-    src: "fuse-operator.yml.j2"
-    dest: /tmp/fuse-operator.yml
-
 - name: Create Fuse image streams
   shell: "oc replace --force -f {{ item }} -n openshift"
   register: create_fuse_imagestream_cmd
   failed_when: create_fuse_imagestream_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_imagestream_cmd.stderr
   changed_when: create_fuse_imagestream_cmd.rc == 0
   with_items:
-    - "/tmp/fuse-operator.yml"
-    - "{{ fuse_operator_imagestreams_url }}"
+    - "{{ fuse_online_imagestreams_url }}"
     - "{{ fuse_on_openshift_imagestreams_url }}"
 
 # SETUP FUSE ON OPENSHIFT TEMPLATES
