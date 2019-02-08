@@ -24,3 +24,23 @@ spec:
         for: 15m
         labels:
           severity: critical
+      - alert: KubePodImagePullBackOff
+        annotations:
+          message: Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} has been unable to pull it's image for longer than 5 minutes.
+        expr: |
+          (kube_pod_container_status_waiting_reason{reason="ImagePullBackOff"} * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
+        for: 5m
+        labels:
+          severity: critical
+      - alert: KubePodBadConfig
+        annotations:
+          message: Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} has been unable to start due to a bad configuration for longer than 5 minutes.
+        expr: |
+          (kube_pod_container_status_waiting_reason{reason="CreateContainerConfigError"} * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
+        for: 5m
+      - alert: KubePodStuckCreating
+        annotations:
+          message: Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} has been trying to start for longer than 15 minutes - this could indicate a configuration error.
+        expr: |
+          (kube_pod_container_status_waiting_reason{reason="ContainerCreating"} * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
+        for: 15m
