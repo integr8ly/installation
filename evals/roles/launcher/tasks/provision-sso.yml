@@ -29,7 +29,7 @@
   when: launcher_sso_force_image_streams_update
 
 - name: Provision SSO for Launcher
-  shell: "oc new-app --template={{ launcher_sso_serviceclass }} -n {{ launcher_namespace }} -p SSO_ADMIN_PASSWORD={{ launcher_sso_username }} -p SSO_ADMIN_USERNAME={{ launcher_sso_username }} -p SSO_REALM={{ launcher_sso_realm }} -p APPLICATION_NAME={{ launcher_sso_prefix }}"
+  shell: "oc new-app --template={{ launcher_sso_serviceclass }} -n {{ launcher_namespace }} -p SSO_ADMIN_USERNAME={{ launcher_sso_username }} -p SSO_REALM={{ launcher_sso_realm }} -p APPLICATION_NAME={{ launcher_sso_prefix }}"
   when: launcher_sso_exists_cmd.rc != 0
 
 - name: "Verify Launcher SSO deployment succeeded"
@@ -40,3 +40,13 @@
   delay: 10
   failed_when: result.stdout
   changed_when: False
+
+- name: Retrieve launcher SSO Admin Password
+  shell: "oc get dc/launcher-sso \
+        -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"SSO_ADMIN_PASSWORD\")].value}' \
+        -n {{ launcher_namespace }}"
+  register: launcher_admin_password_cmd
+
+- set_fact:
+    launcher_sso_password: "{{ launcher_admin_password_cmd.stdout }}"
+    launcher_sso_admin_password: "{{ launcher_admin_password_cmd.stdout }}"
