@@ -1,9 +1,9 @@
 ---
 # defaults file for walkthroughs
-crud_spboot_image_tag: "de27db2"
+crud_spboot_image_tag: "edf0286"
 crud_spboot_runtime_version: 1.3-8
 crud_spboot_source_repo_url: "https://github.com/integr8ly/spboot-example.git"
-crud_spboot_source_repo_ref: "de27db2"
+crud_spboot_source_repo_ref: "edf0286"
 crud_spboot_source_repo_dir: "."
 crud_spboot_artifact_copy_args: "'*.jar'"
 crud_spboot_github_webhook_secret: ""
