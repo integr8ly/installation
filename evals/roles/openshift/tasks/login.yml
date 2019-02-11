@@ -1,0 +1,9 @@
+---
+
+- name: Password authentication
+  shell: oc login {{ openshift_master_public_url }} -u {{ openshift_username }} -p {{ openshift_password }} --insecure-skip-tls-verify={{ eval_self_signed_certs }}
+  when: openshift_password != ''
+
+- name: Token authentication
+  shell: oc login {{ openshift_master_public_url }} --token {{ openshift_token }} --insecure-skip-tls-verify={{ eval_self_signed_certs }}
+  when: openshift_token != ''
