@@ -13,7 +13,7 @@
   get_url:
     url: "{{ enmasse_download_url }}"
     dest: "/tmp/enmasse-{{ enmasse_version }}.zip"
-  when: 
+  when:
     enmasse_artifact.stat.exists == False
 
 - name: Install gnu-tar required for MacOSX
@@ -77,10 +77,10 @@
   changed_when: False
 
 - name: Add labels to namespace
-  shell: oc patch ns {{ enmasse_namespace }} --patch '{"metadata":{"labels":{"integreatly-middleware-service":"true"}}}'
-  register: namespace_patch
-  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
-  changed_when: namespace_patch.rc == 0
+  shell: oc label --overwrite namespace {{ enmasse_namespace }} {{ monitoring_label_name }}={{ monitoring_label_value }} integreatly-middleware-service=true
+  register: namespace_label
+  failed_when: namespace_label.stderr != '' and 'not labeled' not in namespace_label.stderr
+  changed_when: namespace_label.rc == 0
 
 - name: Remove EnMasse configurations from hosts file
   blockinfile:
