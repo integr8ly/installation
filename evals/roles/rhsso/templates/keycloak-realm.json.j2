@@ -11,25 +11,46 @@
         "enabled": true,
         "eventsListeners": ["{{ rhsso_realm_event_listeners | join('","') }}"],
         "users": [
-            {
-                "enabled":true,
-                "attributes":{},
-                "username":"{{ rhsso_evals_admin_username }}",
-                "emailVerified":true,
-                "email":"{{ rhsso_evals_admin_email }}",
-                "password": "{{ rhsso_evals_admin_password }}",
-                "realmRoles": [
-                    "offline_access",
-                    "uma_authorization"
-                ],
-                "clientRoles": {
-                    "account": [
-                        "manage-account",
-                        "view-profile"
-                    ]
-                },
-                "outputSecret": "evals-admin-user-credentials"
+            {% if rhsso_seed_users_count|int > 0 %}
+            {   
+                "enabled":true, 
+                "attributes":{},    
+                "username":"{{ rhsso_evals_admin_username }}",  
+                "emailVerified":true,   
+                "email":"{{ rhsso_evals_admin_email }}",    
+                "password": "{{ rhsso_evals_admin_password }}", 
+                "realmRoles": [ 
+                    "offline_access",   
+                    "uma_authorization" 
+                ],  
+                "clientRoles": {    
+                    "account": [    
+                        "manage-account",   
+                        "view-profile"  
+                    ]   
+                },  
+                "outputSecret": "evals-admin-user-credentials"  
             },
+            {   
+                "enabled":true, 
+                "attributes":{},    
+                "username":"{{ rhsso_evals_username }}",    
+                "emailVerified":true,   
+                "email":"{{ rhsso_evals_email }}",  
+                "password": "{{ rhsso_evals_password }}",   
+                "realmRoles": [ 
+                    "offline_access",   
+                    "uma_authorization" 
+                ],  
+                "clientRoles": {    
+                    "account": [    
+                        "manage-account",   
+                        "view-profile"  
+                    ]   
+                },  
+                "outputSecret": "test-user-credentials",
+            },
+            {% endif %}
             {
                 "enabled":true,
                 "attributes":{},
@@ -48,25 +69,6 @@
                     ]
                 },
                 "outputSecret": "admin-user-credentials"
-            },
-            {
-                "enabled":true,
-                "attributes":{},
-                "username":"{{ rhsso_evals_username }}",
-                "emailVerified":true,
-                "email":"{{ rhsso_evals_email }}",
-                "password": "{{ rhsso_evals_password }}",
-                "realmRoles": [
-                    "offline_access",
-                    "uma_authorization"
-                ],
-                "clientRoles": {
-                    "account": [
-                        "manage-account",
-                        "view-profile"
-                    ]
-                },
-                "outputSecret": "test-user-credentials"
             }
         ],
         "clients": [
@@ -346,7 +348,7 @@
                     "configure": true,
                     "manage": true
                 }
-            },
+            }
             {% endif %}
         ]
     }
