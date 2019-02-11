@@ -44,3 +44,91 @@ spec:
         expr: |
           (kube_pod_container_status_waiting_reason{reason="ContainerCreating"} * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
         for: 15m
+      - alert: ThreeScalePodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected exactly 15 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="3scale"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="3scale"}) != 15
+        for: 5m
+        labels:
+          severity: critical
+      - alert: ApicuritoPodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected exactly 2 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="apicurito"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="apicurito"}) != 2
+        for: 5m
+        labels:
+          severity: critical
+      - alert: CodeReadyPodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected at least 2 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="codeready"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="codeready"}) < 2
+        for: 5m
+        labels:
+          severity: critical
+      - alert: AMQOnlinePodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected at least 6 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="enmasse"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="enmasse"}) < 6
+        for: 5m
+        labels:
+          severity: critical
+      - alert: GiteaPodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected exactly 3 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="gitea"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="gitea"}) != 3
+        for: 5m
+        labels:
+          severity: critical
+      - alert: LauncherPodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected exactly 6 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="launcher"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="launcher"}) != 6
+        for: 5m
+        labels:
+          severity: critical
+      - alert: ManagedServiceBrokerPodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected exactly 1 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="managed-service-broker"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="managed-service-broker"}) != 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: MiddlewareMonitoringPodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected exactly 7 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="middleware-monitoring"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="middleware-monitoring"}) != 7
+        for: 5m
+        labels:
+          severity: critical
+      - alert: NexusPodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected exactly 1 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="nexus"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="nexus"}) != 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: SSOPodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected exactly 3 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="sso"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="sso"}) != 3
+        for: 5m
+        labels:
+          severity: critical
+      - alert: SolutionExplorerPodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected exactly 2 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="webapp"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="webapp"}) != 2
+        for: 5m
+        labels:
+          severity: critical
