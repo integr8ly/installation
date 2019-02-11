@@ -1,6 +1,11 @@
 ---
 - hosts: localhost
   tasks:
+    - when: create_cluster_admin
+      name: switch to system:admin for uninstall
+      shell: oc login -u system:admin
+      register: oc_login
+      failed_when: oc_login.rc != 0
     - when: keep_namespaces is undefined or not keep_namespaces | bool
       block:
       - name: Check that jq exists
@@ -46,16 +51,6 @@
         tasks_from: uninstall
       tags: ['amq']
       when: amq
-    -
-      name: Uninstall che
-      include_role:
-        name: che
-        tasks_from: uninstall
-      vars:
-        delete_keycloak_user: false
-        che_delete_namespace: true
-      tags: ['che']
-      when: che
     - 
       name: Uninstall managed services broker
       include_role:

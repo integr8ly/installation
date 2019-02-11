@@ -1,8 +1,8 @@
 ---
 
 -
-  name: Get che route
-  shell: "oc get route/che -o jsonpath='{.spec.host}' -n {{ che_namespace }}"
+  name: Get codeready route
+  shell: "oc get route/codeready -o jsonpath='{.spec.host}' -n {{ che_namespace }}"
   register: che_route_cmd
 
 -

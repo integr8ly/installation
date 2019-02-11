@@ -1,0 +1,59 @@
+---
+- name: check if codeready already exists
+  shell: oc get ns codeready
+  register: codeready_exists
+  failed_when: codeready_exists.rc != 0 and codeready_exists.rc != 1
+
+- block:
+  - name: mkdir code ready
+    file:
+      path: "/tmp/code-ready"
+      state: directory
+
+  - name: download code ready installer
+    get_url:
+      url: "{{che_installer}}"
+      dest: /tmp/code-ready/installer.sh
+      mode: 0550
+
+
+  - name: Retrieve cluster cert
+    shell: "echo -n '' | openssl s_client -showcerts -connect {{ che_keycloak_host }}:{{ che_keycloak_port }} | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' > /tmp/code-ready/cert.ca"
+    args:
+      warn: no
+    register: che_ssl_cmd
+    when: eval_self_signed_certs
+
+  - set_fact:
+      self_signed_cert: "{{che_ssl_cmd.stdout }}"
+    when: eval_self_signed_certs and che_ssl_cmd.stdout != "" and che_ssl_cmd.rc == 0
+
+  - name: Copy config file into code ready dir
+    template:
+      src: "config.yaml"
+      dest: /tmp/code-ready/config.yaml
+
+  - name: install code ready with self signed cert
+    shell: cd /tmp/code-ready && ./installer.sh --deploy --cert=/tmp/code-ready/cert.ca
+    when: eval_self_signed_certs
+
+  - name: install code ready valid certs
+    shell: cd /tmp/code-ready && ./installer.sh --deploy
+    when: not eval_self_signed_certs
+
+  - name: patch for per workspace volumes
+    shell: "oc set env deployment/che CHE_INFRA_KUBERNETES_PVC_PRECREATE__SUBPATHS=false -n {{eval_che_namespace}}"
+    register: oc_cmd
+    failed_when: oc_cmd.rc != 0
+
+  - name: clean up code ready
+    file:
+      path: '{{item}}'
+      state: absent
+    with_items:
+      - /tmp/code-ready/installer.sh
+      - /tmp/code-ready/config.yaml
+  - name: Include keycloak tasks
+    include_tasks: keycloak-client.yml
+    when: che_multiuser|bool == true
+  when: codeready_exists.rc != 0 and 'NotFound' in codeready_exists.stderr

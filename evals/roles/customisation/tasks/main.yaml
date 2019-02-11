@@ -68,8 +68,8 @@
     component_manifests: "{{component_manifests}} + {{apicurito_manifest}}"
   when: apicurito
 
-- name: Get Che secure route
-  shell: oc get route/che -o template --template \{\{.spec.host\}\} -n {{ che_namespace }}
+- name: Get codeready secure route
+  shell: oc get route/codeready -o template --template \{\{.spec.host\}\} -n {{ che_namespace }}
   register: che_secure_route
   when: che and launcher
 
@@ -80,7 +80,7 @@
 - name: set che component
   set_fact:
     che_manifest:
-    - name: che
+    - name: codeready
       version: "{{che_version}}"
       host: "{{che_secure_route}}"
   when: che and launcher

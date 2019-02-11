@@ -22,7 +22,7 @@
   shell: oc patch deployment/keycloak -p '{{ keycloak_plugin_image_contents.stdout }}' -n {{ enmasse_namespace }}
 
 - name: "Verify patched deployments are ready"
-  shell: sleep 5; oc get pods | awk '{print $2}' | grep '0/1'
+  shell: sleep 5; oc get pods -n {{enmasse_namespace}} | awk '{print $2}' | grep '0/1'
   register: result
   until: not result.stdout
   retries: 50
