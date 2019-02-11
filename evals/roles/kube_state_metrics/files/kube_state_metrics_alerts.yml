@@ -44,3 +44,9 @@ spec:
         expr: |
           (kube_pod_container_status_waiting_reason{reason="ContainerCreating"} * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
         for: 15m
+      - alert: ReplicasLessThanOne
+        annotations:
+          message: Deployment {{ $labels.exported_namespace }}/{{ $labels.deployment }} has replicas set to 0 for longer than 5 minutes.
+        export: |
+          kube_deployment_status_replicas  * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"} < 1
+        for: 5m
