@@ -1,0 +1,46 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    monitoring-key: middleware
+  name: ksm-alerts
+spec:
+  groups:
+    - name: general.rules
+      rules:
+      - alert: KubePodCrashLooping
+        annotations:
+          message: Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times every 5 minutes; for the last 15 minutes.
+        expr: |
+          rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[15m]) * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"} * 60 * 5 > 0
+        for: 15m
+        labels:
+          severity: critical
+      - alert: KubePodNotReady
+        annotations:
+          message: Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} has been in a non-ready state for longer than 15 minutes.
+        expr: |
+          sum by(exported_pod, exported_namespace) (kube_pod_status_phase{phase=~"Pending|Unknown"} * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
+        for: 15m
+        labels:
+          severity: critical
+      - alert: KubePodImagePullBackOff
+        annotations:
+          message: Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} has been unable to pull it's image for longer than 5 minutes.
+        expr: |
+          (kube_pod_container_status_waiting_reason{reason="ImagePullBackOff"} * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
+        for: 5m
+        labels:
+          severity: critical
+      - alert: KubePodBadConfig
+        annotations:
+          message: Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} has been unable to start due to a bad configuration for longer than 5 minutes.
+        expr: |
+          (kube_pod_container_status_waiting_reason{reason="CreateContainerConfigError"} * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
+        for: 5m
+      - alert: KubePodStuckCreating
+        annotations:
+          message: Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} has been trying to start for longer than 15 minutes - this could indicate a configuration error.
+        expr: |
+          (kube_pod_container_status_waiting_reason{reason="ContainerCreating"} * on (namespace, exported_namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
+        for: 15m
