@@ -408,3 +408,19 @@ ansible_python_interpreter=python
 
 TIP: The module need to be installed in the same version of python used by Ansible. Use the command `$ ansible --version` to check this path.
 
+=== Self Signed Certs with Che
+If your cluster is using a self signed (non CA) certificate, there are a couple of things that needs to be noted.
+
+- Che will only allow the creation of one workspace when self signed certificates are used.
+- When a workspace is created, the following errors may appear on the workspace:
+
+----
+Connection failed with terminal
+Some error happened with terminal WebSocket connection
+----
+
+----
+Failed to import project
+----
+
+- In order to solve these issues, you will need to accept the certs for all the routes that was created for that workspace. These routes are listed in the workspace deployment within the Che namespace.
