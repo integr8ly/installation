@@ -1,11 +1,6 @@
 ---
 - hosts: localhost
   tasks:
-    - name: Setup AMQ Templates
-      include_role:
-        name: amq
-      tags: ['amq']
-      when: amq
     - name: Install walkthroughs
       include_role:
         name: walkthroughs

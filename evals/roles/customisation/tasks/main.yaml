@@ -73,7 +73,7 @@
   register: che_secure_route
   when: che and launcher
 
-- set_fact: 
+- set_fact:
     che_secure_route: "https://{{che_secure_route.stdout}}"
   when: che and launcher
 
@@ -98,7 +98,7 @@
   local_action: command oc get route/{{ rhsso_secure_route_name.stdout }} -o template --template \{\{.spec.host\}\} -n {{ rhsso_namespace }}
   register: rhsso_secure_route
 
-- set_fact: 
+- set_fact:
     rhsso_secure_route: "https://{{rhsso_secure_route.stdout}}"
 
 - name: set rhsso component
@@ -112,11 +112,11 @@
     component_manifests: "{{component_manifests}} + {{rhsso_manifest}}"
 
 - name: Get Gitea route
-  shell: oc get routes -n {{ gitea_namespace }} -o=jsonpath={.items[0].spec.host} 
+  shell: oc get routes -n {{ gitea_namespace }} -o=jsonpath={.items[0].spec.host}
   register: gitea_route
   when: gitea
 
-- set_fact: 
+- set_fact:
     gitea_route: "https://{{gitea_route.stdout}}"
   when: gitea
 
@@ -146,7 +146,7 @@
   register: launcher_route_cmd
   when: launcher
 
-- set_fact: 
+- set_fact:
     launcher_route: "https://{{launcher_route_cmd.stdout}}"
   when: launcher
 
@@ -161,19 +161,6 @@
 - set_fact:
     component_manifests: "{{component_manifests}} + {{launcher_manifest}}"
   when: launcher
-
-
-- name: set amq component
-  set_fact:
-    amq_manifest:
-    - name: amq
-      version: "{{amq_version}}"
-      host: ""
-  when: amq
-
-- set_fact:
-    component_manifests: "{{component_manifests}} + {{amq_manifest}}"
-  when: amq
 
 - name: set fuse online component
   set_fact:
@@ -206,7 +193,7 @@
   register: enmsase_route_cmd
   when: enmasse
 
-- set_fact: 
+- set_fact:
     enmasse_rest_route: "https://{{enmsase_route_cmd.stdout}}"
   when: enmasse
 
@@ -227,7 +214,7 @@
   register: launcher_sso_host_cmd
   when: launcher
 
-- set_fact: 
+- set_fact:
     launcher_sso_route: "https://{{launcher_sso_host_cmd.stdout}}"
   when: launcher
 

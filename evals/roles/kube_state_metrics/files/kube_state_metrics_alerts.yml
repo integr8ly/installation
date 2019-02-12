@@ -68,14 +68,6 @@ spec:
         for: 5m
         labels:
           severity: critical
-      - alert: AMQOnlinePodCount
-        annotations:
-          message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected at least 6 pods.
-        expr: |
-          (1-absent(kube_pod_status_ready{condition="true", exported_namespace="enmasse"})) or sum(kube_pod_status_ready{condition="true", exported_namespace="enmasse"}) < 6
-        for: 5m
-        labels:
-          severity: critical
       - alert: GiteaPodCount
         annotations:
           message: Pod count for namespace {{ $labels.exported_namespace }} is {{ printf "%.0f" $value }}. Expected exactly 3 pods.

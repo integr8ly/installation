@@ -10,16 +10,6 @@ threescale_version: '2.4.0.GA'
 threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
 threescale_template_s3: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp-s3.yml'
 
-#controls whether amq is installed or not
-amq: true
-# This is not currently used as part of the install but is the version from the above release tag
-amq_version: '7.2'
-#controls the the github release to pull the imagestreams and templates from
-amq_release_tag: '72-1.1.GA'
-#the short tag is needed as it is referenced in the urls
-amq_template_short_tag: '72'
-
-
 #controls whether che is installed or not
 #note che cannot be installed without launcher being present currently
 che: true
