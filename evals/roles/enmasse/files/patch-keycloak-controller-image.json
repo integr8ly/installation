@@ -1,1 +1,0 @@
-{ "spec": { "template": { "spec": { "containers": [{"name": "keycloak-controller", "image": "docker.io/lulf/amqmaas10-auth-controller-openshift:1.0-2", "imagePullPolicy": "Always" }] } } }}
