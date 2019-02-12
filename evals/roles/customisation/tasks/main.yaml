@@ -214,7 +214,7 @@
   set_fact:
     enmasse_manifest:
     - name: enmasse
-      version: "{{fuse_version}}"
+      version: "{{enmasse_version}}"
       host: "{{enmasse_rest_route}}"
   when: enmasse
 

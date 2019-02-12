@@ -22,11 +22,11 @@
     args:
       warn: no
     register: che_ssl_cmd
-    when: eval_self_signed_certs
+    when: eval_self_signed_certs|bool
 
   - set_fact:
       self_signed_cert: "{{che_ssl_cmd.stdout }}"
-    when: eval_self_signed_certs and che_ssl_cmd.stdout != "" and che_ssl_cmd.rc == 0
+    when: eval_self_signed_certs|bool and che_ssl_cmd.stdout != "" and che_ssl_cmd.rc == 0
 
   - name: Copy config file into code ready dir
     template:
@@ -35,11 +35,11 @@
 
   - name: install code ready with self signed cert
     shell: cd /tmp/code-ready && ./installer.sh --deploy --cert=/tmp/code-ready/cert.ca
-    when: eval_self_signed_certs
+    when: eval_self_signed_certs|bool
 
   - name: install code ready valid certs
     shell: cd /tmp/code-ready && ./installer.sh --deploy
-    when: not eval_self_signed_certs
+    when: not eval_self_signed_certs|bool
 
   - name: patch for per workspace volumes
     shell: "oc set env deployment/che CHE_INFRA_KUBERNETES_PVC_PRECREATE__SUBPATHS=false -n {{eval_che_namespace}}"
