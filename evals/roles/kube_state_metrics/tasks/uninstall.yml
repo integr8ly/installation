@@ -9,3 +9,4 @@
 
 - name: Delete ksm alerts
   shell: "oc delete -f /tmp/kube_state_metrics_alerts.yml -n {{ kube_state_metrics_namespace }}"
+  failed_when: false
