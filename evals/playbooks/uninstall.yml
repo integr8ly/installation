@@ -45,26 +45,19 @@
       tags: ['launcher']
       when: launcher
     -
-      name: Uninstall amq
-      include_role:
-        name: amq
-        tasks_from: uninstall
-      tags: ['amq']
-      when: amq
-    - 
       name: Uninstall managed services broker
       include_role:
         name: msbroker
         tasks_from: uninstall
       tags: ['msbroker']
-    - 
+    -
       name: Uninstall 3scale
       include_role:
         name: 3scale
         tasks_from: uninstall
       tags: ['3scale']
       when: threescale
-    - 
+    -
       name: Uninstall Gitea
       include_role:
         name: gitea
@@ -77,20 +70,20 @@
         tasks_from: uninstall
       tags: ['enmasse']
       when: enmasse
-    - 
+    -
       name: Uninstall the webapp
       include_role:
         name: webapp
         tasks_from: uninstall
       tags: ['webapp']
       when: webapp
-    - 
+    -
       name: Uninstall rhsso
       include_role:
         name: rhsso
         tasks_from: uninstall
       tags: ['rhsso']
-    - 
+    -
       name: Uninstall Nexus
       include_role:
         name: nexus
@@ -104,7 +97,7 @@
         tasks_from: uninstall
       tags: ['fuse']
       when: fuse
-    - 
+    -
       name: Uninstall Walkthrough Apps
       include_role:
         name: walkthroughs
@@ -130,13 +123,13 @@
         name: reboot_template_broker
 - hosts: master
   tasks:
-    - 
-      name: Remove webapp cors data 
+    -
+      name: Remove webapp cors data
       include_role:
         name: webapp
         tasks_from: cors-remove
       tags: ['webapp']
-    - 
+    -
       name: Uninstall rhsso
       include_role:
         name: rhsso
