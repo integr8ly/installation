@@ -7,5 +7,4 @@ before_install:
 install:
 - pip install ansible
 script:
-- cd evals/
 - for entry in *.yml; do  ansible-playbook -i ../test/inventories/hosts playbooks/$entry --syntax-check; done
