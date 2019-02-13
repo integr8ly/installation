@@ -17,6 +17,9 @@
 
 - name: Create ksm alerts
   shell: "oc create -f /tmp/kube_state_metrics_alerts.yml -n {{ kube_state_metrics_namespace }}"
+  register: create_ksm_alerts
+  failed_when: create_ksm_alerts.stderr != '' and 'already exists' not in create_ksm_alerts.stderr
+  changed_when: create_ksm_alerts.rc == 0
 
 - include: ./create_resource_from_template.yml
   with_items: "{{ kube_state_metrics_templates }}"
