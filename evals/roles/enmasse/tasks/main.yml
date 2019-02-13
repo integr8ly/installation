@@ -1,9 +1,3 @@
 ---
 - name: Install EnMasse
   import_tasks: install.yml
-
-- name: Patch Enmasse Deployment Strategy
-  import_tasks: patch-deployment-strategy.yml
-
-- name: Patch Enmasse Auth Images
-  import_tasks: patch-auth-images.yml

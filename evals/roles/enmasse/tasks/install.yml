@@ -4,10 +4,7 @@
     path: "/tmp/enmasse-{{ enmasse_version }}.tgz"
   register: enmasse_artifact
 
-- name: Set enmasse_download_url var to use productised url
-  set_fact:
-    enmasse_download_url: "{{ enmasse_productised_download_url }}"
-  when: is_productised_version | bool  == True
+- debug: msg="Using EnMasse artifact URL - {{ enmasse_download_url }}"
 
 - name: "Retrieve EnMasse {{ enmasse_version }} artifact"
   get_url:
@@ -48,7 +45,7 @@
   when: is_productised_version | bool  == False
 
 - set_fact:
-    enmasse_playbook_location: enmasse-"{{ enmasse_version }}"/install_and_examples/ansible/playbooks/openshift/deploy_all.yml
+    enmasse_playbook_location: enmasse-"{{ enmasse_version }}"/amq-online-install/ansible/playbooks/openshift/deploy_all.yml
   when: is_productised_version | bool  == True
 
 - name: Check EnMasse namespace for existing resources
@@ -59,13 +56,7 @@
   shell: ansible-playbook -i {{ inventory_file }} /tmp/{{enmasse_playbook_location}}
   args:
     chdir: "../"
-  when: enmasse_resources_exist.stderr == "No resources found." and  is_productised_version | bool != True
-
-- name: "Provision EnMasse {{ enmasse_version }}"
-  shell: ansible-playbook -i {{ inventory_file }} /tmp/enmasse-"{{ enmasse_version }}"/install_and_examples/ansible/playbooks/openshift/deploy_all.yml
-  args:
-    chdir: "../"
-  when: enmasse_resources_exist.stderr == "No resources found." and  is_productised_version | bool == True
+  when: enmasse_resources_exist.stderr == "No resources found."
 
 - name: "Verify EnMasse deployment succeeded"
   shell: sleep 5; oc get pods --namespace {{ enmasse_namespace }}  |  grep  "deploy"
@@ -95,5 +86,6 @@
     state: absent
   with_items:
     - /tmp/enmasse-{{ enmasse_version }}.tgz
+    - /tmp/enmasse-{{ enmasse_version }}.zip
     - /tmp/enmasse-{{ enmasse_version }}
   when: enmasse_clean_artifacts

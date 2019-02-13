@@ -24,7 +24,7 @@
   retries: 50
   delay: 10
   failed_when: result.stdout
-  changed_when: False  
+  changed_when: False
 
 - name: Get enmasse apiServices
   shell: for i in $(oc get apiServices | grep enmasse | awk '{ print $1}');do echo "$i"; done
