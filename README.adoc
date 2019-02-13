@@ -62,11 +62,11 @@ git clone https://github.com/integr8ly/installation.git
 
 == Create the inventory hosts file
 
-. Create the host file based on the template(`../evals/inventories/hosts.default`). Following the an example.
+. Create the host file based on the template(`../inventories/hosts.default`). Following the an example.
 +
 [source,shell]
 ----
-$ cp evals/inventories/hosts.template evals/inventories/hosts
+$ cp inventories/hosts.template inventories/hosts
 ----
 . Update the host file to connect in your OpenShift cluster
 +
@@ -74,7 +74,7 @@ Prior to running the playbooks the master hostname and associated SSH username *
 +
 [source]
 ----
-~/installation/evals/inventories/hosts
+~/installation/inventories/hosts
 
 [local:vars]
 ansible_connection=local
@@ -96,7 +96,7 @@ NOTE: It is possible to add the variable `ansible_ssh_private_key_file` for the 
 
 == Check the connection with the OpenShift cluster
 
-Run the following command in order to check the connection with the OpenShift cluster from the `/installation/evals`.
+Run the following command in order to check the connection with the OpenShift cluster from the root of the repository.
 
 [source,shell]
 ----
@@ -135,7 +135,7 @@ You can install Integreatly using either of the following options:
 [[install-all]]
 == Install all products from a single playbook
 
-All products can be installed using the *install.yml* playbook located in the *evals/playbooks/* directory.
+All products can be installed using the *install.yml* playbook located in the *playbooks/* directory.
 
 Before running the installer, please consider the following variables:
 
@@ -181,7 +181,6 @@ image::https://user-images.githubusercontent.com/7708031/48856868-7141d680-edaf-
 [source,shell]
 ----
 $ oc login https://<openshift-master-url> -u <user> -p <password>
-$ cd evals/
 $ $ ansible-playbook -i inventories/hosts playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
 ----
 
@@ -214,14 +213,13 @@ image::https://user-images.githubusercontent.com/7708031/48856981-c1209d80-edaf-
 [[install-individually]]
 == Install each product individually
 
-Each product has an associated install playbook available from the *evals/playbooks/* directory.
+Each product has an associated install playbook available from the *playbooks/* directory.
 
 === Run Single Sign On install playbook
 
 [source,shell]
 ----
 $ oc login https://<openshift-master-url>
-$ cd evals/
 $ ansible-playbook -i inventories/hosts playbooks/rhsso.yml
 ----
 
@@ -241,7 +239,6 @@ $ ansible-playbook -i inventories/hosts playbooks/rhsso.yml -e rhsso_evals_usern
 [source,shell]
 ----
 $ oc login https://<openshift-master-url>
-$ cd evals/
 $ ansible-playbook -i inventories/hosts playbooks/enmasse.yml
 ----
 
@@ -267,7 +264,6 @@ Set the following variables:
 [source,shell]
 ----
 $ oc login https://<openshift-master-url>
-$ cd evals/
 $ ansible-playbook -i inventories/hosts playbooks/che-install.yml
 ----
 
@@ -311,7 +307,6 @@ Next, run the playbook.
 [source,shell]
 ----
 $ oc login https://<openshift-master-url>
-$ cd evals
 $ ansible-playbook -i inventories/hosts playbooks/launcher.yml
 ----
 
@@ -326,7 +321,6 @@ WARNING: 3Scale requires access to ReadWriteMany PVs. As such, it will only work
 [source,shell]
 ----
 $ oc login https://<openshift-master-url>
-$ cd evals/
 $ ansible-playbook -i inventories/hosts playbooks/3scale.yml -e threescale_route_suffix=<openshift-router-suffix> -e enable_wildcard_route=<true/false>
 ----
 
@@ -335,7 +329,6 @@ $ ansible-playbook -i inventories/hosts playbooks/3scale.yml -e threescale_route
 [source,shell]
 ----
 $ oc login https://<openshift-master-url>
-$ cd evals/
 $ ansible-playbook -i inventories/hosts playbooks/webapp.yml
 ----
 
@@ -363,10 +356,9 @@ image::https://user-images.githubusercontent.com/7708031/48856465-5ae74b00-edae-
 :numbered!:
 == Uninstalling Integreatly
 
-Run the uninstall.yml playbook from inside the evals directory:
+Run the uninstall.yml playbook from the root of the repository:
 [source,shell]
 ----
-$ cd evals/
 $ ansible-playbook -i inventories/hosts playbooks/uninstall.yml
 ----
 
