@@ -14,7 +14,7 @@ rhsso_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
 rhsso_redirect_uri: ""
 
 rhsso_openshift_master_config_path: /etc/origin/master/master-config.yaml
-rhsso_disable_htpasswd_identity_provider: true
+rhsso_hide_default_identity_providers: true
 
 rhsso_identity_provider_self_signed_certs: "{{ eval_self_signed_certs | default(true) }}"
 rhsso_identity_provider_ca_cert_path: ca.crt
