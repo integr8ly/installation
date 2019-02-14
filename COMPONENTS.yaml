@@ -15,13 +15,6 @@ components:
       role: msbroker
       imageTagVar: msbroker_image_tag
       gitTagVar: msbroker_git_ref
-  - name: keycloak-operator
-    gitUrl: git@github.com:integr8ly/keycloak-operator.git
-    imageUrl: quay.io/integreatly/keycloak-operator
-    ansible:
-      role: rhsso
-      imageTagVar: rhsso_keycloak_operator_image_tag
-      gitTagVar: rhsso_operator_commit_tag
   - name: tutorial-web-app-operator
     gitUrl: git@github.com:integr8ly/tutorial-web-app-operator.git
     imageUrl: quay.io/integreatly/tutorial-web-app-operator
