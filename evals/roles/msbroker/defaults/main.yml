@@ -8,7 +8,7 @@ msbroker_clusterrole: managed-service
 msbroker_clusterrolebinding: default-cluster-account-managed-service
 msbroker_deployment_name: msb
 msbroker_servicebroker_name: managed-service-broker
-monitoring_key: middleware
+monitoring_key: brokered-fuse-online
 msbroker_fuse_operator_resources_url: https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources/fuse-online-operator.yml
 required_crds:
   - "https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources/syndesis-crd.yml"
