@@ -1,0 +1,47 @@
+---
+
+- name: Create fuse namespace if it doesn't exist
+  shell: oc new-project fuse
+  register: fuse_create_namespace
+  failed_when: fuse_create_namespace.stderr != '' and 'AlreadyExists' not in fuse_create_namespace.stderr
+
+- name: Create Syndesis CRD
+  shell: oc apply -f {{ fuse_online_crd_resources }}
+
+- name: Create Fuse image streams
+  shell: "oc replace --force -f {{ fuse_online_imagestream_resources }} -n openshift"
+  register: fuse_create_imagestream
+  failed_when: fuse_create_imagestream.stderr != '' and 'AlreadyExists' not in fuse_create_imagestream.stderr
+  changed_when: fuse_create_imagestream.rc == 0
+
+- name: Create fuse Operator resources in {{ fuse_namespace }}
+  shell: oc apply -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
+
+- template:
+    src: syndesis-customresource.yml.j2
+    dest: /tmp/syndesis-customresource.yml
+
+- name: Create Syndesis custom resource in {{ fuse_namespace }}
+  shell: oc apply -f /tmp/syndesis-customresource.yml -n {{ fuse_namespace }}
+
+- name: Verify Fuse deployment succeeded
+  shell: sleep 5; oc get pods -n {{ fuse_namespace }} | grep "deploy"
+  register: fuse_verify_result
+  until: not fuse_verify_result.stdout
+  retries: 50
+  delay: 10
+  failed_when: fuse_verify_result.stdout
+  changed_when: False
+
+# Allow any authenticated user to access fuse.
+- name: Remove OpenShift SAR configuration on Fuse Managed OAuth proxy
+  shell: oc get dc syndesis-oauthproxy -o yaml -n {{ fuse_namespace }} | sed '/--openshift-sar/d' | oc apply -f - -n {{ fuse_namespace }}
+
+- name: Verify Fuse OAuth proxy has redeployed
+  shell: sleep 5; oc get pods -n {{ fuse_namespace }} | grep "deploy"
+  register: fuse_verify_result
+  until: not fuse_verify_result.stdout
+  retries: 50
+  delay: 10
+  failed_when: fuse_verify_result.stdout
+  changed_when: False
