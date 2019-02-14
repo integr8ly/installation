@@ -1,11 +1,9 @@
 ---
+
+- import_playbook: "./openshift.yml"
+
 - hosts: localhost
   tasks:
-    - when: create_cluster_admin
-      name: switch to system:admin for uninstall
-      shell: oc login -u system:admin
-      register: oc_login
-      failed_when: oc_login.rc != 0
     - when: keep_namespaces is undefined or not keep_namespaces | bool
       block:
       - name: Get namespaces to clean up
