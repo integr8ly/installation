@@ -1,7 +1,4 @@
 ---
-rhsso_keycloak_operator_image_url: "quay.io/integreatly/keycloak-operator"
-rhsso_keycloak_operator_image_tag: master
-
 rhsso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"
 
 rhsso_admin_username: admin
@@ -24,15 +21,11 @@ rhsso_openshift_webconsole_namespace: openshift-web-console
 rhsso_openshift_webconsole_configmap: webconsole-config
 rhsso_openshift_update_webconsole_configmap: false
 
-rhsso_operator_repo: integr8ly
-rhsso_operator_commit_tag: master
-
-rhsso_operator_required_objects:
-  - rbac.yaml
-
-rhsso_operator_required_crd_objects:
-  - Keycloak_crd.yaml
-  - KeycloakRealm_crd.yaml
+rhsso_operator_resource_items:
+  - "{{ rhsso_operator_resources }}/rbac.yaml"
+  - "{{ rhsso_operator_resources }}/crds/Keycloak_crd.yaml"
+  - "{{ rhsso_operator_resources }}/crds/KeycloakRealm_crd.yaml"
+  - "{{ rhsso_operator_resources }}/operator.yaml"
 
 rhsso_seed_users_email_format: evals%02d@example.com
 rhsso_seed_users_name_format: evals%02d

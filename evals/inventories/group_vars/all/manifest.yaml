@@ -53,10 +53,10 @@ launcher_template: 'https://raw.githubusercontent.com/fabric8-launcher/launcher-
 
 #not currently used but is the version installed by the operator
 # rhsso is not an optional component
-rh_sso_version: '7.2.2.GA'
+rhsso_version: '7.2.2.GA'
 #below vars not currently used but will be used to pull in the new versions of RH-SSO once we decouple the resources from the installer.
-rh_sso_opertor_release_tag: '0.0.2'
-rh_sso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rh_sso_opertor_release_tag}}/deploy/'
+rhsso_operator_release_tag: 'v0.0.3'
+rhsso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
 
 #controls whether gitea is installed or not
 gitea: true
