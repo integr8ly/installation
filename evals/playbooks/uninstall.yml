@@ -118,6 +118,13 @@
       tags: ['middleware-monitoring']
       when: middleware_monitoring | default(true) | bool
     -
+      name: Uninstall managed Fuse
+      include_role:
+        name: fuse_managed
+        tasks_from: uninstall
+      tags: ['fuse']
+      when: fuse_managed | default(true) | bool
+    -
       name: Reboot template broker
       include_role:
         name: reboot_template_broker
