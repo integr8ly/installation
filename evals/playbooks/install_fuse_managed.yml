@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  gather_facts: no
+  roles:
+  - role: fuse_managed
+    when: fuse_managed | default(true) | bool
+  tasks:
+    - name: Expose vars
+      include_vars: "../roles/fuse_managed/defaults/main.yml"

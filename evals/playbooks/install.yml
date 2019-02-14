@@ -21,6 +21,7 @@
 - import_playbook: "./install_sso.yml"
 - import_playbook: "./install_infra.yml"
 - import_playbook: "./install_services.yml"
+- import_playbook: "./install_fuse_managed.yml"
 - import_playbook: "./install_webapp.yml"
 - import_playbook: "./install_middleware_monitoring.yml"
 - import_playbook: "./install_kube_state_metrics.yml"

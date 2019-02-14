@@ -162,12 +162,21 @@
     component_manifests: "{{component_manifests}} + {{launcher_manifest}}"
   when: launcher
 
+- name: Get Fuse rest route
+  shell: oc get route/syndesis -o jsonpath='{.spec.host}' -n {{fuse_namespace}}
+  register: fuse_route_cmd
+  when: fuse_online
+
+- set_fact:
+    fuse_route: "https://{{fuse_route_cmd.stdout}}"
+  when: fuse_online
+
 - name: set fuse online component
   set_fact:
     fuse_online_manifest:
     - name: fuse_online
       version: "{{fuse_version}}"
-      host: ""
+      host: "{{fuse_route}}"
   when: fuse_online
 
 - set_fact:
