@@ -125,6 +125,17 @@
       tags: ['fuse']
       when: fuse_managed | default(true) | bool
     -
+      name: Uninstall che
+      include_role:
+        name: code-ready
+        tasks_from: uninstall
+      vars:
+        che_keycloak_user: "{{ eval_launcher_sso_admin_username }}"
+        che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"
+        che_keycloak_host: "{{ eval_launcher_sso_host }}"
+      tags: ['che']
+      when: che | default(true) | bool
+    -
       name: Reboot template broker
       include_role:
         name: reboot_template_broker

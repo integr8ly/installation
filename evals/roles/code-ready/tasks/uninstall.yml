@@ -1,0 +1,71 @@
+---
+-
+  name: Set initial vars
+  set_fact:
+    che_keycloak_url: "{{ che_protocol }}://{{ che_keycloak_host }}"
+
+-
+  name: Delete objects labeled as app:{{ che_app_label }}
+  shell: "oc delete all -l app={{ item }} -n {{ che_namespace }}"
+  register: che_delete_cmd
+  failed_when: che_delete_cmd.rc != 0
+  changed_when: che_delete_cmd == 0
+  with_items:
+    - "{{ che_app_label }}"
+    - "keycloak"
+    - "postgres"
+
+-
+  name: Retrieve service account secrets
+  shell: "oc get sa -o jsonpath='{.items[*].secrets[*].name}' -l app={{ che_app_label }} -n {{ che_namespace }}"
+  register: che_sa_cmd
+  failed_when: false
+
+-
+  name: Delete service account secrets
+  shell: "oc delete secret/{{ item }} -n {{ che_namespace }}"
+  with_items: "{{ che_sa_cmd.stdout.split(' ') | lower }}"
+  when: che_sa_cmd.rc == 0 and che_sa_cmd.stdout != ""
+
+-
+  name: Deleting remaining resources
+  shell: "oc delete {{ item[1] }} -l app={{ item[0] }} -n {{ che_namespace }}"
+  with_nested:
+    - ["{{ che_app_label }}", 'postgres', 'keycloak']
+    - ['serviceaccount', 'rolebinding', 'pvc']
+  register: che_delete_res_cmd
+  failed_when: che_delete_res_cmd.rc != 0 and 'not found' not in output.stderr
+  changed_when: che_delete_res_cmd == 0
+
+-
+  name: Delete che namespace
+  shell: "oc delete project {{ che_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
+  changed_when: output.rc == 0
+  when: che_delete_namespace | default(true) | bool
+
+-
+  name: Generate keycloak auth token for admin user
+  uri:
+    url: "{{ che_keycloak_url }}/auth/realms/master/protocol/openid-connect/token"
+    method: POST
+    body: "client_id=admin-cli&username={{ che_keycloak_user }}&password={{ che_keycloak_password }}&grant_type=password"
+    validate_certs: "{{ che_validate_certs }}"
+  register: che_keycloak_auth_response
+  retries: 20
+  delay: 2
+  until: che_keycloak_auth_response.status == 503 or che_keycloak_auth_response.status in [200, 401, 403]
+
+-
+  name: "Delete client {{ che_keycloak_client_id }} from realm {{ che_keycloak_realm }}"
+  uri:
+    url: "{{ che_keycloak_url }}/auth/admin/realms/{{ che_keycloak_realm }}/clients/{{ che_keycloak_client_id }}"
+    method: DELETE
+    validate_certs: "{{ che_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ che_keycloak_auth_response.json.access_token }}"
+    status_code: [204]
+  register: che_clients_cmd
+  when: che_keycloak_auth_response.status != 503
