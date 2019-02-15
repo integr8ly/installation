@@ -31,23 +31,22 @@
   shell: oc apply -f /tmp/syndesis-customresource.yml -n {{ fuse_namespace }}
 
 - name: Verify Fuse deployment succeeded
-  shell: sleep 5; oc get pods -n {{ fuse_namespace }} | grep "deploy"
+  shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
   register: fuse_verify_result
-  until: not fuse_verify_result.stdout
+  until: fuse_verify_result.stdout.find("7") != -1
   retries: 50
   delay: 10
-  failed_when: fuse_verify_result.stdout
   changed_when: False
 
-# Allow any authenticated user to access fuse.
+# Allow any authenticated user to access fuse. Sleep 5 to allow time for the
+# new deployment to kick off.
 - name: Remove OpenShift SAR configuration on Fuse Managed OAuth proxy
-  shell: oc get dc syndesis-oauthproxy -o yaml -n {{ fuse_namespace }} | sed '/--openshift-sar/d' | oc apply -f - -n {{ fuse_namespace }}
+  shell: oc get dc syndesis-oauthproxy -o yaml -n {{ fuse_namespace }} | sed '/--openshift-sar/d' | oc apply -f - -n {{ fuse_namespace }}; sleep 5
 
-- name: Verify Fuse OAuth proxy has redeployed
-  shell: sleep 5; oc get pods -n {{ fuse_namespace }} | grep "deploy"
+- name: Verify Fuse deployment succeeded
+  shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
   register: fuse_verify_result
-  until: not fuse_verify_result.stdout
+  until: fuse_verify_result.stdout.find("7") != -1
   retries: 50
   delay: 10
-  failed_when: fuse_verify_result.stdout
   changed_when: False
