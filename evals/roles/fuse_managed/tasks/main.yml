@@ -1,0 +1,52 @@
+---
+
+- name: Create fuse namespace if it doesn't exist
+  shell: oc new-project fuse
+  register: fuse_create_namespace
+  failed_when: fuse_create_namespace.stderr != '' and 'AlreadyExists' not in fuse_create_namespace.stderr
+
+- name: Add labels to namespace
+  shell: oc label --overwrite namespace {{ fuse_namespace }} {{ monitoring_label_name }}={{ monitoring_label_value }} integreatly-middleware-service=true
+  register: namespace_label
+  failed_when: namespace_label.stderr != '' and 'not labeled' not in namespace_label.stderr
+  changed_when: namespace_label.rc == 0
+
+- name: Create Syndesis CRD
+  shell: oc apply -f {{ fuse_online_crd_resources }}
+
+- name: Create Fuse image streams
+  shell: "oc replace --force -f {{ fuse_online_imagestream_resources }} -n openshift"
+  register: fuse_create_imagestream
+  failed_when: fuse_create_imagestream.stderr != '' and 'AlreadyExists' not in fuse_create_imagestream.stderr
+  changed_when: fuse_create_imagestream.rc == 0
+
+- name: Create fuse Operator resources in {{ fuse_namespace }}
+  shell: oc apply -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
+
+- template:
+    src: syndesis-customresource.yml.j2
+    dest: /tmp/syndesis-customresource.yml
+
+- name: Create Syndesis custom resource in {{ fuse_namespace }}
+  shell: oc apply -f /tmp/syndesis-customresource.yml -n {{ fuse_namespace }}
+
+- name: Verify Fuse deployment succeeded
+  shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
+  register: fuse_verify_result
+  until: fuse_verify_result.stdout.find("7") != -1
+  retries: 50
+  delay: 10
+  changed_when: False
+
+# Allow any authenticated user to access fuse. Sleep 5 to allow time for the
+# new deployment to kick off.
+- name: Remove OpenShift SAR configuration on Fuse Managed OAuth proxy
+  shell: oc get dc syndesis-oauthproxy -o yaml -n {{ fuse_namespace }} | sed '/--openshift-sar/d' | oc apply -f - -n {{ fuse_namespace }}; sleep 5
+
+- name: Verify Fuse deployment succeeded
+  shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
+  register: fuse_verify_result
+  until: fuse_verify_result.stdout.find("7") != -1
+  retries: 50
+  delay: 10
+  changed_when: False

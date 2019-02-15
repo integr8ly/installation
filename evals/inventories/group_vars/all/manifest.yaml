@@ -38,6 +38,8 @@ fuse_online: true
 # Below Fuse vars are not currently used but will be used to source the resources needed to do the install.
 fuse_online_release_tag: '1.5'
 fuse_online_operator_resources: 'https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources/fuse-online-operator.yml'
+fuse_online_imagestream_resources: 'https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources/fuse-online-image-streams.yml'
+fuse_online_crd_resources: 'https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources/syndesis-crd.yml'
 
 #controls whether Launcher is installed or not.
 launcher: true
@@ -66,7 +68,7 @@ gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-ope
 #controls whether webapp is installed or not
 webapp: true
 #below vars are not currently used but reflect the current state. In the future they will be used when we source resources from outside of the installer
-webapp_version: '2.3.0'
+webapp_version: '2.4.0'
 webapp_operator_release_tag: 'master'
 webapp_operator_resources: 'https://raw.githubusercontent.com/integr8ly/tutorial-web-app-operator/{{webapp_operator_release_tag}}/deploy/'
 
