@@ -1,0 +1,7 @@
+---
+
+- hosts: local
+  gather_facts: yes
+  tasks:
+    - include_role:
+        name: prerequisites
