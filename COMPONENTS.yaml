@@ -1,13 +1,6 @@
 ---
 
 components:
-  - name: gitea-operator
-    gitUrl: git@github.com:integr8ly/gitea-operator.git
-    imageUrl: quay.io/integreatly/gitea-operator
-    ansible:
-      role: gitea
-      imageTagVar: gitea_operator_image_tag
-      gitTagVar: gitea_git_ref
   - name: managed-service-broker
     gitUrl: git@github.com:integr8ly/managed-service-broker.git
     imageUrl: quay.io/integreatly/managed-service-broker
