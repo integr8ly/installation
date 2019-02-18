@@ -22,9 +22,3 @@ components:
       role: rhsso
       imageTagVar: rhsso_keycloak_operator_image_tag
       gitTagVar: rhsso_operator_commit_tag
-  - name: tutorial-web-app-operator
-    gitUrl: git@github.com:integr8ly/tutorial-web-app-operator.git
-    imageUrl: quay.io/integreatly/tutorial-web-app-operator
-    ansible:
-      role: webapp
-      imageTagVar: webapp_operator_image_tag

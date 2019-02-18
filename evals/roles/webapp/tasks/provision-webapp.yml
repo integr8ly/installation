@@ -12,25 +12,22 @@
   shell: oc get route sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
   register: sso_route
 
-- name: Generate operator template files
-  template:
-    src: "{{ item }}.j2"
-    dest: /tmp/{{ item }}
-  with_items:
-    - rbac.yaml
-    - sa.yaml
-    - crd.yaml
-    - cr.yaml
-    - operator.yaml
+- name: Create WebApp Operator Resources
+  shell: "oc create -f {{ item }} -n {{ webapp_namespace }}"
+  with_items: "{{ webapp_operator_resource_items }}"
+  register: create_webapp_operator_resource_cmd
+  failed_when: create_webapp_operator_resource_cmd.stderr != '' and 'AlreadyExists' not in create_webapp_operator_resource_cmd.stderr
 
-- name: Deploy operator resources
-  shell: "oc apply -f /tmp/{{ item }} -n {{ webapp_namespace }}"
-  with_items:
-    - rbac.yaml
-    - sa.yaml
-    - crd.yaml
-    - cr.yaml
-    - operator.yaml
+- name: Generate WebApp custom resource template
+  template:
+    src: "cr.yaml.j2"
+    dest: /tmp/webapp-cr.yml
+
+- name: Create WebApp custom resource
+  shell: oc create -f /tmp/webapp-cr.yml -n {{ webapp_namespace }}
+  register: create_webapp_custom_resource_cmd
+  failed_when: create_webapp_custom_resource_cmd.stderr != '' and 'AlreadyExists' not in create_webapp_custom_resource_cmd.stderr
+  changed_when: create_webapp_custom_resource_cmd.rc == 0
 
 - name: Wait for pods
   shell: sleep 5; oc get pods --namespace {{ webapp_namespace }}  |  grep  "Creating"
