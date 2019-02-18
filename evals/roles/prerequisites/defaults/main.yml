@@ -1,0 +1,8 @@
+---
+
+prerequisites_install: true
+prerequisites_install_packages: true
+
+# JQ (https://stedolan.github.io/jq/)
+prerequisites_jq_path: /usr/bin/jq
+prerequisites_jq_release_url: https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
