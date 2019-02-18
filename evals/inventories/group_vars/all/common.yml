@@ -22,6 +22,3 @@ eval_threescale_enable_wildcard_route: false
 #eval_threescale_storage_s3_aws_region: <aws_region>
 #eval_threescale_storage_s3_aws_bucket: <s3_bucket_name>
 
-
-# openshift login as some product installs wont work with system:admin
-create_cluster_admin: true

@@ -17,7 +17,6 @@
       tags: ['bootstrap', 'remote']
 
 - import_playbook: "./openshift.yml"
-- import_playbook: "./user.yaml"
 - import_playbook: "./install_sso.yml"
 - import_playbook: "./install_infra.yml"
 - import_playbook: "./install_services.yml"
@@ -26,27 +25,3 @@
 - import_playbook: "./install_middleware_monitoring.yml"
 - import_playbook: "./install_kube_state_metrics.yml"
 - import_playbook: "./generate-customisation-inventory.yml"
-
-- hosts: master
-  gather_facts: no
-  tasks:
-    - name: remove integreatly-admin user
-      shell: "htpasswd -D /etc/origin/master/htpasswd integreatly-admin"
-      become: yes
-      when: create_cluster_admin
-- hosts: localhost
-  gather_facts: no
-  tasks:
-    - name: switch back to system admin
-      shell: oc login -u system:admin
-      register: oc_cmd
-      failed_when: oc_cmd.rc != 0 and oc_cmd.rc != 1
-      when: create_cluster_admin
-    - debug:
-        msg: All services have been provisioned successfully.
-    - debug:
-        msg: Please add '{{ callback_url }}' as the Authorization callback URL of your GitHub OAuth Application.
-      vars:
-        callback_url: "{{ launcher_sso_route }}/auth/realms/{{ eval_launcher_sso_realm }}/broker/github/endpoint"
-      when: launcher
-
