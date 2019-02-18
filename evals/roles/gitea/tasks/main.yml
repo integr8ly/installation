@@ -15,20 +15,11 @@
 - name: Make sure we are using the gitea namespace
   shell: "oc project {{ gitea_namespace }}"
 
-- name: Create Gitea resources
-  shell: oc apply -f {{ item }} -n {{ gitea_namespace }}
-  with_items: "{{ gitea_resources }}"
-
-- name: Create Gitea operator resource
-  template:
-    src: "operator.yml.j2"
-    dest: /tmp/operator.yml
-
-- name: Deploy the Gitea operator
-  shell: oc create -f /tmp/operator.yml -n {{ gitea_namespace }}
+- name: Create Gitea Operator Resources
+  shell: "oc create -f {{ item }} -n {{ gitea_namespace }}"
+  with_items: "{{ gitea_operator_resource_items }}"
   register: create_gitea_operator_resource_cmd
   failed_when: create_gitea_operator_resource_cmd.stderr != '' and 'AlreadyExists' not in create_gitea_operator_resource_cmd.stderr
-  changed_when: create_gitea_operator_resource_cmd.rc == 0
 
 - name: Generate Gitea custom resource template
   template:
