@@ -1,0 +1,27 @@
+---
+
+# Installs unzip package as part of enmasse install playbook
+- name: Install unzip if not present
+  yum:
+    name: unzip
+    state: installed
+  become: yes
+  when: ansible_os_family != "Darwin"
+
+- name: Install gnu-tar required for MacOSX
+  shell: brew install gnu-tar
+  when: ansible_os_family == "Darwin"
+
+# Installs jq as part of uninstall playbook
+- name: Check that jq exists
+  stat:
+    path: "{{ prerequisites_jq_path }}"
+  failed_when: false
+  register: jq_binary
+- name: download jq
+  become: true
+  get_url:
+    url: "{{ prerequisites_jq_release_url }}"
+    dest: "{{ prerequisites_jq_path }}"
+    mode: 0555
+  when: jq_binary.stat.exists == False

@@ -16,6 +16,7 @@
           openshift_master_url: "{{ (eval_master_config['content'] | b64decode | from_yaml)['masterPublicURL'] }}"
       tags: ['bootstrap', 'remote']
 
+- import_playbook: "./prerequisites.yml"
 - import_playbook: "./openshift.yml"
 - import_playbook: "./user.yaml"
 - import_playbook: "./install_sso.yml"
