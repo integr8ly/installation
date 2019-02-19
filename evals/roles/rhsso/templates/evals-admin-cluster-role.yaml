@@ -1,9 +1,0 @@
-apiVersion: authorization.openshift.io/v1
-kind: ClusterRole
-metadata:
-  name: integreatly-evals-admin
-rules:
-  - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["get"]
-    resourceNames: ["inventory"]

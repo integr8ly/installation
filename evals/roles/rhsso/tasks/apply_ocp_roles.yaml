@@ -8,16 +8,3 @@
   shell: "oc adm policy add-cluster-role-to-user view {{rhsso_evals_admin_username}}"
   register: policy_cmd
   failed_when: policy_cmd.rc != 0
-
-- name: Generate integreatly evals admin cluster role
-  template:
-    src: "evals-admin-cluster-role.yaml"
-    dest: /tmp/evals-admin-cluster-role.yaml
-
-- name: Create integreatly evals admin cluster roles
-  shell: "oc apply -f /tmp/evals-admin-cluster-role.yaml"
-  register: policy_cmd
-  failed_when: policy_cmd.rc != 0
-
-- name: remove generated template
-  file: path='/tmp/evals-admin-cluster-role.yaml' state=absent
