@@ -125,6 +125,13 @@
       tags: ['fuse']
       when: fuse_managed | default(true) | bool
     -
+      name: Uninstall che
+      include_role:
+        name: code-ready
+        tasks_from: uninstall
+      tags: ['che']
+      when: che | default(true) | bool
+    -
       name: Reboot template broker
       include_role:
         name: reboot_template_broker
