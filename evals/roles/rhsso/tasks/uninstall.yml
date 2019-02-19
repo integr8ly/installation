@@ -44,9 +44,3 @@
 - name: "Delete user identities"
   shell:  "oc delete identities {{ identities.stdout | replace('\n', ' ') }}"
   when: identities.stdout != ''
-
-- name: "delete integreatly role"
-  shell: "oc delete clusterrole integreatly-evals-admin"
-  register: del_cmd
-  failed_when: del_cmd.stderr != '' and 'not found' not in del_cmd.stderr
-  changed_when: del_cmd.rc == 0
