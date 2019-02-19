@@ -53,23 +53,23 @@ launcher_template: 'https://raw.githubusercontent.com/fabric8-launcher/launcher-
 
 #not currently used but is the version installed by the operator
 # rhsso is not an optional component
-rh_sso_version: '7.2.2.GA'
+rhsso_version: '7.2.2.GA'
 #below vars not currently used but will be used to pull in the new versions of RH-SSO once we decouple the resources from the installer.
-rh_sso_opertor_release_tag: '0.0.2'
-rh_sso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rh_sso_opertor_release_tag}}/deploy/'
+rhsso_operator_release_tag: 'v0.0.3'
+rhsso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
 
 #controls whether gitea is installed or not
 gitea: true
 gitea_version: '1.6.0' # not currently used for installation reflect current installation (https://github.com/integr8ly/gitea-operator/issues/25)
 #below vars are not currently used but will be used once we source resources from outside of the installer
-gitea_operator_release_tag: 'v0.0.2'
-gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_operator_release_tag}}/deploy/operator.yaml'
+gitea_operator_release_tag: 'v0.0.3'
+gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_operator_release_tag}}/deploy/'
 
 #controls whether webapp is installed or not
 webapp: true
 #below vars are not currently used but reflect the current state. In the future they will be used when we source resources from outside of the installer
 webapp_version: '2.4.0'
-webapp_operator_release_tag: 'master'
+webapp_operator_release_tag: 'v0.0.4'
 webapp_operator_resources: 'https://raw.githubusercontent.com/integr8ly/tutorial-web-app-operator/{{webapp_operator_release_tag}}/deploy/'
 
 #controls whether apicurito is installed or not
@@ -82,3 +82,6 @@ nexus_version: '2.14.11-01'
 monitoring_label_name: "monitoring-key"
 monitoring_label_value: "middleware"
 middleware_monitoring_operator_version: '0.0.3'
+
+msbroker_release_tag: 'v0.0.1'
+msbroker_template: 'https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_release_tag }}/templates/broker.template.yaml'

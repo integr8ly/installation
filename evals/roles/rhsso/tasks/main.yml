@@ -29,32 +29,11 @@
   failed_when: not result.stdout
   changed_when: False
 
-- name: "Create keycloak RBAC"
-  shell: "oc create -f https://raw.githubusercontent.com/{{ rhsso_operator_repo }}/keycloak-operator/{{ rhsso_operator_commit_tag }}/deploy/rbac.yaml -n {{ rhsso_namespace }}"
-  register: rhsso_rbac_result
-  failed_when: rhsso_rbac_result.stderr != '' and 'AlreadyExists' not in rhsso_rbac_result.stderr
-
 - name: "Create required objects"
-  shell: "oc create -f https://raw.githubusercontent.com/{{rhsso_operator_repo}}/keycloak-operator/{{rhsso_operator_commit_tag}}/deploy/{{ item }} -n {{ rhsso_namespace }}"
-  with_items: "{{ rhsso_operator_required_objects }}"
-  register: rhsso_required_objects_result
-  failed_when: rhsso_required_objects_result.stderr != '' and 'AlreadyExists' not in rhsso_required_objects_result.stderr
-
-- name: "Create required crd objects"
-  shell: "oc create -f https://raw.githubusercontent.com/{{rhsso_operator_repo}}/keycloak-operator/{{rhsso_operator_commit_tag}}/deploy/crds/{{ item }} -n {{ rhsso_namespace }}"
-  with_items: "{{ rhsso_operator_required_crd_objects }}"
-  register: rhsso_required_crd_objects_result
-  failed_when: rhsso_required_crd_objects_result.stderr != '' and 'AlreadyExists' not in rhsso_required_crd_objects_result.stderr
-
-- name: "Create operator deployment config template"
-  template:
-    src: "operator-dc.yaml"
-    dest: /tmp/operator-dc.yaml
-
-- name: "create operator deployment config"
-  shell: "oc create -f /tmp/operator-dc.yaml -n {{ rhsso_namespace }}"
-  register: rhsso_dc
-  failed_when: rhsso_dc.stderr != '' and 'AlreadyExists' not in rhsso_dc.stderr
+  shell: "oc create -f {{ item }} -n {{ rhsso_namespace }}"
+  with_items: "{{ rhsso_operator_resource_items }}"
+  register: rhsso_operator_resources_result
+  failed_when: rhsso_operator_resources_result.stderr != '' and 'AlreadyExists' not in rhsso_operator_resources_result.stderr
 
 - name: "Create keycloak resource template"
   template:
