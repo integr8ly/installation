@@ -6,5 +6,5 @@
 - name: Delete resource from file
   shell: "oc delete -f {{ monitoring_tmp_dir }}/{{ item }} -n {{ monitoring_namespace }}"
   register: monitoring_resource_delete
-  failed_when: monitoring_resource_delete.stderr != '' and 'NotFound' not in monitoring_resource_delete.stderr
+  failed_when: monitoring_resource_delete.stderr != '' and 'NotFound' not in monitoring_resource_delete.stderr and "no matches for kind" not in monitoring_resource_delete.stderr
   changed_when: monitoring_resource_delete.rc == 0
