@@ -1,0 +1,8 @@
+threescale_namespace: 3scale
+additional_scrape_config_name: integreatly-additional-scrape-configs
+middleware_monitoring_namespace: middleware-monitoring
+secret_key: integreatly-additional.yaml
+prometheus_cr_name: application-monitoring
+additional_scrape_config_patch: "{\"spec\":{\"additionalScrapeConfigs\":{\"name\":\"{{ additional_scrape_config_name }}\",\"key\":\"{{ secret_key }}\"}}}"
+jobs:
+  - 3scale

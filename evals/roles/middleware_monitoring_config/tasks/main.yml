@@ -1,0 +1,3 @@
+---
+- name: Setup the prometheus additional scrape config
+  include_tasks: prometheus_additional_scrape_config.yaml
