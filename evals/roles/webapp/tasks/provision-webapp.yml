@@ -69,8 +69,3 @@
 
 - name: Create OpenShift OAuth client
   shell: oc create -f /tmp/oauthclient.yaml -n {{ eval_rhsso_namespace }}
-
-- name: apply integreatly evals admin role to evals-admin user
-  shell: "oc adm policy add-role-to-user integreatly-evals-admin {{rhsso_evals_admin_username}} -n {{webapp_namespace}}"
-  register: policy_cmd
-  failed_when: policy_cmd.rc != 0
