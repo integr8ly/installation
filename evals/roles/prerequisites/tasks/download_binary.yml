@@ -1,0 +1,14 @@
+
+# Installs jq as part of uninstall playbook
+- name: Check that {{ name }} exists
+  stat:
+    path: "{{ path }}"
+  failed_when: false
+  register: binary
+- name: download {{ name }}
+  become: true
+  get_url:
+    url: "{{ url }}"
+    dest: "{{ path }}"
+    mode: 0555
+  when: binary.stat.exists == False

@@ -1,0 +1,56 @@
+(
+    function() {
+        window.OPENSHIFT_CONSTANTS.SERVICE_CATALOG_CATEGORIES.push(
+            {
+                id: "managed",
+                label: "Managed Services",
+                subCategories: [
+                    {
+                        id: "Services",
+                        label: "managed-services",
+                        icon: "fa fa-cogs",
+                        tags: [
+                            "cloud-services"
+                        ]
+                    }
+                ]
+            }
+        );
+
+        window.OPENSHIFT_CONSTANTS.SAAS_OFFERINGS = [
+          {%- set first = 'true' -%}
+          {%- for service in manifest_obj.components -%}
+            {%- if service.host != "" and service.name in customise_web_console.custom_services -%}
+            {%- if first == 'true' -%}
+              {%- set first = 'false' -%}
+            {%- else -%}
+              ,
+            {%- endif -%}
+            {
+                title: "{{ customise_web_console.custom_services[service.name].name }}",
+                icon: "{{ customise_web_console.custom_services[service.name].icon }}",
+                url: "{{ service.host }}",
+                description: "{{ customise_web_console.custom_services[service.name].description }}"
+            }
+            {%- endif -%}
+          {%- endfor -%}
+        ];
+
+        window.OPENSHIFT_CONSTANTS.APP_LAUNCHER_NAVIGATION = [
+          {%- set first = 'true' -%}
+          {%- for service in manifest_obj.components -%}
+            {%- if service.host != "" and service.name in customise_web_console.custom_services -%}
+              {%- if first == 'true' -%}{%- set first = 'false' -%}
+              {%- else -%},{%- endif -%}
+            {
+                title: "{{ customise_web_console.custom_services[service.name].name }}",
+                iconClass: "{{ customise_web_console.custom_services[service.name].icon }}",
+                href: "{{ service.host }}",
+                tooltip: '{{ customise_web_console.custom_services[service.name].description }}'
+            }
+            {%- endif -%}
+          {%- endfor -%}
+        ];
+
+    }()
+);

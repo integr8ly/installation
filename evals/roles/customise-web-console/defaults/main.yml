@@ -1,0 +1,52 @@
+customise_web_console:
+  configmap_name: web-console-config
+  namespace: console-config
+  javascript_filename: web-console-config.js
+  deploy_filename: /tmp/web-console-deploy.yml
+  app_name: web-console-config-web-server
+  route_name: web-console-config-route
+  webapp:
+    secret: manifest
+    secret_key: generated_manifest
+  server_image:
+    name: registry.access.redhat.com/rhscl/httpd-24-rhel7
+    tag: latest
+    mount_path: /var/www/html
+  web_console:
+    namespace: openshift-web-console
+    configmap: webconsole-config
+    configmap_key: webconsole-config.yaml
+  custom_services:
+    rh-sso:
+      name: Red Hat Single Sign-On
+      icon: fa fa-noicon
+      description: Identity management.
+    3scale:
+      name: Red Hat 3scale API Management Platform
+      icon: fa fa-noicon
+      description: API management dashboard.
+    apicurito:
+      name: Apicurito
+      icon: fa fa-noicon
+      description: Web-Based Open Source API Design via the OpenAPI specification.
+    codeready:
+      name: Red Hat CodeReady Workspaces
+      icon: fa fa-noicon
+      description: The developer workspace server and cloud IDE built for teams and organizations.
+    launcher:
+      name: Red Hat Developer Launcher
+      icon: fa fa-noicon
+      description: Continuous application delivery, built and deployed on OpenShift.
+#    EnMasse does not currently generate useful URL by the end of installation, so let's remove it until it does
+#    enmasse:
+#      name: Red Hat AMQ Online
+#      icon: fa fa-noicon
+#      description: Continuous application delivery, built and deployed on OpenShift.
+    fuse_online:
+      name: Red Hat Fuse Online
+      icon: fa fa-noicon
+      description: Continuous application delivery, built and deployed on OpenShift.
+    gitea:
+      name: Gitea
+      icon: fa fa-noicon
+      description: A painless self-hosted Git service.
