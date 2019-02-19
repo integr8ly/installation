@@ -31,20 +31,25 @@
   when: client_secret_raw.stdout != "null"
 ## finished getting client secret from openshift secret now
 
-- name: Get the copy of the original master config content
-  shell: "cat {{ original_master_config_path }}"
-  register: master_config_copy_content
+- name: Check the content of the original identity provider backup
+  shell: "cat {{ original_identityprovider_config_path }}"
+  register: original_identityprovider_config
   failed_when: false
+  become: yes
 
-- debug:
-    msg: "master_config_copy_content: {{master_config_copy_content }}"
+# The master-config.yaml file constantly changes. Instead of using the master-config.yaml to backup the identity provider config,
+# use the oldest master-config backedup by ansible which will always have the original identity provider configuration. 
+- name: Get original master config backup filename
+  shell: "ls /etc/origin/master/ -t | grep master-config.yaml | tail -n 1"
+  register: original_master_config_backup_filename
+  become: yes
 
-# Only need to save this when the original master config copy does not exist
-- name: Save original master config
-  shell: "cat $(ls /etc/origin/master/ -t | grep master-config.yaml | tail -n 1) > {{ original_master_config_path }}"
+# Only need to save this when the original identity provider backup does not exist or is empty
+- name: Save original identity provider config
+  shell: "sed -n '/identityProvider/,/masterCA/{//!p}' /etc/origin/master/{{ original_master_config_backup_filename.stdout }} > {{ original_identityprovider_config_path }}"
   args:
     warn: no
-  when: master_config_copy_content.stdout == ""
+  when: original_identityprovider_config.stdout == ""
   become: yes
 
 - name: Hide existing identity providers from login screen

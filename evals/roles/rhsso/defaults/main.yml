@@ -47,4 +47,4 @@ rhsso_cluster_admin_password: Password1
 rhsso_plugins:
   - keycloak-metrics-spi
  
-original_master_config_path: /etc/origin/master/master-config.integreatly-original.yaml
+original_identityprovider_config_path: /etc/origin/master/idp-config.integreatly-original.yaml
