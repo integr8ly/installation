@@ -51,11 +51,11 @@
   shell: "oc delete -f {{ item }}"
   register: output
   failed_when: false
-  with_items: "{{ required_crds }}"
+  with_items: "{{ msbroker_required_crds }}"
 
 - name: Create CRDs
   shell: "oc create -f {{ item }}"
-  with_items: "{{ required_crds }}"
+  with_items: "{{ msbroker_required_crds }}"
 
 - set_fact:
     fuse_online_enabled: "true"
@@ -67,7 +67,7 @@
 
 - name: Create managed service broker template in {{ msbroker_namespace }}
   shell: "oc process -n {{ msbroker_namespace }} \
-  -f {{ msbroker_template_url }} \
+  -f {{ msbroker_template }} \
   --param=NAMESPACE={{ msbroker_namespace }} \
   --param=ROUTE_SUFFIX={{ route_suffix }} \
   --param=LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url }} \
@@ -76,7 +76,7 @@
   --param=APICURIO_DASHBOARD_URL={{ apicurito_dashboard_url }} \
   --param=FUSE_OPERATOR_RESOURCES_URL={{ msbroker_fuse_operator_resources_url }} \
   --param=IMAGE_ORG={{ msbroker_image_org }} \
-  --param=IMAGE_TAG={{ msbroker_image_tag }} \
+  --param=IMAGE_TAG={{ msbroker_release_tag }} \
   --param MONITORING_KEY={{ monitoring_key }} | oc create -n {{ msbroker_namespace }} -f -"
   register: create_msb_resources_cmd
   failed_when: create_msb_resources_cmd.stderr != '' and 'AlreadyExists' not in create_msb_resources_cmd.stderr

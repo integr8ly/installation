@@ -1,14 +1,11 @@
 ---
 msbroker_namespace: managed-service-broker
 msbroker_image_org: quay.io/integreatly
-msbroker_image_tag: master
-msbroker_git_ref: master
-msbroker_template_url: "https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_git_ref }}/templates/broker.template.yaml"
 msbroker_clusterrole: managed-service
 msbroker_clusterrolebinding: default-cluster-account-managed-service
 msbroker_deployment_name: msb
 msbroker_servicebroker_name: managed-service-broker
 monitoring_key: brokered-fuse-online
 msbroker_fuse_operator_resources_url: https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources/fuse-online-operator.yml
-required_crds:
+msbroker_required_crds:
   - "https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources/syndesis-crd.yml"

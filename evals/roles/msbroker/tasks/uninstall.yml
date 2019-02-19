@@ -1,7 +1,7 @@
 ---
 - name: Delete managed service broker resources in {{ msbroker_namespace }}
   shell: "oc process -n {{ msbroker_namespace }} \
-  -f {{ msbroker_template_url }} \
+  -f {{ msbroker_template }} \
   --param=NAMESPACE={{ msbroker_namespace }} \
   --param=ROUTE_SUFFIX='placeholder' \
   --param=LAUNCHER_DASHBOARD_URL='placeholder' \
@@ -9,7 +9,7 @@
   --param=THREESCALE_DASHBOARD_URL='placeholder' \
   --param=APICURIO_DASHBOARD_URL='placeholder' \
   --param=IMAGE_ORG={{ msbroker_image_org }} \
-  --param=IMAGE_TAG={{ msbroker_image_tag }} \
+  --param=IMAGE_TAG={{ msbroker_release_tag }} \
   --param MONITORING_KEY={{ monitoring_key }} | oc delete -n {{ msbroker_namespace }} -f -"
   failed_when: false
 
@@ -22,4 +22,4 @@
   shell: "oc delete -f {{ item }}"
   register: output
   failed_when: false
-  with_items: "{{ required_crds }}"
+  with_items: "{{ msbroker_required_crds }}"
