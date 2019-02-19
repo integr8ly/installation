@@ -124,15 +124,44 @@
         tasks_from: uninstall
       tags: ['fuse']
       when: fuse_managed | default(true) | bool
-    -
-      name: Uninstall che
-      include_role:
-        name: code-ready
-        tasks_from: uninstall
-      vars:
-        che_keycloak_user: "{{ eval_launcher_sso_admin_username }}"
-        che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"
-        che_keycloak_host: "{{ eval_launcher_sso_host }}"
+    - block:
+      -
+        name: Retrieve launcher sso env vars
+        shell: "oc get dc/launcher-sso \
+          -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
+          -n {{ eval_launcher_namespace }}"
+        with_items:
+          - 'SSO_SERVICE_USERNAME'
+          - 'SSO_SERVICE_PASSWORD'
+          - 'SSO_ADMIN_USERNAME'
+          - 'SSO_ADMIN_PASSWORD'
+        register: _eval_launcher_sso_dc_cmd
+      -
+        name: Set launcher sso playbook vars
+        set_fact: "eval_launcher_{{ item.item | lower }}={{ item.stdout }}"
+        with_items: "{{ _eval_launcher_sso_dc_cmd.results }}"
+      -
+        name: Find encrypted RH-SSO route
+        shell: for route in $(oc get routes -n {{ eval_launcher_namespace }} | awk '{print $1}' | grep -v 'NAME'); do term=$(oc get route $route -n {{ eval_launcher_namespace }} -o template --template \{\{.spec.tls.termination\}\}); if [ "$term" == "edge" ] || [ "$term" == "reencrypt" ]; then echo $route; break; fi; done
+        register: rhsso_secure_route_name
+        failed_when: rhsso_secure_route_name.stdout == ''
+      -
+        name: Retrieve launcher sso hostvars
+        shell: "oc get route/{{ rhsso_secure_route_name.stdout }} -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
+        register: eval_launcher_sso_host_cmd
+      -
+        name: Set launcher sso host var
+        set_fact:
+          eval_launcher_sso_host: "{{ eval_launcher_sso_host_cmd.stdout }}"
+      -
+        name: Uninstall che
+        include_role:
+          name: code-ready
+          tasks_from: uninstall
+        vars:
+          che_keycloak_user: "{{ eval_launcher_sso_admin_username }}"
+          che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"
+          che_keycloak_host: "{{ eval_launcher_sso_host }}"
       tags: ['che']
       when: che | default(true) | bool
     -
