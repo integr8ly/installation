@@ -1,0 +1,2 @@
+delete_user_namespaces:
+  jq_query: '.items[] | select(.metadata.annotations["openshift.io/requester"] != null and .metadata.annotations["openshift.io/requester"] != "system:admin" and .metadata.labels["integreatly-middleware-service"] != "true") | .metadata.name'
