@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ customise_web_console.app_name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: {{ customise_web_console.app_name }}
+  template:
+    metadata:
+      labels:
+        name: {{ customise_web_console.app_name }}
+        app: {{ customise_web_console.app_name }}
+    spec:
+      containers:
+        - name: {{ customise_web_console.app_name }}
+          image: {{ customise_web_console.server_image.name }}:{{ customise_web_console.server_image.tag }}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: {{ customise_web_console.server_image.mount_path }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ customise_web_console.configmap_name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ customise_web_console.app_name }}
+  name: {{ customise_web_console.app_name }}
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: {{ customise_web_console.app_name }}
+---
+apiVersion: v1
+kind: Route
+metadata:
+  labels:
+    app: {{ customise_web_console.app_name }}
+  name: {{ customise_web_console.route_name }}
+spec:
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: None
+    termination: edge
+  to:
+    kind: Service
+    name: {{ customise_web_console.app_name }}

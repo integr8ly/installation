@@ -120,6 +120,7 @@
       name: Reboot template broker
       include_role:
         name: reboot_template_broker
+- import_playbook: "./customise_web_console_uninstall.yml"
 - hosts: master
   tasks:
     -

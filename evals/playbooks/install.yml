@@ -28,6 +28,7 @@
 - import_playbook: "./install_kube_state_metrics.yml"
 - import_playbook: "./generate-customisation-inventory.yml"
 - import_playbook: "./apply_ocp_roles.yml"
+- import_playbook: "./customise_web_console_install.yml"
 
 - hosts: master
   gather_facts: no

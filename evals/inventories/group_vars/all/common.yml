@@ -5,16 +5,18 @@ eval_username: evals@example.com
 eval_openshift_master_config_path: /etc/origin/master/master-config.yaml
 eval_self_signed_certs: true
 eval_sso_validate_certs: false
+eval_launcher_sso_realm: launcher_realm
+
+eval_apicurito_namespace: apicurito
 eval_che_namespace: codeready
+eval_launcher_namespace: launcher
 eval_rhsso_namespace: sso
 eval_webapp_namespace: webapp
 eval_managed_fuse_namespace: fuse
-eval_threescale_namespace: 3scale
-eval_apicurito_namespace: apicurito
-eval_launcher_namespace: launcher
-eval_launcher_sso_realm: launcher_realm
-eval_webapp_url_prefix: tutorial-web-app-webapp
+
 eval_seed_users_count: 50
+eval_threescale_namespace: 3scale
+eval_webapp_url_prefix: tutorial-web-app-webapp
 
 eval_threescale_enable_wildcard_route: false
 # To use S3 storage instead of filesystem (PVC-based requiring ReadWriteMany)
