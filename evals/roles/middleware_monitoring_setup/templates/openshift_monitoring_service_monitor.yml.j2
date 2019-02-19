@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    monitoring-key: middleware
+  name: openshift-monitoring-federation
+spec:
+  endpoints:
+    - basicAuth:
+        password:
+          key: password
+          name: {{ openshift_monitoring_basicauth_secret }}
+        username:
+          key: username
+          name: {{ openshift_monitoring_basicauth_secret }}
+      interval: {{ openshift_monitoring_interval }}
+      params:
+        'match[]':
+          - '{service="kube-state-metrics"}'
+      path: /federate
+      port: web
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true
+  namespaceSelector:
+    matchNames:
+      - {{ openshift_monitoring_namespace }}
+  selector:
+    matchLabels:
+      prometheus: k8s
