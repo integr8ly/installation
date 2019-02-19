@@ -89,13 +89,6 @@
         tasks_from: uninstall
       tags: ['walkthroughs']
     -
-      name: Uninstall kube_state_metrics
-      include_role:
-        name: kube_state_metrics
-        tasks_from: uninstall
-      tags: ['kube-state-metrics']
-      when: kube_state_metrics | default(true) | bool
-    -
       name: Uninstall middleware-monitoring
       include_role:
         name: middleware_monitoring

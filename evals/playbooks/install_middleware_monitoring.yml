@@ -4,3 +4,5 @@
   roles:
   - role: middleware_monitoring
     when: middleware_monitoring | default(true) | bool
+  - role: middleware_monitoring_setup
+    when: middleware_monitoring | default(true) | bool
