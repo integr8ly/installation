@@ -1,6 +1,0 @@
----
-monitoring_namespace: middleware-monitoring
-
-openshift_monitoring_namespace: openshift-monitoring
-
-monitoring_additional_scrape_config_file: "monitoring_additional_scrape_config.yml"
