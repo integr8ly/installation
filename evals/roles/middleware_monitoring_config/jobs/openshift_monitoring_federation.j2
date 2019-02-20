@@ -9,7 +9,7 @@
   metrics_path: /federate
   params:
     match[]:
-    - '{service="kube-state-metrics"}'
+    - '{{ "{" }} service="kube-state-metrics" {{ "}" }}'
   scheme: https
   tls_config:
     insecure_skip_verify: true

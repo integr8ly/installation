@@ -18,17 +18,25 @@
   - set_fact:
       grafana_datasource_content: "{{ parsed_datasource_secret.data['prometheus.yaml'] | b64decode | from_json }}"
 
-  - debug: msg={{ grafana_datasource_content }}
-
-  - template:
-      src: "{{ monitoring_additional_scrape_config_file }}.j2"
-      dest: "/tmp/{{ monitoring_additional_scrape_config_file }}"
-    vars:
+  - set_fact:
       openshift_monitoring_prometheus_username: "{{ grafana_datasource_content.datasources[0].basicAuthUser }}"
       openshift_monitoring_prometheus_password: "{{ grafana_datasource_content.datasources[0].basicAuthPassword }}"
 
+  - name: Generate the jobs for the additional scrape config
+    template:
+      src: "jobs/{{ item }}.j2"
+      dest: "/tmp/{{ item }}.yaml"
+    with_items: "{{ jobs }}"
+
+  - set_fact:
+      yaml_files: "{{ jobs | map('regex_replace', '^(.*)$', '/tmp/\\1.yaml') | list }}"
+
+  - name: Combine the jobs data
+    shell: "awk 'FNR==0{print \"\"}1' {{ yaml_files  | join(' ') }} | > /tmp/{{ secret_key }}"
+    register: jobs_data
+
   - name: Create additional scrape config secret
-    shell: oc create secret generic prom-additional-scrape-config --from-file=/tmp/{{ monitoring_additional_scrape_config_file }} -n {{ monitoring_namespace }} --dry-run -o yaml | oc apply -f -
+    shell: oc create secret generic prom-additional-scrape-config --from-file=/tmp/{{ secret_key }} -n {{ monitoring_namespace }} --dry-run -o yaml | oc apply -f -
 
   - name: Check if the middleware monitoring prometheus CR is available
     shell: oc get prometheus application-monitoring -n {{ monitoring_namespace }}
@@ -38,5 +46,5 @@
     retries: 50
 
   - name: Patch the middleware monitoring prometheus with additional scrape config
-    shell: "oc patch prometheus application-monitoring -n {{ monitoring_namespace }} --patch='{\"spec\":{\"additionalScrapeConfigs\":{\"name\":\"prom-additional-scrape-config\", \"key\": \"{{ monitoring_additional_scrape_config_file }}\"}}}' --type='merge'"
+    shell: "oc patch prometheus application-monitoring -n {{ monitoring_namespace }} --patch='{\"spec\":{\"additionalScrapeConfigs\":{\"name\":\"prom-additional-scrape-config\", \"key\": \"{{ secret_key }}\"}}}' --type='merge'"
   when: namespace_check.rc == 0
