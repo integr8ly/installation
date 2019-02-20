@@ -146,6 +146,7 @@ Before running the installer, please consider the following variables:
 | eval_threescale_enable_wildcard_route | Whether 3Scale enables wildcard routing. Defaults to `false`
 | github_client_id | GitHub OAuth client ID to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
 | github_client_secret | GitHub OAuth client secret to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
+| prerequisites_install | Boolean var that skips the installation of system wide tools/packages that are required by the installer if set to false (needs to be set to false when running the installer in a linux container) - defaults to true. 
 |===
 
 
