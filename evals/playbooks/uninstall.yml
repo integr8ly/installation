@@ -1,26 +1,11 @@
 ---
+
+- import_playbook: "./openshift.yml"
+
 - hosts: localhost
   tasks:
-    - when: create_cluster_admin
-      name: switch to system:admin for uninstall
-      shell: oc login -u system:admin
-      register: oc_login
-      failed_when: oc_login.rc != 0
     - when: keep_namespaces is undefined or not keep_namespaces | bool
       block:
-      - name: Check that jq exists
-        stat:
-          path: /usr/bin/jq
-        failed_when: false
-        register: jq_binary
-      - name: download jq
-        become: true
-        get_url:
-          url: https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
-          dest: /usr/bin/jq
-          mode: 0555
-        when: jq_binary.stat.exists == False
-
       - name: Get namespaces to clean up
         shell: oc get namespaces -o json | jq '.items[] | select(.metadata.annotations["openshift.io/requester"] != null and .metadata.annotations["openshift.io/requester"] != "system:admin" and .metadata.labels["integreatly-middleware-service"] != "true") | .metadata.name' | cut -f2 -d'"'
         register: namespaces_output
