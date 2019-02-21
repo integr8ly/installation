@@ -4,7 +4,7 @@
   - role: service
     namespaces:
       names:
-      - openshift-monitoring
+      - {{ openshift_monitoring_namespace }}
   scrape_interval: 30s
   metrics_path: /federate
   params:
