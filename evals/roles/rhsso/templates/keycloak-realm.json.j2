@@ -11,7 +11,6 @@
         "enabled": true,
         "eventsListeners": ["{{ rhsso_realm_event_listeners | join('","') }}"],
         "users": [
-            {% if rhsso_seed_users_count|int > 0 %}
             {   
                 "enabled":true, 
                 "attributes":{},    
@@ -31,6 +30,7 @@
                 },  
                 "outputSecret": "customer-admin-user-credentials"
             },
+            {% if rhsso_seed_users_count|int > 0 %}
             {   
                 "enabled":true, 
                 "attributes":{},    
