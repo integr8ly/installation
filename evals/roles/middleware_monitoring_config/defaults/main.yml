@@ -1,0 +1,13 @@
+---
+middleware_monitoring_namespace: middleware-monitoring
+openshift_monitoring_namespace: openshift-monitoring
+threescale_namespace: 3scale
+
+jobs:
+- 3scale
+- openshift_monitoring_federation
+
+config_secret_contents_file: integreatly-additional.yaml
+prometheus_cr_name: application-monitoring
+additional_scrape_config_name: integreatly-additional-scrape-configs
+additional_scrape_config_patch: "{\"spec\":{\"additionalScrapeConfigs\":{\"name\":\"{{ additional_scrape_config_name }}\", \"key\": \"{{ config_secret_contents_file }}\"}}}"
