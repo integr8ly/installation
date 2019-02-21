@@ -4,17 +4,11 @@
 
 - hosts: localhost
   tasks:
-    - when: keep_namespaces is undefined or not keep_namespaces | bool
-      block:
-      - name: Get namespaces to clean up
-        shell: oc get namespaces -o json | jq '.items[] | select(.metadata.annotations["openshift.io/requester"] != null and .metadata.annotations["openshift.io/requester"] != "system:admin" and .metadata.labels["integreatly-middleware-service"] != "true") | .metadata.name' | cut -f2 -d'"'
-        register: namespaces_output
-      - name: Delete namespaces
-        shell: "oc delete namespace {{ item }}"
-        register: output
-        failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
-        changed_when: output.rc == 0
-        with_items: "{{ namespaces_output.stdout_lines }}"
+    -
+      name: Delete user namespaces
+      include_role:
+        name: delete-user-namespaces
+      when: keep_namespaces is undefined or not keep_namespaces | bool
     -
       name: Uninstall apicurito
       include_role:
