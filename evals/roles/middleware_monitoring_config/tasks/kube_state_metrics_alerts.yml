@@ -1,0 +1,11 @@
+---
+- name: "copy ksm template"
+  copy:
+    src: kube_state_metrics_alerts.yml
+    dest: /tmp/kube_state_metrics_alerts.yml
+
+- name: Create ksm alerts
+  shell: "oc create -f /tmp/kube_state_metrics_alerts.yml -n {{ monitoring_namespace }}"
+  register: create_ksm_alerts
+  failed_when: create_ksm_alerts.stderr != '' and 'already exists' not in create_ksm_alerts.stderr
+  changed_when: create_ksm_alerts.rc == 0
