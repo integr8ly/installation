@@ -1,0 +1,9 @@
+---
+
+- host: localhost
+  gather_facts: no
+  tasks:
+    - debug:
+        msg: running install
+
+
