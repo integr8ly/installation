@@ -1,6 +1,5 @@
 ---
-
-- host: localhost
+- hosts: localhost
   gather_facts: no
   tasks:
     - debug:

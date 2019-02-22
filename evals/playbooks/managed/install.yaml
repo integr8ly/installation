@@ -1,13 +1,9 @@
-# this playbook is intended to hold anything needed for long running clusters.
-# It shouldn't need to include user setup logic or anything to do with workshops
-
-
-
-- host: localhost
+---
+- hosts: master
   gather_facts: no
 
-- import_playbook: ../install.yaml
+- import_playbook: ../install.yml
   when: core_install|bool
 
 - import_playbook: ../backup_restore/install.yaml
-  when: backup_restore|bool
+  when: backup_restore_install|bool
