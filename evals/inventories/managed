@@ -13,7 +13,6 @@ ansible_user=ec2-user
 [master]
 127.0.0.1
 
-[all]
-
-core_install=true
-backup_restore=true
+[managed]
+master
+local

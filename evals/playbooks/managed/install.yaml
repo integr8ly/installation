@@ -1,5 +1,5 @@
 ---
-- hosts: master
+- hosts: managed
   gather_facts: no
 
 - import_playbook: ../install.yml
