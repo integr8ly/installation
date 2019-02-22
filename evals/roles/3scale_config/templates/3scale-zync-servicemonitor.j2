@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    monitoring-key: middleware
+  name: {{ threescale_zync_sm_name }}
+spec:
+  endpoints:
+    - port: 8080-tcp
+  selector:
+    matchLabels:
+      3scale.component: zync
