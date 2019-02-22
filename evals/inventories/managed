@@ -13,6 +13,6 @@ ansible_user=ec2-user
 [master]
 127.0.0.1
 
-[managed]
+[managed:children]
 master
 local
