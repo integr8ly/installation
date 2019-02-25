@@ -16,3 +16,16 @@ ansible_user=ec2-user
 [managed:children]
 master
 local
+
+[managed:vars]
+
+# core_install decides whether to run the main install playbook that sets up all of the core services
+core_install=true
+# backup_restore_install decides whether to run and install the backup and restore features
+backup_restore_install=true
+
+# The namespace where the aws credential secret will be
+aws_credential_secret_namespace= ''
+
+# the secret containing the aws credentials
+aws_credential_secret_name= ''
