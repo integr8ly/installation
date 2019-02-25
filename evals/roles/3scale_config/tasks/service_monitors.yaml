@@ -1,0 +1,27 @@
+---
+- name: Check {{ threescale_namespace }} namespace exists
+  shell: oc get namespace {{ threescale_namespace }}
+  register: threescale_namespace_check
+  failed_when: false
+
+- block:
+    - name: Check if the 3scale zync ServiceMonitor {{ threescale_zync_sm_name }} exists in {{ threescale_namespace }} namespace
+      shell: "oc get servicemonitor {{ threescale_zync_sm_name }} -n {{ threescale_namespace }}"
+      register: threescale_zync_exists
+      failed_when: threescale_zync_exists.stderr != '' and 'not found' not in threescale_zync_exists.stderr
+
+    - block:
+      - name: Create the 3scale zync ServiceMonitor custom resource file
+        template:
+          src: "{{ threescale_zync_sm_name }}.j2"
+          dest: "/tmp/{{ threescale_zync_sm_name }}.yaml"
+
+      - name: Create the ServiceMonitor custom resource to expose Zync metrics for monitoring
+        shell: "oc create -f /tmp/{{ threescale_zync_sm_name }}.yaml -n {{ threescale_namespace }}"
+
+      - name: Delete the 3scale zync ServiceMonitor custom resource file
+        file:
+          path: "/tmp/{{ threescale_zync_sm_name }}.yaml"
+          state: absent
+      when: threescale_zync_exists.rc != 0
+  when: threescale_namespace_check.rc == 0
