@@ -1,2 +1,12 @@
+# These are used as the defaults for the managed install. Common and Manifest are always used, these variables should be specific to a managed cluster install
+
+# core_install decides whether to run the main install playbook that sets up all of the core services
 core_install: true
+# backup_restore_install decides whether to run and install the backup and restore features
 backup_restore_install: true
+
+# The aws key to use when pushing data to s3 backups etc
+s3_aws_access_key: ''
+
+# the aws secret to use when pushing data to s3 for backups
+s3_aws_secret_key: ''
