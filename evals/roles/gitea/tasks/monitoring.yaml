@@ -1,0 +1,27 @@
+---
+- name: Check {{ gitea_namespace }} namespace exists
+  shell: oc get namespace {{ gitea_namespace }}
+  register: gitea_namespace_check
+  failed_when: gitea_namespace_check.stderr != '' and 'not found' not in gitea_namespace_check.stderr
+
+- block:
+    - name: Check if the gitea PrometheusRule {{ gitea_prometheusrule_name }} exists in {{ gitea_namespace }} namespace
+      shell: "oc get prometheusrule {{ gitea_prometheusrule_name }} -n {{ gitea_namespace }}"
+      register: gitea_prometheusrule_exists
+      failed_when: gitea_prometheusrule_exists.stderr != '' and 'not found' not in gitea_prometheusrule_exists.stderr
+
+    - block:
+      - name: Create the gitea PrometheusRule custom resource file
+        template:
+          src: "{{ gitea_prometheusrule_name }}.yaml.j2"
+          dest: "/tmp/{{ gitea_prometheusrule_name }}.yaml"
+
+      - name: Create the gitea PrometheusRule custom resource
+        shell: "oc create -f /tmp/{{ gitea_prometheusrule_name }}.yaml -n {{ gitea_namespace }}"
+
+      - name: Delete the gitea PrometheusRule custom resource file
+        file:
+          path: "/tmp/{{ gitea_prometheusrule_name }}.yaml"
+          state: absent
+      when: gitea_prometheusrule_exists.rc != 0
+  when: gitea_namespace_check.rc == 0

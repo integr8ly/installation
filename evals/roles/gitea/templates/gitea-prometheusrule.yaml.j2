@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    monitoring-key: middleware
+  name: {{ gitea_prometheusrule_name }}
+spec:
+  groups:
+    - name: general.rules
+      rules:
+      - alert: GiteaPodCount
+        annotations:
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 3 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", namespace="gitea"})) or sum(kube_pod_status_ready{condition="true", namespace="gitea"}) != 3
+        for: 5m
+        labels:
+          severity: critical
