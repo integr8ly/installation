@@ -1,5 +1,6 @@
 ---
 
+- import_playbook: "./prerequisites.yml"
 - import_playbook: "./openshift.yml"
 
 - hosts: localhost
