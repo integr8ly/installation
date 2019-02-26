@@ -19,17 +19,28 @@
   failed_when: false
   register: launcher_sso_exists_cmd
 
-- name: "Import image streams {{ launcher_sso_image_stream }}"
-  shell: oc -n openshift import-image {{ launcher_sso_image_stream }}:{{ launcher_sso_image_stream_tag }}
-  register: import_result
-  until: import_result is succeeded
-  retries: 10
-  delay: 5
-  failed_when: import_result is failed
+- name: "Ensure {{ rhsso_imagestream_name }} tag is present for redhat sso in openshift namespace"
+  shell: oc tag --source=docker {{ rhsso_imagestream_image }} openshift/{{ rhsso_imagestream_name }}
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 1
+  failed_when: not result.stdout
+  changed_when: False
+  when: launcher_sso_force_image_streams_update
+
+- name: "Ensure {{ rhsso_imagestream_name }} tag has an imported image in openshift namespace"
+  shell: oc -n openshift import-image {{ rhsso_imagestream_name }}
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 1
+  failed_when: not result.stdout
+  changed_when: False
   when: launcher_sso_force_image_streams_update
 
 - name: Provision SSO for Launcher
-  shell: "oc new-app --template={{ launcher_sso_serviceclass }} -n {{ launcher_namespace }} -p SSO_ADMIN_USERNAME={{ launcher_sso_username }} -p SSO_REALM={{ launcher_sso_realm }} -p APPLICATION_NAME={{ launcher_sso_prefix }}"
+  shell: "oc new-app {{ launcher_sso_template }} -n {{ launcher_namespace }} -p SSO_ADMIN_USERNAME={{ launcher_sso_username }} -p SSO_REALM={{ launcher_sso_realm }} -p APPLICATION_NAME={{ launcher_sso_prefix }}"
   when: launcher_sso_exists_cmd.rc != 0
 
 - name: "Verify Launcher SSO deployment succeeded"

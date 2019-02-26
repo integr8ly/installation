@@ -11,8 +11,8 @@
   failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
   changed_when: namespace_patch.rc == 0
 
-- name: "Ensure 1.2 tag is present for redhat sso in openshift namespace"
-  shell: oc tag --source=docker registry.access.redhat.com/redhat-sso-7/sso72-openshift:1.2 openshift/redhat-sso72-openshift:1.2
+- name: "Ensure {{ rhsso_imagestream_name }} tag is present for redhat sso in openshift namespace"
+  shell: oc tag --source=docker {{ rhsso_imagestream_image }} openshift/{{ rhsso_imagestream_name }}
   register: result
   until: result.stdout
   retries: 50
@@ -20,8 +20,8 @@
   failed_when: not result.stdout
   changed_when: False
 
-- name: "Ensure 1.2 tag has an imported image in openshift namespace"
-  shell: oc -n openshift import-image redhat-sso72-openshift:1.2
+- name: "Ensure {{ rhsso_imagestream_name }} tag has an imported image in openshift namespace"
+  shell: oc -n openshift import-image {{ rhsso_imagestream_name }}
   register: result
   until: result.stdout
   retries: 50
@@ -81,12 +81,12 @@
     launcher_sso_route: "{{ rhsso_secure_route.stdout }}"
   when: launcher
 
-- set_fact:	
-    threescale_route_suffix: "amp.{{ apps_redirect_uri }}"	
-  when: enable_threescale_wildcard_route	
+- set_fact:
+    threescale_route_suffix: "amp.{{ apps_redirect_uri }}"
+  when: enable_threescale_wildcard_route
 
-- set_fact:	
-    threescale_route_suffix: "{{ apps_redirect_uri }}"	
+- set_fact:
+    threescale_route_suffix: "{{ apps_redirect_uri }}"
   when: not enable_threescale_wildcard_route
 
 - name: "Create keycloak realm resource template"
