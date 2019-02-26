@@ -34,11 +34,11 @@
       dest: /tmp/code-ready/config.yaml
 
   - name: install code ready with self signed cert
-    shell: "cd /tmp/code-ready && ./installer.sh --deploy --cert=/tmp/code-ready/cert.ca --operator-image={{che_operator_image}}"
+    shell: "cd /tmp/code-ready && ./installer.sh --deploy --cert=/tmp/code-ready/cert.ca --operator-image={{che_operator_image}} --server-image={{che_server_image}}"
     when: eval_self_signed_certs|bool
 
   - name: install code ready valid certs
-    shell: "cd /tmp/code-ready && ./installer.sh --deploy --operator-image={{che_operator_image}}"
+    shell: "cd /tmp/code-ready && ./installer.sh --deploy --operator-image={{che_operator_image}} --server-image={{che_server_image}}"
     when: not eval_self_signed_certs|bool
 
   - name: patch for per workspace volumes
