@@ -9,7 +9,7 @@
   register: openshift_host
 
 - name: Get SSO route
-  shell: oc get route sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
+  shell: oc get route sso -o template --template \{\{.spec.host\}\} -n {{ rhsso_namespace }}
   register: sso_route
 
 - name: Create WebApp Operator Resources
@@ -58,14 +58,14 @@
     dest: /tmp/oauthclient.yaml
 
 - name: Check if OpenShift OAuth client already exists
-  shell: oc get oauthclient {{ webapp_client_id }} -n {{ eval_rhsso_namespace }}
+  shell: oc get oauthclient {{ webapp_client_id }} -n {{ rhsso_namespace }}
   register: webapp_oauthclient_check_cmd
   changed_when: false
   failed_when: false
 
 - name: Remove OpenShift OAuth client
-  shell: oc delete oauthclient {{ webapp_client_id }} -n {{ eval_rhsso_namespace }}
+  shell: oc delete oauthclient {{ webapp_client_id }} -n {{ rhsso_namespace }}
   when: webapp_oauthclient_check_cmd.rc == 0
 
 - name: Create OpenShift OAuth client
-  shell: oc create -f /tmp/oauthclient.yaml -n {{ eval_rhsso_namespace }}
+  shell: oc create -f /tmp/oauthclient.yaml -n {{ rhsso_namespace }}

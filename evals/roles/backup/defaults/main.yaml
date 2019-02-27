@@ -1,0 +1,14 @@
+backed_up_product_namespaces:
+  - "{{threescale_namespace}}"
+  - "{{rhsso_namespace}}"
+  - "{{che_namespace}}"
+  - "{{enmasse_namespace}}"
+  - "{{fuse_namespace}}"
+
+backup_credentials_secret: 'aws-credentials'
+backup_credentials_ns: 'default'
+backup_resources:
+  - "backup-cronjob-template.yaml"
+  - "rbac/service-account.yaml"
+  - "rbac/role.yaml"
+  - "rbac/role-binding.yaml"

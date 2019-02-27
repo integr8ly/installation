@@ -1,5 +1,3 @@
-gitea_namespace: gitea
-
 gitea_operator_resource_items:
   - "{{ gitea_operator_resources }}/service_account.yaml"
   - "{{ gitea_operator_resources }}/role.yaml"

@@ -1,5 +1,4 @@
 ---
-msbroker_namespace: managed-service-broker
 msbroker_image_org: quay.io/integreatly
 msbroker_clusterrole: managed-service
 msbroker_clusterrolebinding: default-cluster-account-managed-service

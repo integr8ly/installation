@@ -42,12 +42,12 @@
     when: not eval_self_signed_certs|bool
 
   - name: patch for per workspace volumes
-    shell: "oc set env deployment/che CHE_INFRA_KUBERNETES_PVC_PRECREATE__SUBPATHS=false -n {{eval_che_namespace}}"
+    shell: "oc set env deployment/che CHE_INFRA_KUBERNETES_PVC_PRECREATE__SUBPATHS=false -n {{che_namespace}}"
     register: oc_cmd
     failed_when: oc_cmd.rc != 0
 
   - name: Set the launcher keycloak user as admin within the che deployment
-    shell: "oc set env deployment/che CHE_SYSTEM_ADMIN__NAME={{launcher_sso_admin_username}} -n {{eval_che_namespace}} --overwrite=true"
+    shell: "oc set env deployment/che CHE_SYSTEM_ADMIN__NAME={{launcher_sso_admin_username}} -n {{che_namespace}} --overwrite=true"
     register: set_kc_admin_env
     failed_when: set_kc_admin_env.rc != 0
 

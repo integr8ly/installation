@@ -1,4 +1,3 @@
-apicurito_namespace: apicurito
 apicurito_template: apicurito
 apicurito_template_namespace: openshift
 apicurito_template_file: /tmp/apicurito-template.yaml

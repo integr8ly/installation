@@ -1,8 +1,5 @@
 ---
 - hosts: localhost
   gather_facts: no
-  tasks:
-    - debug:
-        msg: running install
-
-
+  roles:
+    - backup

@@ -9,6 +9,7 @@ threescale: true
 threescale_version: '2.4.0.GA'
 threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
 threescale_template_s3: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp-s3.yml'
+threescale_namespace: '3scale'
 
 #controls whether che is installed or not
 #note che cannot be installed without launcher being present currently
@@ -17,6 +18,7 @@ che_version: '1.0.0.GA'
 # by default the GA installer uses the :latest tag so we need to set the tagged version in the config
 che_server_image: 'registry.access.redhat.com/codeready-workspaces/server:1.0'
 che_installer: 'https://raw.githubusercontent.com/redhat-developer/codeready-workspaces-deprecated/{{che_version}}/operator-installer/deploy.sh'
+che_namespace: 'codeready'
 
 #controls whether enmasse is installed or not
 enmasse: true
@@ -25,6 +27,7 @@ enmasse_version: '1.0.0.GA'
 enmasse_download_url: https://access.redhat.com/node/3869211/423/0
 # Controls whether to use a productised version. Use with 'enmasse_productised_download_url'
 is_productised_version: true
+enmasse_namespace: 'enmasse'
 
 #controls whether fuse is installed or not
 fuse: true
@@ -32,6 +35,7 @@ fuse: true
 fuse_release_tag: 'application-templates-2.1.fuse-720018-redhat-00001'
 #not currently used as the operator decides what to install
 fuse_version: '7.2'
+fuse_namespace: 'fuse'
 
 #controls whether Fuse Online is installed or not
 fuse_online: true
@@ -50,6 +54,7 @@ launcher_backend_image_tag: 'b006e49'
 launcher_frontend_image_tag: 'a00064f'
 launcher_version: '7224e235226ffa42135f148bacc409e9f7f402e4'
 launcher_template: 'https://raw.githubusercontent.com/fabric8-launcher/launcher-openshift-templates/{{launcher_version}}/openshift/launcher-template.yaml'
+launcher_namespace: 'launcher'
 
 #not currently used but is the version installed by the operator
 # rhsso is not an optional component
@@ -57,6 +62,7 @@ rhsso_version: '7.2.2.GA'
 #below vars not currently used but will be used to pull in the new versions of RH-SSO once we decouple the resources from the installer.
 rhsso_operator_release_tag: 'v0.0.3'
 rhsso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
+rhsso_namespace: 'sso'
 
 #controls whether gitea is installed or not
 gitea: true
@@ -64,6 +70,7 @@ gitea_version: '1.6.0' # not currently used for installation reflect current ins
 #below vars are not currently used but will be used once we source resources from outside of the installer
 gitea_operator_release_tag: 'v0.0.3'
 gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_operator_release_tag}}/deploy/'
+gitea_namespace: 'gitea'
 
 #controls whether webapp is installed or not
 webapp: true
@@ -71,6 +78,7 @@ webapp: true
 webapp_version: '2.4.0'
 webapp_operator_release_tag: 'v0.0.4'
 webapp_operator_resources: 'https://raw.githubusercontent.com/integr8ly/tutorial-web-app-operator/{{webapp_operator_release_tag}}/deploy/'
+webapp_namespace: 'webapp'
 
 #controls whether apicurito is installed or not
 apicurito: true
@@ -78,6 +86,7 @@ apicurito_version: '0.2.18.Final'
 #controls whether nexus is installed or not
 nexus: true
 nexus_version: '2.14.11-01'
+apicurito_namespace: 'apicurito'
 
 monitoring_label_name: "monitoring-key"
 monitoring_label_value: "middleware"
@@ -85,3 +94,7 @@ middleware_monitoring_operator_version: '0.0.3'
 
 msbroker_release_tag: 'v0.0.1'
 msbroker_template: 'https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_release_tag }}/templates/broker.template.yaml'
+msbroker_namespace: 'managed-service-broker'
+
+backup_version: 'master'
+backup_resources: 'https://raw.githubusercontent.com/integr8ly/backup-container-image/{{backup_version}}/templates/openshift'

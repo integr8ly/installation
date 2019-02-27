@@ -29,7 +29,7 @@
           name: Retrieve rhsso env vars
           shell: "oc get dc/sso \
                   -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
-                  -n {{ eval_rhsso_namespace }}"
+                  -n {{ rhsso_namespace }}"
           with_items:
             - 'SSO_SERVICE_USERNAME'
             - 'SSO_SERVICE_PASSWORD'
@@ -42,7 +42,7 @@
           with_items: "{{ _eval_rhsso_dc_cmd.results }}"
         -
           name: Retrieve cluster rhsso host
-          shell: "oc get route/sso -o jsonpath='{.spec.host}' -n {{ eval_rhsso_namespace }}"
+          shell: "oc get route/sso -o jsonpath='{.spec.host}' -n {{ rhsso_namespace }}"
           register: eval_sso_host_cmd
         -
           name: Set rhsso host var

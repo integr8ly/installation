@@ -1,9 +1,8 @@
 ---
-threescale_namespace: "{{ eval_threescale_namespace | default('3scale') }}"
 threescale_route_suffix: ""
 
 #SSO
-threescale_sso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"
+threescale_sso_namespace: "{{ rhsso_namespace | default('sso') }}"
 threescale_sso_admin_username: admin
 threescale_sso_admin_realm: master
 threescale_sso_realm: openshift
