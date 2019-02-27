@@ -11,12 +11,5 @@
     msg: "oc create -f {{item}}"
   with_items: "{{backup_resources_cluster}}"
 
-- name: "Create backup cron jobs"
-  debug:
-    msg: "oc create -f {{item[1]}} -n {{item[0]}} "
-  with_nested:
-    - "{{backed_up_product_namespaces}}"
-    - "{{backup_resources_ns}}"
-
 
 

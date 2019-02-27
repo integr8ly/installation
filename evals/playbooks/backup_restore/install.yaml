@@ -3,3 +3,5 @@
   gather_facts: no
   roles:
     - backup
+  tasks:
+    - import_tasks: ../roles/3scale/tasks/backup.yaml
