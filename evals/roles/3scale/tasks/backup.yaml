@@ -5,8 +5,6 @@
   failed_when: oc_get_env.rc != 0
 
 - name: set mysql root pass
-  #set_fact: mysql_pass
-#  when: "{{item}} == MYSQL_ROOT_PASSWORD"
-  debug:
-    msg: "{{item}}"
+  set_fact: mysql_pass
+  when: "{{item.split('=')[0]}} == MYSQL_ROOT_PASSWORD"
   with_items: "{{oc_get_env.stdout.split('\n')}}"
