@@ -7,8 +7,9 @@ backed_up_product_namespaces:
 
 backup_credentials_secret: 'aws-credentials'
 backup_credentials_ns: 'default'
-backup_resources:
+backup_resources_ns:
   - "{{backup_resources_location}}/backup-cronjob-template.yaml"
   - "{{backup_resources_location}}/rbac/service-account.yaml"
-  - "{{backup_resources_location}}/rbac/role.yaml"
   - "{{backup_resources_location}}/rbac/role-binding.yaml"
+backup_resources_cluster:
+  - "{{backup_resources_location}}/rbac/role.yaml"

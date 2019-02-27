@@ -1,15 +1,22 @@
 ---
 
-- name: "Create backup cron jobs"
-  debug:
-    msg: "{{item[0]}}  {{item[1]}}"
-  with_nested:
-    - "{{backed_up_product_namespaces}}"
-    - "{{backup_resources}}"
-
-- name: "check for aws credentials secret in {{backup_credentials_ns}} namespace"
+- name: "Check for aws credentials secret in {{backup_credentials_ns}} namespace"
   shell: "oc get secret {{backup_credentials_secret}} -n {{backup_credentials_ns}}"
   register: secret_cmd
   failed_when: secret_cmd.stderr != '' and 'not found' not in secret_cmd.stderr
   changed_when: secret_cmd.rc == 0
+
+- name: "Create backup cluster role"
+  debug:
+    msg: "oc create -f {{item}}"
+  with_items: "{{backup_resources_cluster}}"
+
+- name: "Create backup cron jobs"
+  debug:
+    msg: "oc create -f {{item[1]}} -n {{item[0]}} "
+  with_nested:
+    - "{{backed_up_product_namespaces}}"
+    - "{{backup_resources_ns}}"
+
+
 
