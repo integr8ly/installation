@@ -21,6 +21,7 @@ data:
   # CHE flavor. Upstream `che` or Red Hat `codeready`. Defaults to `che`
   CHE_FLAVOR: "codeready"
   # Docker image for Che server. Defaults to eclipse/che-server:latest. Keep blank unless you need to deploy your custom image
+  # [omatskiv]: this is actually getting overwritten by the installer script - https://github.com/redhat-developer/codeready-workspaces-deprecated/blob/1.0.0.GA/operator-installer/deploy.sh#L214
   CHE_IMAGE: "{{che_server_image}}"
   # TLS support in Che. Defaults to false
   CHE_TLS_SUPPORT: "true"
