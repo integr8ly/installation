@@ -1,6 +1,6 @@
 ---
 rhsso_keycloak_operator_image_url: "quay.io/integreatly/keycloak-operator"
-rhsso_keycloak_operator_image_tag: release-1.2.0-rc7
+rhsso_keycloak_operator_image_tag: release-1.2.0
 
 rhsso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"
 
@@ -25,7 +25,7 @@ rhsso_openshift_webconsole_configmap: webconsole-config
 rhsso_openshift_update_webconsole_configmap: false
 
 rhsso_operator_repo: integr8ly
-rhsso_operator_commit_tag: release-1.2.0-rc7
+rhsso_operator_commit_tag: release-1.2.0
 
 rhsso_operator_required_objects:
   - rbac.yaml
