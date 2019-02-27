@@ -5,7 +5,7 @@
   failed_when: oc_get_env.rc != 0
 
 - name: set mysql root pass
-  set_fact: mysql_pass
+  #set_fact: mysql_pass
 #  when: "{{item}} == MYSQL_ROOT_PASSWORD"
   debug:
     msg: "{{item}}"
