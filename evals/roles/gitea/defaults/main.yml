@@ -11,3 +11,5 @@ webapp_namespace: webapp
 gitea_admin_username: giteaadmin
 gitea_admin_token: admintoken
 gitea_admin_password: Password1
+
+gitea_prometheusrule_name: gitea-prometheusrule

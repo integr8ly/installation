@@ -68,14 +68,6 @@ spec:
         for: 5m
         labels:
           severity: critical
-      - alert: GiteaPodCount
-        annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 3 pods.
-        expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="gitea"})) or sum(kube_pod_status_ready{condition="true", namespace="gitea"}) != 3
-        for: 5m
-        labels:
-          severity: critical
       - alert: LauncherPodCount
         annotations:
           message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 6 pods.
