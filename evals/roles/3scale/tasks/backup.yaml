@@ -8,3 +8,4 @@
   set_fact: mysql_pass="{{item.split('=')[1]}}"
   when: item.split('=')[0] == "MYSQL_ROOT_PASSWORD"
   with_items: "{{oc_get_env.stdout.split('\n')}}"
+  failed_when: mysql_pass == ""
