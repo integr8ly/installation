@@ -4,4 +4,4 @@
   roles:
     - backup
   tasks:
-    - import_tasks: ../roles/3scale/tasks/backup.yaml
+    - import_tasks: ../../roles/3scale/tasks/backup.yaml
