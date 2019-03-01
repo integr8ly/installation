@@ -1,16 +1,23 @@
 
+- name: Check console-config namespace exists
+  shell: oc get namespace console-config
+  register: console_config_check_namespace_exists
+  failed_when: false
+
 - name: "Get route to hosted javascript file"
   shell: "echo 'https://'$(oc get route {{ customise_web_console.route_name }} -n {{ customise_web_console.namespace }} -o json | jq \".spec.host\" -r)"
   register: get_javascript_route
   failed_when: get_javascript_route.stderr != ""
+  when: console_config_check_namespace_exists.rc == 0
 
 - name: "download current openshift web console configmap"
   shell: "oc get configmaps {{ customise_web_console.web_console.configmap }} -n {{ customise_web_console.web_console.namespace }} -o json | jq '.data[\"{{ customise_web_console.web_console.configmap_key }}\"]' -r"
   register: get_web_console_config_result
   failed_when: get_web_console_config_result.stderr != ""
+  when: console_config_check_namespace_exists.rc == 0 
 
 - name: "Rewrite console configmap"
-  when: get_javascript_route.stdout + '/' + customise_web_console.javascript_filename in get_web_console_config_result.stdout
+  when: console_config_check_namespace_exists.rc == 0 and get_javascript_route.stdout + '/' + customise_web_console.javascript_filename in get_web_console_config_result.stdout
   block:
     - name: "write current openshift web console config to a temporary file"
       copy: content={{ get_web_console_config_result.stdout }} dest=/tmp/{{ customise_web_console.web_console.configmap_key }}
@@ -46,3 +53,4 @@
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
   changed_when: output.rc == 0
+  when: console_config_check_namespace_exists.rc == 0
