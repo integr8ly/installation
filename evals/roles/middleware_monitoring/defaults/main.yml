@@ -1,15 +1,15 @@
 ---
 monitoring_namespace: middleware-monitoring
 monitoring_tmp_dir: /tmp
-monitoring_repo_raw: "https://raw.githubusercontent.com/integr8ly/application-monitoring-operator/{{ middleware_monitoring_operator_version | default('master') }}"
+
 # Resources to create via the oc tool.
 monitoring_resources:
-- "{{ monitoring_repo_raw }}/deploy/operator_roles/service_account.yaml"
-- "{{ monitoring_repo_raw }}/deploy/operator_roles/role.yaml"
-- "{{ monitoring_repo_raw }}/deploy/operator_roles/role_binding.yaml"
-- "{{ monitoring_repo_raw }}/deploy/crds/ApplicationMonitoring.yaml"
-- "{{ monitoring_repo_raw }}/deploy/examples/ApplicationMonitoring.yaml"
-- "{{ monitoring_repo_raw }}/deploy/operator.yaml"
+- "{{ middleware_monitoring_operator_resources }}/operator_roles/service_account.yaml"
+- "{{ middleware_monitoring_operator_resources }}/operator_roles/role.yaml"
+- "{{ middleware_monitoring_operator_resources }}/operator_roles/role_binding.yaml"
+- "{{ middleware_monitoring_operator_resources }}/crds/ApplicationMonitoring.yaml"
+- "{{ middleware_monitoring_operator_resources }}/examples/ApplicationMonitoring.yaml"
+- "{{ middleware_monitoring_operator_resources }}/operator.yaml"
 
 monitoring_resource_templates:
 # Grafana resources
