@@ -1,0 +1,12 @@
+---
+backed_up_product_namespaces:
+  - "{{threescale_namespace}}"
+  - "{{rhsso_namespace}}"
+  - "{{che_namespace}}"
+  - "{{enmasse_namespace}}"
+  - "{{fuse_namespace}}"
+
+backup_credentials_secret: 'aws-credentials'
+backup_secret_namespace: 'default'
+backup_resources_cluster:
+  - "{{backup_resources_location}}/rbac/role.yaml"

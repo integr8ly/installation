@@ -1,0 +1,10 @@
+apiVersion: authorization.openshift.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ name }}
+roleRef:
+  name: backupjob
+subjects:
+  - kind: ServiceAccount
+    name: backupjob
+    namespace: {{ serviceaccount_namespace }}
