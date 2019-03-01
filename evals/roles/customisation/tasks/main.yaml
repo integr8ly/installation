@@ -163,7 +163,7 @@
   when: launcher
 
 - name: Get Fuse rest route
-  shell: oc get route/syndesis -o jsonpath='{.spec.host}' -n {{fuse_namespace}}
+  shell: oc get route/syndesis -o jsonpath='{.spec.host}' -n {{ eval_managed_fuse_namespace }}
   register: fuse_route_cmd
   when: fuse_online
 

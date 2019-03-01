@@ -140,6 +140,3 @@
 
 - name: configure logout
   import_tasks: logout.yml
-
-- name: apply roles to admins
-  import_tasks: apply_ocp_roles.yaml

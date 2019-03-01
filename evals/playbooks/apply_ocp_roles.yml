@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Apply ocp roles
+      include_role:
+        name: rhsso
+        tasks_from: apply_ocp_roles
