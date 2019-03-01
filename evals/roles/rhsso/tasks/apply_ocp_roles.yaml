@@ -4,7 +4,8 @@
   register: policy_cmd
   failed_when: policy_cmd.rc != 0
 
-- name: apply view roles to evals-admin user
-  shell: "oc adm policy add-cluster-role-to-user view {{rhsso_evals_admin_username}}"
+- name: apply {{ eval_managed_fuse_namespace }}/admin role to {{ rhsso_evals_admin_username }} user
+  shell: "oc adm policy add-role-to-user admin {{rhsso_evals_admin_username}} -n {{ eval_managed_fuse_namespace }}"
   register: policy_cmd
   failed_when: policy_cmd.rc != 0
+

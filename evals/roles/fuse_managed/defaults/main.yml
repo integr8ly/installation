@@ -1,3 +1,3 @@
 ---
-fuse_namespace: fuse
+fuse_namespace: "{{ eval_managed_fuse_namespace }}"
 fuse_cr_name: fuse-managed
