@@ -23,10 +23,7 @@ che_installer: 'https://raw.githubusercontent.com/redhat-developer/codeready-wor
 #controls whether enmasse is installed or not
 enmasse: true
 enmasse_version: '1.0.0.GA'
-# This is used to indicate where to pull the artifact from for installing EnMasse.
-enmasse_download_url: https://access.redhat.com/node/3869211/423/0
-# Controls whether to use a productised version. Use with 'enmasse_productised_download_url'
-is_productised_version: true
+enmasse_git_url: https://github.com/jboss-container-images/amq-online-images.git
 
 #controls whether fuse is installed or not
 fuse: true

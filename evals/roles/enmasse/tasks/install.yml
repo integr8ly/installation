@@ -1,37 +1,20 @@
 ---
-- name: "Check EnMasse artifact {{ enmasse_version }} exists"
-  stat:
-    path: "/tmp/enmasse-{{ enmasse_version }}.tgz"
-  register: enmasse_artifact
-
-- debug: msg="Using EnMasse artifact URL - {{ enmasse_download_url }}"
+- debug: msg="Using EnMasse git URL - {{ enmasse_git_url }}"
 
 - name: "Retrieve EnMasse {{ enmasse_version }} artifact"
-  get_url:
-    url: "{{ enmasse_download_url }}"
-    dest: "/tmp/enmasse-{{ enmasse_version }}.zip"
-  when:
-    enmasse_artifact.stat.exists == False
+  git:
+    repo: "{{ enmasse_git_url }}"
+    dest: /tmp/enmasse-{{ enmasse_version }}
+    version: "{{ enmasse_version }}"
 
 - name: Ensure tmp dir exists
   file:
     path: /tmp/enmasse-{{ enmasse_version }}
     state: directory
 
-- name: Extract EnMasse artifact contents
-  unarchive:
-    src: "/tmp/enmasse-{{ enmasse_version }}.zip"
-    dest: /tmp/enmasse-{{ enmasse_version }}
-
 - set_fact:
-    enmasse_playbook_location: enmasse-"{{ enmasse_version }}"/ansible/playbooks/openshift/deploy_all.yml
-    enmasse_inventory_path: /tmp/enmasse-{{ enmasse_version }}/ansible/inventory/
-  when: is_productised_version | bool  == False
-
-- set_fact:
-    enmasse_playbook_location: enmasse-"{{ enmasse_version }}"/amq-online-install/ansible/playbooks/openshift/deploy_all.yml
-    enmasse_inventory_path: /tmp/enmasse-{{ enmasse_version }}/amq-online-install/ansible/inventory/
-  when: is_productised_version | bool  == True
+    enmasse_playbook_location: enmasse-"{{ enmasse_version }}"/templates/ansible/playbooks/openshift/deploy_all.yml
+    enmasse_inventory_path: /tmp/enmasse-{{ enmasse_version }}/templates/ansible/inventory/
 
 - name: Generate EnMasse inventory hosts file
   template:
