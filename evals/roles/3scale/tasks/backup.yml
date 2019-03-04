@@ -8,21 +8,17 @@
     binding_name: threescale_backup_binding
     serviceaccount_namespace: '{{ threescale_namespace }}'
 
-# MySQL secret create
+# MySQL backup
 - name: Get MySQL password
   shell: oc get dc system-mysql -n {{ threescale_namespace }} -o jsonpath='{ .spec.template.spec.containers[?(@.name=="system-mysql")].env[?(@.name=="MYSQL_ROOT_PASSWORD")].value }'
   register: threescale_mysql_password
-
-- name: Get MySQL database
-  shell: oc get dc system-mysql -n {{ threescale_namespace }} -o jsonpath='{ .spec.template.spec.containers[?(@.name=="system-mysql")].env[?(@.name=="MYSQL_DATABASE")].value }'
-  register: threescale_mysql_database
 
 - name: Create the MySQL credentials secret for backup
   include_role:
     name: backup
     tasks_from: _create_mysql_secret.yml
   vars:
-    secret_name: threescale-mysql-secret
+    secret_name: '{{ threescale_backup_mysql_secret }}'
     secret_mysql_user: root
     secret_mysql_host: system-mysql
     secret_mysql_password: '{{ threescale_mysql_password.stdout }}'
@@ -32,7 +28,43 @@
     -p 'COMPONENT=mysql' \
     -p 'COMPONENT_SECRET_NAME={{ threescale_backup_mysql_secret }}' \
     -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
-    -p 'ENCRYPTION_SECRET_NAME={{ threescale_backup_encryption_secret }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
     -p 'NAME=mysql-backup' | oc create -n {{ threescale_namespace }} -f -
+  register: mysql_cronjob_create
+  failed_when: mysql_cronjob_create.stderr != '' and 'AlreadyExists' not in mysql_cronjob_create.stderr
+
+# Postgres backup
+- name: Get Postgres password
+  shell: oc get secret zync -n {{ threescale_namespace }} -o jsonpath='{ .data.ZYNC_DATABASE_PASSWORD }' | base64 --decode
+  register: threescale_postgres_password
+
+- name: Get Postgres username
+  shell: oc get dc zync-database -n {{ threescale_namespace }} -o jsonpath='{ .spec.template.spec.containers[?(@.name=="postgresql")].env[?(@.name=="POSTGRESQL_USER")].value }'
+  register: threescale_postgres_username
+
+- name: Get Postgres database
+  shell: oc get dc zync-database -n {{ threescale_namespace }} -o jsonpath='{ .spec.template.spec.containers[?(@.name=="postgresql")].env[?(@.name=="POSTGRESQL_DATABASE")].value }'
+  register: threescale_postgres_database
+
+- name: Create the MySQL credentials secret for backup
+  include_role:
+    name: backup
+    tasks_from: _create_postgres_secret.yml
+  vars:
+    secret_name: '{{ threescale_backup_postgres_secret }}'
+    secret_postgres_user: '{{ threescale_postgres_username.stdout }}'
+    secret_postgres_host: zync-database.3scale.svc
+    secret_postgres_database: '{{ threescale_postgres_database.stdout }}'
+    secret_postgres_password: '{{ threescale_postgres_password.stdout }}'
+
+- name: Create the 3scale Postgres CronJob
+  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
+    -p 'COMPONENT=postgres' \
+    -p 'COMPONENT_SECRET_NAME={{ threescale_backup_postgres_secret }}' \
+    -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
+    -p 'IMAGE={{ backup_image }}' \
+    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'NAME=postgres-backup' | oc create -n {{ threescale_namespace }} -f -
+  register: postgres_cronjob_create
+  failed_when: postgres_cronjob_create.stderr != '' and 'AlreadyExists' not in postgres_cronjob_create.stderr
