@@ -68,3 +68,14 @@
     -p 'NAME=postgres-backup' | oc create -n {{ threescale_namespace }} -f -
   register: postgres_cronjob_create
   failed_when: postgres_cronjob_create.stderr != '' and 'AlreadyExists' not in postgres_cronjob_create.stderr
+
+# Redis backup
+- name: Create the 3scale Redis CronJob
+  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
+    -p 'COMPONENT=3scale-redis' \
+    -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
+    -p 'IMAGE={{ backup_image }}' \
+    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'NAME=redis-backup' | oc create -n {{ threescale_namespace }} -f -
+  register: redis_cronjob_create
+  failed_when: redis_cronjob_create.stderr != '' and 'AlreadyExists' not in redis_cronjob_create.stderr
