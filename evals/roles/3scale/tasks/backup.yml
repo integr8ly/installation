@@ -34,5 +34,5 @@
     -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
     -p 'ENCRYPTION_SECRET_NAME={{ threescale_backup_encryption_secret }}' \
     -p 'IMAGE={{ backup_image }}' \
-    -p 'CRON_SCHEDULE="{{ backup_schedule }}"' \
+    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
     -p 'NAME=mysql-backup' | oc create -n {{ threescale_namespace }} -f -

@@ -25,7 +25,7 @@ core_install=true
 backup_restore_install=true
 
 # The namespace where the aws credential secret will be
-aws_credential_secret_namespace= ''
+aws_credential_secret_namespace=default
 
 # the secret containing the aws credentials
-aws_credential_secret_name= ''
+aws_credential_secret_name=s3-credentials
