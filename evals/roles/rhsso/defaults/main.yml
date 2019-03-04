@@ -46,5 +46,12 @@ rhsso_cluster_admin_password: Password1
 
 rhsso_plugins:
   - keycloak-metrics-spi
- 
 original_identityprovider_config_path: /etc/origin/master/idp-config.integreatly-original.yaml
+
+rhsso_backups:
+  - name: "daily-at-midnight"
+    schedule: "{{ backup_schedule }}"
+    encryption_key_secret_name: ""
+    aws_credentials_secret_name: "{{ backup_credentials_secret }}"
+    image: "quay.io/integreatly/backup-container"
+    image_tag: "{{ backup_image_tag }}"
