@@ -1,0 +1,19 @@
+---
+# Create ServiceAccount in the default namespace
+- name: Create ServiceAccount and role binding
+  include_role:
+    name: backup
+    tasks_from: _setup_service_account.yml
+  vars:
+    binding_name: resources_backup_binding
+    serviceaccount_namespace: default
+
+# Kube resources backup backup
+- name: Create the resources backup job
+  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
+    -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
+    -p 'IMAGE={{ backup_image }}' \
+    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'NAME=resources-backup' | oc create -n default -f -
+  register: resources_cronjob_create
+  failed_when: resources_cronjob_create.stderr != '' and 'AlreadyExists' not in resources_cronjob_create.stderr
