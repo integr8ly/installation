@@ -1,0 +1,9 @@
+---
+- hosts: managed
+  gather_facts: no
+
+- import_playbook: ../install.yml
+  when: core_install | default(true) | bool
+
+- import_playbook: ../backup_restore/install.yml
+  when: backup_restore_install | default(true) | bool

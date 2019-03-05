@@ -1,5 +1,4 @@
 ---
-threescale_namespace: "{{ eval_threescale_namespace | default('3scale') }}"
 threescale_route_suffix: ""
 
 #SSO
@@ -54,3 +53,7 @@ threescale_master_access_token_secret_name: 3scale-master-access-token
 
 enable_wildcard_route: false
 wildcard_policy_param: ""
+
+# Backups
+threescale_backup_mysql_secret: threescale-mysql-secret
+threescale_backup_postgres_secret: threescale-postgres-secret

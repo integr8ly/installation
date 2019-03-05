@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  gather_facts: no
+  roles:
+    - role: backup
+  tasks:
+    - include_vars: ../../roles/3scale/defaults/main.yml
+    - import_tasks: ../../roles/3scale/tasks/backup.yml

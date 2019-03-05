@@ -165,6 +165,5 @@
         route_suffix: "{{ eval_app_host }}"
         launcher_namespace: "{{ eval_launcher_namespace }}"
         che_namespace: "{{ eval_che_namespace }}"
-        threescale_namespace: "{{ eval_threescale_namespace }}"
         apicurio_namespace: "{{ eval_apicurito_namespace }}"
       tags: ['msbroker']

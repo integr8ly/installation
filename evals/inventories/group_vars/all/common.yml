@@ -15,7 +15,7 @@ eval_webapp_namespace: webapp
 eval_managed_fuse_namespace: fuse
 
 eval_seed_users_count: 50
-eval_threescale_namespace: 3scale
+threescale_namespace: 3scale
 eval_webapp_url_prefix: tutorial-web-app-webapp
 
 eval_threescale_enable_wildcard_route: false
