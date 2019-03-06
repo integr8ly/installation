@@ -6,7 +6,7 @@ backed_up_product_namespaces:
   - "{{enmasse_namespace}}"
   - "{{fuse_namespace}}"
 
-backup_credentials_secret: 'aws-credentials'
+backup_credentials_secret: 's3-credentials'
 backup_secret_namespace: 'default'
 backup_resources_cluster:
   - "{{backup_resources_location}}/rbac/role.yaml"
