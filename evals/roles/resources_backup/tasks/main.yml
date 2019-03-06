@@ -10,7 +10,7 @@
 
 # Delete the old backup cronjob in case this is a re-installation
 - name: Remove old cronjob
-  shell: oc delete cronjob {{ resources_cronjob_name }} --ignore-not-found
+  shell: oc delete cronjob {{ resources_cronjob_name }} --ignore-not-found -n default
 
 # Kube resources backup backup
 - name: Create the resources backup job
