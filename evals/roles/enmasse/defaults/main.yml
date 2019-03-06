@@ -9,3 +9,4 @@ enmasse_keycloak_admin_password: admin
 enmasse_authentication_services: ["standard"]
 enmasse_clean_artifacts: true
 enmasse_enable_monitoring: false
+enmasse_backup_postgres_secret: 'enmasse-postgres-secret'
