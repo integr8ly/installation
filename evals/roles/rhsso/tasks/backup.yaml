@@ -1,0 +1,13 @@
+---
+-
+  name: "check keycloak namespace exists"
+  shell: "oc get project {{ rhsso_namespace }} | grep {{ rhsso_namespace }} | wc -l"
+  register: "sso_namespace_exists"
+-
+  name: "Add backups to keycloak CR"
+  when: sso_namespace_exists.stdout != "0"
+  block:
+    -
+      name: "patch Keycloak CR"
+      shell: oc patch keycloak rhsso -n {{ rhsso_namespace }} --patch '{"spec":{"backups":{{ rhsso_backups | to_json }}}}' --type=merge
+
