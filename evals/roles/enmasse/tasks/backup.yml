@@ -32,10 +32,6 @@
     secret_postgres_database: '{{ enmasse_postgres_database.stdout }}'
     secret_postgres_password: '{{ enmasse_postgres_password.stdout }}'
 
-# Delete the old backup cronjob in case this is a re-installation
-- name: Remove old cronjob
-  shell: oc delete cronjob {{ enmasse_backup_cronjob_name }} --ignore-not-found -n {{ enmasse_namespace }}
-
 - name: Create the enmasse Postgres CronJob
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
     -p 'COMPONENT=postgres' \
@@ -43,6 +39,17 @@
     -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
-    -p 'NAME={{ enmasse_backup_cronjob_name }}' | oc create -n {{ enmasse_namespace }} -f -
+    -p 'NAME={{ enmasse_postgres_cronjob_name }}' | oc create -n default -f -
   register: postgres_cronjob_create
   failed_when: postgres_cronjob_create.stderr != '' and 'AlreadyExists' not in postgres_cronjob_create.stderr
+
+# PV backup
+- name: Create the enmasse PV CronJob
+  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
+    -p 'COMPONENT=enmasse_pv' \
+    -p 'IMAGE={{ backup_image }}' \
+    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'NAME={{ enmasse_pv_cronjob_name }}' | oc create -n default -f -
+  register: pv_cronjob_create
+  failed_when: pv_cronjob_create.stderr != '' and 'AlreadyExists' not in pv_cronjob_create.stderr
+
