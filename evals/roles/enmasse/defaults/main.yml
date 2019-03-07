@@ -10,5 +10,5 @@ enmasse_authentication_services: ["standard"]
 enmasse_clean_artifacts: true
 enmasse_enable_monitoring: false
 enmasse_backup_postgres_secret: 'enmasse-postgres-secret'
-enmasse_postgres_cronjob_name: 'postgres-backup'
-enmasse_pv_cronjob_name: 'pv-backup'
+enmasse_postgres_cronjob_name: 'enmasse-postgres-backup'
+enmasse_pv_cronjob_name: 'enmasse-pv-backup'
