@@ -30,6 +30,7 @@
     -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'PRODUCT_NAME=amqonline' \
     -p 'NAME={{ enmasse_postgres_cronjob_name }}' | oc apply -n default -f -
 
 # PV backup
@@ -39,5 +40,6 @@
     -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'PRODUCT_NAME=amqonline' \
     -p 'NAME={{ enmasse_pv_cronjob_name }}' | oc apply -n default -f -
 

@@ -6,4 +6,5 @@
     -p 'COMPONENT=resources' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'PRODUCT_NAME=openshift' \
     -p 'NAME={{ resources_cronjob_name }}' | oc apply -n default -f -

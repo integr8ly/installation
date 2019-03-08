@@ -21,6 +21,7 @@
     -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'PRODUCT_NAME=3scale' \
     -p 'NAME=mysql-backup' | oc apply -n default -f -
   register: mysql_cronjob_create
   failed_when: mysql_cronjob_create.stderr != '' and 'AlreadyExists' not in mysql_cronjob_create.stderr
@@ -56,6 +57,7 @@
     -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'PRODUCT_NAME=3scale' \
     -p 'NAME=postgres-backup' | oc apply -n default -f -
   register: postgres_cronjob_create
   failed_when: postgres_cronjob_create.stderr != '' and 'AlreadyExists' not in postgres_cronjob_create.stderr
@@ -67,6 +69,7 @@
     -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'PRODUCT_NAME=3scale' \
     -p 'NAME=redis-backup' | oc apply -n default -f -
   register: redis_cronjob_create
   failed_when: redis_cronjob_create.stderr != '' and 'AlreadyExists' not in redis_cronjob_create.stderr
