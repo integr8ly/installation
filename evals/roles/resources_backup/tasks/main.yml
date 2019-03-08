@@ -1,13 +1,4 @@
 ---
-# Create ServiceAccount in the default namespace
-- name: Create ServiceAccount and role binding
-  include_role:
-    name: backup
-    tasks_from: _setup_service_account.yml
-  vars:
-    binding_name: resources_backup_binding
-    serviceaccount_namespace: default
-
 # Kube resources backup backup
 - name: Create the resources backup job
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \

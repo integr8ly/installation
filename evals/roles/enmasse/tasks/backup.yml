@@ -1,13 +1,4 @@
 ---
-# Create ServiceAccount
-- name: Create ServiceAccount and role binding
-  include_role:
-    name: backup
-    tasks_from: _setup_service_account.yml
-  vars:
-    binding_name: enmasse_backup_binding
-    serviceaccount_namespace: '{{ enmasse_namespace }}'
-
 # Postgres backup
 - name: Get Postgres password
   shell: oc get secret postgresql -n {{ enmasse_namespace }} -o jsonpath='{ .data.database-password }' | base64 --decode

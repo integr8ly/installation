@@ -7,3 +7,9 @@
   register: backup_cluster_resource_create
   failed_when: backup_cluster_resource_create.stderr != '' and 'AlreadyExists' not in backup_cluster_resource_create.stderr
   with_items: "{{ backup_resources_cluster }}"
+
+- name: "Create default service account"
+  import_tasks: _setup_service_account.yml
+  vars:
+    binding_name: 'default-backup-binding'
+    serviceaccount_namespace: 'default'

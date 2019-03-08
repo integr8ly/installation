@@ -3,6 +3,15 @@
   name: "check keycloak namespace exists"
   shell: "oc get project {{ rhsso_namespace }} | grep {{ rhsso_namespace }} | wc -l"
   register: "sso_namespace_exists"
+
+- name: Create ServiceAccount and role binding
+  include_role:
+    name: backup
+    tasks_from: _setup_service_account.yml
+  vars:
+    binding_name: threescale_backup_binding
+    serviceaccount_namespace: '{{ rhsso_namespace }}'
+
 -
   name: "Add backups to keycloak CR"
   when: sso_namespace_exists.stdout != "0"
