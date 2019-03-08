@@ -1,6 +1,6 @@
 ---
-- name: "Check for aws credentials secret in {{backup_secret_namespace}} namespace"
-  shell: "oc get secret {{backup_credentials_secret}} -n {{backup_secret_namespace}}"
+- name: "Check for aws credentials secret in {{aws_s3_backup_secret_namespace}} namespace"
+  shell: "oc get secret {{aws_s3_backup_secret_name}} -n {{aws_s3_backup_secret_namespace}}"
 
 - name: "Create backup cluster role"
   shell: oc create -f {{ item }}

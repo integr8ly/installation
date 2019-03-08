@@ -29,4 +29,3 @@ eval_threescale_enable_wildcard_route: false
 
 # openshift login as some product installs wont work with system:admin
 create_cluster_admin: true
-backup_credentials_secret: 's3-credentials'

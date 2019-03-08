@@ -36,7 +36,7 @@
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
     -p 'COMPONENT=postgres' \
     -p 'COMPONENT_SECRET_NAME={{ enmasse_backup_postgres_secret }}' \
-    -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
+    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
     -p 'NAME={{ enmasse_postgres_cronjob_name }}' | oc apply -n default -f -
@@ -45,7 +45,7 @@
 - name: Create the enmasse PV CronJob
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
     -p 'COMPONENT=enmasse_pv' \
-    -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
+    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
     -p 'NAME={{ enmasse_pv_cronjob_name }}' | oc apply -n default -f -

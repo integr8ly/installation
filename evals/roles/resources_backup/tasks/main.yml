@@ -11,7 +11,7 @@
 # Kube resources backup backup
 - name: Create the resources backup job
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
-    -p 'BACKEND_SECRET_NAME={{ backup_credentials_secret }}' \
+    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'COMPONENT=resources' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \

@@ -27,7 +27,7 @@
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
     -p 'COMPONENT=mysql' \
     -p 'COMPONENT_SECRET_NAME={{ threescale_backup_mysql_secret }}' \
-    -p 'BACKEND_SECRET_NAME={{ backup_credentials_secret }}' \
+    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
     -p 'NAME=mysql-backup' | oc create -n {{ threescale_namespace }} -f -
@@ -62,7 +62,7 @@
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
     -p 'COMPONENT=postgres' \
     -p 'COMPONENT_SECRET_NAME={{ threescale_backup_postgres_secret }}' \
-    -p 'BACKEND_SECRET_NAME={{ backup_credentials_secret }}' \
+    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
     -p 'NAME=postgres-backup' | oc create -n {{ threescale_namespace }} -f -
@@ -73,7 +73,7 @@
 - name: Create the 3scale Redis CronJob
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
     -p 'COMPONENT=3scale-redis' \
-    -p 'BACKEND_SECRET_NAME={{ backup_credentials_secret }}' \
+    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
     -p 'NAME=redis-backup' | oc create -n {{ threescale_namespace }} -f -
