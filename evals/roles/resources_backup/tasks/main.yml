@@ -8,10 +8,6 @@
     binding_name: resources_backup_binding
     serviceaccount_namespace: default
 
-# Delete the old backup cronjob in case this is a re-installation
-- name: Remove old cronjob
-  shell: oc delete cronjob {{ resources_cronjob_name }} --ignore-not-found
-
 # Kube resources backup backup
 - name: Create the resources backup job
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
@@ -19,4 +15,4 @@
     -p 'COMPONENT=resources' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
-    -p 'NAME={{ resources_cronjob_name }}' | oc create -n default -f -
+    -p 'NAME={{ resources_cronjob_name }}' | oc apply -n default -f -

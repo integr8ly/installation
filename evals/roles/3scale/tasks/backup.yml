@@ -47,7 +47,7 @@
   shell: oc get dc zync-database -n {{ threescale_namespace }} -o jsonpath='{ .spec.template.spec.containers[?(@.name=="postgresql")].env[?(@.name=="POSTGRESQL_DATABASE")].value }'
   register: threescale_postgres_database
 
-- name: Create the MySQL credentials secret for backup
+- name: Create the Postgres credentials secret for backup
   include_role:
     name: backup
     tasks_from: _create_postgres_secret.yml
