@@ -1,11 +1,4 @@
 ---
-backed_up_product_namespaces:
-  - "{{threescale_namespace}}"
-  - "{{rhsso_namespace}}"
-  - "{{che_namespace}}"
-  - "{{enmasse_namespace}}"
-  - "{{fuse_namespace}}"
-
 aws_s3_backup_secret_name: 's3-credentials'
 aws_s3_backup_secret_namespace: 'default'
 component_backup_secret_namespace: 'default'
