@@ -52,6 +52,6 @@ rhsso_backups:
   - name: "daily-at-midnight"
     schedule: "{{ backup_schedule }}"
     encryption_key_secret_name: ""
-    aws_credentials_secret_name: "{{ backup_credentials_secret }}"
+    aws_credentials_secret_name: "{{ aws_s3_backup_secret_name }}"
     image: "quay.io/integreatly/backup-container"
     image_tag: "{{ backup_image_tag }}"

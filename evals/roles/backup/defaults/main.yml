@@ -1,12 +1,6 @@
 ---
-backed_up_product_namespaces:
-  - "{{threescale_namespace}}"
-  - "{{rhsso_namespace}}"
-  - "{{che_namespace}}"
-  - "{{enmasse_namespace}}"
-  - "{{fuse_namespace}}"
-
-backup_credentials_secret: 's3-credentials'
-backup_secret_namespace: 'default'
+aws_s3_backup_secret_name: 's3-credentials'
+aws_s3_backup_secret_namespace: 'default'
+component_backup_secret_namespace: 'default'
 backup_resources_cluster:
   - "{{backup_resources_location}}/rbac/role.yaml"
