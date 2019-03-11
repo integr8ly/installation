@@ -10,19 +10,19 @@
 
 # Postgres backup
 - name: Get the name of the postgres pod
-  shell: oc get pods --selector='component=postgres' -o jsonpath='{.items[0].metadata.name}'
+  shell: oc get pods -n {{ che_namespace }} --selector='component=postgres' -o jsonpath='{.items[0].metadata.name}'
   register: codeready_postgres_pod
 
 - name: Get Postgres password
-  shell: oc exec {{ codeready_postgres_pod.stdout }} printenv | grep POSTGRESQL_PASSWORD | awk -F"=" '{print $2}'
+  shell: oc exec -n {{ che_namespace }} {{ codeready_postgres_pod.stdout }} printenv | grep POSTGRESQL_PASSWORD | awk -F"=" '{print $2}'
   register: codeready_postgres_password
 
 - name: Get Postgres user
-  shell: oc exec {{ codeready_postgres_pod.stdout }} printenv | grep POSTGRESQL_USER | awk -F"=" '{print $2}'
+  shell: oc exec -n {{ che_namespace }} {{ codeready_postgres_pod.stdout }} printenv | grep POSTGRESQL_USER | awk -F"=" '{print $2}'
   register: codeready_postgres_user
 
 - name: Get Postgres database
-  shell: oc exec {{ codeready_postgres_pod.stdout }} printenv | grep POSTGRESQL_DATABASE | awk -F"=" '{print $2}'
+  shell: oc exec -n {{ che_namespace }} {{ codeready_postgres_pod.stdout }} printenv | grep POSTGRESQL_DATABASE | awk -F"=" '{print $2}'
   register: codeready_postgres_database
 
 - name: Create the Postgres credentials secret for backup
@@ -32,7 +32,7 @@
   vars:
     secret_name: '{{ codeready_backup_postgres_secret }}'
     secret_postgres_user: '{{ codeready_postgres_user.stdout }}'
-    secret_postgres_host: postgresql.codeready.svc
+    secret_postgres_host: postgres.codeready.svc
     secret_postgres_database: '{{ codeready_postgres_database.stdout }}'
     secret_postgres_password: '{{ codeready_postgres_password.stdout }}'
 

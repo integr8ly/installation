@@ -7,9 +7,11 @@
     - include_vars: ../../roles/3scale/defaults/main.yml
     - include_vars: ../../roles/resources_backup/defaults/main.yml
     - include_vars: ../../roles/enmasse/defaults/main.yml
+    - include_vars: ../../roles/code-ready/defaults/main.yml
     - import_tasks: ../../roles/3scale/tasks/backup.yml
     - import_tasks: ../../roles/resources_backup/tasks/main.yml
     - import_tasks: ../../roles/enmasse/tasks/backup.yml
+    - import_tasks: ../../roles/code-ready/tasks/backup.yml
     -
       include_role:
         name: rhsso
