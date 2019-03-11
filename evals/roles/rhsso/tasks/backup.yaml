@@ -9,8 +9,21 @@
     name: backup
     tasks_from: _setup_service_account.yml
   vars:
-    binding_name: rhsso_backup_binding
+    binding_name: rhsso-backup-binding
     serviceaccount_namespace: '{{ rhsso_namespace }}'
+
+- name: Prepare role binding
+  template:
+    src: ../../backup/templates/backup-role-binding.yml.j2
+    dest: /tmp/backup-role-binding.yml
+  vars:
+    name: rhsso-default-backup-binding
+    serviceaccount_namespace: '{{ rhsso_namespace }}'
+
+- name: Create backup role binding
+  shell: oc create -f /tmp/backup-role-binding.yml -n {{ aws_s3_backup_secret_namespace }}
+  register: backup_rolebinding_create
+  failed_when: backup_rolebinding_create.stderr != '' and 'AlreadyExists' not in backup_rolebinding_create.stderr
 
 -
   name: "Add backups to keycloak CR"
