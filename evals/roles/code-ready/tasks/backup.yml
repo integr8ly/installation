@@ -39,6 +39,7 @@
 - name: Create the enmasse Postgres CronJob
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
     -p 'COMPONENT=postgres' \
+    -p 'PRODUCT_NAME=codeready' \
     -p 'COMPONENT_SECRET_NAME={{ codeready_backup_postgres_secret }}' \
     -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
@@ -49,6 +50,7 @@
 - name: Create the codeready PV CronJob
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
     -p 'COMPONENT=codeready_pv' \
+    -p 'PRODUCT_NAME=codeready' \
     -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
     -p 'IMAGE={{ backup_image }}' \
     -p 'CRON_SCHEDULE={{ backup_schedule }}' \
