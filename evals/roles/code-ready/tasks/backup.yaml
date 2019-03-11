@@ -1,0 +1,55 @@
+---
+# Create ServiceAccount
+- name: Create ServiceAccount and role binding
+  include_role:
+    name: backup
+    tasks_from: _setup_service_account.yml
+  vars:
+    binding_name: codeready_backup_binding
+    serviceaccount_namespace: '{{ che_namespace }}'
+
+# Postgres backup
+- name: Get the name of the postgres pod
+  shell: oc get pods --selector='component=postgres' -o jsonpath='{.items[0].metadata.name}'
+  register: codeready_postgres_pod
+
+- name: Get Postgres password
+  shell: oc exec {{ codeready_postgres_pod.stdout }} printenv | grep POSTGRESQL_PASSWORD | awk -F"=" '{print $2}'
+  register: codeready_postgres_password
+
+- name: Get Postgres user
+  shell: oc exec {{ codeready_postgres_pod.stdout }} printenv | grep POSTGRESQL_USER | awk -F"=" '{print $2}'
+  register: codeready_postgres_user
+
+- name: Get Postgres database
+  shell: oc exec {{ codeready_postgres_pod.stdout }} printenv | grep POSTGRESQL_DATABASE | awk -F"=" '{print $2}'
+  register: codeready_postgres_database
+
+- name: Create the Postgres credentials secret for backup
+  include_role:
+    name: backup
+    tasks_from: _create_postgres_secret.yml
+  vars:
+    secret_name: '{{ codeready_backup_postgres_secret }}'
+    secret_postgres_user: '{{ codeready_postgres_user.stdout }}'
+    secret_postgres_host: postgresql.codeready.svc
+    secret_postgres_database: '{{ codeready_postgres_database.stdout }}'
+    secret_postgres_password: '{{ codeready_postgres_password.stdout }}'
+
+- name: Create the enmasse Postgres CronJob
+  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
+    -p 'COMPONENT=postgres' \
+    -p 'COMPONENT_SECRET_NAME={{ codeready_backup_postgres_secret }}' \
+    -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
+    -p 'IMAGE={{ backup_image }}' \
+    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'NAME={{ codeready_postgres_cronjob_name }}' | oc apply -n default -f -
+
+# PV backup
+- name: Create the codeready PV CronJob
+  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
+    -p 'COMPONENT=codeready_pv' \
+    -p 'BACKEND_SECRET_NAME={{ aws_credential_secret_name }}' \
+    -p 'IMAGE={{ backup_image }}' \
+    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'NAME={{ codeready_pv_cronjob_name }}' | oc apply -n default -f -

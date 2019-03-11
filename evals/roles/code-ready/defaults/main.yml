@@ -32,3 +32,8 @@ che_keycloak_image_name: 'docker.io/eclipse/che-keycloak'
 che_keycloak_require_update_password: true
 che_keycloak_update_password: 'admin'
 che_keycloak_port: 443
+
+#backup
+codeready_backup_postgres_secret: 'codeready-postgres-secret'
+codeready_postgres_cronjob_name: 'codeready-postgres-backup'
+codeready_pv_cronjob_name: 'codeready-pv-backup'
