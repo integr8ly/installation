@@ -11,7 +11,7 @@
   vars:
     secret_name: '{{ threescale_backup_mysql_secret }}'
     secret_mysql_user: root
-    secret_mysql_host: system-mysql
+    secret_mysql_host: 'system-mysql.{{ threescale_namespace }}.svc'
     secret_mysql_password: '{{ threescale_mysql_password.stdout }}'
 
 - name: Create the 3scale MySQL CronJob
