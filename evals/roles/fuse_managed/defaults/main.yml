@@ -1,3 +1,4 @@
 ---
 fuse_namespace: "{{ eval_managed_fuse_namespace }}"
 fuse_cr_name: fuse-managed
+fuse_backup_postgres_secret_name: fuse-postgres-auth
