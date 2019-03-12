@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    monitoring-key: middleware
+  name: backup-monitoring-alerts
+spec:
+  groups:
+    - name: general.rules
+      rules:
+      - alert: JobRunningTimeExceeded
+        annotations:
+          message: Job {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.job {{ '}}' }} has been running for longer than 5 minutes
+        expr: |
+          time() - (max(kube_job_status_active * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"}) BY (job) * ON(job) GROUP_RIGHT() max(kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"}) BY (job, namespace, label_cronjob_name) > 0) > 300
+        labels:
+          severity: critical
+      - alert: CronJobSuspended
+        annotations:
+          message: CronJob {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.cronjob {{ '}}' }} is suspended
+        expr: |
+          kube_cronjob_labels{ label_monitoring_key="middleware" } * ON (cronjob) GROUP_RIGHT() kube_cronjob_spec_suspend > 0
+        for: 60s
+        labels:
+          severity: critical
+      - alert: CronJobNotRunInThreshold
+        annotations:
+          message: CronJob {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.label_cronjob_name {{ '}}' }} has not started a Job in
+        expr: |
+          (time() - (max( kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"} ) BY (job, label_cronjob_name) == ON(label_cronjob_name) GROUP_LEFT() max( kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"} ) BY (label_cronjob_name))) > 60*60*25
+      {% for cronjob in expected_cronjobs %}
+- alert: CronJobExists_{{ cronjob }}
+        annotations:
+          message: CronJob {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.cronjob {{ '}}' }} does not exist
+        expr: |
+          absent(kube_cronjob_info{cronjob="{{ cronjob }}", namespace="default"})
+        for: 60s
+        labels:
+          severity: critical
+      {% endfor %}

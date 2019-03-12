@@ -4,3 +4,5 @@ aws_s3_backup_secret_namespace: 'default'
 component_backup_secret_namespace: 'default'
 backup_resources_cluster:
   - "{{backup_resources_location}}/rbac/role.yaml"
+
+monitoring_namespace: middleware-monitoring
