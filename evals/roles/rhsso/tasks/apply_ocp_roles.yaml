@@ -3,6 +3,7 @@
   shell: "oc adm policy add-cluster-role-to-user cluster-admin {{rhsso_cluster_admin_username}}"
   register: policy_cmd
   failed_when: policy_cmd.rc != 0
+  when: create_cluster_admin | bool
 
 - name: apply {{ eval_managed_fuse_namespace }}/view role to {{ rhsso_evals_admin_username }} user
   shell: "oc adm policy add-role-to-user view {{rhsso_evals_admin_username}} -n {{ eval_managed_fuse_namespace }}"
