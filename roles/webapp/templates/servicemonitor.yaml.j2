@@ -1,17 +1,17 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
- metadata:
-  labels:
-    monitoring-key: middleware
-  name: tutorial-webapp-monitoring
-  namespace: webapp
- spec:
-  endpoints:
-   - path: /metrics
-     port: http
-     scheme: http
-     tlsConfig:
-       insecureSkipVerify: true
- selector:
-   matchLabels:
-     app: tutorial-web-app
+metadata:
+ labels:
+   monitoring-key: middleware
+ name: tutorial-webapp-monitoring
+ namespace: webapp
+spec:
+ endpoints:
+  - path: /metrics
+    port: http
+    scheme: http
+    tlsConfig:
+      insecureSkipVerify: true
+selector:
+  matchLabels:
+    app: tutorial-web-app
