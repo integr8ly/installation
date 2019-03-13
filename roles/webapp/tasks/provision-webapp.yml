@@ -56,6 +56,15 @@
   template:
     src: oauthclient.yaml.j2
     dest: /tmp/oauthclient.yaml
+- name: Generate template for Service Monitor
+  tempfile:
+   src: servicemonitor.yaml.j2
+   dest: /tmp/servicemonitor.yaml.j2
+
+- name: Create Service Monitor custom resource
+  shell: oc create -f /tmp/servicemonitor.yaml -n {{ webapp_namespace }}
+  register: webapp_servicemonitor_check_cmd
+  failed_when: webapp_servicemonitor_check_cmd.stderr != '' and 'AlreadyExists' not in webapp_servicemonitor_check_cmd.stderr
 
 - name: Check if OpenShift OAuth client already exists
   shell: oc get oauthclient {{ webapp_client_id }} -n {{ eval_rhsso_namespace }}
