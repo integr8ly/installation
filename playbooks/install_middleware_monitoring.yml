@@ -13,3 +13,7 @@
       name: gitea
       tasks_from: monitoring
     when: (middleware_monitoring | default(true) | bool) and gitea
+  - include_role:
+      name: webapp
+      tasks_from: monitoring
+    when: (middleware_monitoring | default(true) | bool) and webapp

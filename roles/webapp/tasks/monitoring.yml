@@ -1,0 +1,9 @@
+---
+- name: Create template for Service Monitor
+  template:
+   src: servicemonitor.yaml.j2
+   dest: /tmp/servicemonitor.yaml
+
+- name: Create Service Monitor resource
+  shell: oc apply -f /tmp/servicemonitor.yaml -n {{ webapp_namespace }}
+  
