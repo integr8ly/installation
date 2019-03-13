@@ -1,14 +1,17 @@
 ---
 
 - name: Retrieve all CronJobs to be monitored
-  shell: oc get cronjob --all-namespaces --selector=monitoring-key=middleware -o jsonpath={.items[*].metadata.name}
+  shell: oc get cronjob --all-namespaces --selector=monitoring-key=middleware -o json | jq '.items[].metadata' | jq . -s -r
   register: get_monitored_cronjobs
+  failed_when: false
+
+- debug: msg="{{ get_monitored_cronjobs.stdout }}"
 
 - template:
     src: backup-monitoring-alerts.yml.j2
     dest: /tmp/backup-monitoring-alerts.yml
   vars:
-    expected_cronjobs: "{{ get_monitored_cronjobs.stdout.split(' ') }}"
+    expected_cronjobs: "{{ get_monitored_cronjobs.stdout | from_json }}"
 
 - name: Create CronJob Alerts
   shell: oc create -f /tmp/backup-monitoring-alerts.yml -n {{ monitoring_namespace }}
