@@ -96,3 +96,7 @@ backup_version: master
 backup_resources_location: 'https://raw.githubusercontent.com/integr8ly/backup-container-image/{{ backup_version }}/templates/openshift'
 backup_image: quay.io/integreatly/backup-container:{{ backup_version }}
 backup_schedule: '30 2 * * *'
+
+# Supported oc versions
+supported_oc_versions:
+  - "3.11"
