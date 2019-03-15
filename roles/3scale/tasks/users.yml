@@ -29,10 +29,6 @@
     status_code: [200]
   when: default_admin_user_xml is defined and default_admin_user_xml.matches is defined
 
-- name: Create evaluation user
-  include: _user.yml email={{ threescale_evals_email }} username={{ threescale_evals_username }} password={{ threescale_evals_password }} 
-  when: rhsso_seed_users_count|int > 0
-
 - name: Create evaluation admin user 
   include: _user.yml email={{ rhsso_evals_admin_email }} username={{ rhsso_evals_admin_username }} password={{ rhsso_evals_admin_password }}
 

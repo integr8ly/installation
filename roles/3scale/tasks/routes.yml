@@ -1,11 +1,6 @@
 ---
 
 #Walkthrough 2 routes
-- name: Create evaluation user wt2 route
-  include_tasks: _wt2_route.yml
-  vars:
-    username: "{{ threescale_evals_username }}"
-
 - name: Create evaluation admin user wt2 route
   include_tasks: _wt2_route.yml
   vars:
