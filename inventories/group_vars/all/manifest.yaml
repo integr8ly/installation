@@ -92,7 +92,7 @@ msbroker_release_tag: 'v0.0.1'
 msbroker_template: 'https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_release_tag }}/templates/broker.template.yaml'
 
 # information about backups
-backup_version: master
+backup_version: '99.99.99'
 backup_resources_location: 'https://raw.githubusercontent.com/integr8ly/backup-container-image/{{ backup_version }}/templates/openshift'
 backup_image: quay.io/integreatly/backup-container:{{ backup_version }}
 backup_schedule: '0 0 * * *'
