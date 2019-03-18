@@ -1,0 +1,48 @@
+
+- name: "Get route to hosted javascript file"
+  shell: "echo 'https://'$(oc get route {{ customise_web_console.route_name }} -n {{ customise_web_console.namespace }} -o json | jq \".spec.host\" -r)"
+  register: get_javascript_route
+  failed_when: get_javascript_route.stderr != ""
+
+- name: "download current openshift web console configmap"
+  shell: "oc get configmaps {{ customise_web_console.web_console.configmap }} -n {{ customise_web_console.web_console.namespace }} -o json | jq '.data[\"{{ customise_web_console.web_console.configmap_key }}\"]' -r"
+  register: get_web_console_config_result
+  failed_when: get_web_console_config_result.stderr != ""
+
+- name: "Rewrite console configmap"
+  when: get_javascript_route.stdout + '/' + customise_web_console.javascript_filename in get_web_console_config_result.stdout
+  block:
+    - name: "write current openshift web console config to a temporary file"
+      copy: content={{ get_web_console_config_result.stdout }} dest=/tmp/{{ customise_web_console.web_console.configmap_key }}
+
+    - name: "get current scriptURLs"
+      shell: "yq r /tmp/{{ customise_web_console.web_console.configmap_key }} extensions.scriptURLs"
+      register: current_scripts
+
+    - name: "generate list of urls to delete"
+      set_fact:
+        delete_list:
+          - "{{ '- ' + get_javascript_route.stdout + '/' + customise_web_console.javascript_filename }}"
+          -
+    - name: "clean urls list"
+      set_fact:
+        clean_urls: "{{ current_scripts.stdout_lines | difference(delete_list) }}"
+
+    - name: "remove all scriptURLs from /tmp/{{ customise_web_console.web_console.configmap_key }}"
+      shell: "yq d -i /tmp/{{ customise_web_console.web_console.configmap_key }} extensions.scriptURLs"
+
+    - name: "add all the clean urls back to the config"
+      shell: "yq w -i /tmp/{{ customise_web_console.web_console.configmap_key }} extensions.scriptURLs[+] {{ item | replace('- ', '') }}"
+      with_items: "{{ clean_urls }}"
+
+    - name: "delete {{ customise_web_console.web_console.namespace }}/{{ customise_web_console.web_console.configmap }} configmap"
+      shell: "oc delete configmap {{ customise_web_console.web_console.configmap }} -n {{ customise_web_console.web_console.namespace }}"
+
+    - name: "update {{ customise_web_console.web_console.namespace }}/{{ customise_web_console.web_console.configmap }} configmap"
+      shell: "oc create configmap {{ customise_web_console.web_console.configmap }} --from-file=/tmp/{{ customise_web_console.web_console.configmap_key }} -n {{ customise_web_console.web_console.namespace }}"
+
+- name: "Delete {{ customise_web_console.namespace }} namespace"
+  shell: "oc delete namespace {{ customise_web_console.namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
+  changed_when: output.rc == 0
