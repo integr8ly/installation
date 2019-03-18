@@ -44,7 +44,7 @@ fuse_online_crd_resources: 'https://raw.githubusercontent.com/syndesisio/fuse-on
 launcher: true
 # https://github.com/fabric8-launcher/launcher-openshift-templates/issues/46
 # we will need to set this during a release to the latest commit hash on master to ensure it doesn't change under us example: c1efdf1
-launcher_backend_image_tag: 'b006e49'
+launcher_backend_image_tag: '7a7fd07'
 # we will need to set this during a release to the latest commit hash on master to ensure it doesn't change under us example: 0a941c1
 launcher_frontend_image_tag: 'a00064f'
 launcher_version: '7224e235226ffa42135f148bacc409e9f7f402e4'
