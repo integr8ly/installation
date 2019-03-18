@@ -52,6 +52,14 @@ spec:
         for: 5m
         labels:
           severity: critical
+      - alert: AMQOnlinePodCount
+        annotations:
+          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected at least 6 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", namespace="enmasse"})) or sum(kube_pod_status_ready{condition="true", namespace="enmasse"}) < 6
+        for: 5m
+        labels:
+          severity: critical
       - alert: ApicuritoPodCount
         annotations:
           message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 2 pods.
