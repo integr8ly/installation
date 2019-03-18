@@ -1,6 +1,6 @@
 ---
 rhsso_keycloak_operator_image_url: "quay.io/integreatly/keycloak-operator"
-rhsso_keycloak_operator_image_tag: release-1.2.1
+rhsso_keycloak_operator_image_tag: release-1.2.2
 
 rhsso_namespace: "{{ eval_rhsso_namespace | default('sso') }}"
 
@@ -39,8 +39,8 @@ rhsso_seed_users_name_format: evals%02d
 rhsso_seed_users_count: "{{ eval_seed_users_count }}"
 rhsso_seed_users_password: Password1
 
-rhsso_evals_email: evals@example.com  
-rhsso_evals_username: "{{ rhsso_evals_email }}" 
+rhsso_evals_email: evals@example.com
+rhsso_evals_username: "{{ rhsso_evals_email }}"
 rhsso_evals_password: Password1
 
 rhsso_evals_admin_email: customer-admin@example.com
@@ -53,5 +53,5 @@ rhsso_cluster_admin_password: Password1
 
 rhsso_plugins:
   - keycloak-metrics-spi
-  
+
 original_identity_provider_path: /tmp/original_identity_provider_config
