@@ -24,6 +24,13 @@
     threescale_dashboard_url: "https://{{ threescale_host_cmd.stdout}}"
   when: threescale
 
+- name: Get shared Fuse dashboard url
+  shell: oc get route/syndesis -o jsonpath='{.spec.host}' -n {{ fuse_namespace }}
+  register: fuse_host_cmd
+  when: fuse
+- set_fact:
+    fuse_dashboard_url: "https://{{ fuse_host_cmd.stdout}}"
+
 - name: Get apicurito dashboard url
   shell: oc get route/apicurito -o jsonpath='{.spec.host}' -n {{ apicurito_namespace }}
   register: apicurito_host_cmd
@@ -74,6 +81,7 @@
   --param=CHE_DASHBOARD_URL={{ che_dashboard_url }} \
   --param=THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url }} \
   --param=APICURIO_DASHBOARD_URL={{ apicurito_dashboard_url }} \
+  --param=SHARED_FUSE_DASHBOARD_URL={{ fuse_dashboard_url }} \
   --param=FUSE_OPERATOR_RESOURCES_URL={{ msbroker_fuse_operator_resources_url }} \
   --param=IMAGE_ORG={{ msbroker_image_org }} \
   --param=IMAGE_TAG={{ msbroker_release_tag }} \
