@@ -46,7 +46,7 @@ launcher: true
 # we will need to set this during a release to the latest commit hash on master to ensure it doesn't change under us example: c1efdf1
 launcher_backend_image_tag: '7a7fd07'
 # we will need to set this during a release to the latest commit hash on master to ensure it doesn't change under us example: 0a941c1
-launcher_frontend_image_tag: 'a00064f'
+launcher_frontend_image_tag: '7b1c127'
 launcher_version: '7224e235226ffa42135f148bacc409e9f7f402e4'
 launcher_template: 'https://raw.githubusercontent.com/fabric8-launcher/launcher-openshift-templates/{{launcher_version}}/openshift/launcher-template.yaml'
 launcher_sso_template: https://raw.githubusercontent.com/jboss-container-images/redhat-sso-7-openshift-image/v7.3.0.GA/templates/sso73-x509-postgresql-persistent.json
@@ -72,7 +72,7 @@ gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-ope
 webapp: true
 #below vars are not currently used but reflect the current state. In the future they will be used when we source resources from outside of the installer
 webapp_version: '2.4.1'
-webapp_operator_release_tag: 'v0.0.6'
+webapp_operator_release_tag: 'v0.0.7'
 webapp_operator_resources: 'https://raw.githubusercontent.com/integr8ly/tutorial-web-app-operator/{{webapp_operator_release_tag}}/deploy/'
 
 #controls whether apicurito is installed or not
