@@ -1,0 +1,43 @@
+---
+# Create ServiceAccount
+- name: Create ServiceAccount and role binding
+  include_role:
+    name: backup
+    tasks_from: _setup_service_account.yml
+  vars:
+    binding_name: launcher_online_backup_binding
+    serviceaccount_namespace: '{{ launcher_namespace }}'
+
+# Postgres backup
+- name: Get launcher Postgres username
+  shell: oc get dc/launcher-sso-postgresql -n {{ launcher_namespace }} -o jsonpath='{ ..env[?(@.name=="POSTGRESQL_USER")].value }'
+  register: postgres_username
+
+- name: Get launcher Postgres password
+  shell: oc get dc/launcher-sso-postgresql -n {{ launcher_namespace }} -o jsonpath='{ ..env[?(@.name=="POSTGRESQL_PASSWORD")].value }'
+  register: postgres_password
+
+- name: Get launcher Postgres database
+  shell: oc get dc/launcher-sso-postgresql -n {{ launcher_namespace }} -o jsonpath='{ ..env[?(@.name=="POSTGRESQL_DATABASE")].value }'
+  register: postgres_database
+
+- name: Create the Postgres credentials secret for launcher backup
+  include_role:
+    name: backup
+    tasks_from: _create_postgres_secret.yml
+  vars:
+    secret_name: "{{ launcher_backup_postgres_secret_name }}"
+    secret_postgres_user: "{{ postgres_username.stdout }}"
+    secret_postgres_host: "launcher-sso-postgresql.launcher.svc"
+    secret_postgres_database: '{{ postgres_database.stdout }}'
+    secret_postgres_password: "{{ postgres_password.stdout }}"
+
+- name: Create the launcher Postgres CronJob
+  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
+    -p 'COMPONENT=postgres' \
+    -p 'COMPONENT_SECRET_NAME={{ launcher_backup_postgres_secret_name }}' \
+    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
+    -p 'IMAGE={{ backup_image }}' \
+    -p 'PRODUCT_NAME=launcher' \
+    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
+    -p 'NAME=launcher-postgres-backup' | oc apply -n default -f -
