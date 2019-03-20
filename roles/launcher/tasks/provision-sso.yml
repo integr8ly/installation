@@ -19,8 +19,8 @@
   failed_when: false
   register: launcher_sso_exists_cmd
 
-- name: "Ensure {{ rhsso_imagestream_name }} tag is present for redhat sso in openshift namespace"
-  shell: oc tag --source=docker {{ rhsso_imagestream_image }} openshift/{{ rhsso_imagestream_name }}
+- name: "Ensure {{ launcher_sso_imagestream_name }} tag is present for redhat sso in openshift namespace"
+  shell: oc tag --source=docker {{ launcher_sso_imagestream_image }} openshift/{{ launcher_sso_imagestream_name }}
   register: result
   until: result.stdout
   retries: 50
@@ -29,8 +29,8 @@
   changed_when: False
   when: launcher_sso_force_image_streams_update
 
-- name: "Ensure {{ rhsso_imagestream_name }} tag has an imported image in openshift namespace"
-  shell: oc -n openshift import-image {{ rhsso_imagestream_name }}
+- name: "Ensure {{ launcher_sso_imagestream_name }} tag has an imported image in openshift namespace"
+  shell: oc -n openshift import-image {{ launcher_sso_imagestream_name }}
   register: result
   until: result.stdout
   retries: 50
