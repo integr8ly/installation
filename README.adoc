@@ -226,13 +226,13 @@ $ ansible-playbook -i inventories/hosts playbooks/rhsso.yml
 
 Upon completion, a new identity provider named *rh_sso* should be presented on the Openshift master console login screen.
 
-WARNING: The default login credentials are `evals@example.com` / `Password1`
+WARNING: The default login credentials are `admin@example.com` / `Password1`
 
 To configure custom account credentials, simply override the rhsso role environment variables by specifying user parameters as part of the install command:
 
 [source,shell]
 ----
-$ ansible-playbook -i inventories/hosts playbooks/rhsso.yml -e rhsso_evals_username=<username> -e rhsso_evals_password=<password>
+$ ansible-playbook -i inventories/hosts playbooks/rhsso.yml -e rhsso_evals_admin_username=<username> -e rhsso_evals_admin_password=<password>
 ----
 
 === Run EnMasse install playbook
@@ -348,7 +348,7 @@ image::https://user-images.githubusercontent.com/7708031/48856461-5884f100-edae-
 
 Also, with the *evals* users created by the installer is possible to check the services in the OpenShift catalog.
 
-IMPORTANT: The default login credentials are `evals@example.com` / `Password1`
+IMPORTANT: The default login credentials are `admin@example.com` / `Password1`
 
 Following an image of this console as example.
 
