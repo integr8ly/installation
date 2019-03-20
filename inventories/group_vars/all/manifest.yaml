@@ -88,7 +88,7 @@ monitoring_label_value: 'middleware'
 middleware_monitoring_operator_release_tag: '0.0.4'
 middleware_monitoring_operator_resources: 'https://raw.githubusercontent.com/integr8ly/application-monitoring-operator/{{ middleware_monitoring_operator_release_tag }}/deploy'
 
-msbroker_release_tag: 'v0.0.1'
+msbroker_release_tag: 'v0.0.2'
 msbroker_template: 'https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_release_tag }}/templates/broker.template.yaml'
 
 # information about backups
