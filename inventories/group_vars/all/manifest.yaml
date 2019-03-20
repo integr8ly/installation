@@ -15,7 +15,7 @@ threescale_template_s3: 'https://raw.githubusercontent.com/3scale/3scale-amp-ope
 #controls whether che is installed or not
 #note che cannot be installed without launcher being present currently
 che: true
-che_version: '1.0.0.GA'
+che_version: '1.0.1.GA'
 # by default the GA installer uses the :latest tag so we need to set the tagged version in the config
 che_server_image: 'registry.access.redhat.com/codeready-workspaces/server:1.0'
 che_operator_image: 'registry.access.redhat.com/codeready-workspaces/server-operator:1.0'
