@@ -4,3 +4,19 @@ aws_s3_backup_secret_namespace: 'default'
 component_backup_secret_namespace: 'default'
 backup_resources_cluster:
   - "{{backup_resources_location}}/rbac/role.yaml"
+
+backup_expected_cronjobs:
+  default:
+    - 3scale-mysql-backup
+    - 3scale-postgres-backup
+    - 3scale-redis-backup
+    - codeready-postgres-backup
+    - codeready-pv-backup
+    - enmasse-postgres-backup
+    - enmasse-pv-backup
+    - fuse-postgres-backup
+    - resources-backup
+  sso:
+    - daily-at-midnight
+
+monitoring_namespace: middleware-monitoring

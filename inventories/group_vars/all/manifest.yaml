@@ -57,7 +57,7 @@ rhsso_version: '7.3.0.GA'
 #below vars not currently used but will be used to pull in the new versions of RH-SSO once we decouple the resources from the installer.
 rhsso_imagestream_name: redhat-sso73-openshift:1.0
 rhsso_imagestream_image: registry.access.redhat.com/redhat-sso-7/sso73-openshift:1.0
-rhsso_operator_release_tag: 'v1.0.0'
+rhsso_operator_release_tag: 'v1.1.0'
 rhsso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
 rhsso_namespace: 'sso'
 
@@ -85,7 +85,7 @@ nexus_version: '2.14.11-01'
 
 monitoring_label_name: 'monitoring-key'
 monitoring_label_value: 'middleware'
-middleware_monitoring_operator_release_tag: '0.0.3'
+middleware_monitoring_operator_release_tag: '0.0.4'
 middleware_monitoring_operator_resources: 'https://raw.githubusercontent.com/integr8ly/application-monitoring-operator/{{ middleware_monitoring_operator_release_tag }}/deploy'
 
 msbroker_release_tag: 'v0.0.1'
@@ -95,4 +95,4 @@ msbroker_template: 'https://raw.githubusercontent.com/integr8ly/managed-service-
 backup_version: master
 backup_resources_location: 'https://raw.githubusercontent.com/integr8ly/backup-container-image/{{ backup_version }}/templates/openshift'
 backup_image: quay.io/integreatly/backup-container:{{ backup_version }}
-backup_schedule: '0 0 * * *'
+backup_schedule: '30 2 * * *'

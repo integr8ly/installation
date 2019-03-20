@@ -21,3 +21,7 @@
         name: rhsso
         tasks_from: backup.yaml
       tags: ['rhsso']
+    - include_role:
+        name: backup
+        tasks_from: monitoring.yml
+      when: backup_restore_monitoring | default(true) | bool

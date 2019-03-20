@@ -51,3 +51,5 @@ rhsso_backups:
     aws_credentials_secret_name: "{{ aws_s3_backup_secret_name }}"
     image: "quay.io/integreatly/backup-container"
     image_tag: "{{ backup_version }}"
+    labels:
+      monitoring-key: middleware
