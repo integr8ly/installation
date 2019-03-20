@@ -24,19 +24,19 @@
     threescale_dashboard_url: "https://{{ threescale_host_cmd.stdout}}"
   when: threescale
 
-- name: Get shared Fuse dashboard url
-  shell: oc get route/syndesis -o jsonpath='{.spec.host}' -n {{ fuse_namespace }}
-  register: fuse_host_cmd
-  when: fuse
-- set_fact:
-    fuse_dashboard_url: "https://{{ fuse_host_cmd.stdout}}"
-
 - name: Get apicurito dashboard url
   shell: oc get route/apicurito -o jsonpath='{.spec.host}' -n {{ apicurito_namespace }}
   register: apicurito_host_cmd
 - set_fact:
     apicurito_dashboard_url: "https://{{ apicurito_host_cmd.stdout}}"
   when: apicurito
+
+- name: Get shared Fuse dashboard url
+  shell: oc get route/syndesis -o jsonpath='{.spec.host}' -n {{ fuse_namespace }}
+  register: fuse_host_cmd
+  when: fuse
+- set_fact:
+    fuse_dashboard_url: "https://{{ fuse_host_cmd.stdout}}"
 
 # Create managed-service-broker namespace
 - name: Check if {{ msbroker_namespace }} namespace exists
