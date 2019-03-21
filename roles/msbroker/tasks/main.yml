@@ -31,6 +31,13 @@
     apicurito_dashboard_url: "https://{{ apicurito_host_cmd.stdout}}"
   when: apicurito
 
+- name: Get shared Fuse dashboard url
+  shell: oc get route/syndesis -o jsonpath='{.spec.host}' -n {{ fuse_namespace }}
+  register: fuse_host_cmd
+  when: fuse
+- set_fact:
+    fuse_dashboard_url: "https://{{ fuse_host_cmd.stdout}}"
+
 # Create managed-service-broker namespace
 - name: Check if {{ msbroker_namespace }} namespace exists
   shell: oc get namespace {{ msbroker_namespace }}
@@ -47,14 +54,8 @@
   failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
   changed_when: namespace_patch.rc == 0
 
-- name: Ensure CRDs do not exist
-  shell: "oc delete -f {{ item }}"
-  register: output
-  failed_when: false
-  with_items: "{{ msbroker_required_crds }}"
-
 - name: Create CRDs
-  shell: "oc create -f {{ item }}"
+  shell: "oc apply -f {{ item }}"
   with_items: "{{ msbroker_required_crds }}"
 
 - set_fact:
@@ -74,6 +75,7 @@
   --param=CHE_DASHBOARD_URL={{ che_dashboard_url }} \
   --param=THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url }} \
   --param=APICURIO_DASHBOARD_URL={{ apicurito_dashboard_url }} \
+  --param=SHARED_FUSE_DASHBOARD_URL={{ fuse_dashboard_url }} \
   --param=FUSE_OPERATOR_RESOURCES_URL={{ msbroker_fuse_operator_resources_url }} \
   --param=IMAGE_ORG={{ msbroker_image_org }} \
   --param=IMAGE_TAG={{ msbroker_release_tag }} \
