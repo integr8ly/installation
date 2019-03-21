@@ -25,7 +25,7 @@ core_install=true
 backup_restore_install=true
 
 # The namespace where the aws credential secret will be
-aws_s3_backup_secret_namespace=default
+aws_s3_backup_secret_namespace=openshift-integreatly-backups
 
 # the secret containing the aws credentials
 aws_s3_backup_secret_name=s3-credentials

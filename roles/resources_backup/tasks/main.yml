@@ -1,10 +1,10 @@
 ---
 # Kube resources backup backup
 - name: Create the resources backup job
-  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
-    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
-    -p 'COMPONENT=resources' \
-    -p 'IMAGE={{ backup_image }}' \
-    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
-    -p 'PRODUCT_NAME=openshift' \
-    -p 'NAME={{ resources_cronjob_name }}' | oc apply -n default -f -
+  include_role:
+    name: backup
+    tasks_from: _create_backup_cron_job.yml
+  vars:
+    cronjob_name: "{{ resources_cronjob_name }}"
+    component: resources
+    product_name: openshift
