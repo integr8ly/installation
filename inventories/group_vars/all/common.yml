@@ -6,15 +6,15 @@ eval_self_signed_certs: true
 eval_sso_validate_certs: false
 eval_launcher_sso_realm: launcher_realm
 
-eval_apicurito_namespace: apicurito
-eval_che_namespace: codeready
-eval_launcher_namespace: launcher
+eval_apicurito_namespace: '{{ns_prefix}}apicurito'
+eval_che_namespace: '{{ns_prefix}}codeready'
+eval_launcher_namespace: '{{ns_prefix}}launcher'
 eval_rhsso_namespace: '{{ns_prefix}}sso'
-eval_webapp_namespace: webapp
-eval_managed_fuse_namespace: fuse
+eval_webapp_namespace: '{{ns_prefix}}webapp'
+eval_managed_fuse_namespace: '{{ns_prefix}}fuse'
 
 eval_seed_users_count: 50
-threescale_namespace: 3scale
+threescale_namespace: '{{ns_prefix}}3scale'
 eval_webapp_url_prefix: tutorial-web-app-webapp
 
 eval_threescale_enable_wildcard_route: false

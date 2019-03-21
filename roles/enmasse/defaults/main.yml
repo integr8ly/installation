@@ -1,5 +1,5 @@
 ---
-enmasse_namespace: enmasse
+enmasse_namespace: '{{ns_prefix}}enmasse'
 enmasse_multitenant: true
 enmasse_enable_rbac: true
 enmasse_api_server: true

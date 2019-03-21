@@ -1,2 +1,2 @@
-nexus_namespace: nexus
+nexus_namespace: '{{ns_prefix}}nexus'
 nexus_image: sonatype/nexus:{{nexus_version}}
