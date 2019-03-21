@@ -1,5 +1,6 @@
 ---
-
+# ns_prefix
+ns_prefix: ''
 # threescale version is controlled by the operator. Changing the operator version will change the 3scale version
 
 # controls whether threescale is installed or not.
@@ -7,7 +8,6 @@ threescale: true
 # below threescale variables below are not currently used. They define where and what to pull in from github. These will be important as we look to break out and decouple the resources from the installer ###############
 # not currently used but records the version installed by the operator, this should come from the status block
 threescale_version: '2.4.0.GA'
-threescale_namespace: '3scale'
 threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
 threescale_template_s3: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp-s3.yml'
 

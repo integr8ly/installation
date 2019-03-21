@@ -9,7 +9,7 @@ eval_launcher_sso_realm: launcher_realm
 eval_apicurito_namespace: apicurito
 eval_che_namespace: codeready
 eval_launcher_namespace: launcher
-eval_rhsso_namespace: sso
+eval_rhsso_namespace: '{{ns_prefix}}sso'
 eval_webapp_namespace: webapp
 eval_managed_fuse_namespace: fuse
 
