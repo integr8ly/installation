@@ -49,15 +49,17 @@ launcher_backend_image_tag: '7a7fd07'
 launcher_frontend_image_tag: '7b1c127'
 launcher_version: '7224e235226ffa42135f148bacc409e9f7f402e4'
 launcher_template: 'https://raw.githubusercontent.com/fabric8-launcher/launcher-openshift-templates/{{launcher_version}}/openshift/launcher-template.yaml'
-launcher_sso_template: https://raw.githubusercontent.com/jboss-container-images/redhat-sso-7-openshift-image/v7.3.0.GA/templates/sso73-x509-postgresql-persistent.json
+launcher_sso_imagestream_name: redhat-sso72-openshift:1.4
+launcher_sso_imagestream_image: registry.access.redhat.com/redhat-sso-7/sso72-openshift:1.4
+launcher_sso_template: https://raw.githubusercontent.com/jboss-container-images/redhat-sso-7-openshift-image/v7.2.6.GA/templates/sso72-x509-postgresql-persistent.json
 
 #not currently used but is the version installed by the operator
 # rhsso is not an optional component
-rhsso_version: '7.3.0.GA'
+rhsso_version: '7.2.0.GA'
 #below vars not currently used but will be used to pull in the new versions of RH-SSO once we decouple the resources from the installer.
-rhsso_imagestream_name: redhat-sso73-openshift:1.0
-rhsso_imagestream_image: registry.access.redhat.com/redhat-sso-7/sso73-openshift:1.0
-rhsso_operator_release_tag: 'v1.1.0'
+rhsso_imagestream_name: redhat-sso72-openshift:1.4
+rhsso_imagestream_image: registry.access.redhat.com/redhat-sso-7/sso72-openshift:1.4
+rhsso_operator_release_tag: 'master'
 rhsso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
 rhsso_namespace: 'sso'
 
