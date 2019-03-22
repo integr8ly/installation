@@ -1,4 +1,5 @@
 ---
+ns_prefix: ''
 eval_action: install
 eval_namespace: eval
 eval_openshift_master_config_path: /etc/origin/master/master-config.yaml
@@ -28,3 +29,4 @@ eval_threescale_enable_wildcard_route: false
 
 # openshift login as some product installs wont work with system:admin
 create_cluster_admin: true
+# override to set a namespace prefix.
