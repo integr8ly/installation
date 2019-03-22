@@ -1,7 +1,7 @@
 ---
 - name: "copy ksm template"
-  copy:
-    src: kube_state_metrics_alerts.yml
+  template:
+    src: kube_state_metrics_alerts.yml.j2
     dest: /tmp/kube_state_metrics_alerts.yml
 
 - name: Create ksm alerts

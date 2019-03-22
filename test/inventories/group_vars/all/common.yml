@@ -4,7 +4,7 @@ eval_namespace: eval
 eval_openshift_master_config_path: /etc/origin/master/master-config.yaml
 eval_self_signed_certs: true
 eval_sso_validate_certs: false
-eval_che_namespace: che
+eval_che_namespace: "{{ns_prefix | default('')}}codeready"
 eval_rhsso_namespace: sso
 threescale_namespace: 3scale
 eval_launcher_namespace: launcher
