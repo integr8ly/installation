@@ -10,3 +10,4 @@
 
 - name: Give namespace {{ namespace }} display name {{ display_name }}
   shell: oc annotate --overwrite namespace {{ namespace }} openshift.io/display-name="{{ display_name }}"
+  when: display_name is defined

@@ -10,7 +10,7 @@
   when: threescale
 
 - name: Retrieve 3Scale master auth token
-  shell:  oc describe dc/system-app -n 3scale | grep MASTER_ACCESS_TOKEN | head -1 | awk -F '"' '{print $2}'
+  shell:  oc describe dc/system-app -n {{ threescale_namespace }} | grep MASTER_ACCESS_TOKEN | head -1 | awk -F '"' '{print $2}'
   register: master_auth_config
   when: threescale
 

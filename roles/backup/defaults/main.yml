@@ -19,4 +19,4 @@ backup_expected_cronjobs:
   sso:
     - daily-at-midnight
 
-monitoring_namespace: middleware-monitoring
+monitoring_namespace: "{{ns_prefix | default('')}}middleware-monitoring"

@@ -1,7 +1,7 @@
 kind: OAuthClient
 apiVersion: v1
 metadata:
-  name: 3scale
+  name: "{{ threescale_oauth_client_id }}"
 secret: "{{ client_secret }}"
 redirectURIs:
 - "https://master.{{ threescale_route_suffix }}"

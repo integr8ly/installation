@@ -46,7 +46,7 @@
   vars:
     secret_name: '{{ threescale_backup_postgres_secret }}'
     secret_postgres_user: '{{ threescale_postgres_username.stdout }}'
-    secret_postgres_host: zync-database.3scale.svc
+    secret_postgres_host: 'zync-database.{{ threescale_namespace }}.svc'
     secret_postgres_database: '{{ threescale_postgres_database.stdout }}'
     secret_postgres_password: '{{ threescale_postgres_password.stdout }}'
 

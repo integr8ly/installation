@@ -1,8 +1,10 @@
 ---
 - name: Create {{ apicurito_namespace }} namespace
-  shell: oc create namespace {{ apicurito_namespace }}
-  register: project_cmd
-  failed_when: project_cmd.stderr != '' and 'AlreadyExists' not in project_cmd.stderr
+  include_role:
+    name: namespace
+  vars:
+    namespace: "{{ apicurito_namespace }}"
+    display_name: "{{ apicurito_display_name }}"
 
 - name: Add labels to namespace
   shell: oc label --overwrite namespace {{ apicurito_namespace }} {{ monitoring_label_name }}={{ monitoring_label_value }} integreatly-middleware-service=true

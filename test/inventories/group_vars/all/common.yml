@@ -6,8 +6,8 @@ eval_self_signed_certs: true
 eval_sso_validate_certs: false
 eval_che_namespace: "{{ns_prefix | default('')}}codeready"
 eval_rhsso_namespace: sso
-threescale_namespace: 3scale
-eval_launcher_namespace: launcher
+threescale_namespace: "{{ns_prefix | default('')}}3scale"
+eval_launcher_namespace: "{{ns_prefix | default('')}}launcher"
 eval_launcher_sso_realm: launcher_realm
 eval_webapp_url_prefix: tutorial-web-app-webapp
 eval_seed_users_count: 5

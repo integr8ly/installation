@@ -1,7 +1,7 @@
 ---
-middleware_monitoring_namespace: middleware-monitoring
+middleware_monitoring_namespace: "{{ns_prefix | default('')}}middleware-monitoring"
 openshift_monitoring_namespace: openshift-monitoring
-threescale_namespace: 3scale
+threescale_namespace: "{{ns_prefix | default('')}}3scale"
 
 jobs:
 - 3scale

@@ -1,9 +1,10 @@
 ---
 - name: "Create 3scale namespace: {{ threescale_namespace }}"
-  shell: oc new-project {{ threescale_namespace }}
-  register: threescale_namespace_exists
-  failed_when: threescale_namespace_exists.stderr != '' and 'already exists' not in threescale_namespace_exists.stderr
-  changed_when: threescale_namespace_exists.rc == 0
+  include_role:
+    name: namespace
+  vars:
+    namespace: "{{ threescale_namespace }}"
+    display_name: "{{ threescale_display_name }}"
 
 - name: Check namespace for existing resources
   shell: oc get all -n {{ threescale_namespace }}
