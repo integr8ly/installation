@@ -7,7 +7,7 @@ eval_sso_validate_certs: false
 eval_launcher_sso_realm: launcher_realm
 
 eval_apicurito_namespace: apicurito
-eval_che_namespace: codeready
+eval_che_namespace: "{{ns_prefix | default('')}}codeready"
 eval_launcher_namespace: launcher
 eval_rhsso_namespace: sso
 eval_webapp_namespace: webapp

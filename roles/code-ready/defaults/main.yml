@@ -2,7 +2,8 @@
 # defaults file for che
 
 #common vars
-che_namespace: "{{ eval_che_namespace | default('che') }}"
+che_namespace: "{{ eval_che_namespace | default('codeready') }}"
+che_display_name: "Red Hat CodeReady"
 che_template_folder: /tmp/che-templates
 che_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
 
