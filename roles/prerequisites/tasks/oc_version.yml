@@ -1,0 +1,10 @@
+---
+
+- name: Get the target oc version to major version
+  shell: oc version | awk 'NR==1{print substr($2,2)}' | awk '{split($0,a,"."); printf a[1]; printf "."; printf a[2]}'
+  register: target_oc_version
+
+- name: Verify target oc version matches a declared supported version
+  fail:
+    msg: "Unsupported oc version"
+  when: target_oc_version.stdout not in supported_oc_versions
