@@ -1,9 +1,9 @@
 ---
-- name: "Create project namespace: {{ rhsso_namespace }}"
-  shell: oc new-project {{ rhsso_namespace }}
-  register: output
-  failed_when: output.stderr != '' and 'already exists' not in output.stderr
-  changed_when: output.rc == 0
+- include_role:
+    name: namespace
+  vars:
+    namespace: "{{ rhsso_namespace }}"
+    display_name: "Red Hat Single Sign-On"
 
 - name: Add labels to namespace
   shell: oc patch ns {{ rhsso_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
