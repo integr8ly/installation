@@ -10,7 +10,7 @@ spec:
       rules:
       - alert: KubePodCrashLooping
         annotations:
-          message: Pod {{ $labels.namespace }}/{{ $labels.exported_pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times every 5 minutes; for the last 15 minutes.
+          message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.exported_pod {{ '}}' }} ({{ '{{' }} $labels.container {{ '}}' }}) is restarting {{ '{{' }} printf "%.2f" $value {{ '}}' }} times every 5 minutes; for the last 15 minutes.
         expr: |
           rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[15m]) * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"} * 60 * 5 > 0
         for: 15m
@@ -18,7 +18,7 @@ spec:
           severity: critical
       - alert: KubePodNotReady
         annotations:
-          message: Pod {{ $labels.namespace }}/{{ $labels.exported_pod }} has been in a non-ready state for longer than 15 minutes.
+          message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.exported_pod {{ '}}' }} has been in a non-ready state for longer than 15 minutes.
         expr: |
           sum by(exported_pod, namespace) (kube_pod_status_phase{phase=~"Pending|Unknown"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
         for: 15m
@@ -26,7 +26,7 @@ spec:
           severity: critical
       - alert: KubePodImagePullBackOff
         annotations:
-          message: Pod {{ $labels.namespace }}/{{ $labels.exported_pod }} has been unable to pull it's image for longer than 5 minutes.
+          message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.exported_pod {{ '}}' }} has been unable to pull it's image for longer than 5 minutes.
         expr: |
           (kube_pod_container_status_waiting_reason{reason="ImagePullBackOff"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
         for: 5m
@@ -34,19 +34,19 @@ spec:
           severity: critical
       - alert: KubePodBadConfig
         annotations:
-          message: Pod {{ $labels.namespace }}/{{ $labels.exported_pod }} has been unable to start due to a bad configuration for longer than 5 minutes.
+          message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.exported_pod {{ '}}' }} has been unable to start due to a bad configuration for longer than 5 minutes.
         expr: |
           (kube_pod_container_status_waiting_reason{reason="CreateContainerConfigError"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
         for: 5m
       - alert: KubePodStuckCreating
         annotations:
-          message: Pod {{ $labels.namespace }}/{{ $labels.exported_pod }} has been trying to start for longer than 15 minutes - this could indicate a configuration error.
+          message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.exported_pod {{ '}}' }} has been trying to start for longer than 15 minutes - this could indicate a configuration error.
         expr: |
           (kube_pod_container_status_waiting_reason{reason="ContainerCreating"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
         for: 15m
       - alert: ThreeScalePodCount
         annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 15 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 15 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="3scale"})) or sum(kube_pod_status_ready{condition="true", namespace="3scale"}) != 15
         for: 5m
@@ -54,7 +54,7 @@ spec:
           severity: critical
       - alert: AMQOnlinePodCount
         annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected at least 6 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 6 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="enmasse"})) or sum(kube_pod_status_ready{condition="true", namespace="enmasse"}) < 6
         for: 5m
@@ -62,7 +62,7 @@ spec:
           severity: critical
       - alert: ApicuritoPodCount
         annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 2 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 2 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="apicurito"})) or sum(kube_pod_status_ready{condition="true", namespace="apicurito"}) != 2
         for: 5m
@@ -70,15 +70,15 @@ spec:
           severity: critical
       - alert: CodeReadyPodCount
         annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected at least 2 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 2 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="codeready"})) or sum(kube_pod_status_ready{condition="true", namespace="codeready"}) < 2
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_che_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_che_namespace }}"}) < 2
         for: 5m
         labels:
           severity: critical
       - alert: LauncherPodCount
         annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 6 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 6 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="launcher"})) or sum(kube_pod_status_ready{condition="true", namespace="launcher"}) != 6
         for: 5m
@@ -86,7 +86,7 @@ spec:
           severity: critical
       - alert: ManagedServiceBrokerPodCount
         annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 1 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 1 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="managed-service-broker"})) or sum(kube_pod_status_ready{condition="true", namespace="managed-service-broker"}) != 1
         for: 5m
@@ -94,7 +94,7 @@ spec:
           severity: critical
       - alert: MiddlewareMonitoringPodCount
         annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 6 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 6 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="middleware-monitoring"})) or sum(kube_pod_status_ready{condition="true", namespace="middleware-monitoring"}) != 6
         for: 5m
@@ -102,7 +102,7 @@ spec:
           severity: critical
       - alert: NexusPodCount
         annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 1 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 1 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="nexus"})) or sum(kube_pod_status_ready{condition="true", namespace="nexus"}) != 1
         for: 5m
@@ -110,7 +110,7 @@ spec:
           severity: critical
       - alert: SSOPodCount
         annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 3 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 3 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="sso"})) or sum(kube_pod_status_ready{condition="true", namespace="sso"}) != 3
         for: 5m
@@ -118,7 +118,7 @@ spec:
           severity: critical
       - alert: SolutionExplorerPodCount
         annotations:
-          message: Pod count for namespace {{ $labels.namespace }} is {{ printf "%.0f" $value }}. Expected exactly 2 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 2 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="webapp"})) or sum(kube_pod_status_ready{condition="true", namespace="webapp"}) != 2
         for: 5m
