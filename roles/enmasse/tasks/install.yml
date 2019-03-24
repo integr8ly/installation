@@ -28,8 +28,11 @@
   #hack to work around oc new-app failing when a ns begins with openshift- the ns will begin with openshift- in OSD so that it is hidden from the end user
 
 - block:
-    - name: "pre create enmasse namespace"
-      shell: oc create ns {{enmasse_namespace}}
+    - include_role:
+        name: namespace
+      vars:
+        namespace: "{{ enmasse_namespace }}"
+        display_name: "AMQ Online"
     - name: Adjust project check role when using openshift prefix
       template:
         src: "project_task.yml"
