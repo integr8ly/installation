@@ -60,6 +60,14 @@ spec:
         for: 5m
         labels:
           severity: critical
+      - alert: FuseOnlinePodCount
+        annotations:
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 8 pods.
+        expr: |
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{fuse_namespace}}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{fuse_namespace}}"}) < 8
+        for: 5m
+        labels:
+          severity: critical
       - alert: ApicuritoPodCount
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 2 pods.
