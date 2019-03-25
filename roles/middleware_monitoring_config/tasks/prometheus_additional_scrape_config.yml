@@ -13,8 +13,6 @@
   - set_fact:
       parsed_datasource_secret: "{{ grafana_datasource_secret.stdout | from_json }}"
 
-  - debug: msg={{ parsed_datasource_secret }}
-
   - set_fact:
       grafana_datasource_content: "{{ parsed_datasource_secret.data['prometheus.yaml'] | b64decode | from_json }}"
 
