@@ -46,6 +46,7 @@ launcher: true
 launcher_backend_image_tag: '7a7fd07'
 # we will need to set this during a release to the latest commit hash on master to ensure it doesn't change under us example: 0a941c1
 launcher_frontend_image_tag: '7b1c127'
+launcher_creator_backend_image_tag: 'e10cf46'
 launcher_version: '7224e235226ffa42135f148bacc409e9f7f402e4'
 launcher_template: 'https://raw.githubusercontent.com/fabric8-launcher/launcher-openshift-templates/{{launcher_version}}/openshift/launcher-template.yaml'
 launcher_sso_imagestream_name: redhat-sso72-openshift:1.4
