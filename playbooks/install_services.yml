@@ -118,6 +118,9 @@
       failed_when: not result.stdout
       changed_when: False
       when: enmasse
+
+    - name: Expose vars
+      include_vars: "../roles/enmasse/defaults/main.yml"
     -
       name: Install enmasse
       include_role:
