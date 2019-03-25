@@ -7,7 +7,7 @@ gitea_operator_resource_items:
   - "{{ gitea_operator_resources }}/crds/crd.yaml"
   - "{{ gitea_operator_resources }}/operator.yaml"
 
-webapp_namespace: webapp
+webapp_namespace: "{{ eval_webapp_namespace | default('webapp') }}"
 gitea_admin_username: giteaadmin
 gitea_admin_token: admintoken
 gitea_admin_password: Password1
