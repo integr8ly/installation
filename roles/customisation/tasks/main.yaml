@@ -147,7 +147,7 @@
   when: launcher
 
 - set_fact:
-    launcher_route: "http://{{launcher_route_cmd.stdout}}"
+    launcher_route: "https://{{launcher_route_cmd.stdout}}"
   when: launcher
 
 - name: set launcher component
