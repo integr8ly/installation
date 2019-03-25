@@ -32,7 +32,7 @@
   vars:
     secret_name: '{{ codeready_backup_postgres_secret }}'
     secret_postgres_user: '{{ codeready_postgres_user.stdout }}'
-    secret_postgres_host: postgres.codeready.svc
+    secret_postgres_host: postgres.{{ eval_che_namespace }}.svc
     secret_postgres_database: '{{ codeready_postgres_database.stdout }}'
     secret_postgres_password: '{{ codeready_postgres_password.stdout }}'
     secret_postgres_superuser: "true"

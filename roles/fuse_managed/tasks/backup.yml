@@ -28,7 +28,7 @@
   vars:
     secret_name: "{{ fuse_backup_postgres_secret_name }}"
     secret_postgres_user: "{{ fuse_postgres_username.stdout }}"
-    secret_postgres_host: "syndesis-db.fuse.svc"
+    secret_postgres_host: "syndesis-db.{{ eval_managed_fuse_namespace }}.svc"
     secret_postgres_database: '{{ fuse_postgres_database.stdout }}'
     secret_postgres_password: "{{ fuse_postgres_password.stdout }}"
 
