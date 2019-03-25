@@ -25,19 +25,18 @@
   shell: oc get all -n {{ enmasse_namespace }}
   register: enmasse_resources_exist
 
-  #hack to work around oc new-app failing when a ns begins with openshift- the ns will begin with openshift- in OSD so that it is hidden from the end user
+- include_role:
+    name: namespace
+  vars:
+    namespace: "{{ enmasse_namespace }}"
+    display_name: "AMQ Online"
 
-- block:
-    - include_role:
-        name: namespace
-      vars:
-        namespace: "{{ enmasse_namespace }}"
-        display_name: "AMQ Online"
-    - name: Adjust project check role when using openshift prefix
-      template:
-        src: "project_task.yml"
-        dest: /tmp/enmasse-{{ enmasse_version }}/templates/ansible/roles/project/tasks/main.yml
-        force: yes
+  #hack to work around oc new-app failing when a ns begins with openshift- the ns will begin with openshift- in OSD so that it is hidden from the end user
+- name: Adjust project check role when using openshift prefix
+  template:
+    src: "project_task.yml"
+    dest: /tmp/enmasse-{{ enmasse_version }}/templates/ansible/roles/project/tasks/main.yml
+    force: yes
   when: ns_prefix == "openshift-"
 
 - name: "Provision EnMasse {{ enmasse_version }}"
