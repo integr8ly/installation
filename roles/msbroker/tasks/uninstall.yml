@@ -19,6 +19,16 @@
   register: output
   failed_when: false
 
+- name: "Delete clusterservicebroker namespace: {{ msbroker_namespace }}"
+  shell: oc delete clusterservicebroker managed-service-broker
+  register: output
+  failed_when: false
+
+- name: "Delete clusterrole managed-service"
+  shell: oc delete clusterrole managed-service
+  register: output
+  failed_when: false
+
 - name: Delete CRDs
   shell: "oc delete -f {{ item }}"
   register: output
