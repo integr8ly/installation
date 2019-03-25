@@ -39,14 +39,11 @@
     fuse_dashboard_url: "https://{{ fuse_host_cmd.stdout}}"
 
 # Create managed-service-broker namespace
-- name: Check if {{ msbroker_namespace }} namespace exists
-  shell: oc get namespace {{ msbroker_namespace }}
-  failed_when: false
-  register: msbroker_check_namespace_exists
-
-- name: Create managed service broker namespace
-  shell: oc new-project {{ msbroker_namespace }}
-  when: msbroker_check_namespace_exists.rc != 0
+- include_role:
+    name: namespace
+  vars:
+    namespace: "{{ msbroker_namespace }}"
+    display_name: "Managed Service Broker"
 
 - name: Add labels to namespace
   shell: oc patch ns {{ msbroker_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
