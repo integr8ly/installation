@@ -13,6 +13,7 @@ eval_launcher_namespace: launcher
 eval_rhsso_namespace: sso
 eval_webapp_namespace: webapp
 eval_managed_fuse_namespace: fuse
+eval_msbroker_namespace: "{{ns_prefix | default('')}}managed-service-broker"
 
 eval_seed_users_count: 50
 threescale_namespace: 3scale

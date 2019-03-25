@@ -88,7 +88,7 @@ spec:
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 1 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="managed-service-broker"})) or sum(kube_pod_status_ready{condition="true", namespace="managed-service-broker"}) != 1
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_msbroker_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_msbroker_namespace }}"}) != 1
         for: 5m
         labels:
           severity: critical
