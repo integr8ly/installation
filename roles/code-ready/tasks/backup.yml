@@ -38,21 +38,21 @@
     secret_postgres_superuser: "true"
 
 - name: Create the codeready Postgres CronJob
-  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
-    -p 'COMPONENT=postgres' \
-    -p 'PRODUCT_NAME=codeready' \
-    -p 'COMPONENT_SECRET_NAME={{ codeready_backup_postgres_secret }}' \
-    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
-    -p 'IMAGE={{ backup_image }}' \
-    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
-    -p 'NAME={{ codeready_postgres_cronjob_name }}' | oc apply -n default -f -
+  include_role:
+    name: backup
+    tasks_from: _create_backup_cron_job.yml
+  vars:
+    cronjob_name: "{{ codeready_postgres_cronjob_name }}"
+    component: postgres
+    component_secret_name: "{{ codeready_backup_postgres_secret }}"
+    product_name: codeready
 
 # PV backup
 - name: Create the codeready PV CronJob
-  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
-    -p 'COMPONENT=codeready_pv' \
-    -p 'PRODUCT_NAME=codeready' \
-    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
-    -p 'IMAGE={{ backup_image }}' \
-    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
-    -p 'NAME={{ codeready_pv_cronjob_name }}' | oc apply -n default -f -
+  include_role:
+    name: backup
+    tasks_from: _create_backup_cron_job.yml
+  vars:
+    cronjob_name: "{{ codeready_pv_cronjob_name }}"
+    component: codeready_pv
+    product_name: codeready

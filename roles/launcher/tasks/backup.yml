@@ -33,11 +33,11 @@
     secret_postgres_password: "{{ postgres_password.stdout }}"
 
 - name: Create the launcher Postgres CronJob
-  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
-    -p 'COMPONENT=postgres' \
-    -p 'COMPONENT_SECRET_NAME={{ launcher_backup_postgres_secret_name }}' \
-    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
-    -p 'IMAGE={{ backup_image }}' \
-    -p 'PRODUCT_NAME=launcher' \
-    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
-    -p 'NAME=launcher-postgres-backup' | oc apply -n default -f -
+  include_role:
+    name: backup
+    tasks_from: _create_backup_cron_job.yml
+  vars:
+    cronjob_name: launcher-postgres-backup
+    component: postgres
+    component_secret_name: "{{ launcher_backup_postgres_secret_name }}"
+    product_name: launcher

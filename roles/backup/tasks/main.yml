@@ -1,6 +1,11 @@
 ---
-- name: "Check for aws credentials secret in {{aws_s3_backup_secret_namespace}} namespace"
-  shell: "oc get secret {{aws_s3_backup_secret_name}} -n {{aws_s3_backup_secret_namespace}}"
+- name: "Create {{ backup_namespace }} namespace"
+  shell: "oc create namespace {{ backup_namespace }}"
+  register: backup_namespace_result
+  failed_when: backup_namespace_result.stderr != '' and 'AlreadyExists' not in backup_namespace_result.stderr
+
+- name: "Check for aws credentials secret in {{ backup_namespace }} namespace"
+  shell: "oc get secret {{ aws_s3_backup_secret_name }} -n {{ backup_namespace }}"
 
 - name: "Create backup cluster role"
   shell: oc create -f {{ item }}
@@ -8,8 +13,8 @@
   failed_when: backup_cluster_resource_create.stderr != '' and 'AlreadyExists' not in backup_cluster_resource_create.stderr
   with_items: "{{ backup_resources_cluster }}"
 
-- name: "Create default service account"
+- name: "Create {{ backup_namespace }} service account"
   import_tasks: _setup_service_account.yml
   vars:
-    binding_name: 'default-backup-binding'
-    serviceaccount_namespace: 'default'
+    binding_name: '{{ backup_namespace }}-backup-binding'
+    serviceaccount_namespace: "{{ backup_namespace }}"

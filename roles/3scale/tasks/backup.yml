@@ -15,16 +15,14 @@
     secret_mysql_password: '{{ threescale_mysql_password.stdout }}'
 
 - name: Create the 3scale MySQL CronJob
-  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
-    -p 'COMPONENT=mysql' \
-    -p 'COMPONENT_SECRET_NAME={{ threescale_backup_mysql_secret }}' \
-    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
-    -p 'IMAGE={{ backup_image }}' \
-    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
-    -p 'PRODUCT_NAME=3scale' \
-    -p 'NAME=3scale-mysql-backup' | oc apply -n default -f -
-  register: mysql_cronjob_create
-  failed_when: mysql_cronjob_create.stderr != '' and 'AlreadyExists' not in mysql_cronjob_create.stderr
+  include_role:
+    name: backup
+    tasks_from: _create_backup_cron_job.yml
+  vars:
+    cronjob_name: 3scale-mysql-backup
+    component: mysql
+    component_secret_name: "{{ threescale_backup_mysql_secret }}"
+    product_name: 3scale
 
 # Postgres backup
 - name: Get Postgres password
@@ -51,25 +49,21 @@
     secret_postgres_password: '{{ threescale_postgres_password.stdout }}'
 
 - name: Create the 3scale Postgres CronJob
-  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
-    -p 'COMPONENT=postgres' \
-    -p 'COMPONENT_SECRET_NAME={{ threescale_backup_postgres_secret }}' \
-    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
-    -p 'IMAGE={{ backup_image }}' \
-    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
-    -p 'PRODUCT_NAME=3scale' \
-    -p 'NAME=3scale-postgres-backup' | oc apply -n default -f -
-  register: postgres_cronjob_create
-  failed_when: postgres_cronjob_create.stderr != '' and 'AlreadyExists' not in postgres_cronjob_create.stderr
+  include_role:
+    name: backup
+    tasks_from: _create_backup_cron_job.yml
+  vars:
+    cronjob_name: 3scale-postgres-backup
+    component: postgres
+    component_secret_name: "{{ threescale_backup_postgres_secret }}"
+    product_name: 3scale
 
 # Redis backup
 - name: Create the 3scale Redis CronJob
-  shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
-    -p 'COMPONENT=3scale-redis' \
-    -p 'BACKEND_SECRET_NAME={{ aws_s3_backup_secret_name }}' \
-    -p 'IMAGE={{ backup_image }}' \
-    -p 'CRON_SCHEDULE={{ backup_schedule }}' \
-    -p 'PRODUCT_NAME=3scale' \
-    -p 'NAME=3scale-redis-backup' | oc apply -n default -f -
-  register: redis_cronjob_create
-  failed_when: redis_cronjob_create.stderr != '' and 'AlreadyExists' not in redis_cronjob_create.stderr
+  include_role:
+    name: backup
+    tasks_from: _create_backup_cron_job.yml
+  vars:
+    cronjob_name: 3scale-redis-backup
+    component: 3scale-redis
+    product_name: 3scale
