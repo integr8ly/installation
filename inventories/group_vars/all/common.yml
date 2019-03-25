@@ -11,7 +11,7 @@ eval_apicurito_namespace: apicurito
 eval_che_namespace: "{{ns_prefix | default('')}}codeready"
 eval_launcher_namespace: launcher
 eval_rhsso_namespace: sso
-eval_webapp_namespace: webapp
+eval_webapp_namespace: "{{ns_prefix | default('')}}webapp"
 eval_managed_fuse_namespace: fuse
 eval_msbroker_namespace: "{{ns_prefix | default('')}}managed-service-broker"
 eval_nexus_namespace: "{{ns_prefix | default('')}}nexus"

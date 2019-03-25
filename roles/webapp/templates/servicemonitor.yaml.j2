@@ -4,7 +4,7 @@ metadata:
  labels:
    monitoring-key: middleware
  name: tutorial-webapp-monitoring
- namespace: webapp
+ namespace: {{ webapp_namespace }}
 spec:
  endpoints:
   - path: /metrics

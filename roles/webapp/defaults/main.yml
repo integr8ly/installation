@@ -1,5 +1,5 @@
 #webapp vars
-webapp_namespace: "{{ eval_webapp_namespace }}"
+webapp_namespace: "{{ eval_webapp_namespace | default('webapp') }}"
 webapp_extra_services_configmap: extra-services
 webapp_client_id: tutorial-web-app
 webapp_route: tutorial-web-app

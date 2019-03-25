@@ -128,7 +128,7 @@ spec:
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 2 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="webapp"})) or sum(kube_pod_status_ready{condition="true", namespace="webapp"}) != 2
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_webapp_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_webapp_namespace }}"}) != 2
         for: 5m
         labels:
           severity: critical
