@@ -10,6 +10,7 @@
   --param=APICURIO_DASHBOARD_URL='placeholder' \
   --param=IMAGE_ORG={{ msbroker_image_org }} \
   --param=IMAGE_TAG={{ msbroker_release_tag }} \
+  --param=SHARED_FUSE_DASHBOARD_URL='placeholder' \
   --param MONITORING_KEY={{ monitoring_key }} | oc delete -n {{ msbroker_namespace }} -f -"
   failed_when: false
 

@@ -1,12 +1,9 @@
 ---
-- name: Check if {{ nexus_namespace }} namespace exists
-  shell: oc get namespace {{ nexus_namespace }}
-  failed_when: false
-  register: nexus_check_namespace_exists
-
-- name: Create {{ nexus_namespace }} namespace
-  shell: oc new-project {{ nexus_namespace }}
-  when: nexus_check_namespace_exists.rc != 0
+- include_role:
+    name: namespace
+  vars:
+    namespace: "{{ nexus_namespace }}"
+    display_name: "Nexus"
 
 - name: Add labels to namespace
   shell: oc patch ns {{ nexus_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
@@ -19,7 +16,7 @@
   register: running_nexus_pods
   failed_when: false
 
-- 
+-
   when: '"1" not in running_nexus_pods.stdout'
   block:
     - name: Deploy nexus
@@ -28,7 +25,7 @@
     - name: Add liveness probe to nexus deployment
       shell: "oc set probe dc/nexus  -n {{ nexus_namespace }} --liveness --failure-threshold 3 --initial-delay-seconds 30 -- echo ok"
 
-    - name: Add readiness probe to nexus deployment 
+    - name: Add readiness probe to nexus deployment
       shell: "oc set probe dc/nexus  -n {{ nexus_namespace }} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8081/nexus/content/groups/public"
 
     - name: Wait for nexus to be ready
