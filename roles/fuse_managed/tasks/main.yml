@@ -1,9 +1,10 @@
 ---
 
-- name: Create {{ fuse_namespace }} namespace if it doesn't exist
-  shell: oc new-project {{ eval_managed_fuse_namespace }}
-  register: fuse_create_namespace
-  failed_when: fuse_create_namespace.stderr != '' and 'AlreadyExists' not in fuse_create_namespace.stderr
+- include_role:
+    name: namespace
+  vars:
+    namespace: "{{ fuse_namespace }}"
+    display_name: "Shared Fuse Online"
 
 - name: Add labels to namespace
   shell: oc label --overwrite namespace {{ fuse_namespace }} {{ monitoring_label_name }}={{ monitoring_label_value }} integreatly-middleware-service=true
