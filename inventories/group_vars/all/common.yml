@@ -10,7 +10,7 @@ eval_launcher_sso_realm: launcher_realm
 eval_apicurito_namespace: "{{ns_prefix | default('')}}apicurito"
 eval_che_namespace: "{{ns_prefix | default('')}}codeready"
 eval_launcher_namespace: "{{ns_prefix | default('')}}launcher"
-eval_rhsso_namespace: sso
+eval_rhsso_namespace: "{{ns_prefix | default('')}}sso"
 eval_webapp_namespace: "{{ns_prefix | default('')}}webapp"
 eval_msbroker_namespace: "{{ns_prefix | default('')}}managed-service-broker"
 eval_nexus_namespace: "{{ns_prefix | default('')}}nexus"
