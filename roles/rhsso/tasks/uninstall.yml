@@ -44,3 +44,14 @@
 - name: "Delete user identities"
   shell:  "oc delete identities {{ identities.stdout | replace('\n', ' ') }}"
   when: identities.stdout != ''
+
+- name: Export existing webconsole configmap
+  shell: oc get configmap {{ rhsso_openshift_webconsole_configmap }} -o yaml -n {{ rhsso_openshift_webconsole_namespace }} > /tmp/{{ rhsso_openshift_webconsole_configmap }}.yaml
+
+- lineinfile:
+    path: /tmp/{{ rhsso_openshift_webconsole_configmap }}.yaml
+    regexp: 'logoutPublicURL:'
+    line: "      logoutPublicURL: ''"
+
+- name: Replace webconsole configmap in {{ rhsso_openshift_webconsole_namespace }} namespace
+  shell: oc replace -f /tmp/{{ rhsso_openshift_webconsole_configmap }}.yaml -n {{ rhsso_openshift_webconsole_namespace }}
