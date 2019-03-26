@@ -1,4 +1,5 @@
 ---
+integreatly_version: master
 # threescale version is controlled by the operator. Changing the operator version will change the 3scale version
 
 # controls whether threescale is installed or not.
