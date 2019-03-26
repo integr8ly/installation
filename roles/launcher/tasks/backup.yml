@@ -28,7 +28,7 @@
   vars:
     secret_name: "{{ launcher_backup_postgres_secret_name }}"
     secret_postgres_user: "{{ postgres_username.stdout }}"
-    secret_postgres_host: "launcher-sso-postgresql.launcher.svc"
+    secret_postgres_host: "launcher-sso-postgresql.{{ eval_launcher_namespace }}.svc"
     secret_postgres_database: '{{ postgres_database.stdout }}'
     secret_postgres_password: "{{ postgres_password.stdout }}"
 

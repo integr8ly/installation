@@ -19,7 +19,7 @@
   vars:
     secret_name: '{{ enmasse_backup_postgres_secret }}'
     secret_postgres_user: '{{ enmasse_postgres_username.stdout }}'
-    secret_postgres_host: postgresql.enmasse.svc
+    secret_postgres_host: postgresql.{{ eval_enmasse_namespace }}.svc
     secret_postgres_database: '{{ enmasse_postgres_database.stdout }}'
     secret_postgres_password: '{{ enmasse_postgres_password.stdout }}'
 
