@@ -4,7 +4,7 @@
   register: launcher_host_cmd
   when: launcher
 - set_fact:
-    launcher_dashboard_url: "http://{{ launcher_host_cmd.stdout}}"
+    launcher_dashboard_url: "https://{{ launcher_host_cmd.stdout}}"
   when: launcher
 
 - name: Get Che dashboard url
