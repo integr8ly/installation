@@ -1,5 +1,6 @@
 ---
-monitoring_namespace: middleware-monitoring
+monitoring_namespace: "{{ns_prefix | default('')}}middleware-monitoring"
+monitoring_display_name: "Managed Service Monitoring"
 monitoring_tmp_dir: /tmp
 
 # Resources to create via the oc tool.

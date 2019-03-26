@@ -5,7 +5,11 @@
   register: launcher_check_namespace_exists_cmd
 
 - name: Create launcher namespace
-  shell: oc new-project {{ launcher_namespace }}
+  include_role:
+    name: namespace
+  vars:
+    namespace: "{{ launcher_namespace }}"
+    display_name: "{{ launcher_display_name }}"
   when: launcher_check_namespace_exists_cmd.rc != 0
 
 - name: Add labels to namespace

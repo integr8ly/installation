@@ -1,5 +1,6 @@
 ---
 launcher_namespace: "{{ eval_launcher_namespace | default('launcher') }}"
+launcher_display_name: "Red Hat Developer Launcher"
 
 launcher_sso_serviceinstance_name: launcher-sso-instance
 launcher_sso_username: admin

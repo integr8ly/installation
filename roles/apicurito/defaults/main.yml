@@ -1,4 +1,5 @@
-apicurito_namespace: apicurito
+apicurito_namespace: "{{ns_prefix | default('')}}apicurito"
+apicurito_display_name: "Apicurito"
 apicurito_template: apicurito
 apicurito_template_namespace: openshift
 apicurito_template_file: /tmp/apicurito-template.yaml

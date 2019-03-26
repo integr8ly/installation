@@ -48,7 +48,7 @@ spec:
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 15 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="3scale"})) or sum(kube_pod_status_ready{condition="true", namespace="3scale"}) != 15
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ threescale_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ threescale_namespace }}"}) != 15
         for: 5m
         labels:
           severity: critical
@@ -72,7 +72,7 @@ spec:
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 2 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="apicurito"})) or sum(kube_pod_status_ready{condition="true", namespace="apicurito"}) != 2
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_apicurito_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_apicurito_namespace }}"}) != 2
         for: 5m
         labels:
           severity: critical
@@ -88,7 +88,7 @@ spec:
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 6 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="launcher"})) or sum(kube_pod_status_ready{condition="true", namespace="launcher"}) != 6
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_launcher_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_launcher_namespace }}"}) != 6
         for: 5m
         labels:
           severity: critical
@@ -104,7 +104,7 @@ spec:
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 6 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="middleware-monitoring"})) or sum(kube_pod_status_ready{condition="true", namespace="middleware-monitoring"}) != 6
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ monitoring_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ monitoring_namespace }}"}) != 6
         for: 5m
         labels:
           severity: critical
