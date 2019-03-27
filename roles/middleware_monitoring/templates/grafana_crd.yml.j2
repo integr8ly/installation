@@ -1,13 +1,13 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  name: grafanadashboards.integreatly.org
+  name: grafanas.integreatly.org
 spec:
   group: integreatly.org
   names:
-    kind: GrafanaDashboard
-    listKind: GrafanaDashboardList
-    plural: grafanadashboards
-    singular: grafanadashboard
+    kind: Grafana
+    listKind: GrafanaList
+    plural: grafanas
+    singular: grafana
   scope: Namespaced
   version: v1alpha1
