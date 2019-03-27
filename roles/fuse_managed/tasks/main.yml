@@ -13,7 +13,9 @@
   changed_when: namespace_label.rc == 0
 
 - name: Create Syndesis CRD
-  shell: oc apply -f {{ fuse_online_crd_resources }}
+  shell: oc create -f {{ fuse_online_crd_resources }}
+  register: create_crd
+  failed_when: create_crd.stderr != '' and 'AlreadyExists' not in create_crd.stderr
 
 - name: Create Fuse image streams
   shell: "oc replace --force -f {{ fuse_online_imagestream_resources }} -n openshift"
@@ -22,19 +24,23 @@
   changed_when: fuse_create_imagestream.rc == 0
 
 - name: Create fuse Operator resources in {{ fuse_namespace }}
-  shell: oc apply -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
+  shell: oc create -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
+  register: create_operator_resources
+  failed_when: create_operator_resources.stderr != '' and 'AlreadyExists' not in create_operator_resources.stderr
 
 - template:
     src: syndesis-customresource.yml.j2
     dest: /tmp/syndesis-customresource.yml
 
 - name: Create Syndesis custom resource in {{ fuse_namespace }}
-  shell: oc apply -f /tmp/syndesis-customresource.yml -n {{ fuse_namespace }}
+  shell: oc create -f /tmp/syndesis-customresource.yml -n {{ fuse_namespace }}
+  register: create_cr
+  failed_when: create_cr.stderr != '' and 'AlreadyExists' not in create_cr.stderr
 
 - name: Verify Fuse deployment succeeded
-  shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
+  shell: oc get pods -n {{ fuse_namespace }} -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w | tr -d ' '
   register: fuse_verify_result
-  until: fuse_verify_result.stdout.find("7") != -1
+  until: fuse_verify_result.stdout | int > 7
   retries: 50
   delay: 10
   changed_when: False
@@ -45,9 +51,9 @@
   shell: oc get dc syndesis-oauthproxy -o yaml -n {{ fuse_namespace }} | sed '/--openshift-sar/d' | oc apply -f - -n {{ fuse_namespace }}; sleep 5
 
 - name: Verify Fuse deployment succeeded
-  shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
+  shell: oc get pods -n {{ fuse_namespace }} -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w | tr -d ' '
   register: fuse_verify_result
-  until: fuse_verify_result.stdout.find("7") != -1
+  until: fuse_verify_result.stdout | int > 7
   retries: 50
   delay: 10
   changed_when: False
