@@ -70,7 +70,7 @@
       when: storageclass_exists.rc == 0
 
     - name: "Create system-storage PVC with storageClassName: {{ threescale_pvc_rwx_storageclassname }}"
-      shell: oc create -f /tmp/system-storage-pvc.yml
+      shell: oc create -f /tmp/system-storage-pvc.yml -n {{ threescale_namespace }}
       when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
   when: threescale_file_upload_storage == "filesystem"
 
