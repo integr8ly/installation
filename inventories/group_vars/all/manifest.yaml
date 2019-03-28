@@ -12,7 +12,10 @@ threescale_display_name: "Red Hat 3scale API Management Platform"
 threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
 threescale_template_s3: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp-s3.yml'
 
-threescale_product_version: '2.5'
+#https://github.com/3scale/3scale-operator/blob/master/pkg/3scale/amp/product/upstream.go
+#https://github.com/3scale/3scale-operator/blob/master/pkg/3scale/amp/product/release_2_5.go
+#threescale_product_version: '2.5' - Unable to pull these from registry.access.redhat.com/3scale-amp25, are they available yet?
+threescale_product_version: 'upstream'
 threescale_operator_release_tag: 'master'
 threescale_operator_resources: 'https://raw.githubusercontent.com/3scale/3scale-operator/{{threescale_operator_release_tag}}/deploy'
 
