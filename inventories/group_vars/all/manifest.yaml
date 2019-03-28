@@ -14,7 +14,7 @@ threescale_template_s3: 'https://raw.githubusercontent.com/3scale/3scale-amp-ope
 
 threescale_product_version: '2.5'
 threescale_operator_release_tag: 'master'
-threescale_operator_resources: 'https://raw.githubusercontent.com/3scale/3scale-operator/{{threescale_operator_release_tag}}/deploy/'
+threescale_operator_resources: 'https://raw.githubusercontent.com/3scale/3scale-operator/{{threescale_operator_release_tag}}/deploy'
 
 #controls whether che is installed or not
 #note che cannot be installed without launcher being present currently
