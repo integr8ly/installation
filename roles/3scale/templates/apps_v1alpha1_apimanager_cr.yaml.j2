@@ -3,5 +3,6 @@ kind: APIManager
 metadata:
   name: 3scale-apimanager
 spec:
+  wildcardPolicy: "{{ threescale_wildcard_policy }}"
   productVersion: "{{ threescale_product_version }}"
   wildcardDomain: "{{ threescale_route_suffix }}"

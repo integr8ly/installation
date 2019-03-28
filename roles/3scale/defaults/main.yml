@@ -47,7 +47,7 @@ threescale_storage_s3_aws_bucket: "{{ eval_threescale_storage_s3_aws_bucket | de
 threescale_master_access_token_secret_name: 3scale-master-access-token
 
 enable_wildcard_route: false
-wildcard_policy_param: ""
+threescale_wildcard_policy: "None"
 
 # Backups
 threescale_backup_mysql_secret: threescale-mysql-secret
