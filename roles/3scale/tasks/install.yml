@@ -10,80 +10,86 @@
   shell: oc get all -n {{ threescale_namespace }}
   register: threescale_resources_exist
 
-- name: Add labels to namespace
-  shell: oc patch ns {{ threescale_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
-  register: namespace_patch
-  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
-  changed_when: namespace_patch.rc == 0
+- name: Create 3Scale Operator Resources
+  shell: "oc create -f {{ item }} -n {{ threescale_namespace }}"
+  with_items: "{{ threescale_operator_resource_items }}"
+  register: create_3scale_operator_resource_cmd
+  failed_when: create_3scale_operator_resource_cmd.stderr != '' and 'AlreadyExists' not in create_3scale_operator_resource_cmd.stderr
 
-- name: Check for errored deploy pods
-  shell: oc get pods --namespace {{ threescale_namespace }}  |  grep  "deploy" | grep "Failed" | cut -d " " -f 1
-  register: errored_deploy_pods
-
-- name: Delete errored deploy pods
-  shell: oc delete pod --namespace {{ threescale_namespace }} {{ errored_deploy_pods.stdout }}
-  when: errored_deploy_pods.stdout != ""
-
-# setup for enabling wildcard route
-- name: Allow router to accept wildcard routes
-  shell: oc set env dc/router ROUTER_ALLOW_WILDCARD_ROUTES=true -n default
-  when: enable_wildcard_route
-
-- set_fact:
-    wildcard_policy_param: "-p WILDCARD_POLICY=Subdomain"
-  when: enable_wildcard_route
-
-- name: "Provision 3scale in namespace: {{ threescale_namespace }}"
-  block:
-    - name: 'Install 3scale using filesystem template'
-      shell: oc process -n {{ threescale_namespace }} -f {{ threescale_template }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} {{ wildcard_policy_param }}| oc create -n {{ threescale_namespace }} -f -
-      when: threescale_file_upload_storage == "filesystem"
-
-    - name: 'Install 3scale using s3 template'
-      shell: >
-        oc process -n {{ threescale_namespace }} -f {{ threescale_template_s3 }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} {{ wildcard_policy_param }} -p FILE_UPLOAD_STORAGE={{ threescale_file_upload_storage }} -p AWS_BUCKET={{ threescale_storage_s3_aws_bucket }} -p AWS_REGION={{ threescale_storage_s3_aws_region }} -p AWS_ACCESS_KEY_ID={{ threescale_storage_s3_aws_access_key }} -p AWS_SECRET_ACCESS_KEY={{ threescale_storage_s3_aws_secret_key }}  | oc create -n {{ threescale_namespace }} -f -
-      when: threescale_file_upload_storage == "s3"
-  when: threescale_resources_exist.stderr == "No resources found."
-
-- import_tasks: resources.yml
-
-- import_tasks: routes.yml
-  when: not enable_wildcard_route
-
-- name: "Setup pv-based storage"
-  block:
-    - name: "Check for storage class: {{ threescale_pvc_rwx_storageclassname }}"
-      shell: oc get storageclass {{ threescale_pvc_rwx_storageclassname }}
-      register: storageclass_exists
-      failed_when: storageclass_exists.stderr != '' and 'NotFound' not in storageclass_exists.stderr
-
-    # Temporary Workaround until 3Scale update their AMP template
-    # to support storageclass names (https://issues.jboss.org/browse/THREESCALE-1323)
-    - name: Remove original system-storage PVC
-      shell: oc delete pvc system-storage -n {{ threescale_namespace }}
-      when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
-
-    - name: Generate system-storage pvc template
-      template:
-        src: "system-storage-pvc.yml.j2"
-        dest: /tmp/system-storage-pvc.yml
-      when: storageclass_exists.rc == 0
-
-    - name: "Create system-storage PVC with storageClassName: {{ threescale_pvc_rwx_storageclassname }}"
-      shell: oc create -f /tmp/system-storage-pvc.yml -n {{ threescale_namespace }}
-      when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
-  when: threescale_file_upload_storage == "filesystem"
-
-- name: "Verify 3Scale deployment succeeded"
-  shell: sleep 5; oc get pods --namespace {{ threescale_namespace }}  |  grep  "deploy"
-  register: result
-  until: not result.stdout
-  retries: 50
-  delay: 10
-  failed_when: result.stdout
-  changed_when: False
-
-- import_tasks: sso.yml
-- import_tasks: access_token.yml
-- import_tasks: service_discovery.yml
-- import_tasks: users.yml
+#- name: Add labels to namespace
+#  shell: oc patch ns {{ threescale_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
+#  register: namespace_patch
+#  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
+#  changed_when: namespace_patch.rc == 0
+#
+#- name: Check for errored deploy pods
+#  shell: oc get pods --namespace {{ threescale_namespace }}  |  grep  "deploy" | grep "Failed" | cut -d " " -f 1
+#  register: errored_deploy_pods
+#
+#- name: Delete errored deploy pods
+#  shell: oc delete pod --namespace {{ threescale_namespace }} {{ errored_deploy_pods.stdout }}
+#  when: errored_deploy_pods.stdout != ""
+#
+## setup for enabling wildcard route
+#- name: Allow router to accept wildcard routes
+#  shell: oc set env dc/router ROUTER_ALLOW_WILDCARD_ROUTES=true -n default
+#  when: enable_wildcard_route
+#
+#- set_fact:
+#    wildcard_policy_param: "-p WILDCARD_POLICY=Subdomain"
+#  when: enable_wildcard_route
+#
+#- name: "Provision 3scale in namespace: {{ threescale_namespace }}"
+#  block:
+#    - name: 'Install 3scale using filesystem template'
+#      shell: oc process -n {{ threescale_namespace }} -f {{ threescale_template }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} {{ wildcard_policy_param }}| oc create -n {{ threescale_namespace }} -f -
+#      when: threescale_file_upload_storage == "filesystem"
+#
+#    - name: 'Install 3scale using s3 template'
+#      shell: >
+#        oc process -n {{ threescale_namespace }} -f {{ threescale_template_s3 }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} {{ wildcard_policy_param }} -p FILE_UPLOAD_STORAGE={{ threescale_file_upload_storage }} -p AWS_BUCKET={{ threescale_storage_s3_aws_bucket }} -p AWS_REGION={{ threescale_storage_s3_aws_region }} -p AWS_ACCESS_KEY_ID={{ threescale_storage_s3_aws_access_key }} -p AWS_SECRET_ACCESS_KEY={{ threescale_storage_s3_aws_secret_key }}  | oc create -n {{ threescale_namespace }} -f -
+#      when: threescale_file_upload_storage == "s3"
+#  when: threescale_resources_exist.stderr == "No resources found."
+#
+#- import_tasks: resources.yml
+#
+#- import_tasks: routes.yml
+#  when: not enable_wildcard_route
+#
+#- name: "Setup pv-based storage"
+#  block:
+#    - name: "Check for storage class: {{ threescale_pvc_rwx_storageclassname }}"
+#      shell: oc get storageclass {{ threescale_pvc_rwx_storageclassname }}
+#      register: storageclass_exists
+#      failed_when: storageclass_exists.stderr != '' and 'NotFound' not in storageclass_exists.stderr
+#
+#    # Temporary Workaround until 3Scale update their AMP template
+#    # to support storageclass names (https://issues.jboss.org/browse/THREESCALE-1323)
+#    - name: Remove original system-storage PVC
+#      shell: oc delete pvc system-storage -n {{ threescale_namespace }}
+#      when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
+#
+#    - name: Generate system-storage pvc template
+#      template:
+#        src: "system-storage-pvc.yml.j2"
+#        dest: /tmp/system-storage-pvc.yml
+#      when: storageclass_exists.rc == 0
+#
+#    - name: "Create system-storage PVC with storageClassName: {{ threescale_pvc_rwx_storageclassname }}"
+#      shell: oc create -f /tmp/system-storage-pvc.yml -n {{ threescale_namespace }}
+#      when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
+#  when: threescale_file_upload_storage == "filesystem"
+#
+#- name: "Verify 3Scale deployment succeeded"
+#  shell: sleep 5; oc get pods --namespace {{ threescale_namespace }}  |  grep  "deploy"
+#  register: result
+#  until: not result.stdout
+#  retries: 50
+#  delay: 10
+#  failed_when: result.stdout
+#  changed_when: False
+#
+#- import_tasks: sso.yml
+#- import_tasks: access_token.yml
+#- import_tasks: service_discovery.yml
+#- import_tasks: users.yml

@@ -52,3 +52,17 @@ wildcard_policy_param: ""
 # Backups
 threescale_backup_mysql_secret: threescale-mysql-secret
 threescale_backup_postgres_secret: threescale-postgres-secret
+
+threescale_operator_resource_items:
+  - "{{ threescale_operator_resources }}/service_account.yaml"
+  - "{{ threescale_operator_resources }}/role.yaml"
+  - "{{ threescale_operator_resources }}/role_binding.yaml"
+  - "{{ threescale_operator_resources }}/crds/apps_v1alpha1_apimanager_crd.yaml"
+  - "{{ threescale_operator_resources }}/crds/capabilities_v1alpha1_api_crd.yaml"
+  - "{{ threescale_operator_resources }}/crds/capabilities_v1alpha1_binding_crd.yaml"
+  - "{{ threescale_operator_resources }}/crds/capabilities_v1alpha1_limit_crd.yaml"
+  - "{{ threescale_operator_resources }}/crds/capabilities_v1alpha1_mappingrule_crd.yaml"
+  - "{{ threescale_operator_resources }}/crds/capabilities_v1alpha1_metric_crd.yaml"
+  - "{{ threescale_operator_resources }}/crds/capabilities_v1alpha1_plan_crd.yaml"
+  - "{{ threescale_operator_resources }}/crds/capabilities_v1alpha1_tenant_crd.yaml"
+  - "{{ threescale_operator_resources }}/operator.yaml"
