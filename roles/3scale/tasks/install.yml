@@ -10,11 +10,22 @@
   shell: oc get all -n {{ threescale_namespace }}
   register: threescale_resources_exist
 
-- name: Create 3Scale Operator Resources
+- name: Create 3Scale Operator resources
   shell: "oc create -f {{ item }} -n {{ threescale_namespace }}"
   with_items: "{{ threescale_operator_resource_items }}"
   register: create_3scale_operator_resource_cmd
   failed_when: create_3scale_operator_resource_cmd.stderr != '' and 'AlreadyExists' not in create_3scale_operator_resource_cmd.stderr
+
+- name: Generate 3Scale Operator resource file
+  template:
+    src: "operator.yaml.j2"
+    dest: /tmp/3scale-operator.yml
+
+- name: Create 3Scale Operator resource
+  shell: oc create -f /tmp/3scale-operator.yml -n {{ threescale_namespace }}
+  register: create_3scale_operator_resource_cmd
+  failed_when: create_3scale_operator_resource_cmd.stderr != '' and 'AlreadyExists' not in create_3scale_operator_resource_cmd.stderr
+  changed_when: create_3scale_operator_resource_cmd.rc == 0
 
 #- name: Add labels to namespace
 #  shell: oc patch ns {{ threescale_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'

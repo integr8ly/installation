@@ -65,4 +65,3 @@ threescale_operator_resource_items:
   - "{{ threescale_operator_resources }}/crds/capabilities_v1alpha1_metric_crd.yaml"
   - "{{ threescale_operator_resources }}/crds/capabilities_v1alpha1_plan_crd.yaml"
   - "{{ threescale_operator_resources }}/crds/capabilities_v1alpha1_tenant_crd.yaml"
-  - "{{ threescale_operator_resources }}/operator.yaml"
