@@ -33,17 +33,36 @@
     threescale_wildcard_policy: "Subdomain"
   when: enable_wildcard_route
 
-#- name: "Provision 3scale in namespace: {{ threescale_namespace }}"
-#  block:
-#    - name: 'Install 3scale using filesystem template'
-#      shell: oc process -n {{ threescale_namespace }} -f {{ threescale_template }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} {{ wildcard_policy_param }}| oc create -n {{ threescale_namespace }} -f -
-#      when: threescale_file_upload_storage == "filesystem"
-#
-#    - name: 'Install 3scale using s3 template'
-#      shell: >
-#        oc process -n {{ threescale_namespace }} -f {{ threescale_template_s3 }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} {{ wildcard_policy_param }} -p FILE_UPLOAD_STORAGE={{ threescale_file_upload_storage }} -p AWS_BUCKET={{ threescale_storage_s3_aws_bucket }} -p AWS_REGION={{ threescale_storage_s3_aws_region }} -p AWS_ACCESS_KEY_ID={{ threescale_storage_s3_aws_access_key }} -p AWS_SECRET_ACCESS_KEY={{ threescale_storage_s3_aws_secret_key }}  | oc create -n {{ threescale_namespace }} -f -
-#      when: threescale_file_upload_storage == "s3"
-#  when: threescale_resources_exist.stderr == "No resources found."
+- name: "Setup pv-based storage"
+  block:
+    - name: "Check for pvc storage class: {{ threescale_pvc_rwx_storageclassname }}"
+      shell: oc get storageclass {{ threescale_pvc_rwx_storageclassname }}
+      register: storageclass_exists
+      failed_when: storageclass_exists.stderr != '' and 'NotFound' not in storageclass_exists.stderr
+
+    - set_fact:
+        threescale_pvc_rwx_storageclassname: ""
+      when: not storageclass_exists.rc == 0
+  when: threescale_file_upload_storage == "filesystem"
+
+- name: "Setup s3 storage"
+  block:
+    - name: Create tmp file for AWS Auth Secret
+      template:
+        src: "aws-auth-secret.yml.j2"
+        dest: /tmp/aws-auth-secret.yaml
+
+    - name:  Create AWS Auth Secret for S3 storage
+      command: "oc create -f /tmp/master-access-token-secret.yaml -n {{ threescale_namespace }}"
+      register: threescale_master_access_token_secret_exists
+      failed_when: threescale_master_access_token_secret_exists.stderr != '' and 'already exists' not in threescale_master_access_token_secret_exists.stderr
+      changed_when: threescale_master_access_token_secret_exists.rc == 0
+
+    - name: Delete tmp file for AWS Auth Secret
+      file:
+        path: /tmp/aws-auth-secret.yaml
+        state: absent
+  when: threescale_file_upload_storage == "s3"
 
 - name: Create 3Scale Operator resources
   shell: "oc create -f {{ item }} -n {{ threescale_namespace }}"
@@ -79,30 +98,6 @@
 - import_tasks: routes.yml
   when: not enable_wildcard_route
 
-#- name: "Setup pv-based storage"
-#  block:
-#    - name: "Check for storage class: {{ threescale_pvc_rwx_storageclassname }}"
-#      shell: oc get storageclass {{ threescale_pvc_rwx_storageclassname }}
-#      register: storageclass_exists
-#      failed_when: storageclass_exists.stderr != '' and 'NotFound' not in storageclass_exists.stderr
-#
-#    # Temporary Workaround until 3Scale update their AMP template
-#    # to support storageclass names (https://issues.jboss.org/browse/THREESCALE-1323)
-#    - name: Remove original system-storage PVC
-#      shell: oc delete pvc system-storage -n {{ threescale_namespace }}
-#      when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
-#
-#    - name: Generate system-storage pvc template
-#      template:
-#        src: "system-storage-pvc.yml.j2"
-#        dest: /tmp/system-storage-pvc.yml
-#      when: storageclass_exists.rc == 0
-#
-#    - name: "Create system-storage PVC with storageClassName: {{ threescale_pvc_rwx_storageclassname }}"
-#      shell: oc create -f /tmp/system-storage-pvc.yml -n {{ threescale_namespace }}
-#      when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
-#  when: threescale_file_upload_storage == "filesystem"
-#
 - name: "Verify 3Scale deployment succeeded"
   shell: sleep 5; oc get pods --namespace {{ threescale_namespace }}  |  grep  "deploy"
   register: result

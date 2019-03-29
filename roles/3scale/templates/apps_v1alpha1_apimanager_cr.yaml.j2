@@ -1,3 +1,4 @@
+#jinja2: lstrip_blocks: True
 apiVersion: apps.3scale.net/v1alpha1
 kind: APIManager
 metadata:
@@ -6,3 +7,16 @@ spec:
   wildcardPolicy: "{{ threescale_wildcard_policy }}"
   productVersion: "{{ threescale_product_version }}"
   wildcardDomain: "{{ threescale_route_suffix }}"
+  system:
+    fileStorage:
+    {% if threescale_file_upload_storage == "s3" %}
+      amazonSimpleStorageService:
+        awsRegion: "{{ threescale_storage_s3_aws_region }}"
+        awsBucket: "{{ threescale_storage_s3_aws_bucket }}"
+        awsCredentialsSecret:
+          name: "{{ threescale_storage_s3_secret_name }}"
+        fileUploadStorage: "{{ threescale_file_upload_storage }}"
+    {% else %}
+      persistentVolumeClaim:
+        storageClassName: "{{ threescale_pvc_rwx_storageclassname }}"
+    {% endif %}

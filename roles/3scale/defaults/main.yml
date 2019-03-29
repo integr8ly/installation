@@ -43,6 +43,7 @@ threescale_storage_s3_aws_access_key: "{{ eval_threescale_storage_s3_aws_access_
 threescale_storage_s3_aws_secret_key: "{{ eval_threescale_storage_s3_aws_secret_key | default('null') }}"
 threescale_storage_s3_aws_region: "{{ eval_threescale_storage_s3_aws_region | default('null') }}"
 threescale_storage_s3_aws_bucket: "{{ eval_threescale_storage_s3_aws_bucket | default('null') }}"
+threescale_storage_s3_secret_name: "aws-auth"
 
 threescale_master_access_token_secret_name: 3scale-master-access-token
 
