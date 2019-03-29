@@ -106,7 +106,7 @@
   failed_when: result.stdout
   changed_when: False
 
-#- import_tasks: sso.yml
-#- import_tasks: access_token.yml
-#- import_tasks: service_discovery.yml
-#- import_tasks: users.yml
+- import_tasks: sso.yml
+- import_tasks: access_token.yml
+- import_tasks: service_discovery.yml
+- import_tasks: users.yml
