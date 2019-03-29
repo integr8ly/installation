@@ -9,8 +9,6 @@ threescale: true
 threescale_version: '2.4.0.GA'
 threescale_namespace: "{{ns_prefix | default('')}}3scale"
 threescale_display_name: "Red Hat 3scale API Management Platform"
-threescale_template: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp.yml'
-threescale_template_s3: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp/amp-s3.yml'
 
 #https://github.com/3scale/3scale-operator/blob/master/pkg/3scale/amp/product/upstream.go
 #https://github.com/3scale/3scale-operator/blob/master/pkg/3scale/amp/product/release_2_5.go
