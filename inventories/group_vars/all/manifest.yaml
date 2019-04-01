@@ -51,9 +51,9 @@ launcher_frontend_image_tag: '4e404a1'
 launcher_creator_backend_image_tag: 'e10cf46'
 launcher_version: '7224e235226ffa42135f148bacc409e9f7f402e4'
 launcher_template: 'https://raw.githubusercontent.com/fabric8-launcher/launcher-openshift-templates/{{launcher_version}}/openshift/launcher-template.yaml'
-launcher_sso_imagestream_name: redhat-sso72-openshift:1.4
-launcher_sso_imagestream_image: registry.access.redhat.com/redhat-sso-7/sso72-openshift:1.4
-launcher_sso_template: https://raw.githubusercontent.com/jboss-container-images/redhat-sso-7-openshift-image/v7.2.6.GA/templates/sso72-x509-postgresql-persistent.json
+launcher_sso_imagestream_name: redhat-sso73-openshift:1.0
+launcher_sso_imagestream_image: registry.access.redhat.com/redhat-sso-7/sso73-openshift:1.0
+launcher_sso_template: https://raw.githubusercontent.com/jboss-container-images/redhat-sso-7-openshift-image/v7.3.0.GA/templates/sso73-x509-postgresql-persistent.json
 
 #not currently used but is the version installed by the operator
 # rhsso is not an optional component
