@@ -19,8 +19,6 @@ local
 
 [managed:vars]
 
-# core_install decides whether to run the main install playbook that sets up all of the core services
-core_install=true
 # backup_restore_install decides whether to run and install the backup and restore features
 backup_restore_install=true
 
