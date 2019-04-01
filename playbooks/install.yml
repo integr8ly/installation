@@ -37,7 +37,7 @@
       become: yes
       when: create_cluster_admin
 
-- hosts: managed
+- hosts: local
   gather_facts: no
 
 - import_playbook: ./backup_restore/install.yml
