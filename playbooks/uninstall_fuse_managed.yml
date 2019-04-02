@@ -1,7 +1,0 @@
----
-- hosts: localhost
-  gather_facts: no
-  tasks:
-  - include_role:
-      name: fuse_managed
-      tasks_from: uninstall.yml

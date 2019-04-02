@@ -1,9 +1,0 @@
----
-- hosts: localhost
-  gather_facts: no
-  tasks:
-    - include_role:
-        name: walkthroughs
-        tasks_from: walkthroughs
-    - include_role:
-        name: reboot_template_broker

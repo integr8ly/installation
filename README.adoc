@@ -127,11 +127,6 @@ Before run the scripts it is required login via oc client tool to the master/OCP
 oc login master.example.openshiftworkshop.com -u <user> -p <password>
 ----
 
-You can install Integreatly using either of the following options:
-
-. link:#install-all[Install all products from a single playbook]
-. link:#install-individually[Install each product individually]
-
 [[install-all]]
 == Install all products from a single playbook
 
@@ -148,6 +143,8 @@ Before running the installer, please consider the following variables:
 | github_client_secret | GitHub OAuth client secret to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
 | prerequisites_install | Boolean var that skips the installation of system wide tools/packages that are required by the installer if set to false (needs to be set to false when running the installer in a linux container) - defaults to true. 
 |===
+
+Some products can be excluded from the install by setting a var. For example, setting `gitea=false` will not install gitea. Installation of individual products will not be a supported installation method with this repo. You can however write your own playbook to execute specific roles & tasks as needed.
 
 
 === Create GitHub OAuth to enable GitHub authorization for Launcher
@@ -210,128 +207,6 @@ ok: [127.0.0.1] => {
 The `http://localhost` placeholder added in the GitHub OAuth App should be replaced with this value. Following an example.
 
 image::https://user-images.githubusercontent.com/7708031/48856981-c1209d80-edaf-11e8-9d23-f550c7ec31be.png[GitHub OAuth auhotization callback URL, 640]
-
-[[install-individually]]
-== Install each product individually
-
-Each product has an associated install playbook available from the *playbooks/* directory.
-
-=== Run Single Sign On install playbook
-
-[source,shell]
-----
-$ oc login https://<openshift-master-url>
-$ ansible-playbook -i inventories/hosts playbooks/rhsso.yml
-----
-
-Upon completion, a new identity provider named *rh_sso* should be presented on the Openshift master console login screen.
-
-WARNING: The default login credentials are `admin@example.com` / `Password1`
-
-To configure custom account credentials, simply override the rhsso role environment variables by specifying user parameters as part of the install command:
-
-[source,shell]
-----
-$ ansible-playbook -i inventories/hosts playbooks/rhsso.yml -e rhsso_evals_admin_username=<username> -e rhsso_evals_admin_password=<password>
-----
-
-=== Run EnMasse install playbook
-
-[source,shell]
-----
-$ oc login https://<openshift-master-url>
-$ ansible-playbook -i inventories/hosts playbooks/enmasse.yml
-----
-
-Once the playbook has completed a service named `EnMasse (standard)` will be available
-in the Service Catalog. This can be provisioned into your namespace to use EnMasse.
-
-=== Run Che install playbook
-
-Set the following variables:
-
-.Che installer playbook variables
-|===
-| Variable | Description
-| che_route_suffix | The router suffix of the OpenShift cluster
-| che_keycloak_host | The route to the previously created SSO, without protocol
-| che_keycloak_user | Username to authenticate as, this would be the admin user by defaul
-| che_keycloak_password | Password of the user
-| che_namespace | The namesapce to provision che into
-| che_infra_namespace | This can usually be the same as `che_namespace`
-|===
-
-
-[source,shell]
-----
-$ oc login https://<openshift-master-url>
-$ ansible-playbook -i inventories/hosts playbooks/che-install.yml
-----
-
-=== Run Launcher install playbook
-
-The Launcher playbook also requires information about the existing SSO that was
-provisioned previously. It needs to know the route of the SSO. This can be
-retrieved using:
-
-[source,shell]
-----
-$ oc get route sso -o jsonpath='{.spec.host}' -n rhsso
-----
-
-It also needs to know the realm to interact with. By default this would be
-`openshift`. Finally it needs the credentials of a user to login as, by default
-this would be the `admin` user created by the SSO playbook.
-
-Specify the following variables in the inventory files or as `--extra-vars` when
-running the playbook.
-
-.Launcher installer playbook variables
-|===
-| Variable | Description
-| launcher_openshift_sso_route | The route to the previously created SSO, without protocol
-| launcher_openshift_sso_realm | The realm to create resources in the SSO, this would be `openshift` by default
-| launcher_openshift_sso_username | Username to authenticate as, this would be the admin user by default
-| launcher_openshift_sso_password | Password of the user
-|===
-
-
-If using self signed certs set `launcher_sso_validate_certs` to `no/false`.
-Without this, an error will be thrown similar to this:
-
-----
-fatal: [127.0.0.1]: FAILED! => {"msg": "The conditional check 'launcher_sso_auth_response.status == 200' failed. The error was: error while evaluating conditional (launcher_sso_auth_response.status == 200): 'dict object' has no attribute 'status'"}
-----
-
-Next, run the playbook.
-
-[source,shell]
-----
-$ oc login https://<openshift-master-url>
-$ ansible-playbook -i inventories/hosts playbooks/launcher.yml
-----
-
-Once the playbook has completed it will print a debug message saying to update
-the `Authorization callback URL` of the GitHub OAuth Application. Once this is
-done the launcher setup has finished.
-
-=== Run 3Scale install playbook
-
-WARNING: 3Scale requires access to ReadWriteMany PVs. As such, it will only work on Openshift clusters that have RWX PVs available.
-
-[source,shell]
-----
-$ oc login https://<openshift-master-url>
-$ ansible-playbook -i inventories/hosts playbooks/3scale.yml -e threescale_route_suffix=<openshift-router-suffix> -e enable_wildcard_route=<true/false>
-----
-
-=== Run Webapp install playbook
-
-[source,shell]
-----
-$ oc login https://<openshift-master-url>
-$ ansible-playbook -i inventories/hosts playbooks/webapp.yml
-----
 
 == Check the installation
 

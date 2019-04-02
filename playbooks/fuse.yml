@@ -1,5 +1,0 @@
-- name: Setup Fuse on OpenShift
-  hosts: local
-  gather_facts: no
-  roles:
-    - fuse
