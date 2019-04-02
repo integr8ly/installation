@@ -40,7 +40,7 @@
 - hosts: local
   gather_facts: no
 
-- import_playbook: ./backup_restore/install.yml
+- import_playbook: ./install_backups.yml
   when: backup_restore_install | default(false) | bool
 
 - hosts: localhost
