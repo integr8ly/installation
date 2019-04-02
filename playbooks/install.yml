@@ -36,6 +36,10 @@
       shell: "htpasswd -D /etc/origin/master/htpasswd integreatly-admin"
       become: yes
       when: create_cluster_admin
+
+- import_playbook: ./install_backups.yml
+  when: backup_restore_install | default(false) | bool
+
 - hosts: localhost
   gather_facts: no
   tasks:
@@ -51,4 +55,3 @@
       vars:
         callback_url: "{{ launcher_sso_route }}/auth/realms/{{ eval_launcher_sso_realm }}/broker/github/endpoint"
       when: launcher
-
