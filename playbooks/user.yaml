@@ -26,7 +26,7 @@
         shell: oc adm policy add-cluster-role-to-user cluster-admin integreatly-admin
         register: oc_cmd
         failed_when: oc_cmd.rc != 0
-    when: create_cluster_admin
+    when: (run_master_tasks | default(true) | bool) and create_cluster_admin
 
 - hosts: localhost
   gather_facts: no
@@ -50,4 +50,4 @@
           - name: login with admin user via rhsso identity provider when htpasswd disabled
             shell: "oc login {{ server_cmd.stdout }} --username=admin --password={{ admin_password.stdout }}"
         when: oc_login.rc != 0 and '401 Unauthorized' in oc_login.stdout and create_cluster_admin
-      when: create_cluster_admin
+      when: (run_master_tasks | default(true) | bool) and create_cluster_admin

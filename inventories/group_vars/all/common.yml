@@ -30,5 +30,31 @@ eval_threescale_enable_wildcard_route: false
 
 
 # openshift login as some product installs wont work with system:admin
+# NOTE: When run_master_tasks is false, this var will also be set to false, with the
+#       expectation that `oc` is already logged in as a cluster-admin user
 create_cluster_admin: true
 # override to set a namespace prefix.
+
+
+#run_master_tasks: (boolean)
+#
+# Default is set to true inline in various places.
+# No default is set here, as it wouldn't be overwriteable in an inventory file
+#
+# If true, any tasks that need to happen on the master will be run.
+# For example:
+# - adding an identity provider to the master-config.yaml
+# - adding a cors rule to the master-config.yaml
+# - retrieving master url & routing subdomain values from the master-config.yaml
+# - adding/removing a htpasswd user (integreatly-admin)
+#
+# If false, the master host will *not* be accessed at all.
+# In this case, the following should be done:
+# - run the install.yml playbook,
+#   - on a machine that is logged in (oc) with cluster-admin access (*not* system:admin user)
+#   - with values set for the following vars
+#     - eval_app_host (router subdomain, used for creating some routes & for 3scale)
+#     - openshift_master_url (master url for oauth use)
+# - after install, add the relevant cors rule to the master-config.yaml based on the webapp route
+# - add the cluster SSO identity provider to the master-config.yaml
+# - restart the master(s)
