@@ -1,7 +1,0 @@
----
-- hosts: localhost
-  gather_facts: no
-  tasks:
-  - include_role:
-      name: middleware_monitoring
-      tasks_from: uninstall.yml
