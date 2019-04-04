@@ -1,0 +1,37 @@
+---
+- name: "Delete keycloak realm"
+  shell: "oc delete keycloakrealm {{ rhsso_realm }} -n {{ sso_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
+  changed_when: output.rc == 0
+
+- name: "Delete keycloak"
+  shell: "oc delete keycloak rhsso -n {{ sso_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
+  changed_when: output.rc == 0
+
+- name: "Wait for keycloak resources to be removed"
+  shell: oc get keycloak rhsso -n {{ sso_namespace }}
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
+
+- name: "Wait for keycloakrealms to be removed"
+  shell: oc get keycloakrealm {{ rhsso_realm }} -n {{ sso_namespace }}
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
+
+
+- name: "Delete project namespace: {{ sso_namespace }}"
+  shell: oc delete project {{ sso_namespace }}
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
+  changed_when: output.rc == 0

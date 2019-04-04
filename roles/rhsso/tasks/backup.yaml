@@ -1,7 +1,7 @@
 ---
 -
   name: "check keycloak namespace exists"
-  shell: "oc get project {{ eval_rhsso_namespace }} | grep {{ eval_rhsso_namespace }} | wc -l"
+  shell: "oc get project {{ sso_namespace }} | grep {{ sso_namespace }} | wc -l"
   register: "sso_namespace_exists"
 
 - name: Create ServiceAccount and role binding
@@ -10,7 +10,7 @@
     tasks_from: _setup_service_account.yml
   vars:
     binding_name: rhsso-backup-binding
-    serviceaccount_namespace: '{{ eval_rhsso_namespace }}'
+    serviceaccount_namespace: '{{ sso_namespace }}'
 
 -
   name: "Add backups to keycloak CR"
@@ -18,5 +18,5 @@
   block:
     -
       name: "patch Keycloak CR"
-      shell: oc patch keycloak rhsso -n {{ eval_rhsso_namespace }} --patch '{"spec":{"backups":{{ rhsso_backups | to_json }}}}' --type=merge
+      shell: oc patch keycloak rhsso -n {{ sso_namespace }} --patch '{"spec":{"backups":{{ rhsso_backups | to_json }}}}' --type=merge
 
