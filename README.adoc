@@ -208,6 +208,33 @@ The `http://localhost` placeholder added in the GitHub OAuth App should be repla
 
 image::https://user-images.githubusercontent.com/7708031/48856981-c1209d80-edaf-11e8-9d23-f550c7ec31be.png[GitHub OAuth auhotization callback URL, 640]
 
+=== Add backup jobs
+
+__NOTE__: Needs to be used in an existing integreatly cluster.
+
+__NOTE__: Requires an existing s3 secret `s3-credentials` in the backup namespace.
+
+Sample command:
+
+```
+ansible-playbook \
+-i inventories/host \
+-e 'backup_schedule="30 2 * * *"' \
+-e 'backup_namespace=openshift-integreatly-backups' \
+playbooks/install_backups.yml
+```
+
+Parameters:
+
+|===
+| Variable | Description | Default
+| backup_version | backup-container-image tag version | defaults to the most recent backup-container-image tag
+| backup_resources_location | http url to download openshift cronjob template file(s) | `https://raw.githubusercontent.com/integr8ly/backup-container-image/{{ backup_version }}/templates/openshift`
+| backup_image | backup image name to use (is used together with backup_version var) | `quay.io/integreatly/backup-container:{{ backup_version }}`
+| backup_schedule | the cronjob schedule for all jobs - NOTE: always encapsulate the value in quotes, example: `-e 'backup_schedule="30 2 * * *"'`| `30 2 * * *`
+| backup_namespace | backup namespace name to add all cronjobs | `openshift-integreatly-backups`
+|===
+
 == Check the installation
 
 IMPORTANT: Once the installation has finished you will no longer be able to login via the Openshift console or oc cli as the admin if there is an sso redirect in place. The new admin user is `admin@example.com` password is `Password1`
