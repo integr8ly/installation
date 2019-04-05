@@ -212,7 +212,7 @@ image::https://user-images.githubusercontent.com/7708031/48856981-c1209d80-edaf-
 
 __NOTE__: Needs to be used in an existing integreatly cluster.
 
-__NOTE__: Requires an existing s3 secret `s3-credentials.yml` in the backup namespace.
+__NOTE__: Requires an existing s3 secret `s3-credentials` in the backup namespace.
 
 Sample command:
 
