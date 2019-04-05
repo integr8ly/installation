@@ -228,7 +228,7 @@ Parameters:
 
 |===
 | Variable | Description | Default
-| backup_version | backup image tag version | defaults to the most recent backup release tag
+| backup_version | backup-container-image tag version | defaults to the most recent backup-container-image tag
 | backup_resources_location | http url to download openshift cronjob template file(s) | `https://raw.githubusercontent.com/integr8ly/backup-container-image/{{ backup_version }}/templates/openshift`
 | backup_image | backup image name to use (is used together with backup_version var) | `quay.io/integreatly/backup-container:{{ backup_version }}`
 | backup_schedule | the cronjob schedule for all jobs - NOTE: always encapsulate the value in quotes, example: `-e 'backup_schedule="30 2 * * *"'`| `30 2 * * *`
