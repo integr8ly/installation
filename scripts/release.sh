@@ -72,7 +72,7 @@ fi
 
 git reset --hard HEAD
 
-releaseExists=$(git tag | grep ${releaseTag} | wc -l)
+releaseExists=$(git tag | grep ${^releaseTag$} | wc -l)
 if [[ "${releaseExists}" -gt "0" ]]
 then
 echo "
