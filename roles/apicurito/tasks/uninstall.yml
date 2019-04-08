@@ -1,6 +1,7 @@
 ---
-- name: "Delete project namespace: {{ apicurito_namespace }} "
-  shell: "oc delete namespace {{ apicurito_namespace }} "
-  register: output
-  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
-  changed_when: output.rc == 0 
+- include_role:
+    name: namespace
+    tasks_from: delete
+  vars:
+    names:
+    - "{{ apicurito_namespace }}"

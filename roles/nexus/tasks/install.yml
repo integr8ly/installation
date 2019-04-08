@@ -1,15 +1,12 @@
 ---
 - include_role:
     name: namespace
+    tasks_from: create
   vars:
-    namespace: "{{ nexus_namespace }}"
+    name: "{{ nexus_namespace }}"
     display_name: "Nexus"
-
-- name: Add labels to namespace
-  shell: oc patch ns {{ nexus_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
-  register: namespace_patch
-  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
-  changed_when: namespace_patch.rc == 0
+    monitor: true
+    is_service: true
 
 - name: Check if nexus deploy exists
   shell: "oc get pods -n {{ nexus_namespace }} | grep 'nexus' | grep -v 'deploy' | grep '1/1' | wc -l"

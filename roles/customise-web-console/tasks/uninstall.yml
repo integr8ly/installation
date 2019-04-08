@@ -39,10 +39,10 @@
       shell: oc create configmap {{ customise_web_console.web_console.configmap }} --from-file=/tmp/{{ customise_web_console.web_console.configmap_key }} -n {{ customise_web_console.web_console.namespace }} --dry-run -o yaml | oc replace -f -
       when: new_web_console_config is changed
 
-- name: "Delete {{ customise_web_console.namespace }} namespace"
-  shell: "oc delete namespace {{ customise_web_console.namespace }}"
-  register: output
-  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
-  changed_when: output.rc == 0
+- include_role:
+    name: namespace
+    tasks_from: delete
+  vars:
+    names:
+    - "{{ customise_web_console.namespace }}"
   when: console_config_check_namespace_exists.rc == 0
-

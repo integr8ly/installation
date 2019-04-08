@@ -9,9 +9,12 @@
 
 - include_role:
     name: namespace
+    tasks_from: create
   vars:
-    namespace: "{{ enmasse_namespace }}"
+    name: "{{ enmasse_namespace }}"
     display_name: "AMQ Online"
+    monitor: true
+    is_service: true
 
 
 - include_tasks: "_install_enmasse_from_artifact.yml"
@@ -56,9 +59,3 @@
   delay: 10
   failed_when: result.stdout
   changed_when: False
-
-- name: Add labels to namespace
-  shell: oc label --overwrite namespace {{ enmasse_namespace }} {{ monitoring_label_name }}={{ monitoring_label_value }} integreatly-middleware-service=true
-  register: namespace_label
-  failed_when: namespace_label.stderr != '' and 'not labeled' not in namespace_label.stderr
-  changed_when: namespace_label.rc == 0
