@@ -12,10 +12,11 @@
     src: web-console-config.js.j2
     dest: "/tmp/{{ customise_web_console.javascript_filename }}"
 
-- name: "Create {{ customise_web_console.namespace }} namespace"
-  shell: "oc create namespace {{ customise_web_console.namespace }}"
-  register: web_console_config_namespace_result
-  failed_when: web_console_config_namespace_result.stderr != '' and 'AlreadyExists' not in web_console_config_namespace_result.stderr
+- include_role:
+    name: namespace
+    tasks_from: create
+  vars:
+    name: "{{ customise_web_console.namespace }}"
 
 - name: "Delete current configmap"
   shell: "oc delete configmap {{ customise_web_console.configmap_name }} -n {{ customise_web_console.namespace }}"

@@ -2,19 +2,16 @@
 - name: "Create 3scale namespace: {{ threescale_namespace }}"
   include_role:
     name: namespace
+    tasks_from: create
   vars:
-    namespace: "{{ threescale_namespace }}"
+    name: "{{ threescale_namespace }}"
     display_name: "{{ threescale_display_name }}"
+    monitor: true
+    is_service: true
 
 - name: Check namespace for existing resources
   shell: oc get all -n {{ threescale_namespace }}
   register: threescale_resources_exist
-
-- name: Add labels to namespace
-  shell: oc patch ns {{ threescale_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
-  register: namespace_patch
-  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
-  changed_when: namespace_patch.rc == 0
 
 - name: Check for errored deploy pods
   shell: oc get pods --namespace {{ threescale_namespace }}  |  grep  "deploy" | grep "Failed" | cut -d " " -f 1

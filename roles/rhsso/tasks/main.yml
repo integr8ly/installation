@@ -1,15 +1,12 @@
 ---
 - include_role:
     name: namespace
+    tasks_from: create
   vars:
-    namespace: "{{ rhsso_namespace }}"
+    name: "{{ rhsso_namespace }}"
     display_name: "Red Hat Single Sign-On"
-
-- name: Add labels to namespace
-  shell: oc patch ns {{ rhsso_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
-  register: namespace_patch
-  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
-  changed_when: namespace_patch.rc == 0
+    monitor: true
+    is_service: true
 
 - name: "Ensure {{ rhsso_imagestream_name }} tag is present for redhat sso in openshift namespace"
   shell: oc tag --source=docker {{ rhsso_imagestream_image }} openshift/{{ rhsso_imagestream_name }}

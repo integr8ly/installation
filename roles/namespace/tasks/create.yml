@@ -1,13 +1,18 @@
 ---
 - name: Check namespace doesn't already exist
-  shell: oc get namespace {{ namespace }}
+  shell: oc get namespace {{ name }}
   register: namespace_exists
   failed_when: namespace_exists.stderr != '' and 'NotFound' not in namespace_exists.stderr
 
-- name: Create namespace {{ namespace }} if it doesnt exist
-  shell: oc create namespace {{ namespace }}
+- name: Creating namespace {{ name }}
+  block:
+    - set_fact:
+        tmp_ns_file: "/tmp/{{ namespace_file }}"
+    - template:
+        src: "{{ namespace_file }}.j2"
+        dest: "{{ tmp_ns_file }}"
+    - shell: "oc apply -f {{ tmp_ns_file }}"
+    - file:
+        path: "{{ tmp_ns_file }}"
+        state: absent
   when: namespace_exists.rc != 0
-
-- name: Give namespace {{ namespace }} display name {{ display_name }}
-  shell: oc annotate --overwrite namespace {{ namespace }} openshift.io/display-name="{{ display_name }}"
-  when: display_name is defined

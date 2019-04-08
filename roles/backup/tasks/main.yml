@@ -1,8 +1,9 @@
 ---
-- name: "Create {{ backup_namespace }} namespace"
-  shell: "oc create namespace {{ backup_namespace }}"
-  register: backup_namespace_result
-  failed_when: backup_namespace_result.stderr != '' and 'AlreadyExists' not in backup_namespace_result.stderr
+- include_role:
+    name: namespace
+    tasks_from: create
+  vars:
+    name: "{{ backup_namespace }}"
 
 - name: "Check for aws credentials secret in {{ backup_namespace }} namespace"
   shell: "oc get secret {{ aws_s3_backup_secret_name }} -n {{ backup_namespace }}"
