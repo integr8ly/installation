@@ -1,0 +1,21 @@
+---
+- include_role:
+    name: namespace
+    tasks_from: create
+  vars:
+    name: "{{ amq_streams_namespace_name }}"
+    display_name: AMQ Streams
+    is_service: true
+
+- include_tasks: ./install_amq_streams_cluster_operator.yml
+  vars:
+    namespace: "{{ amq_streams_namespace_name }}"
+    version: "{{ amq_version }}"
+
+- include_tasks: ./create_kafka.yml
+  vars:
+    name: "{{ integreatly_kafka_cluster_name }}"
+    kafka_storage_size: 10
+    zookeeper_storage_size: 10
+
+- include_tasks: ./check_installation_succeeded.yml

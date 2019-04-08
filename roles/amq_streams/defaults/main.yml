@@ -1,0 +1,5 @@
+amq_streams_namespace_name: "{{ns_prefix | default('')}}amq-streams"
+amq_streams_repo_url: https://github.com/jboss-container-images/amqstreams-1-openshift-image
+amq_version: 1.1.0
+amq_streams_dest: /tmp/amq_streams
+integreatly_kafka_cluster_name: "integreatly-cluster"
