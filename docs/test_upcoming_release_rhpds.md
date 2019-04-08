@@ -8,7 +8,7 @@
    sudo su
    git clone https://github.com/integr8ly/installation.git
    cd installation
-   git checkout <release-1.2.2>
+   git checkout <release-1.x.x>
 ```  
 - update the hosts file
 ```
