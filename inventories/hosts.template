@@ -1,6 +1,8 @@
 [local:vars]
 ansible_connection=local
 
+run_master_tasks=true
+
 [local]
 127.0.0.1
 

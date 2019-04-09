@@ -14,4 +14,4 @@
         rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
         rhsso_namespace: "{{ eval_rhsso_namespace }}"
       tags: ['rhsso', 'remote']
-      when: webapp
+      when: (run_master_tasks | default(true) | bool) and webapp
