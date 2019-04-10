@@ -10,3 +10,5 @@ Add the steps required to check this change. Following an example.
 3. Try to edit this item
 4. Check if in the left menu the feature X is not so long present.
 -->
+
+## Is an upgrade task required and are there additional steps needed to test this?
