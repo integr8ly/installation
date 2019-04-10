@@ -141,6 +141,14 @@
     webapp_route: "https://{{webapp_route.stdout}}"
   when: webapp
 
+- name: set webapp component
+  set_fact:
+    webapp_manifest:
+      - name: webapp
+        version: "{{webapp_version}}"
+        host: "{{webapp_route}}"
+  when: webapp
+
 - name: Get launcher  route
   shell: oc get route/launcher -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
   register: launcher_route_cmd
