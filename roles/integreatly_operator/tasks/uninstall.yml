@@ -1,0 +1,12 @@
+---
+- name: "Delete CRDs for Integreatly Operator"
+  shell: "oc delete -f {{ item }}"
+  with_items: "{{ integreatly_operator_crds }}"
+  failed_when: false
+
+- include_role:
+    name: namespace
+    tasks_from: delete
+  vars:
+    names:
+      - "{{ integreatly_operator_ns_name }}"

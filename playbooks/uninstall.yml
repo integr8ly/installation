@@ -12,6 +12,13 @@
         name: delete-user-namespaces
       when: keep_namespaces is undefined or not keep_namespaces | bool
     -
+      name: Uninstall Integreatly Operator
+      include_role:
+        name: integreatly_operator
+        tasks_from: uninstall
+      tags: ['integreatly_operator']
+      when: integreatly_operator | default(true) | bool
+    -
       name: Uninstall apicurito
       include_role:
         name: apicurito

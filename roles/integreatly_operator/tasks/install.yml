@@ -1,0 +1,16 @@
+---
+- name: "Register CRDs for Integreatly Operator"
+  shell: "oc apply -f {{ item }}"
+  with_items: "{{ integreatly_operator_crds }}"
+
+- include_role:
+    name: namespace
+    tasks_from: create
+  vars:
+    name: "{{ integreatly_operator_ns_name }}"
+    monitor: true
+    is_service: true
+
+- name: "Deploy the Integreatly Operator"
+  shell: "oc apply -f {{ item }} --namespace {{ integreatly_operator_ns_name }}"
+  with_items: "{{ integreatly_operator_deployment }}"

@@ -1,0 +1,6 @@
+---
+- hosts: local
+  gather_facts: no
+  roles:
+    - role: integreatly_operator
+      when: integreatly_operator | default(true) | bool

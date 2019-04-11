@@ -39,6 +39,7 @@
 - import_playbook: "./prerequisites.yml"
 - import_playbook: "./openshift.yml"
 - import_playbook: "./user.yaml"
+- import_playbook: "./install_integreatly_operator.yml"
 - import_playbook: "./install_sso.yml"
 - import_playbook: "./install_infra.yml"
 - import_playbook: "./install_fuse_managed.yml"
