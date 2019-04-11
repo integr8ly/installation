@@ -3,8 +3,6 @@
   gather_facts: no
   tasks:
   - block:
-      - debug:
-          msg: "Setting up a new cluster admin as create_cluster_admin is true"
       - name: make sure we start as system admin
         shell: oc login -u system:admin
         register: oc_login
@@ -26,7 +24,7 @@
         shell: oc adm policy add-cluster-role-to-user cluster-admin integreatly-admin
         register: oc_cmd
         failed_when: oc_cmd.rc != 0
-    when: (run_master_tasks | default(true) | bool) and create_cluster_admin
+    when: (run_master_tasks | default(true) | bool) and (create_cluster_admin == true)
 
 - hosts: localhost
   gather_facts: no
@@ -49,5 +47,5 @@
             failed_when: admin_password.rc != 0
           - name: login with admin user via rhsso identity provider when htpasswd disabled
             shell: "oc login {{ server_cmd.stdout }} --username=admin --password={{ admin_password.stdout }}"
-        when: oc_login.rc != 0 and '401 Unauthorized' in oc_login.stdout and create_cluster_admin
-      when: (run_master_tasks | default(true) | bool) and create_cluster_admin
+        when: oc_login.rc != 0 and '401 Unauthorized' in oc_login.stdout and (create_cluster_admin == true)
+      when: (run_master_tasks | default(true) | bool) and (create_cluster_admin == true)
