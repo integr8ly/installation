@@ -149,6 +149,10 @@
         host: "{{webapp_route}}"
   when: webapp
 
+- set_fact:
+    component_manifests: "{{component_manifests}} + {{webapp_manifest}}"
+  when: webapp
+
 - name: Get launcher  route
   shell: oc get route/launcher -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
   register: launcher_route_cmd
