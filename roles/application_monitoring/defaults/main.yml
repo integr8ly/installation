@@ -1,0 +1,5 @@
+---
+app_monitoring_namespace: openshift-application-metrics
+app_monitoring_postfix: -{{ app_monitoring_namespace }}
+app_monitoring_display_name: Application Metrics
+app_monitoring_monitoring_label_value : application-monitoring

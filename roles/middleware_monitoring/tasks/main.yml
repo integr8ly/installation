@@ -13,9 +13,12 @@
   changed_when: namespace_patch.rc == 0
 
 - include: ./create_resource_from_template.yml
-  with_items: "{{ monitoring_resource_templates }}"
+  with_items: "{{ monitoring_resource_templates_pre }}"
 
 - name: Create required operator resources
   shell: "oc apply -f {{ item }} -n {{ monitoring_namespace }}"
   register: monitoring_resource_create
   with_items: "{{ monitoring_resources }}"
+
+- include: ./create_resource_from_template.yml
+  with_items: "{{ monitoring_resource_templates_post }}"

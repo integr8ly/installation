@@ -1,0 +1,6 @@
+apiVersion: applicationmonitoring.integreatly.org/v1alpha1
+kind: ApplicationMonitoring
+metadata:
+  name: example-applicationmonitoring{{ namespace_postfix }}
+spec:
+  labelSelector: {{ monitoring_label_value }}
