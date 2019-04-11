@@ -1,6 +1,9 @@
 ---
 - include: ./delete_resource_from_template.yml
-  with_items: "{{ monitoring_resource_templates }}"
+  with_items: "{{ monitoring_resource_templates_pre }}"
+
+- include: ./delete_resource_from_template.yml
+  with_items: "{{ monitoring_resource_templates_post }}"
 
 - name: Delete required operator resources
   shell: "oc delete -f {{ item }} -n {{ monitoring_namespace }}"

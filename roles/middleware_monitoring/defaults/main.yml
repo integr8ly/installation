@@ -1,5 +1,6 @@
 ---
 monitoring_namespace: "{{ns_prefix | default('')}}middleware-monitoring"
+namespace_postfix: ""
 monitoring_display_name: "Managed Service Monitoring"
 monitoring_tmp_dir: /tmp
 
@@ -9,10 +10,9 @@ monitoring_resources:
 - "{{ middleware_monitoring_operator_resources }}/operator_roles/role.yaml"
 - "{{ middleware_monitoring_operator_resources }}/operator_roles/role_binding.yaml"
 - "{{ middleware_monitoring_operator_resources }}/crds/ApplicationMonitoring.yaml"
-- "{{ middleware_monitoring_operator_resources }}/examples/ApplicationMonitoring.yaml"
 - "{{ middleware_monitoring_operator_resources }}/operator.yaml"
 
-monitoring_resource_templates:
+monitoring_resource_templates_pre:
 # Grafana resources
 - "grafana_crd.yml"
 - "grafana_cluster_role.yml"
@@ -29,3 +29,8 @@ monitoring_resource_templates:
 - "prometheus_operator_cluster_role.yml"
 - "alert_manager_cluster_role_binding.yml"
 - "alert_manager_cluster_role.yml"
+
+
+monitoring_resource_templates_post:
+  # Application monitoring resources
+  - "application_monitoring_cr.yml"

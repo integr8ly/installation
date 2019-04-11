@@ -92,6 +92,13 @@
       tags: ['middleware-monitoring']
       when: middleware_monitoring | default(true) | bool
     -
+      name: Uninstall application-monitoring
+      include_role:
+        name: application_monitoring
+        tasks_from: uninstall
+      tags: ['application-monitoring']
+      when: application_monitoring | default(true) | bool
+    -
       name: Uninstall managed Fuse
       include_role:
         name: fuse_managed

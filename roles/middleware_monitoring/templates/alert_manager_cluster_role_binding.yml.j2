@@ -2,7 +2,7 @@ apiVersion: authorization.openshift.io/v1
 groupNames: null
 kind: ClusterRoleBinding
 metadata:
-  name: alertmanager-application-monitoring
+  name: alertmanager-application-monitoring{{ namespace_postfix }}
 roleRef:
   name: alertmanager-application-monitoring
 subjects:
