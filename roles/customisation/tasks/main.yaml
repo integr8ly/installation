@@ -3,6 +3,27 @@
   set_fact:
     component_manifests: []
 
+- name: Get Integreatly WebApp route
+  shell: oc get route/tutorial-web-app -o template --template \{\{.spec.host\}\} -n {{ webapp_namespace }}
+  register: webapp_route
+  when: webapp
+
+- set_fact:
+    webapp_route: "https://{{webapp_route.stdout}}"
+  when: webapp
+
+- name: set webapp component
+  set_fact:
+    webapp_manifest:
+      - name: webapp
+        version: "{{webapp_version}}"
+        host: "{{webapp_route}}"
+  when: webapp
+
+- set_fact:
+    component_manifests: "{{component_manifests}} + {{webapp_manifest}}"
+  when: webapp
+
 - name: Retrieve 3Scale admin auth token
   include_role:
     name: 3scale
@@ -131,27 +152,6 @@
 - set_fact:
     component_manifests: "{{component_manifests}} + {{gitea_manifest}}"
   when: gitea
-
-- name: Get Integreatly WebApp route
-  shell: oc get route/tutorial-web-app -o template --template \{\{.spec.host\}\} -n {{ webapp_namespace }}
-  register: webapp_route
-  when: webapp
-
-- set_fact:
-    webapp_route: "https://{{webapp_route.stdout}}"
-  when: webapp
-
-- name: set webapp component
-  set_fact:
-    webapp_manifest:
-      - name: webapp
-        version: "{{webapp_version}}"
-        host: "{{webapp_route}}"
-  when: webapp
-
-- set_fact:
-    component_manifests: "{{component_manifests}} + {{webapp_manifest}}"
-  when: webapp
 
 - name: Get launcher  route
   shell: oc get route/launcher -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
