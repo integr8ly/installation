@@ -17,6 +17,10 @@ customise_web_console:
     configmap: webconsole-config
     configmap_key: webconsole-config.yaml
   custom_services:
+    webapp:
+      name: Solution Explorer
+      icon: fa fa-noicon
+      description: Red Hat Managed Middleware Solution Explorer
     rh-sso:
       name: Red Hat Single Sign-On
       icon: fa fa-noicon
@@ -46,10 +50,6 @@ customise_web_console:
       name: Red Hat Fuse Online
       icon: fa fa-noicon
       description: Continuous application delivery, built and deployed on OpenShift.
-    webapp:
-      name: Solution Explorer
-      icon: fa fa-noicon
-      description: Red Hat Managed Middleware Solution Explorer
     gitea:
       name: Gitea
       icon: fa fa-noicon
