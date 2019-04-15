@@ -60,3 +60,10 @@ create_cluster_admin: true
 # - after install, add the relevant cors rule to the master-config.yaml based on the webapp route
 # - add the cluster SSO identity provider to the master-config.yaml
 # - restart the master(s)
+
+#user_rhsso: (boolean)
+#
+# Default is set to true inline in various places.
+# No default is set here, as it wouldn't be overwriteable in an inventory file
+# If true, a separate RH-SSO instance will be provisioned to a separate namespace.
+# This instance can be used by user applications to provide identity management services.

@@ -30,7 +30,7 @@
       vars:
         sso_namespace: "{{ eval_user_rhsso_namespace }}"
       tags: ['user_rhsso']
-      when: user_rhsso
+      when: user_rhsso | default(true) | bool
     - include_role:
         name: backup
         tasks_from: monitoring.yml

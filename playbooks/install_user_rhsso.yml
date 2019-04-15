@@ -14,4 +14,4 @@
         sso_namespace_display_name: "User Facing Red Hat Single Sign-On"
         rhsso_provision_immediately: true
       tags: ['user_rhsso']
-      when: user_rhsso
+      when: user_rhsso | default(true) | bool

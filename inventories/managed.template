@@ -17,3 +17,8 @@ aws_s3_backup_secret_name=s3-credentials
 # See group_vars/all/common.yml & relevant SOP for more info when 
 # setting this to false.
 run_master_tasks=false
+
+# Don't setup the rh-sso instance for user applications
+# See group_vars/all/common.yml & relevant SOP for more info when 
+# setting this to false.
+user_rhsso=false
