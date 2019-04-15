@@ -1,4 +1,9 @@
 ---
+- name: Update expected cronjobs
+  set_fact:
+    backup_expected_cronjobs: "{{ backup_expected_cronjobs | combine({'user-sso': ['daily-at-midnight']}) }}"
+  when: user_rhsso | default(true) | bool
+
 - template:
     src: backup-monitoring-alerts.yml.j2
     dest: /tmp/backup-monitoring-alerts.yml

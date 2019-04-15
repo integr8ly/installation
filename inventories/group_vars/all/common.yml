@@ -17,6 +17,8 @@ eval_nexus_namespace: "{{ns_prefix | default('')}}nexus"
 eval_managed_fuse_namespace: "{{ns_prefix | default('')}}fuse"
 eval_enmasse_namespace: "{{ ns_prefix | default('')}}enmasse"
 
+eval_user_rhsso_namespace:  "{{ns_prefix | default('')}}user-sso"
+
 eval_seed_users_count: 50
 eval_webapp_url_prefix: tutorial-web-app-webapp
 
@@ -58,3 +60,10 @@ create_cluster_admin: true
 # - after install, add the relevant cors rule to the master-config.yaml based on the webapp route
 # - add the cluster SSO identity provider to the master-config.yaml
 # - restart the master(s)
+
+#user_rhsso: (boolean)
+#
+# Default is set to true inline in various places.
+# No default is set here, as it wouldn't be overwriteable in an inventory file
+# If true, a separate RH-SSO instance will be provisioned to a separate namespace.
+# This instance can be used by user applications to provide identity management services.

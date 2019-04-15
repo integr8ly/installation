@@ -44,6 +44,8 @@ rhsso_plugins:
   - keycloak-metrics-spi
 original_identityprovider_config_path: /etc/origin/master/idp-config.integreatly-original.yaml
 
+rhsso_provision_immediately: false
+
 rhsso_backups:
   - name: "daily-at-midnight"
     schedule: "{{ backup_schedule }}"

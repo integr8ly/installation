@@ -1,0 +1,46 @@
+---
+- include_role:
+    name: namespace
+  vars:
+    namespace: "{{ sso_namespace }}"
+    display_name: "{{ sso_namespace_display_name | default('Red Hat Single Sign-On')}}"
+
+- name: Add labels to namespace
+  shell: oc patch ns {{ sso_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
+  register: namespace_patch
+  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
+  changed_when: namespace_patch.rc == 0
+
+- name: "Ensure {{ rhsso_imagestream_name }} tag is present for redhat sso in openshift namespace"
+  shell: oc tag --source=docker {{ rhsso_imagestream_image }} openshift/{{ rhsso_imagestream_name }}
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 1
+  failed_when: not result.stdout
+  changed_when: False
+
+- name: "Ensure {{ rhsso_imagestream_name }} tag has an imported image in openshift namespace"
+  shell: oc -n openshift import-image {{ rhsso_imagestream_name }}
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 1
+  failed_when: not result.stdout
+  changed_when: False
+
+- name: "Create required objects"
+  shell: "oc create -f {{ item }} -n {{ sso_namespace }}"
+  with_items: "{{ rhsso_operator_resource_items }}"
+  register: rhsso_operator_resources_result
+  failed_when: rhsso_operator_resources_result.stderr != '' and 'AlreadyExists' not in rhsso_operator_resources_result.stderr
+
+- name: "Create keycloak resource template"
+  template:
+    src: "keycloak.json.j2"
+    dest: "/tmp/keycloak.json"
+
+- name: "Create keycloak resource"
+  shell: oc create -f /tmp/keycloak.json -n {{ sso_namespace }}
+  register: rhsso_keycloak
+  failed_when: rhsso_keycloak.stderr != '' and 'AlreadyExists' not in rhsso_keycloak.stderr

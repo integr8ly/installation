@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  gather_facts: true
+  tasks:
+    - name: Include vars from rhsso
+      include_vars: "../../roles/rhsso/defaults/main.yml"
+    -
+      name: Install user rhsso
+      include_role:
+        name: rhsso
+        tasks_from: install_sso.yml
+      vars:
+        sso_namespace: "{{ eval_user_rhsso_namespace }}"
+        sso_namespace_display_name: "User Facing Red Hat Single Sign-On"
+      tags: ['user_rhsso']
+      when: user_rhsso | default(true) | bool
+    -
+      name: Setup backup for user rhsso
+      include_role:
+        name: rhsso
+        tasks_from: backup.yaml
+      vars:
+        sso_namespace: "{{ eval_user_rhsso_namespace }}"
+      tags: ['user_rhsso']
+      when: user_rhsso | default(true) | bool
