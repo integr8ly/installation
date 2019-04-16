@@ -19,7 +19,7 @@ backup_expected_cronjobs: |
       "resources-backup",
       "launcher-postgres-backup"
     ],
-    "sso": [
+    "{{eval_rhsso_namespace}}": [
       "daily-at-midnight"
     ]
   }
