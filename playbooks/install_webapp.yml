@@ -6,7 +6,7 @@
         name: webapp
         tasks_from: cors
       tags: ['webapp', 'remote']
-      when: webapp
+      when: (run_master_tasks | default(true) | bool) and webapp
     - include_role:
         name: rhsso
         tasks_from: identityprovider
