@@ -171,3 +171,10 @@
         apicurio_namespace: "{{ eval_apicurito_namespace }}"
         sso_realm: "{{ rhsso_realm }}"
       tags: ['msbroker']
+
+    - 
+      name: Install DataSync Templates
+      include_role:
+        name: datasync
+      tags: ['datasync']
+      when: datasync
