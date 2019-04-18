@@ -67,7 +67,7 @@ rhsso_namespace: 'sso'
 
 #controls whether gitea is installed or not
 gitea: true
-gitea_version: '1.6.0' # not currently used for installation reflect current installation (https://github.com/integr8ly/gitea-operator/issues/25)
+gitea_version: '1.6.0'
 #below vars are not currently used but will be used once we source resources from outside of the installer
 gitea_operator_release_tag: 'v0.0.3'
 gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_operator_release_tag}}/deploy/'
