@@ -34,7 +34,7 @@
 - name: Verify Fuse deployment succeeded
   shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
   register: fuse_verify_result
-  until: fuse_verify_result.stdout.find("7") != -1
+  until: fuse_verify_result.stdout.find("8") != -1
   retries: 50
   delay: 10
   changed_when: False
@@ -47,7 +47,7 @@
 - name: Verify Fuse deployment succeeded
   shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
   register: fuse_verify_result
-  until: fuse_verify_result.stdout.find("7") != -1
+  until: fuse_verify_result.stdout.find("8") != -1
   retries: 50
   delay: 10
   changed_when: False
