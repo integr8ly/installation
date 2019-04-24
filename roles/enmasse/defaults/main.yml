@@ -12,7 +12,3 @@ enmasse_enable_monitoring: false
 enmasse_backup_postgres_secret: 'enmasse-postgres-secret'
 enmasse_postgres_cronjob_name: 'enmasse-postgres-backup'
 enmasse_pv_cronjob_name: 'enmasse-pv-backup'
-monitoring_infrastructure: "{{ enmasse_enable_monitoring }}"
-service_monitors: "{{ enmasse_enable_monitoring }}"
-alerting: "{{ enmasse_enable_monitoring }}"
-
