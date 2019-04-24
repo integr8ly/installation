@@ -20,7 +20,7 @@ eval_enmasse_namespace: "{{ ns_prefix | default('')}}enmasse"
 eval_user_rhsso_namespace:  "{{ns_prefix | default('')}}user-sso"
 
 eval_seed_users_count: 50
-eval_webapp_url_prefix: tutorial-web-app-webapp
+eval_webapp_url_prefix: tutorial-web-app-{{ eval_webapp_namespace }}
 
 eval_threescale_enable_wildcard_route: false
 # To use S3 storage instead of filesystem (PVC-based requiring ReadWriteMany)
