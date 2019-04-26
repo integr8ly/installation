@@ -1,12 +1,16 @@
 ---
 
+- name: Check if unzip is available
+  shell: unzip -v
+  register: unzip_version
+  
 # Installs unzip package as part of enmasse install playbook
 - name: Install unzip if not present
   yum:
     name: unzip
     state: installed
   become: yes
-  when: ansible_os_family != "Darwin"
+  when: ansible_os_family != "Darwin" and unzip_version.rc != 0
 
 - name: Install gnu-tar required for MacOSX
   shell: brew install gnu-tar
