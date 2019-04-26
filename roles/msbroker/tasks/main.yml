@@ -68,19 +68,18 @@
   when: not fuse_online
 
 - name: Create managed service broker template in {{ msbroker_namespace }}
-  shell: "oc process -n {{ msbroker_namespace }} \
-  -f {{ msbroker_template }} \
-  --param=NAMESPACE={{ msbroker_namespace }} \
-  --param=ROUTE_SUFFIX={{ route_suffix }} \
-  --param=LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url }} \
-  --param=CHE_DASHBOARD_URL={{ che_dashboard_url }} \
-  --param=THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url }} \
-  --param=APICURIO_DASHBOARD_URL={{ apicurito_dashboard_url }} \
-  --param=SHARED_FUSE_DASHBOARD_URL={{ fuse_dashboard_url }} \
-  --param=SSO_URL=https://{{ sso_route.stdout }}/auth/admin/{{ sso_realm }}/console \
-  --param=FUSE_OPERATOR_RESOURCES_URL={{ msbroker_fuse_operator_resources_url }} \
-  --param=IMAGE_ORG={{ msbroker_image_org }} \
-  --param=IMAGE_TAG={{ msbroker_release_tag }} \
-  --param MONITORING_KEY={{ monitoring_key }} | oc create -n {{ msbroker_namespace }} -f -"
+  shell: oc process -f {{ msbroker_template }} \
+    -p 'NAMESPACE={{ msbroker_namespace }}' \
+    -p 'ROUTE_SUFFIX={{ route_suffix }}' \
+    -p 'LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url }}' \
+    -p 'CHE_DASHBOARD_URL={{ che_dashboard_url }}' \
+    -p 'THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url }}' \
+    -p 'APICURIO_DASHBOARD_URL={{ apicurito_dashboard_url }}' \
+    -p 'SHARED_FUSE_DASHBOARD_URL={{ fuse_dashboard_url }}' \
+    -p 'SSO_URL=https://{{ sso_route.stdout }}/auth/admin/{{ sso_realm }}/console' \
+    -p 'FUSE_OPERATOR_RESOURCES_URL={{ msbroker_fuse_operator_resources_url }}' \
+    -p 'IMAGE_ORG={{ msbroker_image_org }}' \
+    -p 'IMAGE_TAG={{ msbroker_release_tag }}' \
+    -p 'MONITORING_KEY={{ monitoring_key }}' | oc create -n "{{ msbroker_namespace }}" -f -
   register: create_msb_resources_cmd
   failed_when: create_msb_resources_cmd.stderr != '' and 'AlreadyExists' not in create_msb_resources_cmd.stderr
