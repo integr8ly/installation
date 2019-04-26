@@ -1,17 +1,16 @@
 ---
 - name: Delete managed service broker resources in {{ msbroker_namespace }}
-  shell: "oc process -n {{ msbroker_namespace }} \
-  -f {{ msbroker_template }} \
-  --param=NAMESPACE={{ msbroker_namespace }} \
-  --param=ROUTE_SUFFIX='placeholder' \
-  --param=LAUNCHER_DASHBOARD_URL='placeholder' \
-  --param=CHE_DASHBOARD_URL='placeholder' \
-  --param=THREESCALE_DASHBOARD_URL='placeholder' \
-  --param=APICURIO_DASHBOARD_URL='placeholder' \
-  --param=IMAGE_ORG={{ msbroker_image_org }} \
-  --param=IMAGE_TAG={{ msbroker_release_tag }} \
-  --param=SHARED_FUSE_DASHBOARD_URL='placeholder' \
-  --param MONITORING_KEY={{ monitoring_key }} | oc delete -n {{ msbroker_namespace }} -f -"
+  shell: oc process -f {{ msbroker_template }} \
+    -p "NAMESPACE={{ msbroker_namespace }}" \
+    -p "ROUTE_SUFFIX='placeholder'" \
+    -p "LAUNCHER_DASHBOARD_URL='placeholder'" \
+    -p "CHE_DASHBOARD_URL='placeholder'" \
+    -p "THREESCALE_DASHBOARD_URL='placeholder'" \
+    -p "APICURIO_DASHBOARD_URL='placeholder'" \
+    -p "IMAGE_ORG={{ msbroker_image_org }}" \
+    -p "IMAGE_TAG={{ msbroker_release_tag }}" \
+    -p "SHARED_FUSE_DASHBOARD_URL='placeholder'" \
+    -p "MONITORING_KEY={{ monitoring_key }}" | oc delete -n "{{ msbroker_namespace }}" -f -
   failed_when: false
 
 - name: "Delete project namespace: {{ msbroker_namespace }}"
