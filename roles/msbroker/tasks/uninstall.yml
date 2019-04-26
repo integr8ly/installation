@@ -28,6 +28,10 @@
   register: output
   failed_when: false
 
+- name: "Delete clusterrolebinding default-cluster-account-managed-service"
+  shell: oc delete clusterrolebinding default-cluster-account-managed-service
+  failed_when: false
+
 - name: Delete CRDs
   shell: "oc delete -f {{ item }}"
   register: output
