@@ -44,6 +44,14 @@
       name: Restart master controllers
       become: yes
       shell: /usr/local/bin/master-restart controllers
+    -
+      name: check if openshift master services are running
+      shell: oc get nodes
+      register: task_result
+      until: task_result.rc == 0
+      retries: 6
+      delay: 5
+      failed_when: task_result.rc != 0
 
 # Delete users and identities created by rhsso
 -
