@@ -8,3 +8,7 @@ prerequisite_binaries:
   - name: jq
     path: /usr/bin/jq
     url: https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+  # YQ (https://github.com/mikefarah/yq)
+  - name: yq
+    path: /usr/bin/yq
+    url: https://github.com/mikefarah/yq/releases/download/2.2.1/yq_linux_amd64

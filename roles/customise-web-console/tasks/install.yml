@@ -1,6 +1,6 @@
 ---
 - name: "get manifest secret from webapp namespace"
-  shell: oc get secret {{ customise_web_console.webapp.secret }} -n {{ eval_webapp_namespace }} --template '{{ "{{" }} .data.generated_manifest | base64decode {{ "}}" }}'
+  shell: "oc get secret {{ customise_web_console.webapp.secret }} -n {{ eval_webapp_namespace }} -o yaml | yq r - \"data.generated_manifest\" | base64 -d"
   register: manifest
   failed_when: manifest.stderr != ""
 
@@ -35,25 +35,26 @@
   shell: "oc apply -f {{ customise_web_console.deploy_filename }} -n {{ customise_web_console.namespace }}"
 
 - name: "Get route to hosted javascript file"
-  shell: oc get route {{ customise_web_console.route_name }} -n {{ customise_web_console.namespace }} --template '{{ "{{" }}printf "https://%s\n" .spec.host{{ "}}" }}'
+  shell: "echo 'https://'$(oc get route {{ customise_web_console.route_name }} -n {{ customise_web_console.namespace }} -o json | jq \".spec.host\" -r)"
   register: get_javascript_route
   failed_when: get_javascript_route.stderr != ""
 
 - name: "download current openshift web console configmap"
-  shell: oc get configmap {{ customise_web_console.web_console.configmap }} -n {{ customise_web_console.web_console.namespace }} --template '{{ "{{" }} index .data "{{ customise_web_console.web_console.configmap_key -}}" {{ "}}" }}'
+  shell: "oc get configmaps {{ customise_web_console.web_console.configmap }} -n {{ customise_web_console.web_console.namespace }} -o json | jq '.data[\"{{ customise_web_console.web_console.configmap_key }}\"]' -r"
   register: get_web_console_config_result
   failed_when: get_web_console_config_result.stderr != ""
 
 - name: "Rewrite console configmap"
   when: get_javascript_route.stdout + '/' + customise_web_console.javascript_filename not in get_web_console_config_result.stdout
   block:
+    - name: "write current openshift web console config to a temporary file"
+      copy: content={{ get_web_console_config_result.stdout }} dest=/tmp/{{ customise_web_console.web_console.configmap_key }}
 
-    - name: "determine changes needed to add script url to web console config"
-      shell: echo '{{ get_web_console_config_result.stdout | from_yaml | to_nice_json}}' | jq '.extensions.scriptURLs |= (. + ["{{ get_javascript_route.stdout }}/{{ customise_web_console.javascript_filename }}"] | unique)'
-      register: new_web_console_config_json_result
+    - name: "edit the config to include the new scriptURL"
+      shell: yq w -i /tmp/{{ customise_web_console.web_console.configmap_key }} extensions.scriptURLs[+] {{ get_javascript_route.stdout }}/{{ customise_web_console.javascript_filename }}
 
-    - name: "write patched web console config to file"
-      copy: content={{ new_web_console_config_json_result.stdout | from_json | to_nice_yaml(indent=2) }} dest=/tmp/{{ customise_web_console.web_console.configmap_key }}
+    - name: "delete {{ customise_web_console.web_console.namespace }}/{{ customise_web_console.web_console.configmap }} configmap"
+      shell: "oc delete configmap {{ customise_web_console.web_console.configmap }} -n {{ customise_web_console.web_console.namespace }}"
 
     - name: "update {{ customise_web_console.web_console.namespace }}/{{ customise_web_console.web_console.configmap }} configmap"
-      shell: oc create configmap {{ customise_web_console.web_console.configmap }} --from-file=/tmp/{{ customise_web_console.web_console.configmap_key }} -n {{ customise_web_console.web_console.namespace }} --dry-run -o yaml | oc replace -f -
+      shell: "oc create configmap {{ customise_web_console.web_console.configmap }} --from-file=/tmp/{{ customise_web_console.web_console.configmap_key }} -n {{ customise_web_console.web_console.namespace }}"
