@@ -6,6 +6,7 @@
     repo: "{{ enmasse_git_url }}"
     dest: /tmp/enmasse-{{ enmasse_version }}
     version: "{{ enmasse_version }}"
+    force: true
 
 - name: Ensure tmp dir exists
   file:

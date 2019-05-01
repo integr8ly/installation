@@ -208,15 +208,19 @@
   when: fuse
 
 
-
 - name: Get enmasse rest route
   shell: oc get route/restapi -o template --template \{\{.spec.host\}\} -n {{ enmasse_namespace | default('enmasse') }}
-  register: enmsase_route_cmd
+  failed_when: no
+  register: enmasse_route_cmd
   when: enmasse
 
 - set_fact:
     enmasse_rest_route: "https://{{enmsase_route_cmd.stdout}}"
-  when: enmasse
+  when: enmasse and enmasse_route_cmd.rc == 0
+
+- set_fact:
+    enmasse_rest_route: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}/apis/enmasse.io"
+  when: enmasse and enmasse_route_cmd.rc != 0
 
 - name: set enmasse component
   set_fact:
