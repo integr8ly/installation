@@ -6,7 +6,7 @@
   failed_when: delete_fuse_imagestream_cmd.stderr != '' and 'NotFound' not in delete_fuse_imagestream_cmd.stderr
   changed_when: delete_fuse_imagestream_cmd.rc == 0
   with_items:
-    - "{{ fuse_online_imagestreams_url }}"
+    - "{{ fuse_online_imagestream_resources }}"
     - "{{ fuse_on_openshift_imagestreams_url }}"
 
 
