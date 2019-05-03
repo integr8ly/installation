@@ -3,10 +3,10 @@
   gather_facts: no
   tasks:
     - set_fact:
-        upgrade_msb_image: quay.io/integreatly/managed-service-broker:v0.0.4
-        upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:v2.9.0
-        upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:v0.0.12
-        upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:v1.3.4
+        upgrade_msb_image: quay.io/integreatly/managed-service-broker:v0.0.5
+        upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:2.10.1
+        upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:v0.0.15
+        upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:v1.3.6
 
     - name: Check current version
       shell: "oc get secret manifest -n {{ eval_webapp_namespace }} -o json | jq \".data.generated_manifest\" -r | base64 -d | jq \".version\" -r"
@@ -39,12 +39,12 @@
       failed_when: upgrade_msb.stderr != '' and 'not patched' not in upgrade_msb.stderr
 
     # Solution Explorer
-    - name: Bump the Web App operator version to 0.0.12
+    - name: Bump the Web App operator version to 0.0.15
       shell: oc patch deployment tutorial-web-app-operator -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_operator_image }}"}]'
       register: upgrade_webapp_operator
       failed_when: upgrade_webapp_operator.stderr != '' and 'not patched' not in upgrade_webapp_operator.stderr
 
-    - name: Bump the Web App deployment version to 0.0.12
+    - name: Bump the Web App deployment version to 2.10.1
       shell: oc patch dc tutorial-web-app -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_image }}"}]'
       register: upgrade_webapp
       failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
