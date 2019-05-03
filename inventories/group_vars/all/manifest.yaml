@@ -63,7 +63,7 @@ rhsso_version: '7.2.6.GA'
 #below vars not currently used but will be used to pull in the new versions of RH-SSO once we decouple the resources from the installer.
 rhsso_imagestream_name: redhat-sso72-openshift:1.4
 rhsso_imagestream_image: registry.access.redhat.com/redhat-sso-7/sso72-openshift:1.4
-rhsso_operator_release_tag: 'v1.3.5'
+rhsso_operator_release_tag: 'v1.3.6'
 rhsso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
 rhsso_namespace: 'sso'
 
