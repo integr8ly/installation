@@ -37,7 +37,7 @@ fuse_version: '7.3'
 #controls whether Fuse Online is installed or not
 fuse_online: true
 # Below Fuse vars are not currently used but will be used to source the resources needed to do the install.
-fuse_online_release_tag: '1.6.19'
+fuse_online_release_tag: '1.6.20'
 fuse_online_resources_base: 'https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources'
 fuse_online_operator_resources: '{{fuse_online_resources_base}}/fuse-online-operator.yml'
 fuse_online_imagestream_resources: '{{fuse_online_resources_base}}/fuse-online-image-streams.yml'
