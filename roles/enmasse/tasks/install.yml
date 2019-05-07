@@ -1,26 +1,7 @@
 ---
 - debug: msg="Using EnMasse git URL - {{ enmasse_git_url }}"
 
-- name: "Retrieve EnMasse {{ enmasse_version }} artifact"
-  git:
-    repo: "{{ enmasse_git_url }}"
-    dest: /tmp/enmasse-{{ enmasse_version }}
-    version: "{{ enmasse_version }}"
-    force: true
-
-- name: Ensure tmp dir exists
-  file:
-    path: /tmp/enmasse-{{ enmasse_version }}
-    state: directory
-
-- set_fact:
-    enmasse_playbook_location: enmasse-"{{ enmasse_version }}"/templates/ansible/playbooks/openshift/deploy_all.yml
-    enmasse_inventory_path: /tmp/enmasse-{{ enmasse_version }}/templates/ansible/inventory/
-
-- name: Generate EnMasse inventory hosts file
-  template:
-    src: enmasse_hosts.j2
-    dest: "{{ enmasse_inventory_path }}/hosts"
+- include_tasks: "_download_enmasse_artifact.yml"
 
 - name: Check EnMasse namespace for existing resources
   shell: oc get all -n {{ enmasse_namespace }}
@@ -32,19 +13,8 @@
     namespace: "{{ enmasse_namespace }}"
     display_name: "AMQ Online"
 
-  #hack to work around oc new-app failing when a ns begins with openshift- the ns will begin with openshift- in OSD so that it is hidden from the end user
-- name: Adjust project check role when using openshift prefix
-  template:
-    src: "project_task.yml"
-    dest: /tmp/enmasse-{{ enmasse_version }}/templates/ansible/roles/project/tasks/main.yml
-    force: yes
-  when: ns_prefix == "openshift-"
 
-- name: "Provision EnMasse {{ enmasse_version }}"
-  shell: ansible-playbook -i {{ enmasse_inventory_path }}/hosts /tmp/{{enmasse_playbook_location}}
-  args:
-    chdir: "../"
-  when: enmasse_resources_exist.stderr == "No resources found."
+- include_tasks: "_install_enmasse_from_artifact.yml"
 
 - name: Check if postgresql already exists
   shell: oc get deploymentconfig postgresql -n {{ enmasse_namespace }}
@@ -75,7 +45,7 @@
 
 - name: "Create EnMasse AuthenticationService"
   shell: oc create -f /tmp/authenticationservice.yml
-  register: authetnicationservice_exists
+  register: authenticationservice_exists
   failed_when: authetnicationservice_exists.stderr != '' and 'AlreadyExists' not in authetnicationservice_exists.stderr
 
 - name: "Verify EnMasse deployment succeeded"
@@ -92,13 +62,3 @@
   register: namespace_label
   failed_when: namespace_label.stderr != '' and 'not labeled' not in namespace_label.stderr
   changed_when: namespace_label.rc == 0
-
-- name: Clean up EnMasse artifacts
-  file:
-    path: "{{ item }}"
-    state: absent
-  with_items:
-    - /tmp/enmasse-{{ enmasse_version }}.tgz
-    - /tmp/enmasse-{{ enmasse_version }}.zip
-    - /tmp/enmasse-{{ enmasse_version }}
-  when: enmasse_clean_artifacts
