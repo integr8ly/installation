@@ -6,6 +6,11 @@
     namespace: "{{ fuse_namespace }}"
     display_name: "Shared Fuse Online"
 
+- include_role:
+    name: fuse_pull_secret
+  vars:
+    namespace: "{{ fuse_namespace }}"
+
 - name: Add labels to namespace
   shell: oc label --overwrite namespace {{ fuse_namespace }} {{ monitoring_label_name }}={{ monitoring_label_value }} integreatly-middleware-service=true
   register: namespace_label
