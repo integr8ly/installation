@@ -1,0 +1,23 @@
+---
+#hack to work around oc new-app failing when a ns begins with openshift- the ns will begin with openshift- in OSD so that it is hidden from the end user
+- name: Adjust project check role when using openshift prefix
+  template:
+    src: "project_task.yml"
+    dest: /tmp/enmasse-{{ enmasse_version }}/templates/ansible/roles/project/tasks/main.yml
+    force: yes
+  when: ns_prefix != ""
+
+- name: "Provision EnMasse {{ enmasse_version }}"
+  shell: ansible-playbook -i {{ enmasse_inventory_path }}/hosts /tmp/{{enmasse_playbook_location}}
+  args:
+    chdir: "../"
+
+- name: Clean up EnMasse artifacts
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /tmp/enmasse-{{ enmasse_version }}.tgz
+    - /tmp/enmasse-{{ enmasse_version }}.zip
+    - /tmp/enmasse-{{ enmasse_version }}
+  when: enmasse_clean_artifacts
