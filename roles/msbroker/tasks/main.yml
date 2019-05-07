@@ -49,6 +49,12 @@
     namespace: "{{ msbroker_namespace }}"
     display_name: "Managed Service Broker"
 
+- include_role:
+    name: fuse_pull_secret
+  vars:
+    namespace: "{{ msbroker_namespace }}"
+  when: fuse_online
+
 - name: Add labels to namespace
   shell: oc patch ns {{ msbroker_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
   register: namespace_patch
