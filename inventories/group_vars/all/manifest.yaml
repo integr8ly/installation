@@ -89,9 +89,9 @@ apicurito_version: '0.2.18.Final'
 nexus: true
 nexus_version: '2.14.11-01'
 
-## Enables datasync templates
+## Enables datasync templates (enabled by default)
 ## datasync: true
-datasync_template_tag: '0.4.0'
+datasync_template_tag: '0.5.0'
 
 monitoring_label_name: 'monitoring-key'
 monitoring_label_value: 'middleware'
