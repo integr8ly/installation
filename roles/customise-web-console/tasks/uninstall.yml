@@ -1,52 +1,43 @@
 
 - name: Check console-config namespace exists
-  shell: oc get namespace console-config
+  shell: oc get namespace {{ customise_web_console.namespace }}
   register: console_config_check_namespace_exists
+  changed_when: false
   failed_when: false
 
 - name: "Get route to hosted javascript file"
-  shell: "echo 'https://'$(oc get route {{ customise_web_console.route_name }} -n {{ customise_web_console.namespace }} -o json | jq \".spec.host\" -r)"
-  register: get_javascript_route
-  failed_when: get_javascript_route.stderr != ""
+  shell: oc get route {{ customise_web_console.route_name }} -n {{ customise_web_console.namespace }} --template '{{ "{{" }}printf "https://%s/%s" .spec.host "{{ customise_web_console.javascript_filename }}"{{ "}}" }}'
+  register: get_javascript_url
+  changed_when: false
+  failed_when: get_javascript_url.rc != 0 and 'not found' not in get_javascript_url.stderr
   when: console_config_check_namespace_exists.rc == 0
 
-- name: "download current openshift web console configmap"
-  shell: "oc get configmaps {{ customise_web_console.web_console.configmap }} -n {{ customise_web_console.web_console.namespace }} -o json | jq '.data[\"{{ customise_web_console.web_console.configmap_key }}\"]' -r"
-  register: get_web_console_config_result
-  failed_when: get_web_console_config_result.stderr != ""
-  when: console_config_check_namespace_exists.rc == 0 
-
-- name: "Rewrite console configmap"
-  when: console_config_check_namespace_exists.rc == 0 and get_javascript_route.stdout + '/' + customise_web_console.javascript_filename in get_web_console_config_result.stdout
+- name: "check for changes needed to web console config"
+  when:
+    - console_config_check_namespace_exists.rc == 0
+    - get_javascript_url.stdout != ""
   block:
+    - name: "retrieve current openshift web console configmap"
+      shell: oc get configmap {{ customise_web_console.web_console.configmap }} -n {{ customise_web_console.web_console.namespace }} --template '{{ "{{" }} index .data "{{ customise_web_console.web_console.configmap_key -}}" {{ "}}" }}'
+      register: get_web_console_config
+      changed_when: false
+
     - name: "write current openshift web console config to a temporary file"
-      copy: content={{ get_web_console_config_result.stdout }} dest=/tmp/{{ customise_web_console.web_console.configmap_key }}
+      copy: content={{ get_web_console_config.stdout }} dest=/tmp/{{ customise_web_console.web_console.configmap_key }}
 
-    - name: "get current scriptURLs"
-      shell: "yq r /tmp/{{ customise_web_console.web_console.configmap_key }} extensions.scriptURLs"
-      register: current_scripts
-
-    - name: "generate list of urls to delete"
-      set_fact:
-        delete_list:
-          - "{{ '- ' + get_javascript_route.stdout + '/' + customise_web_console.javascript_filename }}"
-          -
-    - name: "clean urls list"
-      set_fact:
-        clean_urls: "{{ current_scripts.stdout_lines | difference(delete_list) }}"
-
-    - name: "remove all scriptURLs from /tmp/{{ customise_web_console.web_console.configmap_key }}"
-      shell: "yq d -i /tmp/{{ customise_web_console.web_console.configmap_key }} extensions.scriptURLs"
-
-    - name: "add all the clean urls back to the config"
-      shell: "yq w -i /tmp/{{ customise_web_console.web_console.configmap_key }} extensions.scriptURLs[+] {{ item | replace('- ', '') }}"
-      with_items: "{{ clean_urls }}"
-
-    - name: "delete {{ customise_web_console.web_console.namespace }}/{{ customise_web_console.web_console.configmap }} configmap"
-      shell: "oc delete configmap {{ customise_web_console.web_console.configmap }} -n {{ customise_web_console.web_console.namespace }}"
+    - name: "determine changes needed to the web console configmap"
+      yedit:
+        src: /tmp/{{ customise_web_console.web_console.configmap_key }}
+        key: extensions.scriptURLs
+        update: true
+        value: "{{ get_javascript_url.stdout }}"
+        state: absent
+      register: new_web_console_config
+      when: get_web_console_config.stdout != ""
 
     - name: "update {{ customise_web_console.web_console.namespace }}/{{ customise_web_console.web_console.configmap }} configmap"
-      shell: "oc create configmap {{ customise_web_console.web_console.configmap }} --from-file=/tmp/{{ customise_web_console.web_console.configmap_key }} -n {{ customise_web_console.web_console.namespace }}"
+      shell: oc create configmap {{ customise_web_console.web_console.configmap }} --from-file=/tmp/{{ customise_web_console.web_console.configmap_key }} -n {{ customise_web_console.web_console.namespace }} --dry-run -o yaml | oc replace -f -
+      when: new_web_console_config is changed
 
 - name: "Delete {{ customise_web_console.namespace }} namespace"
   shell: "oc delete namespace {{ customise_web_console.namespace }}"
@@ -54,3 +45,4 @@
   failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
   changed_when: output.rc == 0
   when: console_config_check_namespace_exists.rc == 0
+
