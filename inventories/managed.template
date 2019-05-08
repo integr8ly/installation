@@ -22,6 +22,3 @@ run_master_tasks=false
 # See group_vars/all/common.yml & relevant SOP for more info when 
 # setting this to false.
 user_rhsso=false
-
-# Don't setup the datasync (yet) on managed instance
-datasync: false
