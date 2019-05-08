@@ -177,4 +177,4 @@
       include_role:
         name: datasync
       tags: ['datasync']
-      when: datasync
+      when: datasync | default(true) | bool
