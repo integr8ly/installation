@@ -39,3 +39,13 @@
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
   changed_when: output.rc == 0
+
+- name: "Remove remaining CRDs from {{ enmasse_namespace | default('enmasse') }}"
+  vars:
+    crds: [addressplans.admin.enmasse.io, addressspaceplans.admin.enmasse.io, authenticationservices.admin.enmasse.io, brokeredinfraconfigs.admin.enmasse.io, consoleservices.admin.enmasse.io, iotconfigs.iot.enmasse.io, standardinfraconfigs.admin.enmasse.io]
+  shell: oc delete crd "{{ item }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  with_items: 
+    - "{{ crds }}"
+    
