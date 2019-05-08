@@ -1,0 +1,11 @@
+---
+- import_tasks: prereq-check.yml
+
+- name: Get all pods from {{ images_source_namespace }}
+  shell: "oc get pods -o json -n {{ images_source_namespace }}"
+  register: pod_list
+
+- name: Filter all image names
+  pods_images:
+    data: "{{ pod_list.stdout }}"
+  register: image_list
