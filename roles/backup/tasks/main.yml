@@ -2,7 +2,19 @@
 - name: "Create {{ backup_namespace }} namespace"
   shell: "oc create namespace {{ backup_namespace }}"
   register: backup_namespace_result
+  changed_when: backup_namespace_result.rc == 0 
   failed_when: backup_namespace_result.stderr != '' and 'AlreadyExists' not in backup_namespace_result.stderr
+
+- name: "Create/update secret with s3 credentials"
+  shell: >
+    oc create secret generic {{ aws_s3_backup_secret_name }} -n {{ backup_namespace }} \
+      --from-literal=AWS_ACCESS_KEY_ID={{ backup_s3_aws_access_key }} \
+      --from-literal=AWS_SECRET_ACCESS_KEY={{ backup_s3_aws_secret_key }} \
+      --from-literal=AWS_S3_BUCKET_NAME={{ backup_s3_aws_bucket }} --dry-run -o yaml | oc apply -f -
+  when:
+    - backup_s3_aws_access_key != ""
+    - backup_s3_aws_secret_key != ""
+    - backup_s3_aws_bucket != ""
 
 - name: "Check for aws credentials secret in {{ backup_namespace }} namespace"
   shell: "oc get secret {{ aws_s3_backup_secret_name }} -n {{ backup_namespace }}"
