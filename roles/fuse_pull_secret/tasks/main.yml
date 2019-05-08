@@ -1,0 +1,20 @@
+---
+- copy:
+    src: syndesis-golang-template.tpl
+    dest: /tmp/syndesis-golang-template.tpl
+
+- name: Read the registry pull secret
+  shell: oc get secret imagestreamsecret -n openshift -o go-template-file=/tmp/syndesis-golang-template.tpl
+  register: image_stream_secret_data
+  changed_when: image_stream_secret_data.rc == 0
+  failed_when: image_stream_secret_data.stderr != ''
+
+- set_fact:
+    fuse_docker_config: "{{ image_stream_secret_data.stdout }}"
+
+- template:
+    src: syndesis-pull-secret.yml.j2
+    dest: /tmp/syndesis-pull-secret.yml
+
+- name: Create Syndesis Pull Secret
+  shell: oc apply -f /tmp/syndesis-pull-secret.yml -n {{ namespace }}
