@@ -49,3 +49,8 @@
       register: upgrade_webapp
       failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
 
+    - name: delete alerts
+      shell: "oc delete prometheusrules application-monitoring -n {{ eval_rhsso_namespace }}"
+
+    - name: recreate alerts
+      shell: "oc patch keycloak rhsso --type=json --patch='[{\"op\": \"add\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]' -n {{ eval_rhsso_namespace }}"
