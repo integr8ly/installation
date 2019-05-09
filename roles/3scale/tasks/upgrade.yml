@@ -200,4 +200,5 @@
 -
   name: "clean up old image tag"
   shell: oc tag -n {{ threescale_namespace }} -d postgresql:9.5
-
+  register: delete_tag
+  failed_when: delete_tag.stderr != '' and 'NotFound' not in delete_tag.stderr
