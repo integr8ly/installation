@@ -41,11 +41,5 @@
   changed_when: output.rc == 0
 
 - name: "Remove remaining CRDs from {{ enmasse_namespace | default('enmasse') }}"
-  vars:
-    crds: [addressplans.admin.enmasse.io, addressspaceplans.admin.enmasse.io, authenticationservices.admin.enmasse.io, brokeredinfraconfigs.admin.enmasse.io, consoleservices.admin.enmasse.io, iotconfigs.iot.enmasse.io, standardinfraconfigs.admin.enmasse.io]
-  shell: oc delete crd "{{ item }}"
-  register: output
-  failed_when: output.stderr != '' and 'not found' not in output.stderr
-  with_items: 
-    - "{{ crds }}"
+  shell: oc delete crd -l app=enmasse
     
