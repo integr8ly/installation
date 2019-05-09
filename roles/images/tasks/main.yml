@@ -3,9 +3,17 @@
 
 - name: Get all pods from {{ images_source_namespace }}
   shell: "oc get pods -o json -n {{ images_source_namespace }}"
-  register: pod_list
+  register: pod_list_cmd
+
+- name: Get parsed pod list
+  set_fact:
+    pod_list: "{{ pod_list_cmd.stdout|from_json }}"
 
 - name: Filter all image names
   pods_images:
-    data: "{{ pod_list.stdout }}"
+    data: "{{ pod_list['items'] }}"
   register: image_list
+
+- name: Import images
+  shell: "oc import-image {{ item.image }} --all=true --confirm -n {{ images_namespace }}"
+  with_items: "{{ image_list.images }}"

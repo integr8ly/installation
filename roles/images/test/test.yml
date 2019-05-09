@@ -1,0 +1,6 @@
+- hosts: local
+  tasks:
+    - include_role:
+        name: images
+      vars:
+        images_source_namespace: fuse
