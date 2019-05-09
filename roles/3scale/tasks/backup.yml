@@ -47,6 +47,7 @@
     secret_postgres_host: 'zync-database.{{ threescale_namespace }}.svc'
     secret_postgres_database: '{{ threescale_postgres_database.stdout }}'
     secret_postgres_password: '{{ threescale_postgres_password.stdout }}'
+    secret_postgres_version: 10
 
 - name: Create the 3scale Postgres CronJob
   include_role:
