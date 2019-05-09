@@ -40,6 +40,6 @@
   failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
   changed_when: output.rc == 0
 
-- name: "Remove remaining CRDs from {{ enmasse_namespace | default('enmasse') }}"
+- name: "Remove remaining CRDs"
   shell: oc delete crd -l app=enmasse
     
