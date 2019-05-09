@@ -1,0 +1,203 @@
+#upgrade
+-
+  name: "patch amp-system imagestream"
+  shell: |
+    oc patch -n {{ threescale_namespace }} imagestream/amp-system --type=json -p '[
+      {
+        "op": "add",
+        "path": "/spec/tags/-",
+        "value": {
+          "annotations": {"openshift.io/display-name": "AMP system 2.5.0"},
+          "from": { "kind": "DockerImage", "name": "registry.access.redhat.com/3scale-amp25/system"},
+          "name": "2.5.0",
+          "referencePolicy": {"type": "Source"}
+        }
+      }
+    ]'
+-
+  name: "patch amp-apicast imagestream"
+  shell: |
+    oc patch -n {{ threescale_namespace }} imagestream/amp-apicast --type=json -p '[
+      {
+        "op": "add",
+        "path": "/spec/tags/-",
+        "value": {
+          "annotations": {"openshift.io/display-name": "AMP APIcast 2.5.0"},
+          "from": { "kind": "DockerImage", "name": "registry.access.redhat.com/3scale-amp25/apicast-gateway"},
+          "name": "2.5.0",
+          "referencePolicy": {"type": "Source"}
+        }
+      }
+    ]'
+-
+  name: "patch amp-backend imagestream"
+  shell: |
+    oc patch -n {{ threescale_namespace }} imagestream/amp-backend --type=json -p '[
+      {
+        "op": "add",
+        "path": "/spec/tags/-",
+        "value": {
+          "annotations": {"openshift.io/display-name": "AMP Backend 2.5.0"},
+          "from": { "kind": "DockerImage", "name": "registry.access.redhat.com/3scale-amp25/backend"},
+          "name": "2.5.0",
+          "referencePolicy": {"type": "Source"}
+        }
+      }
+    ]'
+-
+  name: "patch amp-zync imagestream"
+  shell: |
+    oc patch -n {{ threescale_namespace }} imagestream/amp-zync --type=json -p '[
+      {
+        "op": "add",
+        "path": "/spec/tags/-",
+        "value": {
+          "annotations": {"openshift.io/display-name": "AMP Zync 2.5.0"},
+          "from": { "kind": "DockerImage", "name": "registry.access.redhat.com/3scale-amp25/zync"},
+          "name": "2.5.0",
+          "referencePolicy": {"type": "Source"}
+        }
+      }
+    ]'
+-
+  name: "set AMP_RELEASE env var"
+  shell: "oc set env dc/system-app AMP_RELEASE=2.5.0 -n {{ threescale_namespace }}"
+
+# patch configmap system
+-
+  name: "download system > rolling_updates.yml from configmap"
+  shell: |
+    oc get configmap system -n {{ threescale_namespace }} -o jsonpath="{$.data.rolling_updates\.yml}" > /tmp/rolling_updates.yml
+
+-
+  name: "check file is not modified already"
+  shell: "cat /tmp/rolling_updates.yml | grep policy_registry | wc -l"
+  register: rolling_update_modified
+-
+  when: rolling_update_modified.stdout == "0"
+  block:
+    -
+      name: "modify rolling_updates.yml on local file system"
+      shell: |
+        echo -e "  policy_registry: true\n  service_mesh_integration: true" >> /tmp/rolling_updates.yml
+
+    -
+      name: "get new rolling_updates.yml value"
+      shell: sed "s/\$/\\\n/" /tmp/rolling_updates.yml
+      register: new_rolling_updates_value
+
+    -
+      name: "apply changes to configmap"
+      shell: |
+        oc patch configmap system -n {{ threescale_namespace }} --type=json -p '[{"op": "add", "path": "/data/rolling_updates.yml", "value": "{{ new_rolling_updates_value.stdout }}"}]'
+
+-
+  name: "get mysql password"
+  shell: 'oc set env dc/system-mysql -n {{ threescale_namespace }} --list | grep MYSQL_PASSWORD | cut -f2 -d='
+  register: mysql_password
+
+-
+  name: "get mysql username"
+  shell: 'oc set env dc/system-mysql -n {{ threescale_namespace }} --list | grep MYSQL_USER | cut -f2 -d='
+  register: mysql_user
+
+-
+  name: "patch mysql username into system-database secret"
+  shell: |
+    oc patch secret/system-database -n {{ threescale_namespace }} -p "{\"stringData\": {\"DB_USER\": \"{{ mysql_user.stdout }}\"}}"
+
+-
+  name: "patch mysql password into system-database secret"
+  shell: |
+    oc patch secret/system-database -n {{ threescale_namespace }} -p "{\"stringData\": {\"DB_PASSWORD\": \"{{ mysql_password.stdout }}\"}}"
+
+-
+  name: "get index of mysql_user env var in system-mysql dc"
+  shell: 'oc set env dc/system-mysql -n {{ threescale_namespace }} --list | grep -v "deploymentconfigs" | grep MYSQL_USER -B100 | grep -v MYSQL_USER | wc -l'
+  register: mysql_user_index
+
+-
+  name: "get index of mysql_password env var in system-mysql dc"
+  shell: 'oc set env dc/system-mysql -n {{ threescale_namespace }} --list | grep -v "deploymentconfigs" | grep MYSQL_PASSWORD -B100 | grep -v MYSQL_PASSWORD | wc -l'
+  register: mysql_password_index
+
+-
+  name: "patch dc/system-mysql to read env vars from secret"
+  shell: |
+    oc patch -n {{ threescale_namespace }} dc system-mysql --type=json --patch '[
+      {
+        "op": "replace",
+        "path": "/spec/template/spec/containers/0/env/{{ mysql_user_index.stdout }}",
+        "value": {
+          "name": "MYSQL_USER",
+          "valueFrom": {
+            "secretKeyRef": {"key": "DB_USER", "name": "system-database"}
+          }
+        }
+      },
+      {
+        "op": "replace",
+        "path": "/spec/template/spec/containers/0/env/{{ mysql_password_index.stdout }}",
+        "value": {
+          "name": "MYSQL_PASSWORD",
+          "valueFrom": {
+            "secretKeyRef": {"key": "DB_PASSWORD", "name": "system-database"}
+          }
+        }
+      }
+    ]'
+
+-
+  name: "scale down zync"
+  shell: "oc scale --replicas 0 dc/zync -n {{ threescale_namespace }}"
+
+-
+  name: "backup zync-database"
+  shell: |
+    oc rsh -n {{ threescale_namespace }} $(oc get pods -n {{ threescale_namespace }} -l 'deploymentConfig=zync-database' -o jsonpath="{$.items[0].metadata.name}") bash -c 'pg_dumpall' > /tmp/zync-database-backup-for-2.5.raw
+
+-
+  name: "add new postgresql tag to image stream"
+  shell: "oc tag -n {{ threescale_namespace }} --source=docker registry.access.redhat.com/rhscl/postgresql-10-rhel7 postgresql:10 --insecure=true"
+
+-
+  name: "update postgresql image tag in zync-database dc"
+  shell: |
+    oc patch -n {{ threescale_namespace }} dc/zync-database --type=json --patch '[
+      {
+        "op": "replace",
+        "path": "/spec/triggers/1/imageChangeParams/from/name",
+        "value": "postgresql:10"
+      }
+    ]'
+-
+  name: "wait for new pod to come up"
+  shell: |
+    oc get pods -n {{ threescale_namespace }} -l 'deploymentConfig=zync-database' -o jsonpath="{$.items[0].status.containerStatuses[0].ready}"
+  register: zync_database_pod_phase
+  until: zync_database_pod_phase.stdout == "true"
+  retries: 50
+  delay: 5
+
+-
+  name: "restore previous backup"
+  shell: |
+    cat /tmp/zync-database-backup-for-2.5.raw | oc rsh -n {{ threescale_namespace }} $(oc get pods -n {{ threescale_namespace }} -l 'deploymentConfig=zync-database' -o jsonpath="{$.items[0].metadata.name}") bash -c 'psql -d postgres -f -'
+
+-
+  name: "scale up zync"
+  shell: |
+    oc scale dc zync --replicas 1 -n {{ threescale_namespace }}
+
+-
+  name: "wait for zync to start"
+  shell: |
+    oc get pods -n {{ threescale_namespace }} -l 'deploymentConfig=zync' -o jsonpath="{$.items[0].status.containerStatuses[0].ready}"
+  register: zync_pod_ready
+  until: zync_pod_ready.stdout == "true"
+  retries: 50
+  delay: 5
+-
+  name: "clean up old image tag"
+  shell: oc tag -n {{ threescale_namespace }} -d postgresql:9.5
+
