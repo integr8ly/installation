@@ -6,6 +6,8 @@ metadata:
   name: standard-authservice
 spec:
   standard:
+    certificateSecret:
+      name: standard-authservice-cert
     credentialsSecret:
       name: keycloak-credentials
     datasource:
