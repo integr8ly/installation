@@ -18,7 +18,6 @@ backup_expected_cronjobs: |
       "3scale-redis-backup",
       "codeready-postgres-backup",
       "codeready-pv-backup",
-      "enmasse-postgres-backup",
       "enmasse-pv-backup",
       "fuse-postgres-backup",
       "resources-backup",
