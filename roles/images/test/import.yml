@@ -2,5 +2,6 @@
   tasks:
     - include_role:
         name: images
+        tasks_from: import
       vars:
         images_source_namespace: fuse
