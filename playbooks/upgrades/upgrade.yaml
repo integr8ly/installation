@@ -7,6 +7,8 @@
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:2.10.1
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:v0.0.15
         upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:v1.3.6
+        upgrade_backup_container_image: quay.io/integreatly/backup-container:1.0.2
+        new_backup_namespace: openshift-integreatly-backups
 
     - name: Check current version
       shell: "oc get secret manifest -n {{ eval_webapp_namespace }} -o json | jq \".data.generated_manifest\" -r | base64 -d | jq \".version\" -r"
@@ -49,8 +51,67 @@
       register: upgrade_webapp
       failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
 
+    # SSO Alerts
     - name: delete alerts
       shell: "oc delete prometheusrules application-monitoring -n {{ eval_rhsso_namespace }}"
 
     - name: recreate alerts
       shell: "oc patch keycloak rhsso --type=json --patch='[{\"op\": \"add\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]' -n {{ eval_rhsso_namespace }}"
+
+    # Backuo & Restore
+    - name: make sure the new backup namespace exists
+      shell: "oc create namespace {{ new_backup_namespace }}"
+      register: create_backups_namespace_result
+      failed_when: create_backups_namespace_result.stderr != '' and 'already exists' not in create_backups_namespace_result.stderr
+
+    - name: copy all cronjobs over to the new namespace
+      shell: "oc get cronjobs -n {{ backup_namespace }} -o yaml | sed 's/namespace: {{ backup_namespace }}/namespace: {{ new_backup_namespace }}/' | oc create -f -"
+      register: copy_cronjobs_result
+      failed_when: copy_cronjobs_result.stderr != '' and 'not found' not in copy_cronjobs_result.stderr and 'already exists' not in copy_cronjobs_result.stderr and 'no objects passed to create' not in copy_cronjobs_result.stderr
+
+    - name: copy all secrets over to the new namespace
+      shell: "oc get secret {{ item }} -n {{ backup_namespace }} -o yaml | sed 's/namespace: {{ backup_namespace }}/namespace: {{ new_backup_namespace }}/' | oc create -f -"
+      register: copy_secrets_result
+      failed_when: copy_secrets_result.stderr != '' and 'not found' not in copy_secrets_result.stderr and 'already exists' not in copy_secrets_result.stderr
+      with_items:
+        - codeready-postgres-secret
+        - enmasse-postgres-secret
+        - fuse-postgres-auth
+        - launcher-postgres-auth
+        - s3-credentials
+        - threescale-mysql-secret
+        - threescale-postgres-secret
+
+    - name: delete the cronjobs from the old namespace
+      register: delete_cronjobs_result
+      failed_when: delete_cronjobs_result.stderr != '' and 'not found' not in delete_cronjobs_result.stderr and 'already exists' not in delete_cronjobs_result.stderr and 'no objects passed to create' not in delete_cronjobs_result.stderr
+      shell: "oc delete cronjobs --all -n {{ backup_namespace }}"
+
+    - name: delete the secrets from the old namespace
+      shell: "oc delete secret {{ item }} -n {{ backup_namespace }}"
+      register: delete_secrets_result
+      failed_when: delete_secrets_result.stderr != '' and 'not found' not in delete_secrets_result.stderr and 'already exists' not in delete_secrets_result.stderr
+      with_items:
+        - codeready-postgres-secret
+        - enmasse-postgres-secret
+        - fuse-postgres-auth
+        - launcher-postgres-auth
+        - s3-credentials
+        - threescale-mysql-secret
+        - threescale-postgres-secret
+
+    - name: add postgres version to secret
+      shell: "oc patch secret threescale-postgres-secret --type=json --patch='[{\"op\": \"add\", \"path\": \"/data/POSTGRES_VERSION\", \"value\": \"{{ 10 | b64encode }}\"}]' -n {{ new_backup_namespace }}"
+
+    - name: get all cronjobs
+      shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ new_backup_namespace }}"
+      register: cronjobs_result
+
+    - set_fact:
+        cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
+
+    - name: patch all cronjobs
+      shell: "oc patch cronjob {{ item }} -n {{ new_backup_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
+      register: upgrade_cronjob
+      failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
+      with_items: "{{ cronjobs }}"
