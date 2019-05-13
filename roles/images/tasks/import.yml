@@ -14,6 +14,6 @@
     data: "{{ pod_list['items'] }}"
   register: image_list
 
-- name: Import images
+- name: Sync ImageStreams
   shell: "oc import-image {{ item.image }} --all=true --confirm -n {{ item.namespace }}"
   with_items: "{{ image_list.images }}"
