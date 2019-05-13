@@ -44,6 +44,7 @@ def main():
     
     items = get_items(module)
     images = []
+    has_changed = False
 
     for item in items:
         spec = item['spec']
@@ -52,13 +53,18 @@ def main():
         triggers = spec['triggers']
         for trigger in triggers:
             if trigger['type'] == 'ImageChange': 
+                if not 'imageChangeParams' in trigger:
+                    continue
+                if not 'lastTriggeredImage' in trigger['imageChangeParams']:
+                    continue
                 if should_skip(module, trigger['imageChangeParams']['lastTriggeredImage']):
                     continue
                 image_data = get_image_data(trigger)
                 if len(image_data) == 0:
                     continue
+                has_changed = True
                 images.append(image_data)
-    module.exit_json(changed=True, images=images)
+    module.exit_json(changed=has_changed, images=images)
 
 
 if __name__ == '__main__':
