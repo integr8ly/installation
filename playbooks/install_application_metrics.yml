@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  gather_facts: no
+  roles:
+  - role: application_monitoring
+    when: application_metrics | default(true) | bool

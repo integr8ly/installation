@@ -1,0 +1,8 @@
+---
+- include_role:
+    name: middleware_monitoring
+    tasks_from: uninstall
+  vars:
+    monitoring_namespace: "{{ app_monitoring_namespace }}"
+    namespace_postfix: "{{ app_monitoring_postfix }}"
+    monitoring_display_name: "{{ app_monitoring_display_name }}"
