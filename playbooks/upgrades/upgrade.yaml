@@ -115,3 +115,7 @@
       register: upgrade_cronjob
       failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
       with_items: "{{ cronjobs }}"
+
+    - include_role:
+        name: 3scale
+        tasks_from: upgrade
