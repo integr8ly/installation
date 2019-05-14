@@ -49,6 +49,7 @@
 - name: Check if postgresql already exists
   shell: oc get deploymentconfig postgresql -n {{ enmasse_namespace }}
   register: postgresql_exists
+  failed_when: postgresql_exists.stderr != '' and 'not found' not in postgresql_exists.stderr
 
 - name: "Provision Postgres for EnMasse AuthenticationService"
   shell: oc new-app --template postgresql-persistent -p POSTGRESQL_DATABASE=amqonline -p POSTGRESQL_VERSION=9.6 -n {{ enmasse_namespace }}
