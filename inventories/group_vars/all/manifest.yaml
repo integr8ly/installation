@@ -1,5 +1,5 @@
 ---
-integreatly_version: release-1.4.0-rhpds-rc3
+integreatly_version: release-1.4-rc4
 # threescale version is controlled by the operator. Changing the operator version will change the 3scale version
 
 # controls whether threescale is installed or not.
