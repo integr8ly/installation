@@ -77,3 +77,19 @@
     - include_role:
         name: 3scale
         tasks_from: upgrade
+
+    - name: Update image streams
+      include_role:
+        name: images
+        tasks_from: import
+      with_items:
+        - 3scale
+        - apicurito
+        - codeready
+        - enmasse
+        - fuse
+        - launcher
+        - sso
+        - webapp
+      loop_control:
+        loop_var: images_source_namespace

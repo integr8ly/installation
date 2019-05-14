@@ -1,0 +1,19 @@
+---
+- import_tasks: prereq-check.yml
+
+- name: Get all pods from {{ images_source_namespace }}
+  shell: "oc get dc -o json -n {{ images_source_namespace }}"
+  register: pod_list_cmd
+
+- name: Get parsed pod list
+  set_fact:
+    pod_list: "{{ pod_list_cmd.stdout|from_json }}"
+
+- name: Filter all image names
+  dc_images:
+    data: "{{ pod_list['items'] }}"
+  register: image_list
+
+- name: Sync ImageStreams
+  shell: "oc import-image {{ item.image }} --all=true --confirm -n {{ item.namespace }}"
+  with_items: "{{ image_list.images }}"

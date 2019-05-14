@@ -1,0 +1,7 @@
+---
+- name: Check if prereq vars are set
+  debug:
+    msg: "images_source_namespace: {{ item }}"
+  failed_when: item is undefined
+  with_items:
+    - "{{ images_source_namespace }}"
