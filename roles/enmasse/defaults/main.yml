@@ -6,7 +6,7 @@ enmasse_api_server: true
 enmasse_register_api_server: true
 enmasse_service_catalog: true
 enmasse_keycloak_admin_password: admin
-enmasse_authentication_services: ["standard"]
+enmasse_authentication_services: []
 enmasse_clean_artifacts: true
 enmasse_enable_monitoring: false
 enmasse_backup_postgres_secret: 'enmasse-postgres-secret'
