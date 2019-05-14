@@ -1,0 +1,32 @@
+apiVersion: admin.enmasse.io/v1beta1
+kind: AuthenticationService
+metadata:
+  labels:
+    app: enmasse
+  name: standard-authservice
+spec:
+  standard:
+    credentialsSecret:
+      name: keycloak-credentials
+    datasource:
+      type: postgresql
+      host: postgresql
+      port: 5432
+      database: amqonline
+      credentialsSecret:
+        name: postgresql
+        namespace: {{ enmasse_namespace }}
+    deploymentName: keycloak
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+    routeName: keycloak
+    serviceName: standard-authservice
+    storage:
+      claimName: keycloak-data
+      deleteClaim: true
+      size: 5Gi
+      type: persistent-claim
+  type: standard
