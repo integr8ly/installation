@@ -27,6 +27,7 @@
     - "spring-boot-camel-config-template.json"
     - "spring-boot-camel-drools-template.json"
     - "spring-boot-camel-infinispan-template.json"
+    - "spring-boot-camel-rest-3scale-template.json"
     - "spring-boot-camel-rest-sql-template.json"
     - "spring-boot-camel-teiid-template.json"
     - "spring-boot-camel-template.json"
