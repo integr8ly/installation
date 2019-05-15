@@ -9,11 +9,11 @@
   failed_when: pick_secret_result.stderr != '' and 'NotFound' not in pick_secret_result.stderr
 
 - set_fact:
-  pull_secret_name: "{{ osd_pull_secret_name }}"
+    pull_secret_name: "{{ osd_pull_secret_name }}"
   when: pick_secret_result.rc == 0
 
 - set_fact:
-  pull_secret_name: "{{ pds_pull_secret_name }}"
+    pull_secret_name: "{{ pds_pull_secret_name }}"
   when: pick_secret_result.rc != 0
 
 - copy:
