@@ -1,10 +1,27 @@
 ---
+- set_fact:
+    osd_pull_secret_name: registry-redhat-io-dockercfg
+    pds_pull_secret_name: imagestreamsecret
+
+- name: pick the secret depending on the platform
+  shell: "oc get secret {{ osd_pull_secret_name }} -n openshift"
+  register: pick_secret_result
+  failed_when: pick_secret_result.stderr != '' and 'NotFound' not in pick_secret_result.stderr
+
+- set_fact:
+  pull_secret_name: "{{ osd_pull_secret_name }}"
+  when: pick_secret_result.rc == 0
+
+- set_fact:
+  pull_secret_name: "{{ pds_pull_secret_name }}"
+  when: pick_secret_result.rc != 0
+
 - copy:
     src: syndesis-golang-template.tpl
     dest: /tmp/syndesis-golang-template.tpl
 
 - name: Read the registry pull secret
-  shell: oc get secret imagestreamsecret -n openshift -o go-template-file=/tmp/syndesis-golang-template.tpl
+  shell: "oc get secret {{ pull_secret_name }} -n openshift -o go-template-file=/tmp/syndesis-golang-template.tpl"
   register: image_stream_secret_data
   changed_when: image_stream_secret_data.rc == 0
   failed_when: image_stream_secret_data.stderr != ''
