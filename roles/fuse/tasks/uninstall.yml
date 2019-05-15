@@ -42,5 +42,6 @@
   with_items:
     - "fis-console-cluster-template.json"
     - "fis-console-namespace-template.json"
+    - "fuse-apicurito.yml"
   register: delete_fuse_console_template_cmd
   failed_when: delete_fuse_console_template_cmd.stderr != '' and 'NotFound' not in delete_fuse_console_template_cmd.stderr
