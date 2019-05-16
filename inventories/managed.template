@@ -24,4 +24,4 @@ run_master_tasks=false
 user_rhsso=false
 
 # Don't setup the datasync (yet) on managed instance
-datasync: false
+datasync=false
