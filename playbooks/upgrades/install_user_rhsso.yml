@@ -12,6 +12,7 @@
       vars:
         sso_namespace: "{{ eval_user_rhsso_namespace }}"
         sso_namespace_display_name: "User Facing Red Hat Single Sign-On"
+        rhsso_provision_immediately: true
       tags: ['user_rhsso']
       when: user_rhsso | default(true) | bool
     -
@@ -22,4 +23,4 @@
       vars:
         sso_namespace: "{{ eval_user_rhsso_namespace }}"
       tags: ['user_rhsso']
-      when: user_rhsso | default(true) | bool
+      when: (user_rhsso | default(true) | bool) and (backup_restore_install | default(false) | bool)
