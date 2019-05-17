@@ -177,5 +177,19 @@
           set_fact:
             eval_rhsso_host: "{{ eval_sso_host_cmd.stdout }}"
 
+    - name: Retrieve launcher sso env vars
+      shell: "oc get dc/launcher-sso \
+        -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
+        -n {{ eval_launcher_namespace }}"
+      with_items:
+        - 'SSO_SERVICE_USERNAME'
+        - 'SSO_SERVICE_PASSWORD'
+        - 'SSO_ADMIN_USERNAME'
+        - 'SSO_ADMIN_PASSWORD'
+      register: _eval_launcher_sso_dc_cmd
+    - name: Set launcher sso playbook vars
+      set_fact: "eval_launcher_{{ item.item | lower }}={{ item.stdout }}"
+      with_items: "{{ _eval_launcher_sso_dc_cmd.results }}"
+
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
