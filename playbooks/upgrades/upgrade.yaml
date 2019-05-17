@@ -83,6 +83,11 @@
         name: 3scale
         tasks_from: upgrade
 
+    # Launcher
+    - include_role:
+        name: launcher
+        tasks_from: upgrade
+
     - name: Update image streams
       include_role:
         name: images

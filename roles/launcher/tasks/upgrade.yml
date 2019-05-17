@@ -1,0 +1,7 @@
+---
+- name: Patch the launcher config map with the updated version of the launcher catalog
+  shell: |
+    oc patch configmap launcher -n {{ launcher_namespace }} --type=json -p '[{"op": "add", "path": "/data/launcher.backend.catalog.git.ref", "value": "{{ launcher_catalog_git_ref }}"}]'
+  register: launcher_config_patch
+  failed_when: launcher_config_patch.stderr != '' and 'not patched' not in launcher_config_patch.stderr
+  changed_when: launcher_config_patch.rc == 0
