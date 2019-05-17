@@ -1,0 +1,11 @@
+---
+- copy:
+    src: upgrade-cluster-role.json
+    dest: /tmp/upgrade-cluster-role.json
+
+- name: Create cluster role upgrade configuration
+  shell: cat /tmp/upgrade-cluster-role.json
+  register: cluster_role_upgrade_config
+
+- name: Update cluster role {{ msbroker_clusterrole }} with new permissions
+  shell: oc patch clusterrole {{ msbroker_clusterrole }} --type json -p '{{ cluster_role_upgrade_config.stdout }}'
