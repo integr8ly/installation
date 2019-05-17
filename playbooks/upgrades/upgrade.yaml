@@ -112,3 +112,6 @@
         tasks_from: upgrade
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
+
+#Update product version (should always be last)
+- import_playbook: "../generate-customisation-inventory.yml"
