@@ -152,5 +152,30 @@
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
 
+    - name: Set eval_app_host var
+      set_fact:
+        eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+    - name: Gather rhsso data
+      block:
+        - name: Retrieve rhsso env vars
+          shell: "oc get dc/sso \
+                 -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
+                 -n {{ eval_rhsso_namespace }}"
+          with_items:
+           - 'SSO_SERVICE_USERNAME'
+           - 'SSO_SERVICE_PASSWORD'
+           - 'SSO_ADMIN_USERNAME'
+           - 'SSO_ADMIN_PASSWORD'
+          register: _eval_rhsso_dc_cmd
+        - name: Set rhsso playbook vars
+          set_fact: "eval_rh{{ item.item | lower }}={{ item.stdout }}"
+          with_items: "{{ _eval_rhsso_dc_cmd.results }}"
+        - name: Retrieve cluster rhsso host
+          shell: "oc get route/sso -o jsonpath='{.spec.host}' -n {{ eval_rhsso_namespace }}"
+          register: eval_sso_host_cmd
+        - name: Set rhsso host var
+          set_fact:
+            eval_rhsso_host: "{{ eval_sso_host_cmd.stdout }}"
+
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
