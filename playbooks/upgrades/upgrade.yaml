@@ -108,3 +108,5 @@
     - include_role:
         name: fuse_managed
         tasks_from: upgrade
+
+- import_playbook: "./install_user_rhsso.yml"
