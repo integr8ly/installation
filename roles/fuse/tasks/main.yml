@@ -13,6 +13,7 @@
 - name: Create Fuse quickstart templates
   shell: oc replace --force -f {{ fuse_templates_url }}/{{ item }} -n openshift
   with_items:
+    - "eap-camel-amq-template.json"
     - "eap-camel-cdi-template.json"
     - "eap-camel-cxf-jaxrs-template.json"
     - "eap-camel-cxf-jaxws-template.json"

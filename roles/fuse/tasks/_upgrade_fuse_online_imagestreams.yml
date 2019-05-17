@@ -1,0 +1,54 @@
+---
+- set_fact:
+    fuse_registry: "registry.redhat.io"
+
+# Create new image stream postgress_exporter
+- name: Create new Fuse online image streams
+  shell: "oc create -f {{ fuse_online_imagestream_resources }} -n openshift"
+  register: create_fuse_imagestream_cmd
+  failed_when: create_fuse_imagestream_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_imagestream_cmd.stderr
+  changed_when: create_fuse_imagestream_cmd.rc == 0
+
+- name: Add new tag {{ fuse_upgrade_image_tag }} to Fuse online images
+  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-{{ item }}:1.3-16 fuse-ignite-{{ item }}:{{ fuse_upgrade_image_tag }} -n openshift"
+  with_items:
+    - "server"
+    - "meta"
+    - "s2i"
+
+- name: Add new tag {{ fuse_upgrade_image_tag }} to fuse-ignite-ui image
+  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-ui:1.3-10 fuse-ignite-ui:{{ fuse_upgrade_image_tag }} -n openshift"
+
+- name: Import new fuse-ignite-server image
+  shell: "oc import-image fuse-ignite-server:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-server:1.3-16 -n openshift"
+  register: import_image_result
+  until: import_image_result.rc == 0
+  retries: 5
+  delay: 5
+
+- name: Import new fuse-ignite-meta image
+  shell: "oc import-image fuse-ignite-meta:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-meta:1.3-16 -n openshift"
+  register: import_image_result
+  until: import_image_result.rc == 0
+  retries: 5
+  delay: 5
+
+- name: Import new fuse-ignite-s2i image
+  shell: "oc import-image fuse-ignite-s2i:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-s2i:1.3-16 -n openshift"
+  register: import_image_result
+  until: import_image_result.rc == 0
+  retries: 5
+  delay: 5
+
+- name: Import new fuse-ignite-ui image
+  shell: "oc import-image fuse-ignite-ui:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-ui:1.3-10 -n openshift"
+  register: import_image_result
+  until: import_image_result.rc == 0
+  retries: 5
+  delay: 5
+
+- name: Patch oauth proxy image to use new registry
+  shell: "oc patch imagestream/oauth-proxy -n openshift --type json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/0/from/name\", \"value\": \"{{ fuse_registry }}/openshift3/oauth-proxy:v3.10.45\"}]'"
+
+- name: Patch prometheus image to use new registry
+  shell: "oc patch imagestream/prometheus -n openshift --type json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/0/from/name\", \"value\": \"{{ fuse_registry }}/openshift3/prometheus:v3.9.25\"}]'"

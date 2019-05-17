@@ -2,3 +2,5 @@ fuse_resource_base: https://raw.githubusercontent.com/jboss-fuse/application-tem
 fuse_on_openshift_imagestreams_url: https://raw.githubusercontent.com/jboss-fuse/application-templates/{{fuse_release_tag}}/fis-image-streams.json
 fuse_apicurito: https://raw.githubusercontent.com/jboss-fuse/application-templates/{{fuse_release_tag}}//fuse-apicurito.yml
 fuse_templates_url: https://raw.githubusercontent.com/jboss-fuse/application-templates/{{fuse_release_tag}}/quickstarts
+
+msbroker_namespace: "{{ eval_msbroker_namespace | default('managed-service-broker')}}"
