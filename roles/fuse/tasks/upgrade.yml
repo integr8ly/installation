@@ -4,7 +4,7 @@
     old_fuse_resource_base: "https://raw.githubusercontent.com/jboss-fuse/application-templates/{{ old_fuse_tag }}"
 
 - name: Update Fuse Online image streams
-  include: _upgrade_fuse_online_imagestreams.yml fuse_upgrade_image_tag={{ fuse_image_tag }}
+  include: _upgrade_fuse_online_imagestreams.yml
 
 - name: Create new Fuse on Openshift images
   shell: "oc replace --force -f {{ fuse_on_openshift_imagestreams_url }} -n openshift"
