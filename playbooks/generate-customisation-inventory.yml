@@ -2,6 +2,14 @@
 - hosts: localhost
   gather_facts: no
   tasks:
+    - include_vars: ../roles/3scale/defaults/main.yml
+    - include_vars: ../roles/code-ready/defaults/main.yml
+    - include_vars: ../roles/enmasse/defaults/main.yml
+    - include_vars: ../roles/fuse_managed/defaults/main.yml
+    - include_vars: ../roles/gitea/defaults/main.yml
+    - include_vars: ../roles/launcher/defaults/main.yml
+    - include_vars: ../roles/rhsso/defaults/main.yml
+    - include_vars: ../roles/webapp/defaults/main.yml
     - include_role:
         name: customisation
       vars:
