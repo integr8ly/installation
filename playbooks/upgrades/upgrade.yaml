@@ -159,3 +159,6 @@
     - include_role:
         name: enmasse
         tasks_from: upgrade
+
+#Update product version (should always be last)
+- import_playbook: "../generate-customisation-inventory.yml"
