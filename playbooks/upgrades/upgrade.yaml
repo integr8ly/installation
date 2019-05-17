@@ -108,3 +108,14 @@
     - include_role:
         name: fuse_managed
         tasks_from: upgrade
+
+    # Update deployment images
+    - name: Update enmasse deployments
+      include_role:
+        name: enmasse
+        tasks_from: upgrade
+
+    - name: Update codeready deployments
+      include_role:
+        name: code-ready
+        tasks_from: upgrade

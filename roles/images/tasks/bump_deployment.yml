@@ -1,0 +1,12 @@
+-
+  name: "patch non-imagestream deployments"
+  shell: "oc patch dc {{ dc }} -n {{ ns }} --type=json -p='[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/imagePullPolicy\",\"value\":\"Always\"}]'"
+  register: patch_dc
+  failed_when: patch_dc.stderr != ''
+
+-
+  name: "rollout the new version"
+  shell: "oc rollout latest dc/{{ dc }} --namespace {{ ns }}"
+  register: rollout_dc
+  failed_when: rollout_dc.stderr != '' and "already in progress" not in rollout_dc.stderr
+  when: '"not patched" in patch_dc.stdout'
