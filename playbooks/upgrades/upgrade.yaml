@@ -119,3 +119,6 @@
       include_role:
         name: code-ready
         tasks_from: upgrade
+
+#Update product version (should always be last)
+- import_playbook: "../generate-customisation-inventory.yml"
