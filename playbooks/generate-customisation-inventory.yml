@@ -2,6 +2,52 @@
 - hosts: localhost
   gather_facts: no
   tasks:
+    - include_vars: ../roles/3scale/defaults/main.yml
+    - include_vars: ../roles/code-ready/defaults/main.yml
+    - include_vars: ../roles/enmasse/defaults/main.yml
+    - include_vars: ../roles/fuse_managed/defaults/main.yml
+    - include_vars: ../roles/gitea/defaults/main.yml
+    - include_vars: ../roles/launcher/defaults/main.yml
+    - include_vars: ../roles/nexus/defaults/main.yml
+    - include_vars: ../roles/rhsso/defaults/main.yml
+    - include_vars: ../roles/webapp/defaults/main.yml
+
+    - name: Set eval_app_host var
+      set_fact:
+        eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+
+    - name: Gather rhsso data
+      block:
+        - name: Retrieve rhsso env vars
+          shell: "oc get dc/sso -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' -n {{ eval_rhsso_namespace }}"
+          with_items:
+           - 'SSO_SERVICE_USERNAME'
+           - 'SSO_SERVICE_PASSWORD'
+           - 'SSO_ADMIN_USERNAME'
+           - 'SSO_ADMIN_PASSWORD'
+          register: _eval_rhsso_dc_cmd
+        - name: Set rhsso playbook vars
+          set_fact: "eval_rh{{ item.item | lower }}={{ item.stdout }}"
+          with_items: "{{ _eval_rhsso_dc_cmd.results }}"
+        - name: Retrieve cluster rhsso host
+          shell: "oc get route/sso -o jsonpath='{.spec.host}' -n {{ eval_rhsso_namespace }}"
+          register: eval_sso_host_cmd
+        - name: Set rhsso host var
+          set_fact:
+            eval_rhsso_host: "{{ eval_sso_host_cmd.stdout }}"
+
+    - name: Retrieve launcher sso env vars
+      shell: "oc get dc/launcher-sso -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' -n {{ eval_launcher_namespace }}"
+      with_items:
+        - 'SSO_SERVICE_USERNAME'
+        - 'SSO_SERVICE_PASSWORD'
+        - 'SSO_ADMIN_USERNAME'
+        - 'SSO_ADMIN_PASSWORD'
+      register: _eval_launcher_sso_dc_cmd
+    - name: Set launcher sso playbook vars
+      set_fact: "eval_launcher_{{ item.item | lower }}={{ item.stdout }}"
+      with_items: "{{ _eval_launcher_sso_dc_cmd.results }}"
+
     - include_role:
         name: customisation
       vars:
