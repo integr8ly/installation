@@ -12,6 +12,14 @@
         name: delete-user-namespaces
       when: keep_namespaces is undefined or not keep_namespaces | bool
     -
+      name: Uninstall integreatly backups
+      include_role:
+        name: backup
+        tasks_from: uninstall
+      tags: ['backup']
+      when: backup_restore_install
+
+    -
       name: Uninstall apicurito
       include_role:
         name: apicurito
@@ -125,6 +133,7 @@
       name: Reboot template broker
       include_role:
         name: reboot_template_broker
+
 
 - hosts: master
   tasks:
