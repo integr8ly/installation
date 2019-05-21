@@ -12,14 +12,14 @@
 
 -
   name: "redeploy codeready"
-  shell: "oc patch deployment codeready --patch \"{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"last-restart\":\"`date +'%s'`\"}}}}}\" -n {{ che_namespace }}"
+  shell: "oc patch deployment codeready --patch '{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"last-restart\":\"`date +'%s'`\"}}}}}' -n {{ che_namespace }}"
   register: redeploy_codeready_result
   failed_when: redeploy_codeready_result.stderr != ""
   when: '"not patched" in patch_codeready_result.stdout'
 
 -
   name: "redeploy postgres"
-  shell: "oc patch deployment postgres --patch \"{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"last-restart\":\"`date +'%s'`\"}}}}}\" -n {{ che_namespace }}"
+  shell: "oc patch deployment postgres --patch '{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"last-restart\":\"`date +'%s'`\"}}}}}' -n {{ che_namespace }}"
   register: redeploy_postgres_result
   failed_when: redeploy_postgres_result.stderr != ""
   when: '"not patched" in patch_postgres_result.stdout'
