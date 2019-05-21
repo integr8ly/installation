@@ -202,3 +202,17 @@
   shell: oc tag -n {{ threescale_namespace }} -d postgresql:9.5
   register: delete_tag
   failed_when: delete_tag.stderr != '' and 'NotFound' not in delete_tag.stderr
+
+-
+  name: "upgrade non imagestream deployments"
+  include_role:
+    name: images
+    tasks_from: bump_deployment
+  vars:
+    ns: "{{ threescale_namespace }}"
+    dc: "{{ item }}"
+  with_items:
+    - system-mysql
+    - system-memcache
+    - system-redis
+    - backend-redis
