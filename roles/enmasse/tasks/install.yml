@@ -46,7 +46,7 @@
 - name: "Create EnMasse AuthenticationService"
   shell: oc create -f /tmp/authenticationservice.yml
   register: authenticationservice_exists
-  failed_when: authetnicationservice_exists.stderr != '' and 'AlreadyExists' not in authetnicationservice_exists.stderr
+  failed_when: authenticationservice_exists.stderr != '' and 'AlreadyExists' not in authenticationservice_exists.stderr
 
 - name: "Verify EnMasse deployment succeeded"
   shell: sleep 5; oc get pods --namespace {{ enmasse_namespace }}  |  grep  "deploy"
