@@ -1,0 +1,10 @@
+---
+- name: Bump the Web App operator version to {{ webapp_operator_release_tag }}
+  shell: oc patch deployment tutorial-web-app-operator -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_operator_image }}"}]'
+  register: upgrade_webapp_operator
+  failed_when: upgrade_webapp_operator.stderr != '' and 'not patched' not in upgrade_webapp_operator.stderr
+
+- name: Bump the Web App deployment version to {{ webapp_version }}
+  shell: oc patch dc tutorial-web-app -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_image }}"}]'
+  register: upgrade_webapp
+  failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
