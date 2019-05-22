@@ -4,3 +4,9 @@
 
 - name: add CreateOnly to openshift keycloak realm
   shell: "oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"add\", \"path\": \"/spec/createOnly\", \"value\": true}]'"
+
+- name: delete alerts
+  shell: "oc delete prometheusrules application-monitoring -n {{ eval_rhsso_namespace }}"
+
+- name: recreate alerts
+  shell: "oc patch keycloak rhsso --type=json --patch='[{\"op\": \"add\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]' -n {{ eval_rhsso_namespace }}"
