@@ -45,19 +45,17 @@
       vars:
         from_version: "release-1.3.0"
 
+    - include_role:
+        name: rhsso
+        tasks_from: upgrade
+      vars:
+        upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}
+
     - set_fact:
         upgrade_msb_image: quay.io/integreatly/managed-service-broker:{{ msbroker_release_tag }}
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
-        upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}
         upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
-
-    # SSO
-    - name: Update keycloak-operator image tag
-      shell: "oc patch deployment keycloak-operator -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_sso_operator_image }}\"}]'"
-
-    - name: add CreateOnly to openshift keycloak realm
-      shell: "oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"add\", \"path\": \"/spec/createOnly\", \"value\": true}]'"
 
     # SSO Alerts
     - name: delete alerts
