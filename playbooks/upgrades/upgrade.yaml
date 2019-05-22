@@ -39,23 +39,18 @@
 - hosts: localhost
   gather_facts: no
   tasks:
+    - include_role:
+        name: prerequisites
+        tasks_from: upgrade
+      vars:
+        from_version: "release-1.3.0"
+
     - set_fact:
         upgrade_msb_image: quay.io/integreatly/managed-service-broker:{{ msbroker_release_tag }}
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
         upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}
         upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
-
-    - name: Check current version
-      shell: "oc get secret manifest -n {{ eval_webapp_namespace }} -o json | jq \".data.generated_manifest\" -r | base64 -d | jq \".version\" -r"
-      register: version
-
-    - fail:
-        msg: "The current installation could not be verified as the manifest could not be read"
-      when: version.stderr != ""
-    - fail:
-        msg: "The installed version must be 1.3.0 to run this upgrade playbook, {{ version.stdout }} is currently installed"
-      when: version.stdout != "release-1.3.0"
 
     # SSO
     - name: Update keycloak-operator image tag
