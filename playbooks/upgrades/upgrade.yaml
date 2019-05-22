@@ -57,19 +57,15 @@
       vars:
         upgrade_msb_image: quay.io/integreatly/managed-service-broker:{{ msbroker_release_tag }}
 
-    - set_fact:
+    - include_role:
+        name: webapp
+        tasks_from: upgrade
+      vars:
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
+
+    - set_fact:
         upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
-
-    # SSO Alerts
-    - name: delete alerts
-      shell: "oc delete prometheusrules application-monitoring -n {{ eval_rhsso_namespace }}"
-      register: result
-      failed_when: result.stderr != '' and 'not found' not in result.stderr
-
-    - name: recreate alerts
-      shell: "oc patch keycloak rhsso --type=json --patch='[{\"op\": \"add\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]' -n {{ eval_rhsso_namespace }}"
 
     - include_role:
         name: rhsso
@@ -84,17 +80,6 @@
       vars:
         msb_image_tag: "{{ msbroker_release_tag }}"
 
-    # Solution Explorer
-    - name: Bump the Web App operator version to {{ webapp_operator_release_tag }}
-      shell: oc patch deployment tutorial-web-app-operator -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_operator_image }}"}]'
-      register: upgrade_webapp_operator
-      failed_when: upgrade_webapp_operator.stderr != '' and 'not patched' not in upgrade_webapp_operator.stderr
-
-    - name: Bump the Web App deployment version to {{ webapp_version }}
-      shell: oc patch dc tutorial-web-app -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_image }}"}]'
-      register: upgrade_webapp
-      failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
-    
     - include_role:
         name: webapp
         tasks_from: check_readiness
