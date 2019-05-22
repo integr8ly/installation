@@ -1,0 +1,16 @@
+---
+- name: add postgres version to secret
+  shell: "oc patch secret threescale-postgres-secret --type=json --patch='[{\"op\": \"add\", \"path\": \"/data/POSTGRES_VERSION\", \"value\": \"{{ 10 | b64encode }}\"}]' -n {{ backup_namespace }}"
+
+- name: get all cronjobs
+  shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ backup_namespace }}"
+  register: cronjobs_result
+
+- set_fact:
+    cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
+
+- name: patch all cronjobs
+  shell: "oc patch cronjob {{ item }} -n {{ backup_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
+  register: upgrade_cronjob
+  failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
+  with_items: "{{ cronjobs }}"
