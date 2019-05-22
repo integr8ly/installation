@@ -1,4 +1,16 @@
 ---
+- name: Retrieve SSO host
+  shell: oc get route sso -n {{ eval_rhsso_namespace }} -o jsonpath='{.spec.host}'
+  register: get_sso_host
+
+- set_fact:
+    upgrade_sso_url: "https://{{ get_sso_host.stdout | trim }}/auth/admin/openshift/console"
+
+- name: Append the SSO_URL env to the Managed Service Broker deployment
+  shell: oc patch deployment msb -n {{ eval_msbroker_namespace }} --type=json -p '[{"op":"add","path":"/spec/template/spec/containers/0/env/-1","value":{"name":"SSO_URL","value":"{{ upgrade_sso_url }}"}}, {"op":"replace","path":"/spec/template/spec/containers/0/image","value":"{{ upgrade_msb_image }}"}]'
+  register: upgrade_msb
+  failed_when: upgrade_msb.stderr != '' and 'not patched' not in upgrade_msb.stderr
+
 - copy:
     src: upgrade-cluster-role.json
     dest: /tmp/upgrade-cluster-role.json
