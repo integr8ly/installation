@@ -43,7 +43,7 @@
         name: prerequisites
         tasks_from: upgrade
       vars:
-        from_version: "release-1.3.0"
+        from_version: "1.3.0"
 
     - include_role:
         name: rhsso
