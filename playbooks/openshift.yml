@@ -1,7 +1,15 @@
 ---
+- hosts: master
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: openshift
+        tasks_from: set_master_vars.yml
+      when: run_master_tasks | default(true) | bool
 
 - hosts: local
   gather_facts: no
   tasks:
     - include_role:
         name: openshift
+        tasks_from: login.yml

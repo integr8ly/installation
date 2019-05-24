@@ -1,39 +1,10 @@
 ---
-- hosts: local
-  tasks:
-    - block:
-        - debug:
-            msg: "eval_app_host is required when run_master_tasks=false"
-          failed_when: eval_app_host is not defined
-        - debug:
-            msg: "openshift_master_url is required when run_master_tasks=false"
-          failed_when: openshift_master_url is not defined
-        - name: Set EVAL_VARS from vars as not running master tasks
-          add_host:
-            name: EVAL_VARS
-            eval_app_host: "{{ eval_app_host }}"
-            openshift_master_url: "{{ openshift_master_url }}"
-        - name: Overwrite create_cluster_admin, set to false
-          set_fact:
-            create_cluster_admin: false
-      when: not (run_master_tasks | default(true) | bool)
-
 - hosts: master
   gather_facts: no
   tasks:
-    - block:
-        -
-          name: Retrieve master configurations
-          slurp:
-            src: "{{ eval_openshift_master_config_path }}"
-          register: eval_master_config
-          become: yes
-        -
-          add_host:
-            name: EVAL_VARS
-            eval_app_host: "{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
-            openshift_master_url: "{{ (eval_master_config['content'] | b64decode | from_yaml)['masterPublicURL'] }}"
-      tags: ['bootstrap', 'remote']
+    - include_role:
+        name: openshift
+        tasks_from: set_master_vars
       when: run_master_tasks | default(true) | bool
 
 - hosts: localhost
