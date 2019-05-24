@@ -1,8 +1,10 @@
 ---
-- import_playbook: "./prerequisites.yml"
 - hosts: localhost
   gather_facts: true
   tasks:
+    - include_role:
+        name: prerequisites
+        tasks_from: uninstall
     - name: Customise Openshift Console
       include_role:
         name: customise-web-console

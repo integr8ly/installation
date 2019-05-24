@@ -1,0 +1,11 @@
+---
+- block:
+  - name: Retrieve master configurations
+    slurp:
+      src: "{{ eval_openshift_master_config_path }}"
+    register: eval_master_config
+    become: yes
+  - add_host:
+      name: EVAL_VARS
+      eval_app_host: "{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
+      openshift_master_url: "{{ (eval_master_config['content'] | b64decode | from_yaml)['masterPublicURL'] }}"
