@@ -1,0 +1,38 @@
+---
+-
+  name: "Check Tutorial WebApp readiness"
+  block:
+    - name: "Verify webapp operator is running"
+      shell: oc get pods --selector='name=tutorial-web-app-operator' -o jsonpath='{.items[?(@.status.containerStatuses[0].ready==true)].spec.containers[0].image}' -n {{ webapp_namespace }} | sed -e 's/.*://'
+      register: result
+      until: result.stdout == webapp_operator_tag
+      retries: 50
+      delay: 10
+      changed_when: False
+      when: webapp_operator_tag is defined
+
+    - name: "Verify webapp instance is provisioned"
+      shell: oc get webapp tutorial-web-app-operator -o template --template \{\{.status.message\}\}  -n {{ webapp_namespace }}  |  grep  'OK'
+      register: result
+      until: result.stdout
+      retries: 50
+      delay: 10
+      changed_when: False
+
+    - name: "Verify webapp is running"
+      shell: oc get pods --selector='app=tutorial-web-app' -o jsonpath='{.items[?(@.status.containerStatuses[0].ready==true)].spec.containers[0].image}' -n {{ webapp_namespace }} | sed -e 's/.*://'
+      register: result
+      until: result.stdout == webapp_image_tag
+      retries: 50
+      delay: 10
+      changed_when: False
+      when: webapp_image_tag is defined
+
+    - name: "Verify webapp is running"
+      shell: oc get pods --selector='app=tutorial-web-app' -o jsonpath='{.items[*].status.containerStatuses[0].ready}' -n {{ webapp_namespace }}
+      register: result
+      until: "'true' in result.stdout"
+      retries: 50
+      delay: 10
+      changed_when: False
+      when: webapp_image_tag is not defined

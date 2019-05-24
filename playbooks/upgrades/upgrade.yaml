@@ -65,6 +65,22 @@
     - name: add CreateOnly to openshift keycloak realm
       shell: "oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"add\", \"path\": \"/spec/createOnly\", \"value\": true}]'"
 
+    # SSO Alerts
+    - name: delete alerts
+      shell: "oc delete prometheusrules application-monitoring -n {{ eval_rhsso_namespace }}"
+      register: result
+      failed_when: result.stderr != '' and 'not found' not in result.stderr
+
+    - name: recreate alerts
+      shell: "oc patch keycloak rhsso --type=json --patch='[{\"op\": \"add\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]' -n {{ eval_rhsso_namespace }}"
+
+    - include_role:
+        name: rhsso
+        tasks_from: check_readiness
+      vars:
+        rhsso_namespace: "{{ eval_rhsso_namespace }}"
+        sso_operator_tag: "{{ rhsso_operator_release_tag }}"
+
     # Managed Service Broker
     - name: Retrieve SSO host
       shell: oc get route sso -n {{ eval_rhsso_namespace }} -o jsonpath='{.spec.host}'
@@ -81,6 +97,12 @@
         name: msbroker
         tasks_from: upgrade
 
+    - include_role:
+        name: msbroker
+        tasks_from: check_readiness
+      vars:
+        msb_image_tag: "{{ msbroker_release_tag }}"
+
     # Solution Explorer
     - name: Bump the Web App operator version to 0.0.15
       shell: oc patch deployment tutorial-web-app-operator -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_operator_image }}"}]'
@@ -91,41 +113,68 @@
       shell: oc patch dc tutorial-web-app -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_image }}"}]'
       register: upgrade_webapp
       failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
-
-    # SSO Alerts
-    - name: delete alerts
-      shell: "oc delete prometheusrules application-monitoring -n {{ eval_rhsso_namespace }}"
-
-    - name: recreate alerts
-      shell: "oc patch keycloak rhsso --type=json --patch='[{\"op\": \"add\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]' -n {{ eval_rhsso_namespace }}"
+    
+    - include_role:
+        name: webapp
+        tasks_from: check_readiness
+      vars:
+        webapp_operator_tag: "{{ webapp_operator_release_tag }}"
+        webapp_image_tag: "{{ webapp_version }}"
 
     - block:
         # Backup & Restore
         - name: add postgres version to secret
           shell: "oc patch secret threescale-postgres-secret --type=json --patch='[{\"op\": \"add\", \"path\": \"/data/POSTGRES_VERSION\", \"value\": \"{{ 10 | b64encode }}\"}]' -n {{ backup_namespace }}"
 
-        - name: get all cronjobs
+        - name: "get all cronjobs in {{ backup_namespace }} namespace"
           shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ backup_namespace }}"
           register: cronjobs_result
 
         - set_fact:
             cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
 
-        - name: patch all cronjobs
+        - name: "patch all cronjobs in {{ backup_namespace }} namespace"
           shell: "oc patch cronjob {{ item }} -n {{ backup_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
           register: upgrade_cronjob
           failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
           with_items: "{{ cronjobs }}"
+
+        - name: "get all cronjobs in {{ eval_rhsso_namespace }} namespace"
+          shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ eval_rhsso_namespace }}"
+          register: cronjobs_result
+
+        - set_fact:
+            cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
+
+        - name: "patch all cronjobs in {{ eval_rhsso_namespace }} namespace"
+          shell: "oc patch cronjob {{ item }} -n {{ eval_rhsso_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
+          register: upgrade_cronjob
+          failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
+          with_items: "{{ cronjobs }}"
+
+        - name: Verify all middleware cronjobs use new image
+          shell: "oc get cronjobs --selector='monitoring-key=middleware' -o custom-columns=NAME:{.spec.jobTemplate.spec.template.spec.containers[0].image} --no-headers --all-namespaces | sed 's|{{ upgrade_backup_container_image }}||g'"
+          register: result
+          until: result.stdout | replace('\n', '') | length == 0
+          changed_when: False
       when: backup_restore_install | default(false) | bool
 
     - include_role:
         name: 3scale
         tasks_from: upgrade
 
+    - include_role:
+        name: 3scale
+        tasks_from: check_readiness
+
     # Launcher
     - include_role:
         name: launcher
         tasks_from: upgrade
+
+    - include_role:
+        name: launcher
+        tasks_from: check_readiness
 
     - name: Update image streams
       include_role:
@@ -157,10 +206,18 @@
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
 
+    - include_role:
+        name: fuse_managed
+        tasks_from: check_readiness
+
     # AMQ Online / enmasse
     - include_role:
         name: enmasse
         tasks_from: upgrade
+
+    - include_role:
+        name: enmasse
+        tasks_from: check_readiness
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

@@ -87,7 +87,7 @@
   failed_when: create_fuse_console_template_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_console_template_cmd.stderr
   changed_when: create_fuse_console_template_cmd.rc == 0
 
-# Create the image stream pull secret in the Fuse namespace
+# Create the image stream pull secret in the MSB namespace
 - include_role:
     name: fuse_pull_secret
   vars:

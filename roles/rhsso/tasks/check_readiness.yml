@@ -1,0 +1,36 @@
+---
+-
+  name: "Check SSO readiness"
+  block:
+    - name: "Verify rhsso operator is running"
+      shell: oc get pods --selector='name=keycloak-operator' -o jsonpath='{.items[?(@.status.containerStatuses[0].ready==true)].spec.containers[0].image}' -n {{ rhsso_namespace }} | sed -e 's/.*://'
+      register: result
+      until: result.stdout == sso_operator_tag
+      retries: 50
+      delay: 10
+      changed_when: False
+      when: sso_operator_tag is defined
+
+    - name: "Verify rhsso instance is provisioned"
+      shell: oc get keycloak rhsso -o template --template \{\{.status.phase\}\}  -n {{ rhsso_namespace }}  |  grep  'reconcile'
+      register: result
+      until: result.stdout
+      retries: 50
+      delay: 10
+      changed_when: False
+
+    - name: "Verify rhsso realm is provisioned"
+      shell: oc get keycloakrealm {{ rhsso_realm }} -o template --template \{\{.status.phase\}\}  -n {{ rhsso_namespace }}  |  grep  'reconcile'
+      register: result
+      until: result.stdout
+      retries: 50
+      delay: 10
+      changed_when: False
+
+    - name: Verify that alerts were created
+      shell: "oc get prometheusrules application-monitoring -o jsonpath='{..alert}' -n {{ rhsso_namespace }}"
+      register: result
+      until: result.stdout.split() | length >= 6
+      retries: 50
+      delay: 10
+      changed_when: False
