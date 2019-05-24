@@ -215,7 +215,7 @@
   when: enmasse
 
 - set_fact:
-    enmasse_rest_route: "https://{{enmsase_route_cmd.stdout}}"
+    enmasse_rest_route: "https://{{enmasse_route_cmd.stdout}}"
   when: enmasse and enmasse_route_cmd.rc == 0
 
 - set_fact:
