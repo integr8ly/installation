@@ -1,4 +1,8 @@
 ---
+- name: "Ensure master params are present"
+  include_tasks: check_master_params.yml
+  when: not (run_master_tasks | default(true) | bool)
+
 - name: Get target version
   shell: "oc get secret manifest -n {{ eval_webapp_namespace }} -o json | jq \".data.generated_manifest\" -r | base64 -d | jq \".version\" -r"
   register: target_version
