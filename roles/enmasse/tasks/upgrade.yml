@@ -26,15 +26,6 @@
   register: authenticationservice_exists
   failed_when: authenticationservice_exists.stderr != '' and 'AlreadyExists' not in authenticationservice_exists.stderr
 
-- name: "Verify EnMasse deployment succeeded"
-  shell: sleep 5; oc get pods --namespace {{ enmasse_namespace }}  |  grep  "deploy"
-  register: result
-  until: not result.stdout
-  retries: 50
-  delay: 10
-  failed_when: result.stdout
-  changed_when: False
-
 - name: "delete old AMQ Online Shared Services projects"
   shell: |
     for ns in $(oc get namespaces | grep "shared" | awk '{print $1}'); do

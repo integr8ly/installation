@@ -1,0 +1,11 @@
+---
+-
+  name: "Check 3Scale readiness"
+  block:
+    - name: "Verify 3Scale pods are running"
+      shell: oc get pods -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' -n {{ threescale_namespace }} | wc -w
+      register: result
+      until: result.stdout == "17"
+      retries: 50
+      delay: 10
+      changed_when: False

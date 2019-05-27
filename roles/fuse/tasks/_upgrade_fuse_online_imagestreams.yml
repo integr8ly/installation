@@ -1,6 +1,11 @@
 ---
+- name: Get Fuse Image Tag
+  shell: "echo {{ fuse_online_release_tag }} | cut -d '.' -f1-2"
+  register: get_fuse_image_tag
+
 - set_fact:
     fuse_registry: "registry.redhat.io"
+    fuse_upgrade_image_tag: "{{ get_fuse_image_tag.stdout }}"
 
 # Create new image stream postgress_exporter
 - name: Create new Fuse online image streams

@@ -1,0 +1,19 @@
+---
+-
+  name: "Check Fuse readiness"
+  block:
+    - name: "Verify Fuse is running"
+      shell: oc get pods --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' -n {{ fuse_namespace }} | wc -w
+      register: result
+      until: result.stdout == "8"
+      retries: 50
+      delay: 10
+      changed_when: False
+
+    - name: "Verify syndesis instance is provisioned"
+      shell: oc get syndesis {{ fuse_cr_name }} -o template --template \{\{.status.phase\}\}  -n {{ fuse_namespace }}  |  grep  'Installed'
+      register: result
+      until: result.stdout
+      retries: 50
+      delay: 10
+      changed_when: False

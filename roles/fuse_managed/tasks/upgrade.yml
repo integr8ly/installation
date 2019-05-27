@@ -12,8 +12,6 @@
 - include_role:
     name: fuse
     tasks_from: _upgrade_fuse_online_imagestreams
-  vars:
-    fuse_upgrade_image_tag: "{{ fuse_image_tag }}"
 
 - name: Update fuse operator resources in {{ fuse_namespace }}
   shell: oc replace --force -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
