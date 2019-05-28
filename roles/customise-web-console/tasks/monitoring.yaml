@@ -1,0 +1,12 @@
+---
+- name: "Label namespace {{ customise_web_console.namespace }}"
+  shell: "oc label ns/{{ customise_web_console.namespace }} {{ item }} --overwrite"
+  with_items: "{{ web_console_ns_labels }}"
+
+- name: Create template for Service Monitor
+  template:
+   src: servicemonitor.yaml.j2
+   dest: /tmp/servicemonitor.yaml
+
+- name: Create Service Monitor resource
+  shell: oc apply -f /tmp/servicemonitor.yaml -n {{ customise_web_console.namespace }}

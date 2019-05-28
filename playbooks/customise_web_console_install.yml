@@ -7,4 +7,7 @@
       include_role:
         name: customise-web-console
         tasks_from: install
-
+    - include_role:
+        name: customise-web-console
+        tasks_from: monitoring
+      when: (middleware_monitoring | default(true) | bool)

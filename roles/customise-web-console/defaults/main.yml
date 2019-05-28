@@ -1,3 +1,7 @@
+web_console_ns_labels:
+  - 'integreatly-middleware-service=true'
+  - 'monitoring-key=middleware'
+
 customise_web_console:
   configmap_name: web-console-config
   namespace: console-config
