@@ -45,6 +45,8 @@
         tasks_from: upgrade
       vars:
         upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
+        rhsso_namespace: "{{ eval_rhsso_namespace }}"
+      when: backup_restore_install | default(false) | bool
 
     - include_role:
         name: 3scale

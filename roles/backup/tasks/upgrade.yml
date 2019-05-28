@@ -9,8 +9,27 @@
 - set_fact:
     cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
 
-- name: patch all cronjobs
+- name: "patch all cronjobs in {{ backup_namespace }} namespace"
   shell: "oc patch cronjob {{ item }} -n {{ backup_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
   register: upgrade_cronjob
   failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
   with_items: "{{ cronjobs }}"
+
+- name: "get all cronjobs in {{ rhsso_namespace }} namespace"
+  shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ rhsso_namespace }}"
+  register: cronjobs_result
+
+- set_fact:
+    cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
+
+- name: "patch all cronjobs in {{ rhsso_namespace }} namespace"
+  shell: "oc patch cronjob {{ item }} -n {{ rhsso_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
+  register: upgrade_cronjob
+  failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
+  with_items: "{{ cronjobs }}"
+
+- name: Verify all middleware cronjobs use new image
+  shell: "oc get cronjobs --selector='monitoring-key=middleware' -o custom-columns=NAME:{.spec.jobTemplate.spec.template.spec.containers[0].image} --no-headers --all-namespaces | sed 's|{{ upgrade_backup_container_image }}||g'"
+  register: result
+  until: result.stdout | replace('\n', '') | length == 0
+  changed_when: False
