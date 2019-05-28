@@ -21,3 +21,5 @@
 
 - name: Update cluster role {{ msbroker_clusterrole }} with new permissions
   shell: oc patch clusterrole {{ msbroker_clusterrole }} --type json -p '{{ cluster_role_upgrade_config.stdout }}'
+
+- include_tasks: ./check_readiness.yml

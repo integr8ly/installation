@@ -10,3 +10,5 @@
 
 - name: recreate alerts
   shell: "oc patch keycloak rhsso --type=json --patch='[{\"op\": \"add\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]' -n {{ eval_rhsso_namespace }}"
+
+- include_tasks: ./check_readiness.yml

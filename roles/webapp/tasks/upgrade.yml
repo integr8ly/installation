@@ -8,3 +8,5 @@
   shell: oc patch dc tutorial-web-app -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_image }}"}]'
   register: upgrade_webapp
   failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
+
+- include_tasks: ./check_readiness.yml

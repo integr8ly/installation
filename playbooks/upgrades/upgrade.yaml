@@ -21,12 +21,15 @@
         tasks_from: upgrade
       vars:
         upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}
+        rhsso_namespace: "{{ eval_rhsso_namespace }}"
+        sso_operator_tag: "{{ rhsso_operator_release_tag }}"
 
     - include_role:
         name: msbroker
         tasks_from: upgrade
       vars:
         upgrade_msb_image: quay.io/integreatly/managed-service-broker:{{ msbroker_release_tag }}
+        msb_image_tag: "{{ msbroker_release_tag }}"
 
     - include_role:
         name: webapp
@@ -34,6 +37,8 @@
       vars:
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
+        webapp_operator_tag: "{{ webapp_operator_release_tag }}"
+        webapp_image_tag: "{{ webapp_version }}"
 
     - include_role:
         name: backup
@@ -42,41 +47,13 @@
         upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
 
     - include_role:
-        name: rhsso
-        tasks_from: check_readiness
-      vars:
-        rhsso_namespace: "{{ eval_rhsso_namespace }}"
-        sso_operator_tag: "{{ rhsso_operator_release_tag }}"
-
-    - include_role:
-        name: msbroker
-        tasks_from: check_readiness
-      vars:
-        msb_image_tag: "{{ msbroker_release_tag }}"
-
-    - include_role:
-        name: webapp
-        tasks_from: check_readiness
-      vars:
-        webapp_operator_tag: "{{ webapp_operator_release_tag }}"
-        webapp_image_tag: "{{ webapp_version }}"
-
-    - include_role:
         name: 3scale
         tasks_from: upgrade
-
-    - include_role:
-        name: 3scale
-        tasks_from: check_readiness
 
     # Launcher
     - include_role:
         name: launcher
         tasks_from: upgrade
-
-    - include_role:
-        name: launcher
-        tasks_from: check_readiness
 
     - name: Update image streams
       include_role:
@@ -105,18 +82,10 @@
         name: fuse_managed
         tasks_from: upgrade
 
-    - include_role:
-        name: fuse_managed
-        tasks_from: check_readiness
-
     # AMQ Online / enmasse
     - include_role:
         name: enmasse
         tasks_from: upgrade
-
-    - include_role:
-        name: enmasse
-        tasks_from: check_readiness
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
