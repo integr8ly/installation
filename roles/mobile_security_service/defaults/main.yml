@@ -1,0 +1,13 @@
+mobile_security_service_name: "mobile-security-service"
+mobile_security_service_namespace: "{{ eval_mobile_security_service_namespace | default('mobile-security-service') }}"
+mobile_security_service_display_name: "Mobile Security Service"
+
+mobile_security_service_operator_resource_items:
+  - "{{ mobile_security_service_operator_resources }}/crds/mobile-security-service_v1alpha1_mobilesecurityservice_crd.yaml"
+  - "{{ mobile_security_service_operator_resources }}/crds/mobile-security-service_v1alpha1_mobilesecurityservicedb_crd.yaml"
+  - "{{ mobile_security_service_operator_resources }}/crds/mobile-security-service_v1alpha1_mobilesecurityserviceapp_crd.yaml"
+  - "{{ mobile_security_service_operator_resources }}/cluster_role.yaml"
+  - "{{ mobile_security_service_operator_resources }}/cluster_role_binding.yaml"
+  - "{{ mobile_security_service_operator_resources }}/service_account.yaml"
+
+mdc_namespace: "mobile-developer-console"
