@@ -1,0 +1,9 @@
+---
+- name: "Verify oc version"
+  include_tasks: oc_version.yml
+
+- name: "Install Required Packages"
+  include_tasks: packages.yml
+  when:
+    - prerequisites_install
+    - prerequisites_install_packages

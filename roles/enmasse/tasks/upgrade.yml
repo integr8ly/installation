@@ -45,3 +45,5 @@
   shell:  oc delete route/restapi -n {{ enmasse_namespace }}
   register: restapi_delete_cmd
   failed_when: restapi_delete_cmd.stderr != '' and 'not found' not in restapi_delete_cmd.stderr
+
+- include_tasks: ./check_readiness.yml

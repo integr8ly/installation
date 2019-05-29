@@ -3,6 +3,10 @@
 - name: "Verify oc version"
   include_tasks: oc_version.yml
 
+- name: "Ensure master params are present"
+  include_tasks: check_master_params.yml
+  when: not (run_master_tasks | default(true) | bool)
+
 - name: "Install Required Packages"
   include_tasks: packages.yml
   when:

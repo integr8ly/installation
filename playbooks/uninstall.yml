@@ -1,7 +1,14 @@
 ---
 
-- import_playbook: "./prerequisites.yml"
-- import_playbook: "./openshift.yml"
+- hosts: localhost
+  tasks:
+  - include_role:
+      name: prerequisites
+      tasks_from: uninstall
+  - include_role:
+      name: openshift
+      tasks_from: login
+
 - import_playbook: "./customise_web_console_uninstall.yml"
 
 - hosts: localhost

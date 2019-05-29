@@ -5,3 +5,5 @@
   register: launcher_config_patch
   failed_when: launcher_config_patch.stderr != '' and 'not patched' not in launcher_config_patch.stderr
   changed_when: launcher_config_patch.rc == 0
+
+- include_tasks: ./check_readiness.yml

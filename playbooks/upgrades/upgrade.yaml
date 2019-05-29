@@ -1,179 +1,61 @@
 ---
-- hosts: local
-  tasks:
-    - block:
-        - debug:
-            msg: "eval_app_host is required when run_master_tasks=false"
-          failed_when: eval_app_host is not defined
-        - debug:
-            msg: "openshift_master_url is required when run_master_tasks=false"
-          failed_when: openshift_master_url is not defined
-        - name: Set EVAL_VARS from vars as not running master tasks
-          add_host:
-            name: EVAL_VARS
-            eval_app_host: "{{ eval_app_host }}"
-            openshift_master_url: "{{ openshift_master_url }}"
-        - name: Overwrite create_cluster_admin, set to false
-          set_fact:
-            create_cluster_admin: false
-      when: not (run_master_tasks | default(true) | bool)
-
 - hosts: master
   gather_facts: no
   tasks:
-    - block:
-        -
-          name: Retrieve master configurations
-          slurp:
-            src: "{{ eval_openshift_master_config_path }}"
-          register: eval_master_config
-          become: yes
-        -
-          add_host:
-            name: EVAL_VARS
-            eval_app_host: "{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
-            openshift_master_url: "{{ (eval_master_config['content'] | b64decode | from_yaml)['masterPublicURL'] }}"
-      tags: ['bootstrap', 'remote']
+    - include_role:
+        name: openshift
+        tasks_from: set_master_vars
       when: run_master_tasks | default(true) | bool
 
 - hosts: localhost
   gather_facts: no
   tasks:
-    - set_fact:
-        upgrade_msb_image: quay.io/integreatly/managed-service-broker:{{ msbroker_release_tag }}
-        upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
-        upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
-        upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}
-        upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
-
-    - name: Check current version
-      shell: "oc get secret manifest -n {{ eval_webapp_namespace }} -o json | jq \".data.generated_manifest\" -r | base64 -d | jq \".version\" -r"
-      register: version
-
-    - fail:
-        msg: "The current installation could not be verified as the manifest could not be read"
-      when: version.stderr != ""
-    - fail:
-        msg: "The installed version must be 1.3.0 to run this upgrade playbook, {{ version.stdout }} is currently installed"
-      when: version.stdout != "release-1.3.0"
-
-    # SSO
-    - name: Update keycloak-operator image tag
-      shell: "oc patch deployment keycloak-operator -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_sso_operator_image }}\"}]'"
-
-    - name: add CreateOnly to openshift keycloak realm
-      shell: "oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"add\", \"path\": \"/spec/createOnly\", \"value\": true}]'"
-
-    # SSO Alerts
-    - name: delete alerts
-      shell: "oc delete prometheusrules application-monitoring -n {{ eval_rhsso_namespace }}"
-      register: result
-      failed_when: result.stderr != '' and 'not found' not in result.stderr
-
-    - name: recreate alerts
-      shell: "oc patch keycloak rhsso --type=json --patch='[{\"op\": \"add\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]' -n {{ eval_rhsso_namespace }}"
+    - include_role:
+        name: prerequisites
+        tasks_from: upgrade
+      vars:
+        from_version: "1.3.0"
 
     - include_role:
         name: rhsso
-        tasks_from: check_readiness
+        tasks_from: upgrade
       vars:
+        upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}
         rhsso_namespace: "{{ eval_rhsso_namespace }}"
         sso_operator_tag: "{{ rhsso_operator_release_tag }}"
 
-    # Managed Service Broker
-    - name: Retrieve SSO host
-      shell: oc get route sso -n {{ eval_rhsso_namespace }} -o jsonpath='{.spec.host}'
-      register: get_sso_host
-    - set_fact:
-        upgrade_sso_url: "https://{{ get_sso_host.stdout | trim }}/auth/admin/openshift/console"
-
-    - name: Append the SSO_URL env to the Managed Service Broker deployment
-      shell: oc patch deployment msb -n {{ eval_msbroker_namespace }} --type=json -p '[{"op":"add","path":"/spec/template/spec/containers/0/env/-1","value":{"name":"SSO_URL","value":"{{ upgrade_sso_url }}"}}, {"op":"replace","path":"/spec/template/spec/containers/0/image","value":"{{ upgrade_msb_image }}"}]'
-      register: upgrade_msb
-      failed_when: upgrade_msb.stderr != '' and 'not patched' not in upgrade_msb.stderr
-    
     - include_role:
         name: msbroker
         tasks_from: upgrade
-
-    - include_role:
-        name: msbroker
-        tasks_from: check_readiness
       vars:
+        upgrade_msb_image: quay.io/integreatly/managed-service-broker:{{ msbroker_release_tag }}
         msb_image_tag: "{{ msbroker_release_tag }}"
 
-    # Solution Explorer
-    - name: Bump the Web App operator version to {{ webapp_operator_release_tag }}
-      shell: oc patch deployment tutorial-web-app-operator -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_operator_image }}"}]'
-      register: upgrade_webapp_operator
-      failed_when: upgrade_webapp_operator.stderr != '' and 'not patched' not in upgrade_webapp_operator.stderr
-
-    - name: Bump the Web App deployment version to {{ webapp_version }}
-      shell: oc patch dc tutorial-web-app -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_image }}"}]'
-      register: upgrade_webapp
-      failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
-    
     - include_role:
         name: webapp
-        tasks_from: check_readiness
+        tasks_from: upgrade
       vars:
+        upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
+        upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
         webapp_operator_tag: "{{ webapp_operator_release_tag }}"
         webapp_image_tag: "{{ webapp_version }}"
 
-    - block:
-        # Backup & Restore
-        - name: add postgres version to secret
-          shell: "oc patch secret threescale-postgres-secret --type=json --patch='[{\"op\": \"add\", \"path\": \"/data/POSTGRES_VERSION\", \"value\": \"{{ 10 | b64encode }}\"}]' -n {{ backup_namespace }}"
-
-        - name: "get all cronjobs in {{ backup_namespace }} namespace"
-          shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ backup_namespace }}"
-          register: cronjobs_result
-
-        - set_fact:
-            cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
-
-        - name: "patch all cronjobs in {{ backup_namespace }} namespace"
-          shell: "oc patch cronjob {{ item }} -n {{ backup_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
-          register: upgrade_cronjob
-          failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
-          with_items: "{{ cronjobs }}"
-
-        - name: "get all cronjobs in {{ eval_rhsso_namespace }} namespace"
-          shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ eval_rhsso_namespace }}"
-          register: cronjobs_result
-
-        - set_fact:
-            cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
-
-        - name: "patch all cronjobs in {{ eval_rhsso_namespace }} namespace"
-          shell: "oc patch cronjob {{ item }} -n {{ eval_rhsso_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
-          register: upgrade_cronjob
-          failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
-          with_items: "{{ cronjobs }}"
-
-        - name: Verify all middleware cronjobs use new image
-          shell: "oc get cronjobs --selector='monitoring-key=middleware' -o custom-columns=NAME:{.spec.jobTemplate.spec.template.spec.containers[0].image} --no-headers --all-namespaces | sed 's|{{ upgrade_backup_container_image }}||g'"
-          register: result
-          until: result.stdout | replace('\n', '') | length == 0
-          changed_when: False
+    - include_role:
+        name: backup
+        tasks_from: upgrade
+      vars:
+        upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
+        rhsso_namespace: "{{ eval_rhsso_namespace }}"
       when: backup_restore_install | default(false) | bool
 
     - include_role:
         name: 3scale
         tasks_from: upgrade
 
-    - include_role:
-        name: 3scale
-        tasks_from: check_readiness
-
     # Launcher
     - include_role:
         name: launcher
         tasks_from: upgrade
-
-    - include_role:
-        name: launcher
-        tasks_from: check_readiness
 
     - name: Update image streams
       include_role:
@@ -202,18 +84,10 @@
         name: fuse_managed
         tasks_from: upgrade
 
-    - include_role:
-        name: fuse_managed
-        tasks_from: check_readiness
-
     # AMQ Online / enmasse
     - include_role:
         name: enmasse
         tasks_from: upgrade
-
-    - include_role:
-        name: enmasse
-        tasks_from: check_readiness
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
