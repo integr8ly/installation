@@ -11,3 +11,38 @@ spec:
     singular: grafana
   scope: Namespaced
   version: v1alpha1
+  validation:
+    openAPIV3Schema:
+      required: ["spec"]
+      properties:
+        spec:
+          properties:
+            hostname:
+              type: string
+              description: Hostname for the ingress. Optional when --openshift is set
+            logLevel:
+              type: string
+              description: Log level of the grafana instance, defaults to info
+            adminUser:
+              type: string
+              description: Default admin user name
+            adminPassword:
+              type: string
+              description: Default admin password
+            basicAuth:
+              type: boolean
+              description: Basic auth enabled
+            disableLoginForm:
+              type: boolean
+              description: Disable login form
+            disableSignoutMenu:
+              type: boolean
+              description: Disable signout menu
+            anonymous:
+              type: boolean
+              description: Anonymous auth enabled
+            dashboardLabelSelectors:
+              type: array
+              items:
+                type: object
+                description: Label selector or match expressions

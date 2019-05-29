@@ -94,8 +94,8 @@ datasync_template_tag: '0.5.0'
 
 monitoring_label_name: 'monitoring-key'
 monitoring_label_value: 'middleware'
-middleware_monitoring_operator_release_tag: '0.0.9'
-middleware_monitoring_operator_resources: 'https://raw.githubusercontent.com/integr8ly/application-monitoring-operator/{{ middleware_monitoring_operator_release_tag }}/deploy'
+middleware_monitoring_operator_release_tag: 'latest'
+middleware_monitoring_operator_resources: 'https://raw.githubusercontent.com/integr8ly/application-monitoring-operator/grafana-latest/deploy'
 
 msbroker_release_tag: 'v0.0.6'
 msbroker_template: 'https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_release_tag }}/templates/broker.template.yaml'
