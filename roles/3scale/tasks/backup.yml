@@ -76,4 +76,4 @@
     cronjob_name: 3scale-redis-backup
     component: 3scale-redis
     product_name: 3scale
-    secret_name: '{{ threescale_backup_redis_secret }}'
+    component_secret_name: '{{ threescale_backup_redis_secret }}'
