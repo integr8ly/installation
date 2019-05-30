@@ -216,3 +216,11 @@
     - system-memcache
     - system-redis
     - backend-redis
+
+- name: Create 3scale redis secret
+  include_role:
+    name: backup
+    tasks_from: _create_redis_secret.yml
+  vars:
+    secret_name: '{{ threescale_backup_redis_secret }}'
+    secret_redis_host: 'system-redis.{{ threescale_namespace }}.svc'

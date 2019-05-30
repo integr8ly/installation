@@ -60,6 +60,14 @@
     product_name: 3scale
 
 # Redis backup
+- name: Create the redis backend credentials secret for backup
+  include_role:
+    name: backup
+    tasks_from: _create_redis_secret.yml
+  vars:
+    secret_name: '{{ threescale_backup_redis_secret }}'
+    secret_redis_host: 'system-redis.{{ threescale_namespace }}.svc'
+
 - name: Create the 3scale Redis CronJob
   include_role:
     name: backup
@@ -68,3 +76,4 @@
     cronjob_name: 3scale-redis-backup
     component: 3scale-redis
     product_name: 3scale
+    component_secret_name: '{{ threescale_backup_redis_secret }}'
