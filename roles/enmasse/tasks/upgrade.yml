@@ -26,21 +26,6 @@
   register: authenticationservice_exists
   failed_when: authenticationservice_exists.stderr != '' and 'AlreadyExists' not in authenticationservice_exists.stderr
 
-- name: "delete old AMQ Online Shared Services projects"
-  shell: |
-    for ns in $(oc get namespaces | grep "shared" | awk '{print $1}'); do
-      amq_here=$(oc get serviceinstances -n ${ns} | grep amq-online | wc -l);
-      if [ "${amq_here}" != "0" ]; then
-        oc delete namespace ${ns};
-      fi
-    done
-
-- name: "wait for qdrouterd pods to be removed"
-  shell: sleep 30; oc get statefulsets -n {{ enmasse_namespace }} | grep qdrouterd | wc -l
-  register: wait_for_qdrouterd
-  retries: 60
-  until: wait_for_qdrouterd.stdout == "0"
-
 - name: Delete enmasse restapi route
   shell:  oc delete route/restapi -n {{ enmasse_namespace }}
   register: restapi_delete_cmd

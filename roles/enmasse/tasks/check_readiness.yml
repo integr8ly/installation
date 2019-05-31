@@ -1,11 +1,51 @@
 ---
--
-  name: "Check Enmasse readiness"
+- name: Get address-space-controller image
+  shell: oc get deployment address-space-controller -n enmasse -o jsonpath='{.spec.template.spec.containers[?(@.name=="address-space-controller")].image}'
+  register: asc_image
+
+- fail:
+    msg: Address space controller image is incorrect.
+  when: asc_image.stdout != "registry.redhat.io/amq7/amq-online-1-address-space-controller:1.1"
+
+- name: Get api-server image
+  shell: oc get deployment api-server -n enmasse -o jsonpath='{.spec.template.spec.containers[?(@.name=="api-server")].image}'
+  register: api_server_image
+
+- fail:
+    msg: API Server image is incorrect.
+  when: api_server_image.stdout != "registry.redhat.io/amq7/amq-online-1-api-server:1.1"
+
+- name: Get service-broker image
+  shell: oc get deployment service-broker -n enmasse -o jsonpath='{.spec.template.spec.containers[?(@.name=="service-broker")].image}'
+  register: sb_image
+
+- fail:
+    msg: Service Broker image is incorrect.
+  when: sb_image.stdout != "registry.redhat.io/amq7/amq-online-1-service-broker:1.1"
+
+- name: "Verify EnMasse deployment succeeded"
   block:
-    - name: "Verify Enmasse is running"
-      shell: oc get pods -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' -n {{ enmasse_namespace }} | wc -w
+    - name: Ensure address space controller pod is ready
+      shell: sleep 5; oc get pod -l name=address-space-controller --namespace enmasse  |  grep  "deploy"
       register: result
-      until: result.stdout == "8"
+      until: not result.stdout
       retries: 50
       delay: 10
+      failed_when: result.stdout
+      changed_when: False
+    - name: Ensure api server pod is ready
+      shell: sleep 5; oc get pod -l component=api-server --namespace enmasse  |  grep  "deploy"
+      register: result
+      until: not result.stdout
+      retries: 50
+      delay: 10
+      failed_when: result.stdout
+      changed_when: False
+    - name: Ensure server broker pod is ready
+      shell: sleep 5; oc get pod -l component=service-broker --namespace enmasse  |  grep  "deploy"
+      register: result
+      until: not result.stdout
+      retries: 50
+      delay: 10
+      failed_when: result.stdout
       changed_when: False
