@@ -14,6 +14,7 @@
         }
       }
     ]'
+
 -
   name: "patch amp-apicast imagestream"
   shell: |
@@ -59,6 +60,32 @@
         }
       }
     ]'
+
+-
+  name: "patch amp-wildcard-router imagestream"
+  shell: |
+    oc patch -n {{ threescale_namespace }} imagestream/amp-wildcard-router --type=json -p '[
+      {
+        "op": "add",
+        "path": "/spec/tags/-",
+        "value": {
+          "annotations": {"openshift.io/display-name": "AMP Wildcard Router 2.5.0"},
+          "from": { "kind": "DockerImage", "name": "registry.access.redhat.com/3scale-amp22/wildcard-router"},
+          "name": "2.5.0",
+          "referencePolicy": {"type": "Source"}
+        }
+      }
+    ]'
+
+-
+  name: Retag latest imagestreams
+  include_role:
+    name: images
+    tasks_from: tag
+  vars:
+    images_source_namespace: "{{ threescale_namespace }}"
+    images_source_tag: '2.5.0'
+
 -
   name: "set AMP_RELEASE env var"
   shell: "oc set env dc/system-app AMP_RELEASE=2.5.0 -n {{ threescale_namespace }}"

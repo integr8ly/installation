@@ -1,0 +1,24 @@
+---
+- name: Get all image streams
+  shell: "oc get imagestream -n {{ images_source_namespace }} -o json"
+  register: is_list_cmd
+
+- name: Parse imagestream list output
+  set_fact:
+    is_list: "{{ is_list_cmd.stdout|from_json }}"
+
+- name: Get {{ images_source_tag }} tag info
+  is_filter:
+    data: "{{ is_list['items'] }}"
+  register: is_latest_list
+
+- name: "Replace latest image stream tag"
+  shell: |
+    oc patch -n {{ images_source_namespace }} imagestream/{{ item.name }} --type=json -p '[
+      {
+        "op": "replace",
+        "path": "/spec/tags/{{ item.idx }}/from/name",
+        "value": "{{ images_source_tag }}"
+      }
+    ]'
+  with_items: "{{ is_latest_list.images }}"
