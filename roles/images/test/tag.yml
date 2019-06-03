@@ -1,0 +1,8 @@
+- hosts: local
+  tasks:
+    - include_role:
+        name: images
+        tasks_from: tag
+      vars:
+        images_source_namespace: 3scale
+        images_source_tag: '2.5.0'
