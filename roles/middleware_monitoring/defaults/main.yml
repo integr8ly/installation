@@ -18,7 +18,10 @@ monitoring_resource_templates_pre:
 - "grafana_cluster_role.yml"
 - "grafana_cluster_role_binding.yml"
 - "grafana_dashboard_crd.yml"
-# Prometheus resources
+- "grafana_datasource_crd.yml"
+- "grafana-proxy-clusterrole.yml"
+- "grafana-proxy-clusterrole_binding.yml"
+  # Prometheus resources
 - "prometheus_crd.yml"
 - "prometheus_alert_manager_crd.yml"
 - "prometheus_service_monitor_crd.yml"
