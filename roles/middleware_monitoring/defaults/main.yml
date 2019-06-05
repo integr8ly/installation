@@ -7,10 +7,10 @@ monitoring_tmp_dir: /tmp
 # Resources to create via the oc tool.
 monitoring_resources:
 - "{{ middleware_monitoring_operator_resources }}/operator_roles/service_account.yaml"
-- "{{ middleware_monitoring_operator_resources }}/operator_roles/role.yaml"
-- "{{ middleware_monitoring_operator_resources }}/operator_roles/role_binding.yaml"
 - "{{ middleware_monitoring_operator_resources }}/crds/ApplicationMonitoring.yaml"
 - "{{ middleware_monitoring_operator_resources }}/operator.yaml"
+- "{{ middleware_monitoring_operator_resources }}/operator_roles/role.yaml"
+- "{{ middleware_monitoring_operator_resources }}/operator_roles/role_binding.yaml"
 
 monitoring_resource_templates_pre:
 # Grafana resources

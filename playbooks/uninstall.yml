@@ -93,6 +93,13 @@
         tasks_from: uninstall
       tags: ['walkthroughs']
     -
+      name: Uninstall middleware-monitoring-config
+      include_role:
+        name: middleware_monitoring_config
+        tasks_from: uninstall
+      tags: ['middleware-monitoring-config']
+      when: middleware_monitoring_config | default(true) | bool
+    -
       name: Uninstall middleware-monitoring
       include_role:
         name: middleware_monitoring

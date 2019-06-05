@@ -11,3 +11,23 @@ config_secret_contents_file: integreatly-additional.yaml
 prometheus_cr_name: application-monitoring
 additional_scrape_config_name: integreatly-additional-scrape-configs
 additional_scrape_config_patch: "{\"spec\":{\"additionalScrapeConfigs\":{\"name\":\"{{ additional_scrape_config_name }}\", \"key\": \"{{ config_secret_contents_file }}\"}}}"
+
+
+# Fuse online addon resources eg: Prometheus rules/grafana dashboards
+# https://github.com/syndesisio/syndesis/tree/syndesis-1.7.0.fuse-740006/install/addons
+fuse_online_addons_release_tag: 'syndesis-1.7.0.fuse-740006'
+fuse_online_addons_resources_base: 'https://raw.githubusercontent.com/syndesisio/syndesis/{{fuse_online_addons_release_tag}}/install/addons'
+fuse_online_addons_resources:
+- syndesis-db-dashboard.yml
+- syndesis-db-prometheus-rule.yml
+- syndesis-db-servicemonitor.yml
+- syndesis-integration-dashboard.yml
+- syndesis-jvm-dashboard.yml
+- syndesis-legacy-ui-serviceaccount.yml
+- syndesis-legacy-ui.yml
+- syndesis-meta-servicemonitor.yml
+- syndesis-rest-api-dashboard.yml
+- syndesis-rest-api-prometheus-rule.yml
+- syndesis-server-servicemonitor.yml
+# #####
+

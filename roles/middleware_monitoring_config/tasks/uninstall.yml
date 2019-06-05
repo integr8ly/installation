@@ -1,1 +1,7 @@
 ---
+# Delete the addons being read in
+- name: Delete the Syndesis addons in the namespace {{ eval_managed_fuse_namespace }}
+  shell: oc delete -f {{ fuse_online_addons_resources_base }}/{{ item }} -n {{ eval_managed_fuse_namespace }}
+  with_items: "{{ fuse_online_addons_resources }}"
+  register: delete_fuse_monitoring_addons
+  failed_when: delete_fuse_monitoring_addons.stderr != '' and 'NotFound' not in delete_fuse_monitoring_addons.stderr

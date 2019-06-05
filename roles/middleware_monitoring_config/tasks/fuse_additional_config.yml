@@ -1,0 +1,4 @@
+# Create the addons being read in
+- name: Create the Syndesis addons in the namespace {{ fuse_namespace }}
+  shell: oc create -f {{ fuse_online_addons_resources_base }}/{{ item }} -n {{ fuse_namespace }}
+  with_items: "{{ fuse_online_addons_resources }}"
