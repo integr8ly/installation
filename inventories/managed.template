@@ -1,7 +1,4 @@
-[local]
-127.0.0.1
-
-[local:vars]
+[all:vars]
 ansible_connection=local
 
 # backup_restore_install decides whether to run and install the backup and restore features
