@@ -1,14 +1,14 @@
 ---
 
 - set_fact:
-    w2_route_name: "wt2-{{ username }}"
+    wt_route_name: "wt-{{ username }}"
 
-- name: Check WT2 route exists
-  shell: oc get route/{{ w2_route_name }} -n {{ threescale_namespace }}
-  register: wt2_route_cmd
+- name: Check user walkthroughs route exists
+  shell: oc get route/{{ wt_route_name }} -n {{ threescale_namespace }}
+  register: wt_route_cmd
   failed_when: false
 
-- name: Create WT2 route
+- name: Create user walkthroughs route
   shell:
     cmd: |
       cat <<EOF | oc apply -n {{ threescale_namespace }} -f -
@@ -17,9 +17,9 @@
         metadata:
             labels:
               app: 3scale
-            name: "{{ w2_route_name }}"
+            name: "{{ wt_route_name }}"
         spec:
-            host: "{{ w2_route_name }}-{{ threescale_namespace }}.{{ threescale_route_suffix }}"
+            host: "{{ wt_route_name }}-{{ threescale_namespace }}.{{ threescale_route_suffix }}"
             port:
               targetPort: gateway
             tls:
@@ -29,4 +29,4 @@
               kind: Service
               name: apicast-staging
       EOF
-  when: wt2_route_cmd.stderr != '' and 'NotFound' in wt2_route_cmd.stderr
+  when: wt_route_cmd.stderr != '' and 'NotFound' in wt_route_cmd.stderr

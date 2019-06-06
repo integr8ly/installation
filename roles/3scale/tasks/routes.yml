@@ -1,13 +1,13 @@
 ---
 
-#Walkthrough 2 routes
-- name: Create evaluation admin user wt2 route
-  include_tasks: _wt2_route.yml
+#Walkthrough routes
+- name: Create evaluation admin user wt route
+  include_tasks: _wt_route.yml
   vars:
     username: "{{ rhsso_evals_admin_username }}"
 
-- name: Seed evaluation users wt2 routes
-  include_tasks: _wt2_route.yml
+- name: Seed evaluation users wt routes
+  include_tasks: _wt_route.yml
   vars:
     username: "{{ rhsso_seed_users_name_format|format(item|int) }}"
   with_sequence: count={{ rhsso_seed_users_count }}
