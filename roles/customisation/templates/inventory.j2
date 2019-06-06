@@ -1,5 +1,4 @@
-[local:vars]
-ansible_connection=local
+[all:vars]
 
 # The openshift apps suffix
 ocp_routing_subdomain="{{eval_app_host}}"
@@ -116,7 +115,3 @@ apicurito_namespace="{{eval_apicurito_namespace}}"
 apicurito_route="{{apicurito_secure_ui_route}}"
 
 {% endif %}
-
-[local]
-127.0.0.1
-
