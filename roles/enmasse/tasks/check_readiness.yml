@@ -1,6 +1,6 @@
 ---
 - name: Get address-space-controller image
-  shell: oc get deployment address-space-controller -n enmasse -o jsonpath='{.spec.template.spec.containers[?(@.name=="address-space-controller")].image}'
+  shell: oc get deployment address-space-controller -n {{ enmasse_namespace }} -o jsonpath='{.spec.template.spec.containers[?(@.name=="address-space-controller")].image}'
   register: asc_image
 
 - fail:
@@ -8,7 +8,7 @@
   when: asc_image.stdout != "registry.redhat.io/amq7/amq-online-1-address-space-controller:1.1"
 
 - name: Get api-server image
-  shell: oc get deployment api-server -n enmasse -o jsonpath='{.spec.template.spec.containers[?(@.name=="api-server")].image}'
+  shell: oc get deployment api-server -n {{ enmasse_namespace }} -o jsonpath='{.spec.template.spec.containers[?(@.name=="api-server")].image}'
   register: api_server_image
 
 - fail:
@@ -16,7 +16,7 @@
   when: api_server_image.stdout != "registry.redhat.io/amq7/amq-online-1-api-server:1.1"
 
 - name: Get service-broker image
-  shell: oc get deployment service-broker -n enmasse -o jsonpath='{.spec.template.spec.containers[?(@.name=="service-broker")].image}'
+  shell: oc get deployment service-broker -n {{ enmasse_namespace }} -o jsonpath='{.spec.template.spec.containers[?(@.name=="service-broker")].image}'
   register: sb_image
 
 - fail:
@@ -26,7 +26,7 @@
 - name: "Verify EnMasse deployment succeeded"
   block:
     - name: Ensure address space controller pod is ready
-      shell: sleep 5; oc get pod -l name=address-space-controller --namespace enmasse  |  grep  "deploy"
+      shell: sleep 5; oc get pod -l name=address-space-controller --namespace {{ enmasse_namespace }}  |  grep  "deploy"
       register: result
       until: not result.stdout
       retries: 50
@@ -34,7 +34,7 @@
       failed_when: result.stdout
       changed_when: False
     - name: Ensure api server pod is ready
-      shell: sleep 5; oc get pod -l component=api-server --namespace enmasse  |  grep  "deploy"
+      shell: sleep 5; oc get pod -l component=api-server --namespace {{ enmasse_namespace }}  |  grep  "deploy"
       register: result
       until: not result.stdout
       retries: 50
@@ -42,7 +42,7 @@
       failed_when: result.stdout
       changed_when: False
     - name: Ensure server broker pod is ready
-      shell: sleep 5; oc get pod -l component=service-broker --namespace enmasse  |  grep  "deploy"
+      shell: sleep 5; oc get pod -l component=service-broker --namespace {{ enmasse_namespace }}  |  grep  "deploy"
       register: result
       until: not result.stdout
       retries: 50
