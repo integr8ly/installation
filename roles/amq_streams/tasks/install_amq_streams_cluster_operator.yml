@@ -1,0 +1,21 @@
+---
+- name: "Get AMQ Streams install files for version {{ version }}"
+  block:
+    - name: Ensure clean clone location
+      file:
+        path: "{{ amq_streams_dest }}"
+        state: absent
+
+    - name: Clone AMQ Streams repo
+      git:
+        repo: "{{ amq_streams_repo_url }}"
+        dest: "{{ amq_streams_dest }}"
+        version: "{{ version }}"
+
+- name: "Configure the namespace of the RoleBindings to {{ namespace }}"
+  shell: "sed -i 's/namespace: .*/namespace: {{ namespace }}/' {{ amq_streams_dest }}/install/cluster-operator/*RoleBinding*.yaml"
+  args:
+    warn: false
+
+- name: Create the AMQ Streams cluster operator
+  shell: "oc apply -f {{ amq_streams_dest }}/install/cluster-operator -n {{ namespace }}"

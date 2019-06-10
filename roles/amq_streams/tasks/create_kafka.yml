@@ -1,0 +1,12 @@
+---
+- name: Configure kafka template for kafka custom resource
+  template:
+    src: kafka-persistent.yml.j2
+    dest: /tmp/kafka-persistent.yml
+  vars:
+    name: "{{ integreatly_kafka_cluster_name }}"
+    kafka_storage_size: 10
+    zookeeper_storage_size: 10
+
+- name: Create kafka custom resource
+  shell: oc apply -f /tmp/kafka-persistent.yml -n {{ amq_streams_namespace_name }}

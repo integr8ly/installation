@@ -1,0 +1,12 @@
+---
+# AMQ Streams operator does not set a status on Kafka resources to indicate the deployment has succeeded.
+# We must check all the pods are ready instead.
+- name: "Verify AMQ Streams installation succeeded"
+  block:
+    - name: "Ensure the correct number of pods are created and the pods are in a ready state"
+      shell: "sleep 5; oc get pods -l strimzi.io/cluster={{ integreatly_kafka_cluster_name }} -n {{ amq_streams_namespace_name }} -o jsonpath='{.items[*].status.conditions[?(@.type==\"ContainersReady\")].status}'"
+      register: amq_streams_pod_statuses
+      until: amq_streams_pod_statuses.stdout.split() | select('match', 'True') | list | count == 7
+      retries: 50
+      delay: 10
+      failed_when: amq_streams_pod_statuses.stdout.split() | select('match', 'True') | list | count != 7

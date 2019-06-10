@@ -1,0 +1,26 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: {{ name }}
+  labels:
+{% if monitor is defined %}
+    {{ monitoring_label_name }}: {{ monitoring_label_value }}
+{% endif %}
+{% if is_service is defined %}
+    integreatly-middleware-service: "true"
+{% endif %}
+{% if labels is defined %}
+{% for label in labels %}
+    {{ label['key'] }}: {{ label['value'] }}
+{% endfor %}
+{% endif %}
+  annotations:
+{% if display_name is defined %}
+    openshift.io/display-name: "{{ display_name }}"
+{% endif %}
+{% if annotations is defined %}
+{% for annotation in annotations %}
+    {{ annotation['key'] }}: {{ annotation['value'] }}
+{% endfor %}
+{% endif %}
+

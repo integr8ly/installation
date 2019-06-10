@@ -1,0 +1,24 @@
+---
+- name: "Get AMQ Streams install files for version {{ amq_version }}"
+  block:
+    - name: Ensure clean clone location
+      file:
+        path: "{{ amq_streams_dest }}"
+        state: absent
+
+    - name: Clone AMQ Streams repo
+      git:
+        repo: "{{ amq_streams_repo_url }}"
+        dest: "{{ amq_streams_dest }}"
+        version: "{{ amq_version }}"
+
+- name: Delete the AMQ Streams cluster resources
+  shell: "oc delete -f {{ amq_streams_dest }}/install/cluster-operator -n {{ amq_streams_namespace_name }}"
+  failed_when: false
+
+- include_role:
+    name: namespace
+    tasks_from: delete
+  vars:
+    names:
+    - "{{ amq_streams_namespace_name }}"

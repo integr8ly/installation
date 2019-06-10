@@ -7,16 +7,13 @@
 - name: Create launcher namespace
   include_role:
     name: namespace
+    tasks_from: create
   vars:
-    namespace: "{{ launcher_namespace }}"
+    name: "{{ launcher_namespace }}"
     display_name: "{{ launcher_display_name }}"
+    monitor: true
+    is_service: true
   when: launcher_check_namespace_exists_cmd.rc != 0
-
-- name: Add labels to namespace
-  shell: oc patch ns {{ launcher_namespace }} --patch '{"metadata":{"labels":{"{{ monitoring_label_name }}":"{{ monitoring_label_value }}", "integreatly-middleware-service":"true"}}}'
-  register: namespace_patch
-  failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
-  changed_when: namespace_patch.rc == 0
 
 - name: Check if deployment config {{ launcher_sso_prefix }} exists
   shell: "oc get dc {{ launcher_sso_prefix }} -n {{ launcher_namespace }}"

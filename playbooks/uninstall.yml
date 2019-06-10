@@ -130,6 +130,13 @@
       tags: ['user_rhsso']
       when: user_rhsso | default(true) | bool
     -
+      name: Uninstall AMQ Streams
+      include_role:
+        name: amq_streams
+        tasks_from: uninstall
+      tags: ['amq_streams']
+      when: amq_streams | default(true) | bool
+    -
       name: Reboot template broker
       include_role:
         name: reboot_template_broker
