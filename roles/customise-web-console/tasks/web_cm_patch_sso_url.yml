@@ -1,0 +1,35 @@
+---
+- name: "get base sso url string to be updated"
+  shell: "oc get route/sso -o jsonpath='{.spec.host}' -n {{ eval_rhsso_namespace }}"
+  register: rhsso_route
+  failed_when: rhsso_route.stderr != ""
+
+- name: "set sso url as variable"
+  set_fact:
+    rhsso_url: "https://{{ rhsso_route.stdout }}"
+
+- name: "create suffixed sso url var"
+  set_fact:
+    suffixed_rhsso_url: "{{ rhsso_url }}{{ eval_sso_url_suffix }}"
+
+- name: "get original web console"
+  shell: oc get cm web-console-config -n console-config -o yaml | tee /tmp/cm_web-console-config-map.yml
+  register: web_console_output
+  failed_when: web_console_output.stderr != ""
+
+- name: "save original web console config as a variable"
+  set_fact:
+    web_console_config: "{{ web_console_output.stdout }}"
+
+- name: "append the sso suffix to sso url"
+  when: suffixed_rhsso_url not in web_console_config
+  replace:
+    path: /tmp/cm_web-console-config-map.yml
+    regexp: "{{ rhsso_url }}"
+    replace: "{{ suffixed_rhsso_url }}"
+
+- name: "replace changed web console config map"
+  shell: oc replace -f /tmp/cm_web-console-config-map.yml
+  when: suffixed_rhsso_url not in web_console_config
+  register: output
+  failed_when: output.rc != 0
