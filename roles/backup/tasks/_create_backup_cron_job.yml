@@ -1,5 +1,5 @@
 ---
-- name: "Creating backup cronjob: {{ cronjob_name }}"
+- name: "Creating/Updating backup cronjob: {{ cronjob_name }}"
   shell: oc process -f {{ backup_resources_location }}/backup-cronjob-template.yaml \
     -p 'COMPONENT={{ component }}' \
     -p 'PRODUCT_NAMESPACE_PREFIX={{ ns_prefix | default("") }}' \

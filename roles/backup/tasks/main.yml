@@ -19,10 +19,8 @@
 - name: "Check for aws credentials secret in {{ backup_namespace }} namespace"
   shell: "oc get secret {{ aws_s3_backup_secret_name }} -n {{ backup_namespace }}"
 
-- name: "Create backup cluster role"
-  shell: oc create -f {{ item }}
-  register: backup_cluster_resource_create
-  failed_when: backup_cluster_resource_create.stderr != '' and 'AlreadyExists' not in backup_cluster_resource_create.stderr
+- name: "Create/Update backup cluster role"
+  shell: oc apply -f {{ item }}
   with_items: "{{ backup_resources_cluster }}"
 
 - name: "Create {{ backup_namespace }} service account"

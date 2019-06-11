@@ -7,7 +7,6 @@
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
         upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}
-        upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
 
     - name: Check current version
       shell: "oc get secret manifest -n {{ eval_webapp_namespace }} -o json | jq \".data.generated_manifest\" -r | base64 -d | jq \".version\" -r"
@@ -61,27 +60,12 @@
     - name: recreate alerts
       shell: "oc patch keycloak rhsso --type=json --patch='[{\"op\": \"add\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]' -n {{ eval_rhsso_namespace }}"
 
-    # Backup & Restore
-    - name: add postgres version to secret
-      shell: "oc patch secret threescale-postgres-secret --type=json --patch='[{\"op\": \"add\", \"path\": \"/data/POSTGRES_VERSION\", \"value\": \"{{ 10 | b64encode }}\"}]' -n {{ backup_namespace }}"
-
-    - name: get all cronjobs
-      shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ backup_namespace }}"
-      register: cronjobs_result
-
-    - set_fact:
-        cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
-
-    - name: patch all cronjobs
-      shell: "oc patch cronjob {{ item }} -n {{ backup_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
-      register: upgrade_cronjob
-      failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
-      with_items: "{{ cronjobs }}"
-
+    # 3scale
     - include_role:
         name: 3scale
         tasks_from: upgrade
 
+    # Update image streams
     - name: Update image streams
       include_role:
         name: images
@@ -119,6 +103,10 @@
       include_role:
         name: code-ready
         tasks_from: upgrade
+
+# Backup & Restore
+- import_playbook: ../install_backups.yml
+  when: backup_restore_install | default(false) | bool
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
