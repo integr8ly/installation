@@ -76,12 +76,6 @@ Prior to running the playbooks the master hostname and associated SSH username *
 ----
 ~/installation/inventories/hosts
 
-[local:vars]
-ansible_connection=local
-
-[local]
-127.0.0.1
-
 [OSEv3:children]
 master
 
@@ -108,10 +102,6 @@ Following an example of the expected output.
 [source,shell]
 ----
 $ ansible -m ping all
-127.0.0.1 | SUCCESS => {
-    "changed": false,
-    "ping": "pong"
-}
 master.example.openshiftworkshop.com | SUCCESS => {
     "changed": false,
     "ping": "pong"

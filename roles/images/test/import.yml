@@ -1,4 +1,4 @@
-- hosts: local
+- hosts: localhost
   tasks:
     - include_role:
         name: images
