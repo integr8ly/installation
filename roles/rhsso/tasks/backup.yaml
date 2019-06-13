@@ -11,6 +11,7 @@
   vars:
     binding_name: rhsso-backup-binding
     serviceaccount_namespace: '{{ sso_namespace }}'
+  when: sso_namespace_exists.stdout != "0"
 
 -
   name: "Add backups to keycloak CR"
