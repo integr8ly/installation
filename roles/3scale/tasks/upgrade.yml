@@ -200,9 +200,9 @@
 -
   name: "wait for new pod to come up"
   shell: |
-    oc get pods -n {{ threescale_namespace }} -l 'deploymentConfig=zync-database' -o jsonpath="{$.items[0].status.containerStatuses[0].ready}"
+    oc get pods -n {{ threescale_namespace }} -l 'deploymentConfig=zync-database' -o jsonpath="{$.items[0].status.conditions[?(@.type==\"ContainersReady\")].status}"
   register: zync_database_pod_phase
-  until: zync_database_pod_phase.stdout == "true"
+  until: zync_database_pod_phase.stdout == "True"
   retries: 50
   delay: 5
 
@@ -219,9 +219,9 @@
 -
   name: "wait for zync to start"
   shell: |
-    oc get pods -n {{ threescale_namespace }} -l 'deploymentConfig=zync' -o jsonpath="{$.items[0].status.containerStatuses[0].ready}"
+    oc get pods -n {{ threescale_namespace }} -l 'deploymentConfig=zync' -o jsonpath="{$.items[0].status.conditions[?(@.type==\"ContainersReady\")].status}"
   register: zync_pod_ready
-  until: zync_pod_ready.stdout == "true"
+  until: zync_pod_ready.stdout == "True"
   retries: 50
   delay: 5
 -
