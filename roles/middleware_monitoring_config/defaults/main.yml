@@ -15,7 +15,7 @@ additional_scrape_config_patch: "{\"spec\":{\"additionalScrapeConfigs\":{\"name\
 
 # Fuse online addon resources eg: Prometheus rules/grafana dashboards
 # https://github.com/syndesisio/syndesis/tree/syndesis-1.7.0.fuse-740006/install/addons
-fuse_online_addons_release_tag: 'syndesis-1.7.0.fuse-740006'
+fuse_online_addons_release_tag: 'syndesis-1.6.13.fuse-731003'
 fuse_online_addons_resources_base: 'https://raw.githubusercontent.com/syndesisio/syndesis/{{fuse_online_addons_release_tag}}/install/addons'
 fuse_online_addons_resources:
 - syndesis-db-dashboard.yml
