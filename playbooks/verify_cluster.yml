@@ -1,0 +1,38 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Fetch cluster ready state.
+      shell: oc -n {{ eval_middleware_monitoring_namespace }} exec -i prometheus-application-monitoring-0 -c prometheus -- /bin/sh -c "curl http://localhost:9090/api/v1/query?query=ALERTS"
+      register: alerts_response
+      changed_when: False
+
+    - name: Parse Alerts from JSON
+      set_fact:
+        alerts: "{{alerts_response.stdout|from_json}}"
+
+    - name: Get DeadMansSwitch State
+      set_fact:
+        DeadMansSwitch_state: "{{alerts | json_query('data.result[?metric.alertname == `DeadMansSwitch`].metric.alertstate')}}"
+
+    - name: Verify DeadMansSwitch state
+      fail:
+        msg: "DeadMansSwitch not firing"
+      when: "'firing' not in DeadMansSwitch_state"
+
+    - name:  Filter DeadMansSwitch
+      set_fact:
+        filter_deadmans_switch: "{{ alerts | json_query('data.result[?metric.alertname != `DeadMansSwitch`]') }}"
+        
+    - name: Filter Prometheus Alerts
+      set_fact:
+        filter_prometheus: "{{ filter_deadmans_switch | json_query('[?metric.prometheus != `openshift-monitoring/k8s`]') }}"
+
+    - name: Filter Firing Alerts Only
+      set_fact:
+        firing_alerts: "{{ filter_prometheus | json_query('[?metric.alertstate == `firing`]') }}"
+        
+    - name: Verify cluster ready state
+      fail:
+        msg: Cluster not ready "{{firing_alerts}}"
+      when: firing_alerts | length > 0
