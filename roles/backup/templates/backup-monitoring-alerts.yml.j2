@@ -31,6 +31,15 @@ spec:
           message: CronJob {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.label_cronjob_name {{ '}}' }} has not started a Job in 25 hours
         expr: |
           (time() - (max( kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"} ) BY (job, label_cronjob_name) == ON(label_cronjob_name) GROUP_LEFT() max( kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"} ) BY (label_cronjob_name))) > 60*60*25
+      - alert: CronJobsFailed
+        annotations:
+          message: 'Job {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.job {{ '}}' }} has failed'
+        expr: >
+          sum(kube_job_status_failed{namespace="{{ backup_namespace }}"})
+          > 0
+        for: 5m
+        labels:
+          severity: critical
       {% for namespace, cronjobs in expected_cronjobs.iteritems() %}
       {% for cronjob in cronjobs %}
       - alert: CronJobExists_{{ namespace}}_{{ cronjob }}
