@@ -25,6 +25,7 @@ rules:
 - apiGroups: [""]
   resources:
   - configmaps
+  - namespaces
   verbs: ["get"]
 - nonResourceURLs: ["/metrics"]
   verbs: ["get"]
