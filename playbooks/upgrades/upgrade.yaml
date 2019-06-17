@@ -14,75 +14,79 @@
         name: prerequisites
         tasks_from: upgrade
       vars:
-        from_version: "1.3.0"
+        from_versions:
+          - "release-1.3.0"
+          - "release-1.4.0"
+          - "release-1.4.0-rc7"
+    - block:
+        - include_role:
+            name: rhsso
+            tasks_from: upgrade
+          vars:
+            upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}
+            rhsso_namespace: "{{ eval_rhsso_namespace }}"
+            sso_operator_tag: "{{ rhsso_operator_release_tag }}"
 
-    - include_role:
-        name: rhsso
-        tasks_from: upgrade
-      vars:
-        upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}
-        rhsso_namespace: "{{ eval_rhsso_namespace }}"
-        sso_operator_tag: "{{ rhsso_operator_release_tag }}"
+        - include_role:
+            name: msbroker
+            tasks_from: upgrade
+          vars:
+            upgrade_msb_image: quay.io/integreatly/managed-service-broker:{{ msbroker_release_tag }}
+            msb_image_tag: "{{ msbroker_release_tag }}"
 
-    - include_role:
-        name: msbroker
-        tasks_from: upgrade
-      vars:
-        upgrade_msb_image: quay.io/integreatly/managed-service-broker:{{ msbroker_release_tag }}
-        msb_image_tag: "{{ msbroker_release_tag }}"
+        - include_role:
+            name: webapp
+            tasks_from: upgrade
+          vars:
+            upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
+            upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
+            webapp_operator_tag: "{{ webapp_operator_release_tag }}"
+            webapp_image_tag: "{{ webapp_version }}"
 
-    - include_role:
-        name: webapp
-        tasks_from: upgrade
-      vars:
-        upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
-        upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
-        webapp_operator_tag: "{{ webapp_operator_release_tag }}"
-        webapp_image_tag: "{{ webapp_version }}"
+        - include_role:
+            name: backup
+            tasks_from: upgrade
+          vars:
+            upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
+            rhsso_namespace: "{{ eval_rhsso_namespace }}"
+          when: backup_restore_install | default(false) | bool
 
-    - include_role:
-        name: backup
-        tasks_from: upgrade
-      vars:
-        upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
-        rhsso_namespace: "{{ eval_rhsso_namespace }}"
-      when: backup_restore_install | default(false) | bool
+        - include_role:
+            name: 3scale
+            tasks_from: upgrade
 
-    - include_role:
-        name: 3scale
-        tasks_from: upgrade
+        # Launcher
+        - include_role:
+            name: launcher
+            tasks_from: upgrade
 
-    # Launcher
-    - include_role:
-        name: launcher
-        tasks_from: upgrade
+        - name: Update image streams
+          include_role:
+            name: images
+            tasks_from: import
+          with_items:
+            - 3scale
+            - apicurito
+            - codeready
+            - enmasse
+            - fuse
+            - launcher
+            - sso
+            - webapp
+          loop_control:
+            loop_var: images_source_namespace
 
-    - name: Update image streams
-      include_role:
-        name: images
-        tasks_from: import
-      with_items:
-        - 3scale
-        - apicurito
-        - codeready
-        - enmasse
-        - fuse
-        - launcher
-        - sso
-        - webapp
-      loop_control:
-        loop_var: images_source_namespace
+        # Fuse
+        - include_role:
+            name: fuse
+            tasks_from: upgrade
+          vars:
+            old_fuse_tag: "application-templates-2.1.fuse-720018-redhat-00001" # Fuse 7.2 version for deleting old templates
 
-    # Fuse
-    - include_role:
-        name: fuse
-        tasks_from: upgrade
-      vars:
-        old_fuse_tag: "application-templates-2.1.fuse-720018-redhat-00001" # Fuse 7.2 version for deleting old templates
-    
-    - include_role:
-        name: fuse_managed
-        tasks_from: upgrade
+        - include_role:
+            name: fuse_managed
+            tasks_from: upgrade
+      when: target_version.stdout == "release-1.3.0"
 
     # AMQ Online / enmasse
     - include_role:
