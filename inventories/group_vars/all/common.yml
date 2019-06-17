@@ -5,6 +5,7 @@ eval_namespace: eval
 eval_openshift_master_config_path: /etc/origin/master/master-config.yaml
 eval_self_signed_certs: true
 eval_sso_validate_certs: false
+eval_sso_url_suffix: /auth/admin/openshift/console
 eval_launcher_sso_realm: launcher_realm
 
 eval_apicurito_namespace: "{{ns_prefix | default('')}}apicurito"
