@@ -26,26 +26,23 @@
 - name: "Verify EnMasse deployment succeeded"
   block:
     - name: Ensure address space controller pod is ready
-      shell: sleep 5; oc get pod -l name=address-space-controller --namespace {{ enmasse_namespace }}  |  grep  "deploy"
-      register: result
-      until: not result.stdout
+      shell: oc get pod -l name=address-space-controller --namespace {{ enmasse_namespace }} -o jsonpath="{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}" | grep Ready=True
       retries: 50
       delay: 10
-      failed_when: result.stdout
       changed_when: False
+      register: result
+      until: result.rc == 0
     - name: Ensure api server pod is ready
-      shell: sleep 5; oc get pod -l component=api-server --namespace {{ enmasse_namespace }}  |  grep  "deploy"
-      register: result
-      until: not result.stdout
+      shell: oc get pod -l component=api-server --namespace {{ enmasse_namespace }} -o jsonpath="{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}" | grep Ready=True
       retries: 50
       delay: 10
-      failed_when: result.stdout
       changed_when: False
+      register: result
+      until: result.rc == 0
     - name: Ensure server broker pod is ready
-      shell: sleep 5; oc get pod -l component=service-broker --namespace {{ enmasse_namespace }}  |  grep  "deploy"
-      register: result
-      until: not result.stdout
+      shell: oc get pod -l component=service-broker --namespace {{ enmasse_namespace }} -o jsonpath="{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}" | grep Ready=True
       retries: 50
       delay: 10
-      failed_when: result.stdout
       changed_when: False
+      register: result
+      until: result.rc == 0
