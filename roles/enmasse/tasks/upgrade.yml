@@ -3,29 +3,6 @@
 
 - include_tasks: "_install_enmasse_from_artifact.yml"
 
-- name: Generate AuthenticationService
-  template:
-    src: authenticationservice.yml.j2
-    dest: "/tmp/authenticationservice.yml"
-
-- name: Generate keycloak admin password
-  set_fact:
-    keycloak_admin_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
-
-- name: Create secret with the keycloak credentials
-  shell: oc create secret generic -n {{ enmasse_namespace }} keycloak-credentials --from-literal=admin.username=admin --from-literal=admin.password={{ keycloak_admin_password }}
-  register: secret_exists
-  failed_when: secret_exists.stderr != '' and 'AlreadyExists' not in secret_exists.stderr
-
-- name: Label secret
-  shell: oc label secret keycloak-credentials -n {{ enmasse_namespace }} app=enmasse
-  when: secret_exists.rc == 0
-
-- name: "Create EnMasse AuthenticationService"
-  shell: oc create -f /tmp/authenticationservice.yml
-  register: authenticationservice_exists
-  failed_when: authenticationservice_exists.stderr != '' and 'AlreadyExists' not in authenticationservice_exists.stderr
-
 - name: Delete enmasse restapi route
   shell:  oc delete route/restapi -n {{ enmasse_namespace }}
   register: restapi_delete_cmd
