@@ -23,8 +23,7 @@
   failed_when: fuse_create_imagestream.stderr != '' and 'AlreadyExists' not in fuse_create_imagestream.stderr
   changed_when: fuse_create_imagestream.rc == 0
 
-- name: Create fuse Operator resources in {{ fuse_namespace }}
-  shell: oc apply -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
+- include_tasks: create_fuse_operator.yml
 
 - template:
     src: syndesis-customresource.yml.j2

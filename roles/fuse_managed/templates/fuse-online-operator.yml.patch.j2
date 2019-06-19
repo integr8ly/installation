@@ -1,0 +1,12 @@
+--- fuse-online-operator.yml	2019-06-19 12:17:56.023958445 +0100
++++ fuse-online-operator.yml.new	2019-06-19 12:18:46.550782016 +0100
+@@ -196,6 +196,9 @@
+         - name: syndesis-operator
+           image: ' '
+           imagePullPolicy: IfNotPresent
++          args:
++            - '-a'
++            - '/conf/addons'
+           ports:
+             - containerPort: 60000
+               name: metrics

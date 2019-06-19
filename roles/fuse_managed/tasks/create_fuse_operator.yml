@@ -1,0 +1,19 @@
+---
+- name: "Download fuse-online-operator.yml" 
+  get_url: 
+    url: "{{fuse_online_operator_resources}}" 
+    dest: /tmp/fuse-online-operator.yml 
+    mode: '744'
+
+- name: "Copy the patch file over"
+  template:
+    src: fuse-online-operator.yml.patch.j2
+    dest: /tmp/fuse-online-operator.yml.patch
+
+- name: "Patch the fuse-online-operator.yml to include the monitoring addon resources"
+  patch:
+    src: /tmp/fuse-online-operator.yml.patch
+    dest: /tmp/fuse-online-operator.yml
+
+- name: Create fuse Operator resources in {{ fuse_namespace }}
+  shell: oc apply -f /tmp/fuse-online-operator.yml -n {{ fuse_namespace }}
