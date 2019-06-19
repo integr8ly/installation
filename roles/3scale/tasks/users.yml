@@ -24,13 +24,33 @@
   uri:
     url: "https://{{ threescale_admin_route }}/admin/api/users/{{ default_admin_user_xml.matches.0.id|int }}.xml"
     method: PUT
-    body: "access_token={{ threescale_admin_token }}&username={{ threescale_cluster_admin_new_username }}&email={{ threescale_cluster_admin_email }}"
+    body: "access_token={{ threescale_admin_token }}&username={{ rhsso_evals_admin_username }}&email={{ rhsso_evals_admin_email }}"
     validate_certs: "{{ threescale_sso_validate_certs }}"
-    status_code: [200]
+    status_code: [200, 422]
   when: default_admin_user_xml is defined and default_admin_user_xml.matches is defined
 
-- name: Create evaluation admin user 
-  include: _user.yml email={{ rhsso_evals_admin_email }} username={{ rhsso_evals_admin_username }} password={{ rhsso_evals_admin_password }}
+- name: Update email address value for system-seed secret
+  shell: |
+    oc patch secret/system-seed -n {{ threescale_namespace }} -p "{\"stringData\": {\"ADMIN_EMAIL\": \"{{ rhsso_evals_admin_email }}\"}}"
+
+- name: Update username value for system-seed secret
+  shell: |
+    oc patch secret/system-seed -n {{ threescale_namespace }} -p "{\"stringData\": {\"ADMIN_USER\": \"{{ rhsso_evals_admin_username }}\"}}"
+
+- name: Redeploy system-app
+  shell: oc rollout latest system-app -n {{ threescale_namespace }}
+  register: result
+  failed_when: not result.stdout
+  changed_when: False
+
+- name: Verify 3scale deployment succeeded
+  shell: sleep 5; oc get pods --namespace {{ threescale_namespace }} | grep  "deploy"
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
 
 - name: Seed evaluation users
   include: _user.yml email={{ rhsso_seed_users_email_format|format(item|int) }} username={{ rhsso_seed_users_name_format|format(item|int) }} password={{ rhsso_seed_users_password }}
