@@ -9,5 +9,13 @@ mobile_security_service_operator_resource_items:
   - "{{ mobile_security_service_operator_resources }}/cluster_role.yaml"
   - "{{ mobile_security_service_operator_resources }}/cluster_role_binding.yaml"
   - "{{ mobile_security_service_operator_resources }}/service_account.yaml"
+  - "{{ mobile_security_service_operator_resources }}/monitor/service_monitor.yaml"
+  - "{{ mobile_security_service_operator_resources }}/monitor/mss_service_monitor.yaml"
+  - "{{ mobile_security_service_operator_resources }}/monitor/operator_service.yaml"
+  - "{{ mobile_security_service_operator_resources }}/monitor/prometheus_rule.yaml"
+  - "{{ mobile_security_service_operator_resources }}/monitor/mss_prometheus_rule.yaml"
+  - "{{ mobile_security_service_operator_resources }}/monitor/grafana_dashboard.yaml"
+  - "{{ mobile_security_service_operator_resources }}/monitor/mss_grafana_dashboard.yaml"
+
 
 mdc_namespace: "mobile-developer-console"

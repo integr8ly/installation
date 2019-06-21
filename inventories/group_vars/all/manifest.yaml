@@ -94,7 +94,7 @@ datasync_template_tag: '0.5.0'
 
 #controls whether the mobile security service is installed or not
 mobile_security_service: false
-mobile_security_service_operator_release_tag: '0.1.1'
+mobile_security_service_operator_release_tag: '0.1.4'
 mobile_security_service_operator_resources: 'https://raw.githubusercontent.com/aerogear/mobile-security-service-operator/{{mobile_security_service_operator_release_tag}}/deploy'
 mobile_security_service_operator_image: 'quay.io/aerogear/mobile-security-service-operator:{{ mobile_security_service_operator_release_tag }}'
 mss_version: '0.1.0'
