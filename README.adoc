@@ -131,11 +131,18 @@ Before running the installer, please consider the following variables:
 | eval_threescale_enable_wildcard_route | Whether 3Scale enables wildcard routing. Defaults to `false`
 | github_client_id | GitHub OAuth client ID to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
 | github_client_secret | GitHub OAuth client secret to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
-| prerequisites_install | Boolean var that skips the installation of system wide tools/packages that are required by the installer if set to false (needs to be set to false when running the installer in a linux container) - defaults to true. 
+| prerequisites_install | Boolean var that skips the installation of system wide tools/packages that are required by the installer if set to false (needs to be set to false when running the installer in a linux container). Defaults to `true`. 
 |===
 
 Some products can be excluded from the install by setting a var. For example, setting `gitea=false` will not install gitea. Installation of individual products will not be a supported installation method with this repo. You can however write your own playbook to execute specific roles & tasks as needed.
 
+By default Mobile Developer Services will not be installed. In order to install these services, consider the following variables.
+
+.Install Mobile Developer Services
+|===
+| Variable | Description
+| mobile_security_service | Whether Mobile Security Service will be installed or not. Defaults to `false`
+|===
 
 === Create GitHub OAuth to enable GitHub authorization for Launcher
 
