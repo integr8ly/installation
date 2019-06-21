@@ -109,6 +109,13 @@
         name: fuse_managed
         tasks_from: upgrade
 
+    # Update Mobile Security Service - TODO at next version - change to upgrade - current version will run installation
+    - name: Install/Upgrade Mobile Security Service as part of upgrade
+      include_role:
+        name: mobile_security_service
+        tasks_from: upgrade
+      when: mobile_security_service
+
     # Update deployment images
     - name: Update enmasse deployments
       include_role:

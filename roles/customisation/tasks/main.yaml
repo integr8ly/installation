@@ -234,6 +234,27 @@
     component_manifests: "{{component_manifests}} + {{enmasse_manifest}}"
   when: enmasse
 
+- name: Get Mobile Security Service rest route
+  shell: oc get route/route -o template --template \{\{.spec.host\}\} -n {{ eval_mobile_security_service_namespace | default('mobile-security-service') }}
+  register: mss_route_cmd
+  when: mobile_security_service
+
+- set_fact:
+    mss_route: "https://{{mss_route_cmd.stdout}}"
+  when: mobile_security_service
+
+- name: Set Mobile Security Service component
+  set_fact:
+    mss_manifest:
+      - name: Mobile Security Service
+        version: "{{ mss_version }}"
+        host: "{{ mss_route }}"
+  when: mobile_security_service
+
+- set_fact:
+    component_manifests: "{{component_manifests}} + {{ mss_manifest }}"
+  when: mobile_security_service
+
 - name: Retrieve launcher sso hostvars
   shell: "oc get route/{{launcher_sso_prefix}} -o jsonpath='{.spec.host}' -n {{ launcher_namespace }}"
   register: launcher_sso_host_cmd

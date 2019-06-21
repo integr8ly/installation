@@ -136,20 +136,29 @@
         tasks_from: uninstall
       tags: ['amq_streams']
       when: amq_streams | default(true) | bool
+
+    - 
+      name: Uninstall Mobile Security Service
+      include_role:
+        name: mobile_security_service
+        tasks_from: uninstall_mss.yml
+      vars:
+        mss_namespace: "{{ eval_mobile_security_service_namespace }}"
+      tags: ['mss']
+
     -
       name: Reboot template broker
       include_role:
         name: reboot_template_broker
 
-
 - hosts: master
   tasks:
     - block:
       -
-        name: Remove webapp cors data	
-        include_role:	
-          name: webapp	
-          tasks_from: cors-remove	
+        name: Remove webapp cors data
+        include_role:
+          name: webapp
+          tasks_from: cors-remove
         tags: ['webapp']
       -
         name: Uninstall rhsso
@@ -158,3 +167,4 @@
           tasks_from: remove_identityprovider
         tags: ['rhsso']
       when: run_master_tasks | default(true) | bool
+
