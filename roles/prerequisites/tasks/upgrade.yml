@@ -11,9 +11,6 @@
     msg: "The target installation could not be verified as the manifest could not be read"
   when: target_version.stderr != ""
 
-- set_fact:
-    formatted_from_version: "release-{{ from_version }}"
-
 - fail:
-    msg: "The target version must be {{ formatted_from_version }} to run this upgrade playbook, {{ target_version.stdout }} is currently installed"
-  when: target_version.stdout != formatted_from_version
+    msg: "The target version must be in {{ from_versions }} to run this upgrade playbook, {{ target_version.stdout }} is currently installed"
+  when: target_version.stdout not in from_versions
