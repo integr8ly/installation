@@ -4,3 +4,5 @@ metadata:
   name: middleware-monitoring{{ namespace_postfix }}
 spec:
   labelSelector: {{ monitoring_label_value }}
+  additionalScrapeConfigSecretName: "integreatly-additional-scrape-configs"
+  additionalScrapeConfigSecretKey: "integreatly-additional.yaml"
