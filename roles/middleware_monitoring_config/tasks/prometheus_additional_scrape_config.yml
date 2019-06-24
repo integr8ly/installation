@@ -42,12 +42,6 @@
     delay: 5
     retries: 50
 
-  - name: Patch the middleware monitoring prometheus with additional scrape config
-    shell: "oc patch prometheus {{ prometheus_cr_name }} -n {{ middleware_monitoring_namespace }} --patch='{{ additional_scrape_config_patch | to_json }}' --type='merge'"
-    register: prometheus_cr_patch
-    failed_when: prometheus_cr_patch.stderr != '' and 'not patched' not in prometheus_cr_patch.stderr
-    changed_when: prometheus_cr_patch.rc == 0
-
   - name: Delete the temp yaml files
     file:
       path: "{{ item }}"
