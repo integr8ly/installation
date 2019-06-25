@@ -5,7 +5,7 @@
 - name: "Export the prometheus rules in ksm-alerts"
   shell: "oc get prometheusrules ksm-alerts -o yaml --namespace {{ monitoring_upgrade_namespace }} > /tmp/ksm-alerts.yml"
   register: export_prometheusrules
-  failed_when: export_prometheus.stderr != ''
+  failed_when: export_prometheusrules.stderr != ''
 
 - name: "Find/replace $labels.exported_pod with $labels.pod in prometheus rules"
   shell: "sed -i 's/$labels.exported_pod/$labels.pod/g' /tmp/ksm-alerts.yml"
@@ -15,4 +15,4 @@
 - name: "Apply the prometheusrules CR with updated changes"
   shell: "oc apply -f /tmp/ksm-alerts.yml --namespace {{ monitoring_upgrade_namespace }}"
   register: apply_prometheusrules
-  faled_when: "prometheusrule.monitoring.coreos.com/ksm-alerts configured" not in apply_prometheusrules.stdout
+  failed_when: '"prometheusrule.monitoring.coreos.com/ksm-alerts configured" not in apply_prometheusrules.stdout'
