@@ -1,0 +1,16 @@
+---
+- name: "Ensure master params are present"
+  include_tasks: check_master_params.yml
+  when: not (run_master_tasks | default(true) | bool)
+
+- name: Get target version
+  shell: "oc get secret manifest -n {{ eval_webapp_namespace }} -o json | jq \".data.generated_manifest\" -r | base64 -d | jq \".version\" -r"
+  register: target_version
+
+- fail:
+    msg: "The target installation could not be verified as the manifest could not be read"
+  when: target_version.stderr != ""
+
+- fail:
+    msg: "The target version must be in {{ from_versions }} to run this upgrade playbook, {{ target_version.stdout }} is currently installed"
+  when: target_version.stdout not in from_versions
