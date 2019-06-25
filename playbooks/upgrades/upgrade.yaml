@@ -2,46 +2,15 @@
 - hosts: localhost
   gather_facts: no
   tasks:
+    - include_role:
+        name: prerequisites
+        tasks_from: upgrade
+      vars:
+        from_versions:
+          - "release-1.4.1"
     - set_fact:
-        upgrade_msb_image: quay.io/integreatly/managed-service-broker:{{ msbroker_release_tag }}
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
-        upgrade_sso_operator_image: quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}
-        upgrade_backup_container_image: quay.io/integreatly/backup-container:{{ backup_version }}
-
-    - name: Check current version
-      shell: "oc get secret manifest -n {{ eval_webapp_namespace }} -o json | jq \".data.generated_manifest\" -r | base64 -d | jq \".version\" -r"
-      register: version
-
-    - fail:
-        msg: "The current installation could not be verified as the manifest could not be read"
-      when: version.stderr != ""
-    - fail:
-        msg: "The installed version must be 1.3.0 to run this upgrade playbook, {{ version.stdout }} is currently installed"
-      when: version.stdout != "release-1.3.0"
-
-    # SSO
-    - name: Update keycloak-operator image tag
-      shell: "oc patch deployment keycloak-operator -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_sso_operator_image }}\"}]'"
-
-    - name: add CreateOnly to openshift keycloak realm
-      shell: "oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"add\", \"path\": \"/spec/createOnly\", \"value\": true}]'"
-
-    # Managed Service Broker
-    - name: Retrieve SSO host
-      shell: oc get route sso -n {{ eval_rhsso_namespace }} -o jsonpath='{.spec.host}'
-      register: get_sso_host
-    - set_fact:
-        upgrade_sso_url: "https://{{ get_sso_host.stdout | trim }}/auth/admin/openshift/console"
-
-    - name: Append the SSO_URL env to the Managed Service Broker deployment
-      shell: oc patch deployment msb -n {{ eval_msbroker_namespace }} --type=json -p '[{"op":"add","path":"/spec/template/spec/containers/0/env/-1","value":{"name":"SSO_URL","value":"{{ upgrade_sso_url }}"}}, {"op":"replace","path":"/spec/template/spec/containers/0/image","value":"{{ upgrade_msb_image }}"}]'
-      register: upgrade_msb
-      failed_when: upgrade_msb.stderr != '' and 'not patched' not in upgrade_msb.stderr
-    
-    - include_role:
-        name: msbroker
-        tasks_from: upgrade
 
     # Solution Explorer
     - name: Bump the Web App operator version to {{ webapp_operator_release_tag }}
@@ -53,34 +22,6 @@
       shell: oc patch dc tutorial-web-app -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_image }}"}]'
       register: upgrade_webapp
       failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
-
-    # SSO Alerts
-    - name: delete alerts
-      shell: "oc delete prometheusrules application-monitoring -n {{ eval_rhsso_namespace }}"
-
-    - name: recreate alerts
-      shell: "oc patch keycloak rhsso --type=json --patch='[{\"op\": \"add\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]' -n {{ eval_rhsso_namespace }}"
-
-    # Backup & Restore
-    - name: add postgres version to secret
-      shell: "oc patch secret threescale-postgres-secret --type=json --patch='[{\"op\": \"add\", \"path\": \"/data/POSTGRES_VERSION\", \"value\": \"{{ 10 | b64encode }}\"}]' -n {{ backup_namespace }}"
-
-    - name: get all cronjobs
-      shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ backup_namespace }}"
-      register: cronjobs_result
-
-    - set_fact:
-        cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
-
-    - name: patch all cronjobs
-      shell: "oc patch cronjob {{ item }} -n {{ backup_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
-      register: upgrade_cronjob
-      failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
-      with_items: "{{ cronjobs }}"
-
-    - include_role:
-        name: 3scale
-        tasks_from: upgrade
 
     - name: Update image streams
       include_role:
@@ -98,34 +39,12 @@
       loop_control:
         loop_var: images_source_namespace
 
-    # Fuse
-    - include_role:
-        name: fuse
-        tasks_from: upgrade
-      vars:
-        old_fuse_tag: "application-templates-2.1.fuse-720018-redhat-00001" # Fuse 7.2 version for deleting old templates
-    
-    - include_role:
-        name: fuse_managed
-        tasks_from: upgrade
-
     # Update Mobile Security Service - TODO at next version - change to upgrade - current version will run installation
     - name: Install/Upgrade Mobile Security Service as part of upgrade
       include_role:
         name: mobile_security_service
         tasks_from: upgrade
       when: mobile_security_service
-
-    # Update deployment images
-    - name: Update enmasse deployments
-      include_role:
-        name: enmasse
-        tasks_from: upgrade
-
-    - name: Update codeready deployments
-      include_role:
-        name: code-ready
-        tasks_from: upgrade
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
