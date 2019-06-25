@@ -60,6 +60,11 @@
         name: middleware_monitoring_config
         tasks_from: upgrade_1.4.1_to_1.5.0.yml
 
+    # Alerts upgrade
+    - include_role:
+        name: backup
+        tasks_from: upgrade
+      when: target_version.stdout == "release-1.4.1"
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

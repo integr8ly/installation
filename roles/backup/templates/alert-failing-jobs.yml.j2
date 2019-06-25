@@ -1,0 +1,7 @@
+alert: "CronJobsFailed"
+annotations:
+  message: "Job {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.job {{ '}}' }} has failed"
+expr: "sum(kube_job_status_failed{namespace="{{ backup_namespace }}"})"
+for: "5m"
+labels:
+  severity: "critical"
