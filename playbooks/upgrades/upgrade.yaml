@@ -60,6 +60,11 @@
         name: middleware_monitoring_config
         tasks_from: upgrade_1.4.1_to_1.5.0.yml
 
+    - name: Upgrade code ready workspaces 1.0 to 1.2
+      include_role:
+        name: code-ready
+        tasks_from: upgrade_1.0_to_1.2.yml
+
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

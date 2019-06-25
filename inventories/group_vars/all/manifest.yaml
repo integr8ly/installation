@@ -17,10 +17,7 @@ threescale_template_s3: '{{threescale_resources_base}}/amp-s3.yml'
 #note che cannot be installed without launcher being present currently
 che: true
 che_version: '1.2.0.GA'
-# by default the GA installer uses the :latest tag so we need to set the tagged version in the config
-che_server_image: 'registry.access.redhat.com/codeready-workspaces/server:1.0'
-che_operator_image: 'registry.access.redhat.com/codeready-workspaces/server-operator:1.0'
-che_installer: 'https://raw.githubusercontent.com/redhat-developer/codeready-workspaces-deprecated/{{che_version}}/operator-installer/deploy.sh'
+che_git_url: https://github.com/redhat-developer/codeready-workspaces-deprecated.git
 
 #controls whether enmasse is installed or not
 enmasse: true
