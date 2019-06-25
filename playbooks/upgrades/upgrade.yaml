@@ -54,5 +54,12 @@
         tasks_from: upgrade
       when: mobile_security_service
 
+    # Update labels on the prometheusrules in the middleware-monitoring namespace. INTLY-2408
+    - name: Update labels on the prometheusrules in the middleware-monitoring namespace
+      include_role:
+        name: middleware_monitoring_config
+        tasks_from: upgrade_1.4.1_to_1.5.0.yml
+
+
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
