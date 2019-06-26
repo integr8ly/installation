@@ -7,8 +7,8 @@
   register: export_prometheusrules
   failed_when: export_prometheusrules.stderr != ''
 
-- name: "Find/replace $labels.exported_pod with $labels.pod in prometheus rules"
-  shell: "sed -i 's/$labels.exported_pod/$labels.pod/g' /tmp/ksm-alerts.yml"
+- name: "Find/replace exported_pod with pod in ksm-alerts prometheus rules"
+  shell: "sed -i 's/exported_pod/pod/g' /tmp/ksm-alerts.yml"
   register: sed_prometheusrules
   failed_when: sed_prometheusrules.stderr != ''
 
