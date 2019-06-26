@@ -1,4 +1,12 @@
 ---
+- hosts: master
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: openshift
+        tasks_from: set_master_vars
+      when: run_master_tasks | default(true) | bool
+
 - hosts: localhost
   gather_facts: no
   tasks:
