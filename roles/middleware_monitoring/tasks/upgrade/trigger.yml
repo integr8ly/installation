@@ -1,0 +1,49 @@
+---
+- name: Upgrade the monitoring operator role
+  shell: "oc apply -f {{ item }} -n {{ monitoring_namespace }}"
+  register: aom_role_apply_cmd
+  failed_when: aom_role_apply_cmd.stderr != '' and 'Warning' not in aom_role_apply_cmd.stderr
+  changed_when: aom_role_apply_cmd.rc == 0
+  with_items:
+    - "{{ middleware_monitoring_operator_resources }}/operator_roles/role.yaml"
+    - "{{ middleware_monitoring_operator_resources }}/crds/ApplicationMonitoring.yaml"
+
+- name: Upgrade the application monitoring operator
+  shell: "oc patch deployment application-monitoring-operator --patch='{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"application-monitoring-operator\",\"image\":\"quay.io/integreatly/application-monitoring-operator:0.0.16\" }]}}}}' -n {{ monitoring_namespace }}"
+  register: patch_deployment_cmd
+  failed_when: patch_deployment_cmd.stderr != ""
+
+- name: Redeploy the application monitoring operator
+  shell: "oc patch deployment application-monitoring-operator --patch '{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"last-restart\":\"`date +'%s'`\"}}}}}' -n {{ monitoring_namespace }}"
+  register: redeploy_aom_result
+  failed_when: redeploy_aom_result.stderr != ""
+  when: '"not patched" in patch_deployment_cmd.stdout'
+
+- name: Delete the lockfile
+  shell: "oc delete configmap application-monitoring-operator-lock -n {{ monitoring_namespace }}"
+  register: delete_lockfile_cmd
+  failed_when: delete_lockfile_cmd.stderr != '' and 'NotFound' not in delete_lockfile_cmd.stderr
+  changed_when: delete_lockfile_cmd.rc == 0
+
+- name: Wait for the new application monitoring operator to be ready
+  shell: "oc rollout status deployment/application-monitoring-operator -n {{ monitoring_namespace }}"
+  register: rollout_cmd
+  failed_when: delete_lockfile_cmd.rc != 0
+  changed_when: delete_lockfile_cmd.rc == 0
+
+- name: Get the name of the application monitoring CR
+  shell: "oc get applicationmonitorings -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ monitoring_namespace }}"
+  register: get_amo_cr_name_cmd
+
+- set_fact:
+    aom_cr_name: "{{ get_amo_cr_name_cmd.stdout | trim }}"
+
+- name: Apply latest application monitoring CR changes
+  include: ./apply_resource_from_template.yml
+  with_items:
+    - "application_monitoring_cr_upgrade.yml"
+
+- name: Remove the status from the CR to trigger a reconcile
+  shell: oc patch applicationmonitoring {{ aom_cr_name }} -n {{ monitoring_namespace }} --type json -p '[{"op":"replace", "path":"/status/phase", "value":0}]'
+  register: reconcile_cmd
+  failed_when: reconcile_cmd.stderr != '' and 'not patched' not in reconcile_cmd.stderr

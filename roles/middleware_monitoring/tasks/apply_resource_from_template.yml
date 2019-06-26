@@ -1,0 +1,9 @@
+- name: "Apply resource file from template ({{ item }})"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ monitoring_tmp_dir }}/{{ item }}"
+- name: Apply resource from file
+  shell: "oc apply -f {{ monitoring_tmp_dir }}/{{ item }} -n {{ monitoring_namespace }}"
+  register: monitoring_resource_apply
+  failed_when: monitoring_resource_apply.stderr != '' and 'Warning' not in monitoring_resource_apply.stderr
+  changed_when: monitoring_resource_apply.rc == 0
