@@ -1,0 +1,110 @@
+---
+- hosts: localhost
+  tasks:
+    - block:
+        - debug:
+            msg: "eval_app_host is required when run_master_tasks=false"
+          failed_when: eval_app_host is not defined
+        - debug:
+            msg: "openshift_master_url is required when run_master_tasks=false"
+          failed_when: openshift_master_url is not defined
+        - name: Set EVAL_VARS from vars as not running master tasks
+          add_host:
+            name: EVAL_VARS
+            eval_app_host: "{{ eval_app_host }}"
+            openshift_master_url: "{{ openshift_master_url }}"
+        - name: Overwrite create_cluster_admin, set to false
+          set_fact:
+            create_cluster_admin: false
+      when: not (run_master_tasks | default(true) | bool)
+
+- hosts: master
+  gather_facts: no
+  tasks:
+    - block:
+        -
+          name: Retrieve master configurations
+          slurp:
+            src: "{{ eval_openshift_master_config_path }}"
+          register: eval_master_config
+          become: yes
+        -
+          add_host:
+            name: EVAL_VARS
+            eval_app_host: "{{ (eval_master_config['content'] | b64decode | from_yaml)['routingConfig']['subdomain'] }}"
+            openshift_master_url: "{{ (eval_master_config['content'] | b64decode | from_yaml)['masterPublicURL'] }}"
+      tags: ['bootstrap', 'remote']
+      when: run_master_tasks | default(true) | bool
+
+- import_playbook: "./install_sso.yml"
+
+- hosts: localhost
+  gather_facts: true
+  tasks:
+    - name: Install launcher
+      include_role:
+        name: launcher
+      vars:
+        launcher_openshift_sso_username: "{{ eval_rhsso_admin_username }}"
+        launcher_openshift_sso_password: "{{ eval_rhsso_admin_password }}"
+        launcher_openshift_sso_route: "{{ eval_rhsso_host }}"
+        launcher_sso_validate_certs: "{{ eval_sso_validate_certs }}"
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+      tags: ['launcher']
+      when: launcher
+
+    - name: Retrieve launcher sso env vars
+      shell: "oc get dc/launcher-sso \
+          -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
+          -n {{ eval_launcher_namespace }}"
+      with_items:
+        - 'SSO_SERVICE_USERNAME'
+        - 'SSO_SERVICE_PASSWORD'
+        - 'SSO_ADMIN_USERNAME'
+        - 'SSO_ADMIN_PASSWORD'
+      register: _eval_launcher_sso_dc_cmd
+      tags: ['bootstrap']
+      when: launcher
+
+    - name: Set launcher sso playbook vars
+      set_fact: "eval_launcher_{{ item.item | lower }}={{ item.stdout }}"
+      with_items: "{{ _eval_launcher_sso_dc_cmd.results }}"
+      tags: ['bootstrap']
+      when: launcher
+
+    - name: Find encrypted RH-SSO route
+      shell: for route in $(oc get routes -n {{ eval_launcher_namespace }} | awk '{print $1}' | grep 'sso' | grep -v 'NAME'); do term=$(oc get route $route -n {{ eval_launcher_namespace }} -o template --template \{\{.spec.tls.termination\}\}); if [ "$term" == "edge" ] || [ "$term" == "reencrypt" ]; then echo $route; break; fi; done
+      register: rhsso_secure_route_name
+      failed_when: rhsso_secure_route_name.stdout == ''
+      when: launcher
+
+    - name: Retrieve launcher sso hostvars
+      shell: "oc get route/{{ rhsso_secure_route_name.stdout }} -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
+      register: eval_launcher_sso_host_cmd
+      tags: ['bootstrap']
+      when: launcher
+
+    - name: Set launcher sso host var
+      set_fact:
+        eval_launcher_sso_host: "{{ eval_launcher_sso_host_cmd.stdout }}"
+      tags: ['bootstrap']
+      when: launcher
+
+    - name: Expose vars
+      include_vars: "../roles/code-ready/defaults/main.yml"
+    -
+      name: Install che
+      include_role:
+        name: code-ready
+      vars:
+        che_keycloak_user: "{{ eval_launcher_sso_admin_username }}"
+        che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"
+        che_keycloak_host: "{{ eval_launcher_sso_host }}"
+#        che_route_suffix: "{{ eval_app_host }}" Where is this used?
+        che_protocol: https
+        che_ws_protocol: wss
+#        cluster_admin_password: "{{ hostvars['master']['master_url'] }}" Where is this used?
+#        cluster_url: "{{ hostvars['master']['master_url'] }}" Where is this used?
+        che_keycloak_realm: "{{ eval_launcher_sso_realm }}"
+      tags: ['che']
+      when: eval_action == 'install' and che and launcher
