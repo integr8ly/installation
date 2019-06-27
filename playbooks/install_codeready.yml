@@ -1,4 +1,7 @@
 ---
+- import_playbook: "./openshift.yml"
+- import_playbook: "./user.yaml"
+
 - hosts: localhost
   tasks:
     - block:
@@ -35,6 +38,7 @@
             openshift_master_url: "{{ (eval_master_config['content'] | b64decode | from_yaml)['masterPublicURL'] }}"
       tags: ['bootstrap', 'remote']
       when: run_master_tasks | default(true) | bool
+
 
 - import_playbook: "./install_sso.yml"
 
@@ -108,3 +112,29 @@
         che_keycloak_realm: "{{ eval_launcher_sso_realm }}"
       tags: ['che']
       when: eval_action == 'install' and che and launcher
+
+- hosts: master
+  gather_facts: no
+  tasks:
+    - name: remove integreatly-admin user
+      shell: "htpasswd -D /etc/origin/master/htpasswd integreatly-admin"
+      become: yes
+      when: (run_master_tasks | default(true) | bool) and (create_cluster_admin == true)
+
+- import_playbook: ./install_backups.yml
+  when: backup_restore_install | default(false) | bool
+
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: switch back to system admin
+      shell: oc login -u system:admin
+      register: oc_cmd
+      failed_when: oc_cmd.rc != 0 and oc_cmd.rc != 1
+      when: create_cluster_admin
+    - debug:
+        msg: All services have been provisioned successfully.
+    - debug:
+        msg: Please add '{{ callback_url }}' as the Authorization callback URL of your GitHub OAuth Application.
+      vars:
+        callback_url: "{{ launcher_sso_route }}/auth/realms/{{ eval_launcher_sso_realm }}/broker/github/endpoint"
