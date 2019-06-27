@@ -1,6 +1,6 @@
 - name: "Set facts required to patch the middleware-monitoring"
   set_fact:
-    monitoring_upgrade_namespace: "middleware-monitoring"
+    monitoring_upgrade_namespace: "{{ eval_middleware_monitoring_namespace }}"
 
 - name: "Export the prometheus rules in ksm-alerts"
   shell: "oc get prometheusrules ksm-alerts -o yaml --namespace {{ monitoring_upgrade_namespace }} > /tmp/ksm-alerts.yml"
