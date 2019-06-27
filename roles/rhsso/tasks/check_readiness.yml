@@ -26,11 +26,3 @@
       retries: 50
       delay: 10
       changed_when: False
-
-    - name: Verify that alerts were created
-      shell: "oc get prometheusrules application-monitoring -o jsonpath='{..alert}' -n {{ rhsso_namespace }}"
-      register: result
-      until: result.stdout.split() | length >= 6
-      retries: 50
-      delay: 10
-      changed_when: False
