@@ -78,3 +78,6 @@
 
 - name: configure logout
   import_tasks: logout.yml
+
+- name: Run Postinstall checks
+  import_tasks: check_readiness.yml

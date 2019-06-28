@@ -4,3 +4,6 @@
 
 - name: Install 3Scale
   import_tasks: install.yml
+
+- name: Run Postinstall checks
+  import_tasks: check_readiness.yml
