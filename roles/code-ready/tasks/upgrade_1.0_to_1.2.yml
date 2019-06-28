@@ -1,0 +1,73 @@
+
+
+#1.0 -> 1.1 Migration
+#https://github.com/redhat-developer/codeready-workspaces-deprecated/blob/1.2.0.GA/operator-installer/migrate_1.0_to_1.1.sh
+#
+# This is only dealing with adding existing keycloak config to the new custom resource that was added in 1.1.
+# We deal with updating the CR with our own external keycloak config and we don't use the keycloak deployed as part of the install, we do need to make sure the existing postgres db password is updated.
+
+#1.1 -> 1.2 Migration
+# https://github.com/redhat-developer/codeready-workspaces-deprecated/blob/1.2.0.GA/operator-installer/migrate_1.1_to_1.2.sh
+#
+# This is patching the expected custom resource that would have been created as part of the 1.1 migration, and updating image versions for the operator, postgres and keycloak (We don't use this).
+# Since we didn't migrate to 1.1 and are going straight to 1.2, the CR patching isn't required as the main install task will create the new CR, the images will need to be updated.
+
+#Note: These migration scripts are all assuming a basic installation where a keycloak deployment exists in the codeready namespace. We could therefore probably never run them as is.
+
+- name: Retrieve launcher sso env vars
+  shell: "oc get dc/launcher-sso \
+        -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"{{ item }}\")].value}' \
+        -n {{ eval_launcher_namespace }}"
+  with_items:
+    - 'SSO_SERVICE_USERNAME'
+    - 'SSO_SERVICE_PASSWORD'
+    - 'SSO_ADMIN_USERNAME'
+    - 'SSO_ADMIN_PASSWORD'
+  register: _eval_launcher_sso_dc_cmd
+
+- name: Set launcher sso playbook vars
+  set_fact: "eval_launcher_{{ item.item | lower }}={{ item.stdout }}"
+  with_items: "{{ _eval_launcher_sso_dc_cmd.results }}"
+
+- name: Find encrypted RH-SSO route
+  shell: for route in $(oc get routes -n {{ eval_launcher_namespace }} | awk '{print $1}' | grep 'sso' | grep -v 'NAME'); do term=$(oc get route $route -n {{ eval_launcher_namespace }} -o template --template \{\{.spec.tls.termination\}\}); if [ "$term" == "edge" ] || [ "$term" == "reencrypt" ]; then echo $route; break; fi; done
+  register: rhsso_secure_route_name
+  failed_when: rhsso_secure_route_name.stdout == ''
+
+- name: Retrieve launcher sso hostvars
+  shell: "oc get route/{{ rhsso_secure_route_name.stdout }} -o jsonpath='{.spec.host}' -n {{ eval_launcher_namespace }}"
+  register: eval_launcher_sso_host_cmd
+
+- name: Set launcher sso host var
+  set_fact:
+    eval_launcher_sso_host: "{{ eval_launcher_sso_host_cmd.stdout }}"
+
+- include_tasks: download_installer.yml
+
+- name: Retrieve postgres password
+  shell: "oc get deployment postgres -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"POSTGRESQL_PASSWORD\")].value}' -n {{ che_namespace }}"
+  register: codeready_postgres_pwd_cmd
+
+- set_fact:
+    codeready_postgres_pwd: "{{ codeready_postgres_pwd_cmd.stdout }}"
+
+- name: Update Che Cluster Custom Resource
+  replace:
+    path: "{{ codeready_install_scripts_dir }}/custom-resource.yaml"
+    regexp: '{{ item.key }}:.*$'
+    replace: '{{ item.key }}: {{ item.value }}'
+  with_items:
+    - { key: 'chePostgresPassword', value: '{{ codeready_postgres_pwd }}' }
+
+- name: Update postgres image
+  shell: "oc set image deployment/postgres \"*=registry.redhat.io/rhscl/postgresql-96-rhel7:1-40\" -n {{ che_namespace }}"
+
+- name: Wait for postgres
+  shell: "oc rollout status deployment/postgres -n {{ che_namespace }}"
+
+- include_tasks: install.yml
+  vars:
+    che_keycloak_user: "{{ eval_launcher_sso_admin_username }}"
+    che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"
+    che_keycloak_host: "{{ eval_launcher_sso_host }}"
+    che_keycloak_realm: "{{ eval_launcher_sso_realm }}"

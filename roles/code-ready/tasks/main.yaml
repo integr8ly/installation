@@ -1,73 +1,25 @@
 ---
-- name: Check namespace doesn't already exist
-  shell: oc get namespace {{ che_namespace }}
-  register: codeready_exists
-  failed_when: codeready_exists.rc != 0 and codeready_exists.rc != 1
 
-- block:
-  - name: mkdir code ready
-    file:
-      path: "/tmp/code-ready"
-      state: directory
+- include_role:
+    name: namespace
+    tasks_from: create
+  vars:
+    name: "{{ che_namespace }}"
+    display_name: "{{ che_display_name }}"
+    monitor: true
+    is_service: true
 
-  - name: download code ready installer
-    get_url:
-      url: "{{che_installer}}"
-      dest: /tmp/code-ready/installer.sh
-      mode: 0550
+- include_tasks: download_installer.yml
+- include_tasks: install.yml
 
-  - name: Retrieve cluster cert
-    shell: "echo -n '' | openssl s_client -showcerts -connect {{ che_keycloak_host }}:{{ che_keycloak_port }} | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' > /tmp/code-ready/cert.ca"
-    args:
-      warn: no
-    register: che_ssl_cmd
-    when: eval_self_signed_certs|bool
+- name: Set the launcher keycloak user as admin within the che deployment
+  shell: "oc set env deployment/codeready CHE_SYSTEM_ADMIN__NAME={{launcher_sso_admin_username}} -n {{che_namespace}} --overwrite=true"
+  register: set_kc_admin_env
+  failed_when: set_kc_admin_env.rc != 0
 
-  - include_role:
-      name: namespace
-      tasks_from: create
-    vars:
-      name: "{{ che_namespace }}"
-      display_name: "{{ che_display_name }}"
-      monitor: true
-      is_service: true
+- name: Wait for codeready
+  shell: "oc rollout status deployment/codeready -n {{ che_namespace }}"
 
-  - set_fact:
-      self_signed_cert: "{{che_ssl_cmd.stdout }}"
-    when: eval_self_signed_certs|bool and che_ssl_cmd.stdout != "" and che_ssl_cmd.rc == 0
-
-  - name: Copy config file into code ready dir
-    template:
-      src: "config.yaml"
-      dest: /tmp/code-ready/config.yaml
-
-  - name: install code ready with self signed cert
-    shell: "cd /tmp/code-ready && OPENSHIFT_PROJECT={{ che_namespace }} ./installer.sh --deploy --cert=/tmp/code-ready/cert.ca --operator-image={{che_operator_image}} --server-image={{che_server_image}}"
-    when: eval_self_signed_certs|bool
-
-  - name: install code ready valid certs
-    shell: "cd /tmp/code-ready && OPENSHIFT_PROJECT={{ che_namespace }} ./installer.sh --deploy --operator-image={{che_operator_image}} --server-image={{che_server_image}}"
-    when: not eval_self_signed_certs|bool
-
-  - name: patch for per workspace volumes
-    shell: "oc set env deployment/codeready CHE_INFRA_KUBERNETES_PVC_PRECREATE__SUBPATHS=false -n {{che_namespace}}"
-    register: oc_cmd
-    failed_when: oc_cmd.rc != 0
-
-  - name: Set the launcher keycloak user as admin within the che deployment
-    shell: "oc set env deployment/codeready CHE_SYSTEM_ADMIN__NAME={{launcher_sso_admin_username}} -n {{che_namespace}} --overwrite=true"
-    register: set_kc_admin_env
-    failed_when: set_kc_admin_env.rc != 0
-
-  - name: clean up code ready
-    file:
-      path: '{{item}}'
-      state: absent
-    with_items:
-      - /tmp/code-ready/installer.sh
-      - /tmp/code-ready/config.yaml
-  - name: Include keycloak tasks
-    include_tasks: keycloak-client.yml
-    when: che_multiuser|bool == true
-
-  when: codeready_exists.rc != 0 and 'NotFound' in codeready_exists.stderr
+- name: Include keycloak tasks
+  include_tasks: keycloak-client.yml
+  when: che_multiuser|bool == true
