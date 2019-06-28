@@ -86,3 +86,6 @@
     -p 'MONITORING_KEY={{ monitoring_key }}' | oc create -n "{{ msbroker_namespace }}" -f -
   register: create_msb_resources_cmd
   failed_when: create_msb_resources_cmd.stderr != '' and 'AlreadyExists' not in create_msb_resources_cmd.stderr
+
+- name: Run Postinstall checks
+  import_tasks: check_readiness.yml

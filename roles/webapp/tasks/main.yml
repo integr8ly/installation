@@ -4,3 +4,6 @@
 
 - name: Provision and Configure Webapp
   import_tasks: provision-webapp.yml
+
+- name: Run Postinstall checks
+  import_tasks: check_readiness.yml
