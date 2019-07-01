@@ -28,8 +28,8 @@
 - name: Wait for the new application monitoring operator to be ready
   shell: "oc rollout status deployment/application-monitoring-operator -n {{ monitoring_namespace }}"
   register: rollout_cmd
-  failed_when: delete_lockfile_cmd.rc != 0
-  changed_when: delete_lockfile_cmd.rc == 0
+  failed_when: rollout_cmd.rc != 0
+  changed_when: rollout_cmd.rc == 0
 
 - name: Get the name of the application monitoring CR
   shell: "oc get applicationmonitorings -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ monitoring_namespace }}"
