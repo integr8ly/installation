@@ -16,6 +16,22 @@ spec:
         for: 15m
         labels:
           severity: critical
+      - alert: ESPodCount
+        annotations:
+          message: Expected at least Elastic Search 1 pods in namespace {{ '{{' }} $labels.namespace {{ '}}' }}.
+        expr: |
+          (1 - absent(kube_pod_status_ready{condition="true",namespace="openshift-logging", pod=~"logging-es-data-master-.*"})) 
+        for: 5m
+        labels:
+          severity: warning
+      - alert: ESNotReady
+        annotations:
+          message: Not all Elastic Search replication controllers are in a ready state.
+        expr: |
+          count(kube_replicationcontroller_status_ready_replicas{namespace="openshift-logging", replicationcontroller=~"logging-es-data-master-.*"}) != sum(kube_replicationcontroller_status_ready_replicas{namespace="openshift-logging", replicationcontroller=~"logging-es-data-master-.*"})
+        for: 5m
+        labels:
+          severity: warning
       - alert: KubePodNotReady
         annotations:
           message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.pod {{ '}}' }} has been in a non-ready state for longer than 15 minutes.
