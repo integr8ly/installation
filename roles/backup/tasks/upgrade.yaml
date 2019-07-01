@@ -1,0 +1,11 @@
+---
+- name: Delete existing alerts
+  shell: "oc delete prometheusrule backup-monitoring-alerts -n {{ monitoring_namespace }}"
+  register: delete_alerts_cmd
+  failed_when: delete_alerts_cmd.stderr != '' and 'NotFound' not in delete_alerts_cmd.stderr
+  changed_when: delete_alerts_cmd.rc == 0
+
+- include_role:
+    name: backup
+    tasks_from: monitoring
+  when: delete_alerts_cmd.rc == 0
