@@ -1,0 +1,8 @@
+apiVersion: applicationmonitoring.integreatly.org/v1alpha1
+kind: ApplicationMonitoring
+metadata:
+  name: "{{ aom_cr_name }}"
+spec:
+  labelSelector: {{ monitoring_label_value }}
+  additionalScrapeConfigSecretName: "integreatly-additional-scrape-configs"
+  additionalScrapeConfigSecretKey: "integreatly-additional.yaml"

@@ -1,0 +1,71 @@
+---
+- name: Delete existing grafana
+  shell: "oc delete grafanas grafana -n {{ monitoring_namespace }}"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+
+- name: Wait for operator to remove grafana
+  shell: "oc get deployment grafana-deployment -n {{ monitoring_namespace }}"
+  register: get_deployment_cmd
+  failed_when: get_deployment_cmd.rc == 0
+  changed_when: "'NotFound' in get_deployment_cmd.stderr"
+  retries: 10
+  delay: 5
+
+- name: Delete grafana operator
+  shell: "oc delete deployment grafana-operator -n {{ monitoring_namespace }}"
+  register: delete_grafana_operator_cmd
+  failed_when: delete_grafana_operator_cmd.stderr != '' and 'NotFound' not in delete_grafana_operator_cmd.stderr
+  changed_when: delete_grafana_operator_cmd.rc == 0
+
+- name: Delete existing grafana operator cluster role binding
+  shell: "oc delete clusterrolebinding grafana-operator"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+
+- name: Delete existing grafana operator cluster role
+  shell: "oc delete clusterrole grafana-operator-cluster-role"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+
+- name: Delete the existing grafana operator role
+  shell: "oc delete role grafana-operator-role -n {{ monitoring_namespace }}"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+
+- name: Delete the existing grafana operator role binding
+  shell: "oc delete rolebinding grafana-operator-role-binding -n {{ monitoring_namespace }}"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+
+- name: Delete the old serviceaccount
+  shell: "oc delete serviceaccount grafana-serviceaccount -n {{ monitoring_namespace }}"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+
+- name: Recreate resources from latest templates
+  include: ./create_resource_from_template.yml
+  with_items:
+    - "grafana-proxy-clusterrole.yml"
+    - "grafana-proxy-clusterrole_binding.yml"
+    - "grafana_cluster_role.yml"
+    - "grafana_cluster_role_binding.yml"
+
+- name: Upgrade CRDs
+  include: ./apply_resource_from_template.yml
+  with_items:
+    - "grafana_crd.yml"
+    - "grafana_dashboard_crd.yml"
+    - "grafana_datasource_crd.yml"
+
+- name: Include rhsso vars
+  include_vars: ../../../rhsso/defaults/main.yml
+
+- name: Label the keycloak dashboard for the grafana operator to discover it
+  shell: "oc label grafanadashboard keycloak monitoring-key=middleware -n {{ rhsso_namespace }} --overwrite"

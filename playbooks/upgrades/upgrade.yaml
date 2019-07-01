@@ -65,6 +65,25 @@
         name: code-ready
         tasks_from: upgrade_1.0_to_1.2.yml
 
+    # Monitoring upgrade
+    # Grafana
+    - include_role:
+        name: middleware_monitoring
+        tasks_from: upgrade/grafana
+      when: target_version.stdout == "release-1.4.1"
+
+    # Prometheus & Alertmanager
+    - include_role:
+        name: middleware_monitoring
+        tasks_from: upgrade/prometheus
+      when: target_version.stdout == "release-1.4.1"
+
+    # Pull the trigger on the monitoring upgrade
+    - include_role:
+        name: middleware_monitoring
+        tasks_from: upgrade/trigger
+      when: target_version.stdout == "release-1.4.1"
+    # End monitoring upgrade
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

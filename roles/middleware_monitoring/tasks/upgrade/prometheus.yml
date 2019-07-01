@@ -1,0 +1,61 @@
+---
+- name: Upgrade cluster roles
+  include: ./apply_resource_from_template.yml
+  with_items:
+    - "prometheus_cluster_role.yml"
+    - "alert_manager_cluster_role.yml"
+
+- name: Delete existing prometheus
+  shell: "oc delete prometheus application-monitoring -n {{ monitoring_namespace }}"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+
+- name: Wait for operator to remove prometheus
+  shell: "oc get statefulset prometheus-application-monitoring -n {{ monitoring_namespace }}"
+  register: get_statefulset_cmd
+  failed_when: get_statefulset_cmd.rc == 0
+  changed_when: "'NotFound' in get_deployment_cmd.stderr"
+  retries: 10
+  delay: 5
+
+- name: Delete existing alertmanager
+  shell: "oc delete alertmanager application-monitoring -n {{ monitoring_namespace }}"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+
+- name: Wait for operator to remove alertmanager
+  shell: "oc get statefulset alertmanager-application-monitoring -n {{ monitoring_namespace }}"
+  register: get_statefulset_cmd
+  failed_when: get_statefulset_cmd.rc == 0
+  changed_when: "'NotFound' in get_deployment_cmd.stderr"
+  retries: 10
+  delay: 5
+
+- name: Delete serviceaccounts
+  shell: "oc delete serviceaccount {{ item }} -n {{ monitoring_namespace }}"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+  with_items:
+    - alertmanager
+    - prometheus-application-monitoring
+
+- name: Delete routes
+  shell: "oc delete route {{ item }} -n {{ monitoring_namespace }}"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+  with_items:
+    - alertmanager-route
+    - prometheus-route
+
+- name: Delete services
+  shell: "oc delete service {{ item }} -n {{ monitoring_namespace }}"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+  with_items:
+    - alertmanager-service
+    - prometheus-service
