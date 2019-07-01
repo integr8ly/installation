@@ -3,6 +3,8 @@ monitoring_namespace: "{{ns_prefix | default('')}}middleware-monitoring"
 namespace_postfix: ""
 monitoring_display_name: "Managed Service Monitoring"
 monitoring_tmp_dir: /tmp
+monitoring_prometheus_retention: 45d
+monitoring_prometheus_storage_request: 10Gi
 
 # Resources to create via the oc tool.
 monitoring_resources:
