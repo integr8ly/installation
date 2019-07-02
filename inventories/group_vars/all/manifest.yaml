@@ -10,10 +10,10 @@ cluster_type: rhpds
 threescale: true
 # below threescale variables below are not currently used. They define where and what to pull in from github. These will be important as we look to break out and decouple the resources from the installer ###############
 # not currently used but records the version installed by the operator, this should come from the status block
-threescale_version: '2.5.0.GA'
+threescale_version: '3scale-2.6.0-ER2-intly'
 threescale_namespace: "{{ns_prefix | default('')}}3scale"
 threescale_display_name: "Red Hat 3scale API Management Platform"
-threescale_resources_base: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp'
+threescale_resources_base: 'https://raw.githubusercontent.com/integr8ly/3scale-operator/3scale-2.6.0-ER2-intly/pkg/3scale/amp/auto-generated-templates/amp'
 threescale_template: '{{threescale_resources_base}}/amp.yml'
 threescale_template_s3: '{{threescale_resources_base}}/amp-s3.yml'
 
