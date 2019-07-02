@@ -9,7 +9,7 @@
     - "{{ middleware_monitoring_operator_resources }}/crds/ApplicationMonitoring.yaml"
 
 - name: Upgrade the application monitoring operator
-  shell: "oc patch deployment application-monitoring-operator --patch='{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"application-monitoring-operator\",\"image\":\"quay.io/integreatly/application-monitoring-operator:0.0.16\" }]}}}}' -n {{ monitoring_namespace }}"
+  shell: "oc patch deployment application-monitoring-operator --patch='{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"application-monitoring-operator\",\"image\":\"quay.io/integreatly/application-monitoring-operator:{{ middleware_monitoring_operator_release_tag }}\" }]}}}}' -n {{ monitoring_namespace }}"
   register: patch_deployment_cmd
   failed_when: patch_deployment_cmd.stderr != ""
 
