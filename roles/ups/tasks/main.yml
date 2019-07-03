@@ -1,0 +1,7 @@
+---
+
+- include_tasks: prereq.yml
+
+- include_tasks: install-operator.yml
+
+- include_tasks: install-server.yml

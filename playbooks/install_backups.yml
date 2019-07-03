@@ -37,6 +37,13 @@
       tags: ['user_rhsso']
       when: user_rhsso | default(true) | bool
     - include_role:
+        name: ups
+        tasks_from: backup.yml
+      vars:
+        ups_patch_backup: true
+      tags: ['ups']
+      when: ups | default(true) | bool
+    - include_role:
         name: backup
         tasks_from: monitoring.yml
       when: backup_restore_monitoring | default(true) | bool

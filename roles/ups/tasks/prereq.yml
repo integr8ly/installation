@@ -1,0 +1,6 @@
+---
+
+- name: Ensure {{ ups_template_dir }} exists
+  file:
+    path: "{{ ups_template_dir }}"
+    state: directory

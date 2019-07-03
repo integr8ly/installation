@@ -1,0 +1,21 @@
+- hosts: localhost
+  tasks:
+    - include_role:
+        name: ups
+
+    - include_role:
+        name: ups
+        tasks_from: monitoring
+
+    - shell: "oc get unifiedpushservers/unifiedpush -o jsonpath='{.status.phase}' -n unifiedpush"
+      register: get_status_cmd
+    - shell: "oc get pods -o json -n unifiedpush"
+      register: get_pods_cmd
+    - shell: "oc get servicemonitor/unifiedpush-operator -o name -n unifiedpush"
+      register: get_svcmonitor_cmd
+
+    - assert:
+        that:
+          - get_status_cmd.stdout == 'Complete'
+          - (get_pods_cmd.stdout|from_json)['items']|length == 3
+          - get_svcmonitor_cmd.stdout == 'servicemonitor.monitoring.coreos.com/unifiedpush-operator'

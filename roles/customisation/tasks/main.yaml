@@ -234,6 +234,7 @@
     component_manifests: "{{component_manifests}} + {{enmasse_manifest}}"
   when: enmasse
 
+#mobile security service(mss)
 - name: Get Mobile Security Service rest route
   shell: oc get route/route -o template --template \{\{.spec.host\}\} -n {{ eval_mobile_security_service_namespace | default('mobile-security-service') }}
   register: mss_route_cmd
@@ -254,6 +255,24 @@
 - set_fact:
     component_manifests: "{{component_manifests}} + {{ mss_manifest }}"
   when: mobile_security_service
+
+#unified push server(ups)
+- name: Unified Push Server
+  block:
+    - name: Get Unified Push Server route
+      shell: oc get route/unifiedpush-unifiedpush-proxy  -o template --template \{\{.spec.host\}\} -n {{ eval_ups_namespace | default('unifiedpush') }}
+      register: ups_route_cmd
+    - set_fact:
+        ups_route: "https://{{ups_route_cmd.stdout}}"
+    - name: Set Unified Push Server component
+      set_fact:
+        ups_manifest:
+          - name: Unified Push Server
+            version: "{{ ups_release_tag }}"
+            host: "{{ ups_route }}"
+    - set_fact:
+        component_manifests: "{{ component_manifests }} + {{ ups_manifest }}"
+  when: ups
 
 - name: Retrieve launcher sso hostvars
   shell: "oc get route/{{launcher_sso_prefix}} -o jsonpath='{.spec.host}' -n {{ launcher_namespace }}"

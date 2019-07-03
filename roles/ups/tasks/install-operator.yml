@@ -1,0 +1,35 @@
+---
+
+- include_role:
+    name: namespace
+    tasks_from: create
+  vars:
+    name: "{{ ups_namespace }}"
+    display_name: "Unified Push Server"
+    monitor: true
+    is_service: true
+
+- name: Install ups resources
+  shell: "oc apply -f {{ item }} -n {{ ups_namespace }}"
+  with_items: "{{ ups_resources }}"
+
+- name: Process operator template
+  template:
+    src: operator.yml.j2
+    dest: "{{ ups_template_dir }}/ups-operator.yml"
+
+- name: Provision ups operator
+  shell: "oc apply -f {{ ups_template_dir }}/ups-operator.yml -n {{ ups_namespace }}"
+
+- name: Get deployment desired replicas
+  shell: "oc get deployment/unifiedpush-operator -o jsonpath='{.spec.replicas}' -n {{ ups_namespace }}"
+  register: ups_operator_replicas_cmd
+
+- name: Wait for operator readiness
+  shell: "oc get deployment/unifiedpush-operator -o jsonpath='{.status.availableReplicas}' -n {{ ups_namespace }}"
+  register: result
+  until: result.stdout == ups_operator_replicas_cmd.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  changed_when: False
