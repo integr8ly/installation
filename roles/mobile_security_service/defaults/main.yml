@@ -6,9 +6,12 @@ mobile_security_service_operator_resource_items:
   - "{{ mobile_security_service_operator_resources }}/crds/mobile-security-service_v1alpha1_mobilesecurityservice_crd.yaml"
   - "{{ mobile_security_service_operator_resources }}/crds/mobile-security-service_v1alpha1_mobilesecurityservicedb_crd.yaml"
   - "{{ mobile_security_service_operator_resources }}/crds/mobile-security-service_v1alpha1_mobilesecurityserviceapp_crd.yaml"
+  - "{{ mobile_security_service_operator_resources }}/crds/mobile-security-service_v1alpha1_mobilesecurityservicebackup_crd.yaml"
   - "{{ mobile_security_service_operator_resources }}/cluster_role.yaml"
   - "{{ mobile_security_service_operator_resources }}/cluster_role_binding.yaml"
   - "{{ mobile_security_service_operator_resources }}/service_account.yaml"
+
+mobile_security_service_monitoring_resource_items:
   - "{{ mobile_security_service_operator_resources }}/monitor/service_monitor.yaml"
   - "{{ mobile_security_service_operator_resources }}/monitor/mss_service_monitor.yaml"
   - "{{ mobile_security_service_operator_resources }}/monitor/operator_service.yaml"

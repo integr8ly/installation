@@ -1,0 +1,12 @@
+---
+- name: Check {{ mobile_security_service_namespace }} namespace exists
+  shell: oc get namespace {{ mobile_security_service_namespace }}
+  register: mss_namespace_check
+  failed_when: mss_namespace_check.stderr != '' and 'not found' not in mss_namespace_check.stderr
+
+
+- name: Create Mobile Security Service Operator Resources
+  shell: "oc apply -f {{ item }} -n {{ mobile_security_service_namespace }}"
+  with_items: "{{ mobile_security_service_monitoring_resource_items }}"
+  register: mobile_security_service_monitoring_resource_cmd
+  failed_when: mobile_security_service_monitoring_resource_cmd.stderr != '' and 'AlreadyExists' not in mobile_security_service_monitoring_resource_cmd.stderr

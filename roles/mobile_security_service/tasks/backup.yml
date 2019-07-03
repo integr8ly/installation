@@ -1,0 +1,10 @@
+---
+- name: Generate Mobile Security Service Backup CR template
+  template:
+    src: "backup_cr.yml.j2"
+    dest: /tmp/mobile_security_service_backup.yml
+
+- name: Apply Mobile Security Service Backup CR
+  shell: "oc apply -f /tmp/mobile_security_service_backup.yml -n {{ mobile_security_service_namespace }}"
+  register: mobile_security_service_backup_cmd
+  failed_when: mobile_security_service_backup_cmd.stderr != '' and 'AlreadyExists' not in mobile_security_service_backup_cmd.stderr

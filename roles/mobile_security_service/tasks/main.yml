@@ -63,3 +63,4 @@
   until: mobile_security_service_result.stdout.find("2") != -1
   retries: 50
   delay: 5
+
