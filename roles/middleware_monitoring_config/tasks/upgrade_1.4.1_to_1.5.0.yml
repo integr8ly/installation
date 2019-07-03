@@ -1,3 +1,4 @@
+---
 - name: "Set facts required to patch the middleware-monitoring"
   set_fact:
     monitoring_upgrade_namespace: "{{ eval_middleware_monitoring_namespace }}"
