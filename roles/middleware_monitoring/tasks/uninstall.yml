@@ -1,4 +1,18 @@
 ---
+- name: Get the name of the application monitoring CR (may be different depending on version)
+  shell: "oc get applicationmonitorings -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ monitoring_namespace }}"
+  register: get_amo_cr_name_cmd
+  failed_when: get_amo_cr_name_cmd.stderr != '' and 'NotFound' not in get_amo_cr_name_cmd.stderr and "no matches for kind" not in get_amo_cr_name_cmd.stderr and "the server doesn't have a resource type" not in get_amo_cr_name_cmd.stderr
+
+- set_fact:
+    aom_cr_name: "{{ get_amo_cr_name_cmd.stdout | trim }}"
+
+- name: Delete the application monitoring CR
+  shell: "oc delete applicationmonitoring {{ aom_cr_name }} -n {{ monitoring_namespace }}"
+  register: monitoring_resource_delete
+  failed_when: monitoring_resource_delete.stderr != '' and 'NotFound' not in monitoring_resource_delete.stderr and "no matches for kind" not in monitoring_resource_delete.stderr
+  when: aom_cr_name != ''
+
 - include: ./delete_resource_from_template.yml
   with_items: "{{ monitoring_resource_templates_pre }}"
 
