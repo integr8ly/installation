@@ -31,6 +31,11 @@
       register: upgrade_webapp
       failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
 
+    - name: SSO upgrade
+      include_role:
+        name: rhsso
+        tasks_from: upgrade
+
     - name: Update image streams
       include_role:
         name: images

@@ -1,0 +1,19 @@
+---
+
+- name: "Ensure {{ rhsso_imagestream_name }} tag is present for redhat sso in openshift namespace"
+  shell: oc tag --source=docker {{ rhsso_imagestream_image }} openshift/{{ rhsso_imagestream_name }}
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 1
+  failed_when: not result.stdout
+  changed_when: False
+
+- name: "Ensure {{ rhsso_imagestream_name }} tag has an imported image in openshift namespace"
+  shell: oc -n openshift import-image {{ rhsso_imagestream_name }}
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 1
+  failed_when: not result.stdout
+  changed_when: False
