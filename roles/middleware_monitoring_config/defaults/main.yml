@@ -14,3 +14,4 @@ additional_scrape_config_patch: "{\"spec\":{\"additionalScrapeConfigs\":{\"name\
 
 sre_dashboards:
   - resources-by-namespace.yml
+  - resources-by-pod.yml
