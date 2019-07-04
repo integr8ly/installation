@@ -732,6 +732,108 @@ spec:
           "valueName": "current"
         },
         {
+          "cacheTimeout": null,
+          "colorBackground": true,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "datasource": "Prometheus",
+          "decimals": 0,
+          "format": "none",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 2,
+            "w": 6,
+            "x": 0,
+            "y": 8
+          },
+          "id": 20,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "minSpan": 3,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "repeatDirection": "h",
+          "scopedVars": {
+            "services": {
+              "selected": false,
+              "text": "sso",
+              "value": "sso"
+            }
+          },
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "probe_http_status_code{service=~\"$services\"}",
+              "format": "time_series",
+              "interval": "$interval",
+              "intervalFactor": 1,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "300,400",
+          "title": "HTTP Status Code",
+          "transparent": false,
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            },
+            {
+              "op": "=",
+              "text": "YES",
+              "value": "1"
+            },
+            {
+              "op": "=",
+              "text": "NO",
+              "value": "0"
+            }
+          ],
+          "valueName": "current"
+        },
+        {
           "backgroundColor": "rgba(128,128,128,0.1)",
           "colorMaps": [
             {
