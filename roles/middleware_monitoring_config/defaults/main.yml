@@ -11,3 +11,6 @@ config_secret_contents_file: integreatly-additional.yaml
 prometheus_cr_name: application-monitoring
 additional_scrape_config_name: integreatly-additional-scrape-configs
 additional_scrape_config_patch: "{\"spec\":{\"additionalScrapeConfigs\":{\"name\":\"{{ additional_scrape_config_name }}\", \"key\": \"{{ config_secret_contents_file }}\"}}}"
+
+sre_dashboards:
+  - resources-by-namespace.yml
