@@ -34,7 +34,7 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
-          "fill": 2,
+          "fill": 1,
           "gridPos": {
             "h": 7,
             "w": 24,
@@ -52,7 +52,7 @@ spec:
             "values": false
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
           "percentage": false,
@@ -68,7 +68,7 @@ spec:
               "expr": "sum(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace='$namespace'}) by (pod_name)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ "{" }}pod_name{{ "}" }}",
+              "legendFormat": "{{ "{{" }}pod_name{{ "}}" }}",
               "legendLink": null,
               "step": 10,
               "refId": "A"
@@ -136,7 +136,7 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
-          "fill": 2,
+          "fill": 1,
           "fontSize": "100%",
           "gridPos": {
             "h": 7,
@@ -155,7 +155,7 @@ spec:
             "values": false
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
           "pageSize": null,
@@ -380,7 +380,7 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
-          "fill": 2,
+          "fill": 1,
           "gridPos": {
             "h": 7,
             "w": 24,
@@ -398,7 +398,7 @@ spec:
             "values": false
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
           "percentage": false,
@@ -414,7 +414,7 @@ spec:
               "expr": "sum(container_memory_usage_bytes{namespace='$namespace', container_name!=''}) by (pod_name)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ "{" }}pod_name {{ "}" }}",
+              "legendFormat": "{{ "{{" }}pod_name{{ "}}" }}",
               "legendLink": null,
               "step": 10,
               "refId": "A"
@@ -482,7 +482,7 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
-          "fill": 2,
+          "fill": 1,
           "fontSize": "100%",
           "gridPos": {
             "h": 7,
@@ -501,7 +501,7 @@ spec:
             "values": false
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
           "pageSize": null,
@@ -770,6 +770,6 @@ spec:
         ]
       },
       "timezone": "",
-      "title": "Resource Usage By Middleware Service",
+      "title": "Resource Usage By Namespace",
       "version": 1
     }
