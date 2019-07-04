@@ -34,7 +34,7 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
-          "fill": 2,
+          "fill": 1,
           "gridPos": {
             "h": 7,
             "w": 24,
@@ -52,7 +52,7 @@ spec:
             "values": false
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
           "percentage": false,
@@ -68,7 +68,7 @@ spec:
               "expr": "sum(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace='$namespace', pod_name='$pod', container_name!='POD'}) by (container_name)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ "{" }}container_name{{ "}" }}",
+              "legendFormat": "{{ "{{" }}container_name{{ "}}" }}",
               "legendLink": null,
               "step": 10
             },
@@ -76,7 +76,7 @@ spec:
               "expr": "kube_pod_container_resource_requests_cpu_cores{namespace='$namespace', pod='$pod'}",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ "{" }}pod{{ "}" }} Request",
+              "legendFormat": "{{ "{{" }}pod{{ "}}" }} Request",
               "legendLink": null,
               "step": 10
             },
@@ -84,7 +84,7 @@ spec:
               "expr": "kube_pod_container_resource_limits_cpu_cores{namespace='$namespace', pod='$pod'}",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ "{" }}pod{{ "}" }} Limit",
+              "legendFormat": "{{ "{{" }}pod{{ "}}" }} Limit",
               "legendLink": null,
               "step": 10
             }
@@ -151,7 +151,7 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
-          "fill": 2,
+          "fill": 1,
           "fontSize": "100%",
           "gridPos": {
             "h": 7,
@@ -170,7 +170,7 @@ spec:
             "values": false
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
           "pageSize": null,
@@ -395,7 +395,7 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
-          "fill": 2,
+          "fill": 1,
           "gridPos": {
             "h": 7,
             "w": 24,
@@ -413,7 +413,7 @@ spec:
             "values": false
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
           "percentage": false,
@@ -429,7 +429,7 @@ spec:
               "expr": "sum(container_memory_usage_bytes{namespace='$namespace', pod_name='$pod', container_name!='POD', container_name!=''}) by (container_name)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ "{" }}container_name{{ "}" }}",
+              "legendFormat": "{{ "{{" }}container_name{{ "}}" }}",
               "legendLink": null,
               "step": 10
             },
@@ -437,7 +437,7 @@ spec:
               "expr": "kube_pod_container_resource_requests_memory_bytes{namespace='$namespace', pod='$pod'}",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ "{" }}pod{{ "}" }} Request",
+              "legendFormat": "{{ "{{" }}pod{{ "}}" }} Request",
               "legendLink": null,
               "step": 10
             },
@@ -445,7 +445,7 @@ spec:
               "expr": "kube_pod_container_resource_limits_memory_bytes{namespace='$namespace', pod='$pod'}",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ "{" }}pod{{ "}" }} Limit",
+              "legendFormat": "{{ "{{" }}pod{{ "}}" }} Limit",
               "legendLink": null,
               "step": 10
             }
@@ -512,7 +512,7 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
-          "fill": 2,
+          "fill": 1,
           "fontSize": "100%",
           "gridPos": {
             "h": 7,
@@ -531,7 +531,7 @@ spec:
             "values": false
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
           "pageSize": null,
