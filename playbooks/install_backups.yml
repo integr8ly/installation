@@ -20,6 +20,7 @@
       include_role:
         name: mobile_security_service
         tasks_from: backup.yml
+      when:  mobile_security_service | default(false) | bool
     -
       include_role:
         name: rhsso
