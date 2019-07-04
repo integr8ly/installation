@@ -41,13 +41,6 @@ spec:
           "id": 15,
           "panels": [],
           "repeat": "services",
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
           "title": "$services UP/DOWN Status",
           "type": "row"
         },
@@ -106,13 +99,6 @@ spec:
           ],
           "repeat": null,
           "repeatDirection": "h",
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -162,7 +148,7 @@ spec:
             "#d44a3a"
           ],
           "datasource": "Prometheus",
-          "format": "s",
+          "format": "none",
           "gauge": {
             "maxValue": 100,
             "minValue": 0,
@@ -204,13 +190,6 @@ spec:
               "to": "null"
             }
           ],
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -292,13 +271,6 @@ spec:
               "to": "null"
             }
           ],
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -360,13 +332,6 @@ spec:
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
           "seriesOverrides": [
             {
               "alias": "UP/DOWN",
@@ -468,13 +433,6 @@ spec:
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
           "seriesOverrides": [],
           "spaceLength": 10,
           "stack": false,
@@ -584,13 +542,6 @@ spec:
             }
           ],
           "repeatDirection": "h",
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -685,13 +636,6 @@ spec:
             }
           ],
           "repeatDirection": "h",
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -786,13 +730,6 @@ spec:
             }
           ],
           "repeatDirection": "h",
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "sso",
-              "value": "sso"
-            }
-          },
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -866,13 +803,6 @@ spec:
             }
           ],
           "rowHeight": 25,
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
           "showDistinctCount": true,
           "showLegend": true,
           "showLegendCounts": true,
@@ -1000,13 +930,6 @@ spec:
               "to": "null"
             }
           ],
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -1036,111 +959,6 @@ spec:
           ],
           "valueName": "current"
         },
-        {
-          "cacheTimeout": null,
-          "colorBackground": true,
-          "colorValue": false,
-          "colors": [
-            "#299c46",
-            "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
-          ],
-          "datasource": "Prometheus",
-          "decimals": 0,
-          "format": "none",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 2,
-            "w": 6,
-            "x": 0,
-            "y": 32
-          },
-          "id": 75,
-          "interval": null,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "minSpan": 3,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "repeatDirection": "h",
-          "repeatIteration": 1561558894526,
-          "repeatPanelId": 20,
-          "repeatedByRow": true,
-          "scopedVars": {
-            "services": {
-              "selected": false,
-              "text": "x",
-              "value": "x"
-            }
-          },
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false
-          },
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "probe_http_status_code{service=~\"$services\"}",
-              "format": "time_series",
-              "interval": "$interval",
-              "intervalFactor": 1,
-              "refId": "A"
-            }
-          ],
-          "thresholds": "300,400",
-          "title": "HTTP Status Code",
-          "transparent": false,
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            },
-            {
-              "op": "=",
-              "text": "YES",
-              "value": "1"
-            },
-            {
-              "op": "=",
-              "text": "NO",
-              "value": "0"
-            }
-          ],
-          "valueName": "current"
-        }
       ],
       "refresh": "30s",
       "schemaVersion": 16,
@@ -1241,14 +1059,7 @@ spec:
           },
           {
             "allValue": null,
-            "current": {
-              "selected": false,
-              "tags": [],
-              "text": "All",
-              "value": [
-                "$__all"
-              ]
-            },
+            "current": {},
             "datasource": "Prometheus",
             "definition": "label_values(probe_success, service)",
             "hide": 0,
@@ -1302,6 +1113,6 @@ spec:
       "timezone": "",
       "title": "Endpoints Detailed",
       "uid": "xtkCtBkiz2",
-      "version": 13
+      "version": 1
     }
   name: endpointsdetailed.json
