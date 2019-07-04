@@ -1638,20 +1638,22 @@ spec:
             "hide": 0,
             "includeAll": true,
             "label": null,
-            "multi": false,
+            "multi": true,
             "name": "services",
             "options": [
                 {
                 "selected": true,
                 "text": "All",
-                "value": "$__all"
+                "value": [
+                  "$__all"
+                ]
                 }
             ],
             "query": "label_values(probe_success, service)",
-            "refresh": 0,
+            "refresh": 1,
             "regex": "",
             "skipUrlSync": false,
-            "sort": 1,
+            "sort": 0,
             "tagValuesQuery": "",
             "tags": [],
             "tagsQuery": "",
@@ -1693,4 +1695,5 @@ spec:
         "title": "Endpoints Report",
         "version": 18
     }
+
   name: endpointsreport.json
