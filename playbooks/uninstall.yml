@@ -100,6 +100,20 @@
         tasks_from: uninstall
       tags: ['walkthroughs']
     -
+      name: Uninstall middleware-monitoring
+      include_role:
+        name: middleware_monitoring
+        tasks_from: uninstall
+      tags: ['middleware-monitoring']
+      when: middleware_monitoring | default(true) | bool
+    -
+      name: Uninstall application-monitoring
+      include_role:
+        name: application_monitoring
+        tasks_from: uninstall
+      tags: ['application-monitoring']
+      when: application_monitoring | default(true) | bool
+    -
       name: Uninstall managed Fuse
       include_role:
         name: fuse_managed
@@ -147,21 +161,6 @@
       vars:
         ups_namespace: "{{ eval_ups_namespace }}"
       tags: ['ups']
-
-    -
-      name: Uninstall middleware-monitoring
-      include_role:
-        name: middleware_monitoring
-        tasks_from: uninstall
-      tags: ['middleware-monitoring']
-      when: middleware_monitoring | default(true) | bool
-    -
-      name: Uninstall application-monitoring
-      include_role:
-        name: application_monitoring
-        tasks_from: uninstall
-      tags: ['application-monitoring']
-      when: application_monitoring | default(true) | bool
 
     -
       name: Reboot template broker
