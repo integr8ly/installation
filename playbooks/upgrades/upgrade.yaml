@@ -61,6 +61,12 @@
       vars:
         ups_backup: "{{ backup_restore_install | default(false) | bool }}"
       when: ups
+    
+    #applicatio metrics
+    - name: Install application metrics
+      include_role:
+        name: application_monitoring
+      when: application_metrics | default(false) | bool
 
     # Update labels on the prometheusrules in the middleware-monitoring namespace. INTLY-2408
     - name: Update labels on the prometheusrules in the middleware-monitoring namespace
