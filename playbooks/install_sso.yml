@@ -2,10 +2,6 @@
 - hosts: localhost
   gather_facts: true
   tasks:
-    - name: Generate evals user password
-      set_fact:
-        rhsso_seed_users_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters,digits') }}"
-
     - name: Expose vars
       include_vars: "../roles/rhsso/defaults/main.yml"
     -
