@@ -25,3 +25,4 @@ monitoring_prometheusrules_resource_templates:
 sre_dashboards:
   - resources-by-namespace.yml
   - resources-by-pod.yml
+  - cluster-resources.yml
