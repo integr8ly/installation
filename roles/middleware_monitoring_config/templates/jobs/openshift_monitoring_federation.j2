@@ -14,6 +14,7 @@
     - '{{ "{" }} __name__=~"namespace_pod_name_container_name:.*" }'
     - '{{ "{" }} __name__=~"node:.*" {{ "}" }}'
     - '{{ "{" }} __name__="container_memory_usage_bytes" {{ "}" }}'
+    - '{{ "{" }} __name__=~":node_memory_.*" {{ "}" }}'
   scheme: https
   tls_config:
     insecure_skip_verify: true

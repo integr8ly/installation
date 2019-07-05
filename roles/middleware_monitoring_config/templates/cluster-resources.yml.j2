@@ -1,19 +1,18 @@
 apiVersion: integreatly.org/v1alpha1
 kind: GrafanaDashboard
 metadata:
-  name: cluster-resources
+  name: cluster-resources-new
   labels:
     monitoring-key: "{{monitoring_label_value}}"
 spec:
-  name: cluster-resources.json
+  name: cluster-resources-new.json
   json: >
     {
       "annotations": {},
       "editable": true,
       "gnetId": null,
       "graphTooltip": 0,
-      "id": 1,
-      "iteration": 1562247965102,
+      "id": 14,
       "links": [],
       "panels": [
         {
@@ -27,7 +26,7 @@ spec:
           "id": 10,
           "panels": [],
           "repeat": null,
-          "title": "Headlines",
+          "title": "CPU Overview",
           "type": "row"
         },
         {
@@ -44,6 +43,8 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
+          "decimals": 2,
+          "description": "CPU Usage of all middleware namespaces",
           "fill": 1,
           "format": "percentunit",
           "gauge": {
@@ -55,7 +56,7 @@ spec:
           },
           "gridPos": {
             "h": 3,
-            "w": 4,
+            "w": 3,
             "x": 0,
             "y": 1
           },
@@ -115,7 +116,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "1 - avg(rate(node_cpu{mode='idle'}[1m]))",
+              "expr": "sum(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate * on (namespace) group_left(label_monitoring_key) sum(kube_namespace_labels{label_monitoring_key=~'middleware'}) by (namespace)) / sum(kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"} * on(node) group_left (instance) kube_node_status_allocatable_cpu_cores)",
               "format": "time_series",
               "instant": true,
               "intervalFactor": 2,
@@ -125,7 +126,7 @@ spec:
           "thresholds": "70,80",
           "timeFrom": null,
           "timeShift": null,
-          "title": "CPU Utilisation",
+          "title": "CPU Utilisation (Middleware)",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -181,6 +182,7 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
+          "description": "CPU idle percentage across all compute nodes",
           "fill": 1,
           "format": "percentunit",
           "gauge": {
@@ -191,283 +193,9 @@ spec:
             "thresholdMarkers": true
           },
           "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 4,
-            "y": 1
-          },
-          "id": 1,
-          "interval": null,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "null as zero",
-          "nullText": null,
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false
-          },
-          "stack": false,
-          "steppedLine": false,
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "sum(kube_pod_container_resource_requests_cpu_cores) / sum(node:node_num_cpu:sum)",
-              "format": "time_series",
-              "instant": true,
-              "intervalFactor": 2,
-              "refId": "A"
-            }
-          ],
-          "thresholds": "70,80",
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "CPU Requests Commitment",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "avg",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ]
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": false,
-          "colors": [
-            "#299c46",
-            "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
-          ],
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "Prometheus",
-          "fill": 1,
-          "format": "percentunit",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 8,
-            "y": 1
-          },
-          "id": 2,
-          "interval": null,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "null as zero",
-          "nullText": null,
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false
-          },
-          "stack": false,
-          "steppedLine": false,
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "sum(kube_pod_container_resource_limits_cpu_cores) / sum(node:node_num_cpu:sum)",
-              "format": "time_series",
-              "instant": true,
-              "intervalFactor": 2,
-              "refId": "A"
-            }
-          ],
-          "thresholds": "70,80",
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "CPU Limits Commitment",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "avg",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ]
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": false,
-          "colors": [
-            "#299c46",
-            "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
-          ],
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "Prometheus",
-          "fill": 1,
-          "format": "percentunit",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 12,
+            "h": 6,
+            "w": 3,
+            "x": 3,
             "y": 1
           },
           "id": 3,
@@ -526,7 +254,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "1 - sum(:node_memory_MemFreeCachedBuffers:sum) / sum(:node_memory_MemTotal:sum)",
+              "expr": "1 - avg(node:node_cpu_utilisation:avg1m * on(node) group_left (instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"})",
               "format": "time_series",
               "instant": true,
               "intervalFactor": 2,
@@ -536,7 +264,7 @@ spec:
           "thresholds": "70,80",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Memory Utilisation",
+          "title": "CPU Unused %",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -592,6 +320,283 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
+          "description": "Sum of all CPU requests across middleware namespaces",
+          "fill": 1,
+          "format": "none",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 6,
+            "y": 1
+          },
+          "id": 1,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(kube_pod_container_resource_requests_cpu_cores * on (namespace) group_left(label_monitoring_key) sum(kube_namespace_labels{label_monitoring_key=~'middleware'}) by (namespace))",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CPU Requests (Middleware)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Total available CPU requests across all compute nodes",
+          "fill": 1,
+          "format": "none",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 3,
+            "x": 11,
+            "y": 1
+          },
+          "id": 19,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"} * on(node) group_left (instance) kube_node_status_allocatable_cpu_cores)",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CPU Requests Available",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Percentage of CPU requests allocated by middleware namespaces",
           "fill": 1,
           "format": "percentunit",
           "gauge": {
@@ -603,8 +608,146 @@ spec:
           },
           "gridPos": {
             "h": 3,
-            "w": 4,
-            "x": 16,
+            "w": 5,
+            "x": 14,
+            "y": 1
+          },
+          "id": 2,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(kube_pod_container_resource_requests_cpu_cores * on (namespace) group_left(label_monitoring_key) sum(kube_namespace_labels{label_monitoring_key=~'middleware'}) by (namespace)) / sum(kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"} * on(node) group_left (instance) kube_node_status_allocatable_cpu_cores)\n",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CPU Requests % (Middleware)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Percentage of CPU requests still available for allocation across all compute nodes",
+          "fill": 1,
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 5,
+            "x": 19,
             "y": 1
           },
           "id": 4,
@@ -663,7 +806,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kube_pod_container_resource_requests_memory_bytes) / sum(:node_memory_MemTotal:sum)",
+              "expr": "(1 - sum(kube_pod_container_resource_requests_cpu_cores * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"}) / sum(kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"} * on(node) group_left (instance) kube_node_status_allocatable_cpu_cores))\n",
               "format": "time_series",
               "instant": true,
               "intervalFactor": 2,
@@ -673,7 +816,7 @@ spec:
           "thresholds": "70,80",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Memory Requests Commitment",
+          "title": "CPU Uncommitted %",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -716,6 +859,87 @@ spec:
           ]
         },
         {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "datasource": "Prometheus",
+          "description": "CPU usage across all compute nodes",
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 3,
+            "x": 0,
+            "y": 4
+          },
+          "id": 16,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "avg(node:node_cpu_utilisation:avg1m * on(node) group_left (instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"})",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "",
+          "title": "CPU Utilisation (all on compute nodes)",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
+        },
+        {
           "aliasColors": {},
           "bars": false,
           "cacheTimeout": null,
@@ -729,8 +953,9 @@ spec:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Prometheus",
+          "description": "Sum of all CPU requests across all compute nodes",
           "fill": 1,
-          "format": "percentunit",
+          "format": "none",
           "gauge": {
             "maxValue": 100,
             "minValue": 0,
@@ -740,11 +965,11 @@ spec:
           },
           "gridPos": {
             "h": 3,
-            "w": 4,
-            "x": 20,
-            "y": 1
+            "w": 5,
+            "x": 6,
+            "y": 4
           },
-          "id": 5,
+          "id": 17,
           "interval": null,
           "legend": {
             "avg": false,
@@ -800,7 +1025,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kube_pod_container_resource_limits_memory_bytes) / sum(:node_memory_MemTotal:sum)",
+              "expr": "sum(kube_pod_container_resource_requests_cpu_cores * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"})",
               "format": "time_series",
               "instant": true,
               "intervalFactor": 2,
@@ -810,7 +1035,145 @@ spec:
           "thresholds": "70,80",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Memory Limits Commitment",
+          "title": "CPU Requests (Total)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Percentage of CPU requests allocated across all compute nodes",
+          "fill": 1,
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 14,
+            "y": 4
+          },
+          "id": 18,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(kube_pod_container_resource_requests_cpu_cores * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"}) / sum(kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"} * on(node) group_left (instance) kube_node_status_allocatable_cpu_cores)\n",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CPU Requests % (Total)",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -858,7 +1221,7 @@ spec:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 4
+            "y": 7
           },
           "id": 11,
           "panels": [],
@@ -877,7 +1240,7 @@ spec:
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 5
+            "y": 8
           },
           "id": 6,
           "legend": {
@@ -916,7 +1279,7 @@ spec:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "CPU Usage",
+          "title": "CPU Utilisation (in number of CPUs)",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -934,8 +1297,8 @@ spec:
             {
               "format": "short",
               "label": null,
-              "logBase": 1,
-              "max": null,
+              "logBase": 10,
+              "max": "100",
               "min": 0,
               "show": true
             },
@@ -959,7 +1322,7 @@ spec:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 15
           },
           "id": 12,
           "panels": [],
@@ -980,7 +1343,7 @@ spec:
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 16
           },
           "id": 7,
           "legend": {
@@ -1204,7 +1567,1263 @@ spec:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 20
+            "y": 23
+          },
+          "id": 21,
+          "panels": [],
+          "title": "Memory Overview",
+          "type": "row"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Memory usage by middleware namespaces",
+          "fill": 1,
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 3,
+            "x": 0,
+            "y": 24
+          },
+          "id": 22,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(container_memory_rss{container_name!='',container_name!='POD'} * on (namespace) group_left(label_monitoring_key) sum(kube_namespace_labels{label_monitoring_key=~'middleware'}) by (namespace)) / sum(kube_node_status_capacity_memory_bytes  * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"})",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Utilisation (Middleware)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Percentage of unused memory across all compute nodes",
+          "fill": 1,
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 3,
+            "x": 3,
+            "y": 24
+          },
+          "id": 24,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "1 -avg(sum(node:node_memory_utilisation:  * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"}))",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Unused %",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Memory requests by middleware namespaces",
+          "fill": 1,
+          "format": "bytes",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 6,
+            "y": 24
+          },
+          "id": 25,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(kube_pod_container_resource_requests_memory_bytes * on (namespace) group_left(label_monitoring_key) sum(kube_namespace_labels{label_monitoring_key=~'middleware'}) by (namespace))",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Requests (Middleware)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Total amount of requestable memory across all compute nodes",
+          "fill": 1,
+          "format": "bytes",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 3,
+            "x": 11,
+            "y": 24
+          },
+          "id": 27,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(kube_node_status_allocatable_memory_bytes * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"})",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Requests (Total)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Percentage of memory requested by middleware namespaces",
+          "fill": 1,
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 14,
+            "y": 24
+          },
+          "id": 28,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(kube_pod_container_resource_requests_memory_bytes * on (namespace) group_left(label_monitoring_key) sum(kube_namespace_labels{label_monitoring_key=~'middleware'}) by (namespace)) / sum(kube_node_status_allocatable_memory_bytes * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"})",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Requests % (Middleware)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Percentage of memory available for allocation across all compute nodes",
+          "fill": 1,
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 5,
+            "x": 19,
+            "y": 24
+          },
+          "id": 30,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "1 - sum(kube_pod_container_resource_requests_memory_bytes * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"}) / sum(kube_node_status_allocatable_memory_bytes * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"})",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Uncommited %",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Memory usage across all compute nodes",
+          "fill": 1,
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 3,
+            "x": 0,
+            "y": 27
+          },
+          "id": 23,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "avg(sum(node:node_memory_utilisation:  * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"}))",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Utilisation (Total)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Memory requests across all compute nodes",
+          "fill": 1,
+          "format": "bytes",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 6,
+            "y": 27
+          },
+          "id": 26,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(kube_pod_container_resource_requests_memory_bytes * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"})",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Requests (Total)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "description": "Percentage of memory requested across all compute nodes",
+          "fill": 1,
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 14,
+            "y": 27
+          },
+          "id": 29,
+          "interval": null,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "null as zero",
+          "nullText": null,
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "stack": false,
+          "steppedLine": false,
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(kube_pod_container_resource_requests_memory_bytes * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"}) / sum(kube_node_status_allocatable_memory_bytes * on(node) group_left(instance) kube_node_labels{label_node_role_kubernetes_io_compute=\"true\"})",
+              "format": "time_series",
+              "instant": true,
+              "intervalFactor": 2,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "70,80",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Requests % (Total)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 30
           },
           "id": 13,
           "panels": [],
@@ -1223,7 +2842,7 @@ spec:
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 21
+            "y": 31
           },
           "id": 8,
           "legend": {
@@ -1304,7 +2923,7 @@ spec:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 28
+            "y": 38
           },
           "id": 14,
           "panels": [],
@@ -1325,7 +2944,7 @@ spec:
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 29
+            "y": 39
           },
           "id": 9,
           "legend": {
@@ -1581,6 +3200,6 @@ spec:
         ]
       },
       "timezone": "",
-      "title": "Cluster Resources",
-      "version": 1
+      "title": "Resource Usage for Cluster",
+      "version": 8
     }
