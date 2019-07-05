@@ -1,0 +1,3 @@
+---
+# Apply latest CR definitions
+- include_tasks: ./kube_state_metrics_alerts.yml

@@ -62,11 +62,10 @@
         ups_backup: "{{ backup_restore_install | default(false) | bool }}"
       when: ups
 
-    # Update labels on the prometheusrules in the middleware-monitoring namespace. INTLY-2408
-    - name: Update labels on the prometheusrules in the middleware-monitoring namespace
+    - name: Recreate any CRs for alerts to ensure we have the latest
       include_role:
         name: middleware_monitoring_config
-        tasks_from: upgrade_1.4.1_to_1.5.0.yml
+        tasks_from: upgrade.yml
 
     - name: Upgrade code ready workspaces 1.0 to 1.2
       include_role:
@@ -93,7 +92,7 @@
       when: target_version.stdout == "release-1.4.1"
     # End monitoring upgrade
 
-    # Alerts upgrade
+    # Backup alerts upgrade
     - include_role:
         name: backup
         tasks_from: upgrade
