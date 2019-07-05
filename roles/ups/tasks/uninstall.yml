@@ -1,0 +1,45 @@
+---
+
+- name: Delete ups server
+  shell: "oc delete unifiedpushserver/{{ ups_server_name }} -n {{ ups_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
+  changed_when: output.rc == 0
+
+- name: Register available resources
+  shell: "oc get {{ item }} -n {{ ups_namespace }} -o name"
+  register: ups_resource_list_cmd
+  failed_when: false
+  with_items:
+    - androidvariants
+    - iosvariants
+    - pushapplications
+    - unifiedpushservers
+
+- set_fact:
+    ups_resource_list: "{{ ups_resource_list | default([]) + item.stdout_lines }}"
+  with_items: "{{ ups_resource_list_cmd.results }}"
+
+- name: Delete available resources
+  shell: "oc delete {{ item }} -n {{ resource_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  with_items: "{{ ups_resource_list }}"
+
+
+- name: "Wait for resources to be removed"
+  shell: oc get {{ item }} -n {{ resource_namespace }}
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
+  with_items: "{{ ups_resource_list }}"
+
+- include_role:
+    name: namespace
+    tasks_from: delete
+  vars:
+    names:
+      - "{{ ups_namespace }}"

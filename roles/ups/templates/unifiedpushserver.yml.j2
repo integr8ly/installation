@@ -1,0 +1,17 @@
+apiVersion: push.aerogear.org/v1alpha1
+kind: UnifiedPushServer
+metadata:
+  name: {{ ups_server_name }}
+{% if ups_backup %}
+spec:
+  backups:
+    -
+      name: {{ ups_backup_name }}
+      schedule: "{{ ups_backup_schedule }}"
+      backendSecretName: {{ ups_backup_secret }}
+      backendSecretNamespace: {{ ups_backup_secret_namespace }}
+      {% if ups_encryption_secret %}
+      encryptionKeySecretName: {{ ups_encryption_secret }}
+      encryptionKeySecretNamespace: {{ ups_encryption_secret_namespace }}
+      {% endif %}
+{% endif %}

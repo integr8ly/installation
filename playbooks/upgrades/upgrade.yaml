@@ -54,6 +54,14 @@
         tasks_from: upgrade
       when: mobile_security_service
 
+    #ups
+    - name: Install/Upgrade Unified Push Server (ups) as part of upgrade
+      include_role:
+        name: ups
+      vars:
+        ups_backup: "{{ backup_restore_install | default(false) | bool }}"
+      when: ups
+
     # Update labels on the prometheusrules in the middleware-monitoring namespace. INTLY-2408
     - name: Update labels on the prometheusrules in the middleware-monitoring namespace
       include_role:

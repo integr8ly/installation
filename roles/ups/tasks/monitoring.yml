@@ -1,0 +1,5 @@
+---
+- name: Create Service Monitor resource
+  shell: "oc apply -f {{ item }} -n {{ ups_namespace }}"
+  failed_when: output.stderr != '' and 'already exists' not in output.stderr
+  with_items: "{{ ups_svc_monitor_resources }}"

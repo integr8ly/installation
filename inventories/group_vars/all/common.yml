@@ -18,6 +18,8 @@ eval_nexus_namespace: "{{ns_prefix | default('')}}nexus"
 eval_managed_fuse_namespace: "{{ns_prefix | default('')}}fuse"
 eval_enmasse_namespace: "{{ ns_prefix | default('')}}enmasse"
 eval_mobile_security_service_namespace: "{{ ns_prefix | default('')}}mobile-security-service"
+eval_ups_namespace: "{{ ns_prefix | default('')}}unifiedpush"
+eval_mdc_namespace: "{{ ns_prefix | default('')}}mobile-developer-console"
 eval_middleware_monitoring_namespace: "{{ ns_prefix | default('')}}middleware-monitoring"
 
 eval_user_rhsso_namespace:  "{{ns_prefix | default('')}}user-sso"

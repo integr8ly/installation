@@ -1,0 +1,29 @@
+- hosts: localhost
+  tasks:
+    - include_role:
+        name: backup
+
+    - name: Create backup storage secret
+      shell: "oc apply -f {{ s3_secret_path }} -n openshift-integreatly-backups"
+
+    - include_role:
+        name: ups
+
+    - include_role:
+        name: ups
+        tasks_from: backup.yml
+      vars:
+        ups_patch_backup: true
+
+    - shell: "oc get cj/ups-daily-at-midnight -oname -n unifiedpush"
+      register: get_cj_cmd
+    - shell: "oc get unifiedpushservers/unifiedpush -o jsonpath='{.status.phase}' -n unifiedpush"
+      register: get_status_cmd
+    - shell: "oc get pods -o json -n unifiedpush"
+      register: get_pods_cmd
+
+    - assert:
+        that:
+          - get_cj_cmd.stdout == 'cronjob.batch/ups-daily-at-midnight'
+          - get_status_cmd.stdout == 'Complete'
+          - (get_pods_cmd.stdout|from_json)['items']|length == 3

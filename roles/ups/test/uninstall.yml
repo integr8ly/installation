@@ -1,0 +1,14 @@
+- hosts: localhost
+  tasks:
+    - include_role:
+        name: ups
+        tasks_from: uninstall
+
+    - shell: oc get ns/unifiedpush
+      register: get_ns_cmd
+      failed_when: false
+
+    - assert:
+        that:
+          - "'No resources found.' in get_ns_cmd.stderr"
+          - "'Error from server (NotFound): namespaces \"unifiedpush\" not found' in get_ns_cmd.stderr"

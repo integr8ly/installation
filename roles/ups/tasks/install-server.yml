@@ -1,0 +1,21 @@
+---
+- include_tasks: backup.yml
+
+- name: Process ups server template
+  template:
+    src: unifiedpushserver.yml.j2
+    dest: "{{ ups_template_dir }}/unifiedpushserver.yml"
+
+- name: Apply ups server resource
+  shell: "oc create -f {{ ups_template_dir }}/unifiedpushserver.yml -n {{ ups_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'AlreadyExists' not in output.stderr
+
+- name: Wait for ups readiness
+  shell: "oc get unifiedpushserver/{{ ups_server_name }} -o jsonpath='{.status.phase}' -n {{ ups_namespace }}"
+  register: result
+  until: result.stdout == 'Complete'
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  changed_when: False

@@ -1,0 +1,14 @@
+- hosts: localhost
+  tasks:
+    - include_role:
+        name: ups
+
+    - shell: "oc get unifiedpushservers/unifiedpush -o jsonpath='{.status.phase}' -n unifiedpush"
+      register: get_status_cmd
+    - shell: "oc get pods -o json -n unifiedpush"
+      register: get_pods_cmd
+
+    - assert:
+        that:
+          - get_status_cmd.stdout == 'Complete'
+          - (get_pods_cmd.stdout|from_json)['items']|length == 3

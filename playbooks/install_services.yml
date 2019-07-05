@@ -178,6 +178,12 @@
         name: datasync
       tags: ['datasync']
       when: datasync | default(true) | bool
+    
+    - name: Install unified push server (ups)
+      include_role:
+        name: ups
+      tags: ['ups']
+      when: ups | default(true) | bool
 
     - name: Expose vars
       include_vars: "../roles/mobile_security_service/defaults/main.yml"

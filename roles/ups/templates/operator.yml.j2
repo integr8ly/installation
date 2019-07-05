@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unifiedpush-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: unifiedpush-operator
+  template:
+    metadata:
+      labels:
+        name: unifiedpush-operator
+    spec:
+      serviceAccountName: unifiedpush-operator
+      containers:
+        - name: unifiedpush-operator
+          image: "{{ ups_operator_image }}"
+          command:
+          - unifiedpush-operator
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "unifiedpush-operator"
+            - name: UPS_IMAGE_STREAM_INITIAL_IMAGE
+              value: "{{ ups_image }}"
+            - name: OAUTH_PROXY_IMAGE_STREAM_INITIAL_IMAGE
+              value: "{{ ups_proxy_image }}"
+            - name: APP_NAMESPACES
+              value: "{{ ups_app_namespaces }}"

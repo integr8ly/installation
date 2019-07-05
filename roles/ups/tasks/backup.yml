@@ -1,0 +1,33 @@
+---
+- name: "Create backup cluster role"
+  shell: oc apply -f {{ item }} -n {{ ups_namespace }}
+  register: output
+  failed_when: output.stderr != '' and 'AlreadyExists' not in output.stderr
+  with_items: "{{ ups_backup_rbac_resources }}"
+        
+- name: "Create backup cluster role binding"
+  shell: oc new-app -f {{ item }} --param 'SA_NAMESPACE={{ ups_namespace }}'
+  register: output
+  failed_when: output.stderr != '' and 'already exists' not in output.stderr
+  with_items: "{{ ups_backup_rbac_template }}"  
+
+- name: Patch ups instance
+  block:
+    - name: Process ups server template
+      template:
+        src: unifiedpushserver.yml.j2
+        dest: "{{ ups_template_dir }}/unifiedpushserver.yml"
+      vars:
+        ups_backup: true
+    - name: Apply ups server resource
+      shell: "oc apply -f {{ ups_template_dir }}/unifiedpushserver.yml -n {{ ups_namespace }}"
+
+    - name: Wait for ups readiness
+      shell: "oc get unifiedpushserver/{{ ups_server_name }} -o jsonpath='{.status.phase}' -n {{ ups_namespace }}"
+      register: result
+      until: result.stdout == 'Complete'
+      retries: 50
+      delay: 10
+      failed_when: result.stderr
+      changed_when: False
+  when: ups_patch_backup | default(false) | bool
