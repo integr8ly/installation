@@ -6,8 +6,8 @@
   with_items: "{{ sre_dashboards }}"
 
 - name: Create dashboards from file
-  shell: "oc create -f /tmp/{{ item }} -n {{ monitoring_namespace }}"
+  shell: "oc apply -f /tmp/{{ item }} -n {{ monitoring_namespace }}"
   register: monitoring_resource_create
-  failed_when: monitoring_resource_create.stderr != '' and 'AlreadyExists' not in monitoring_resource_create.stderr
+  failed_when: monitoring_resource_create.stderr != ''
   changed_when: monitoring_resource_create.rc == 0
   with_items: "{{ sre_dashboards }}"
