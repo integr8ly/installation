@@ -4,8 +4,10 @@
     src: kube_state_metrics_alerts.yml.j2
     dest: /tmp/kube_state_metrics_alerts.yml
 
-- name: Create ksm alerts
-  shell: "oc create -f /tmp/kube_state_metrics_alerts.yml -n {{ middleware_monitoring_namespace }}"
-  register: create_ksm_alerts
-  failed_when: create_ksm_alerts.stderr != '' and 'already exists' not in create_ksm_alerts.stderr
-  changed_when: create_ksm_alerts.rc == 0
+# `oc apply` is used deliberately here so that this task can be used for *install* and *upgrade*.
+#  This ensures the latest alerts are created during install, and applied during upgrade.
+- name: Apply kube-state-metrics alerts
+  shell: "oc apply -f /tmp/kube_state_metrics_alerts.yml -n {{ middleware_monitoring_namespace }}"
+  register: apply_ksm_alerts
+  failed_when: apply_ksm_alerts.stderr != '' and 'already exists' not in apply_ksm_alerts.stderr and 'oc apply should be used on resource created by either oc create --save-config or oc apply' not in apply_ksm_alerts.stderr
+  changed_when: apply_ksm_alerts.rc == 0

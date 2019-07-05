@@ -72,7 +72,7 @@ spec:
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 6 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="{{enmasse_namespace}}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{enmasse_namespace}}"}) < 6
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{eval_enmasse_namespace}}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{eval_enmasse_namespace}}"}) < 6
         for: 5m
         labels:
           severity: critical
@@ -80,7 +80,7 @@ spec:
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 8 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="{{fuse_namespace}}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{fuse_namespace}}"}) < 8
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{eval_managed_fuse_namespace}}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{eval_managed_fuse_namespace}}"}) < 8
         for: 5m
         labels:
           severity: critical
@@ -120,7 +120,7 @@ spec:
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 6 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ monitoring_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ monitoring_namespace }}"}) != 6
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_middleware_monitoring_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_middleware_monitoring_namespace }}"}) != 6
         for: 5m
         labels:
           severity: critical
