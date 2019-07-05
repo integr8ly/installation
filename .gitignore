@@ -1,5 +1,6 @@
 *.retry
 .DS_Store
 .idea/*
+*.swp
 evals/inventories/hosts
 inventories/hosts
