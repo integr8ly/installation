@@ -906,7 +906,7 @@ spec:
               "expr": "sum(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate * on (namespace) group_left(label_monitoring_key) sum(kube_namespace_labels{label_monitoring_key=~'middleware'}) by (namespace)) by (namespace)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ "{" }}namespace{ "}" }}",
+              "legendFormat": "{{ "{{" }}namespace{{ "}}" }}",
               "legendLink": null,
               "refId": "A",
               "step": 10
@@ -1252,7 +1252,7 @@ spec:
               "expr": "sum(container_memory_rss{container_name!=''} * on (namespace) group_left(label_monitoring_key) sum(kube_namespace_labels{label_monitoring_key=~'middleware'}) by (namespace)) by (namespace)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": ""{{ "{" }}namespace"{{ "}" }}",
+              "legendFormat": "{{ "{{" }}namespace{{ "}}" }}",
               "legendLink": null,
               "step": 10
             }
