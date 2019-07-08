@@ -1,4 +1,9 @@
 ---
+- name: Setup RH-SSO Imagestreams
+  include_tasks: imagestreams.yaml
+  vars:
+    sso_namespace: "{{ rhsso_namespace }}"
+
 - name: Provision RH-SSO
   include_tasks: install_sso.yml
   vars:

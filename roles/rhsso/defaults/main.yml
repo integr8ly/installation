@@ -56,3 +56,6 @@ rhsso_backups:
     image_tag: "{{ backup_version }}"
     labels:
       monitoring-key: middleware
+
+
+upgrade_sso_operator_image: "quay.io/integreatly/keycloak-operator:{{rhsso_operator_release_tag}}"
