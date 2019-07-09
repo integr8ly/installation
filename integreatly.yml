@@ -1,9 +1,3 @@
 imageSync:
   sourceRepo: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888
-  projects:
-    3scale-amp26:
-      images:
-      - apicast-gateway
-      - backend
-      - system
-      - zync
+  projects: {}
