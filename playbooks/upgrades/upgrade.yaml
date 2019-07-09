@@ -66,6 +66,12 @@
       vars:
         ups_backup: "{{ backup_restore_install | default(false) | bool }}"
       when: ups
+    
+    #applicatio metrics
+    - name: Install application metrics
+      include_role:
+        name: application_monitoring
+      when: application_metrics
 
     - name: Recreate any CRs for alerts to ensure we have the latest
       include_role:

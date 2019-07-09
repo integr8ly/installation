@@ -106,6 +106,9 @@ ups_image: 'docker.io/aerogear/unifiedpush-wildfly-plain:{{ ups_release_tag }}'
 ups_proxy_release_tag: 'v1.1.0'
 ups_proxy_image: 'docker.io/openshift/oauth-proxy:{{ ups_proxy_release_tag }}'
 
+#application metrics
+application_metrics: false
+
 monitoring_label_name: 'monitoring-key'
 monitoring_label_value: 'middleware'
 middleware_monitoring_operator_release_tag: '0.0.17'
