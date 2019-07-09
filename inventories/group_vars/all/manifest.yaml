@@ -21,7 +21,7 @@ che_git_url: https://github.com/redhat-developer/codeready-workspaces-deprecated
 
 #controls whether enmasse is installed or not
 enmasse: true
-enmasse_version: 'amq-online-11-intly'
+enmasse_version: 'amq-online-11-brk-fxd-intly'
 enmasse_git_url: 'https://github.com/integr8ly/amq-online-images.git'
 
 #controls whether fuse is installed or not
