@@ -1,0 +1,12 @@
+---
+- name: "Create resource file from template ({{ item }})"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ monitoring_conf_tmp_dir }}/{{ item }}"
+# `oc apply` is used deliberately here so that this task can be used for *install* and *upgrade*.
+#  This ensures the latest alerts are created during install, and applied during upgrade.
+- name: Apply resource from file
+  shell: "oc apply -f {{ monitoring_conf_tmp_dir }}/{{ item }} -n {{ eval_middleware_monitoring_namespace }}"
+  register: monitoring_conf_resource_apply
+  failed_when: monitoring_conf_resource_apply.stderr != '' and 'already exists' not in monitoring_conf_resource_apply.stderr and 'oc apply should be used on resource created by either oc create --save-config or oc apply' not in monitoring_conf_resource_apply.stderr
+  changed_when: monitoring_conf_resource_apply.rc == 0
