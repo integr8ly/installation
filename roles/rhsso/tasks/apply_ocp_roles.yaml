@@ -10,3 +10,9 @@
   register: policy_cmd
   failed_when: policy_cmd.rc != 0
 
+- name: apply {{ eval_user_rhsso_namespace }}/view role to {{ rhsso_evals_admin_username }} user
+  shell: "oc adm policy add-role-to-user view {{rhsso_evals_admin_username}} -n {{ eval_user_rhsso_namespace }}"
+  register: policy_cmd
+  failed_when: policy_cmd.rc != 0
+
+
