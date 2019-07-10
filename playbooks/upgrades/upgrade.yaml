@@ -66,11 +66,12 @@
       vars:
         ups_backup: "{{ backup_restore_install | default(false) | bool }}"
       when: ups
-
-    - name: Recreate any CRs for alerts to ensure we have the latest
+    
+    #applicatio metrics
+    - name: Install application metrics
       include_role:
-        name: middleware_monitoring_config
-        tasks_from: upgrade.yml
+        name: application_monitoring
+      when: application_metrics
 
     - name: Upgrade code ready workspaces 1.0 to 1.2
       include_role:
@@ -96,6 +97,11 @@
         tasks_from: upgrade/trigger
       when: target_version.stdout == "release-1.4.1"
     # End monitoring upgrade
+
+    - name: Recreate any CRs for alerts to ensure we have the latest
+      include_role:
+        name: middleware_monitoring_config
+        tasks_from: upgrade.yml
 
     # Backup alerts upgrade
     - include_role:

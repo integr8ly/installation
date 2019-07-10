@@ -60,7 +60,7 @@ rhsso_version: '7.3.2.GA'
 #below vars not currently used but will be used to pull in the new versions of RH-SSO once we decouple the resources from the installer.
 rhsso_imagestream_name: redhat-sso73-openshift:1.0
 rhsso_imagestream_image: registry.redhat.io/redhat-sso-7/sso73-openshift:1.0
-rhsso_operator_release_tag: 'v1.4.0'
+rhsso_operator_release_tag: 'v1.5.1'
 rhsso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
 
 #controls whether gitea is installed or not
@@ -105,6 +105,9 @@ ups_release_tag: '2.2.1.Final'
 ups_image: 'docker.io/aerogear/unifiedpush-wildfly-plain:{{ ups_release_tag }}'
 ups_proxy_release_tag: 'v1.1.0'
 ups_proxy_image: 'docker.io/openshift/oauth-proxy:{{ ups_proxy_release_tag }}'
+
+#application metrics
+application_metrics: false
 
 monitoring_label_name: 'monitoring-key'
 monitoring_label_value: 'middleware'

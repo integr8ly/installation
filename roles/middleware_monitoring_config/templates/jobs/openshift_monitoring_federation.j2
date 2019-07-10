@@ -11,9 +11,9 @@
     match[]:
     - '{{ "{" }} service="kube-state-metrics" {{ "}" }}'
     - '{{ "{" }} service="node-exporter" {{ "}" }}'
-    - '{{ "{" }} __name__=~"namespace_pod_name_container_name:.*" }'
+    - '{{ "{" }} __name__=~"namespace_pod_name_container_name:.*" {{ "}" }}'
     - '{{ "{" }} __name__=~"node:.*" {{ "}" }}'
-    - '{{ "{" }} __name__="container_memory_usage_bytes" {{ "}" }}'
+    - '{{ "{" }} __name__=~"container_memory_.*" {{ "}" }}'
     - '{{ "{" }} __name__=~":node_memory_.*" {{ "}" }}'
   scheme: https
   tls_config:
