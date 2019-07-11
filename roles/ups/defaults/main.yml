@@ -27,3 +27,5 @@ ups_backup_rbac_resources:
 #monitor
 ups_svc_monitor_resources:
   - "{{ ups_operator_resources }}/service_monitor.yaml"
+#Use AMQ
+ups_use_message_broker: true

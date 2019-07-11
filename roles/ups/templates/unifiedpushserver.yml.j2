@@ -4,6 +4,7 @@ metadata:
   name: {{ ups_server_name }}
 {% if ups_backup %}
 spec:
+  useMessageBroker: {{ ups_use_message_broker }} 
   backups:
     -
       name: {{ ups_backup_name }}
