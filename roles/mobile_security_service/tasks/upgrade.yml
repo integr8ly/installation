@@ -24,6 +24,6 @@
       path: "/tmp/mobile-security-service-operator.yml"
       state: absent
   - name: Patch the service image
-    shell: "oc patch deployment mobile-security-service -n {{ mobile_security_service_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/1/image\", \"value\": \"quay.io/aerogear/mobile-security-service:{{ mss_version }}\"}]'
+    shell: "oc patch deployment mobile-security-service -n {{ mobile_security_service_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"quay.io/aerogear/mobile-security-service:{{ mss_version }}\"}]'
 "
   when: namespace_exists.rc == 0 and mobile_security_service

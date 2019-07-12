@@ -23,6 +23,6 @@
       path: "/tmp/mobile-app-metrics-operator.yml"
       state: absent
   - name: Patch the service image
-    shell: "oc patch deployment app-metrics-operator -n {{ mobile_app_metrics_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/1/image\", \"value\": \"{{ mobile_app_metrics_operator_image }}\"}]'
+    shell: "oc patch deployment app-metrics-operator -n {{ mobile_app_metrics_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"{{ mobile_app_metrics_operator_image }}\"}]'
 "
   when: namespace_exists.rc == 0 and mobile_app_metrics
