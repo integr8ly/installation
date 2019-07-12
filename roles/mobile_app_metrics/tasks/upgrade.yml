@@ -6,7 +6,7 @@
 
 - name: Install Mobile Application Metrics
   include_role:
-    name: main.yml
+    name: mobile_app_metrics
   tags: ['mobile_app_metrics']
   when: namespace_exists.rc != 0 and mobile_app_metrics
 
