@@ -3,9 +3,8 @@ imageSync:
   projects:
     fuse7:
       images:
-      - fuse-ignite-meta:1.4-4
-      - fuse-ignite-s2i:1.4-4
-      - fuse-ignite-server:1.4-5
-      - fuse-ignite-ui:1.4-2
+      - fuse-ignite-meta:1.4-1
+      - fuse-ignite-s2i:1.4-1
+      - fuse-ignite-server:1.4-2
+      - fuse-ignite-ui:1.4-1
       - fuse-online-operator:1.4-4
-      - fuse-postgres-exporter:1.4-1
