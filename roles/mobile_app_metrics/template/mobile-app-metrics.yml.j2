@@ -1,0 +1,17 @@
+apiVersion: metrics.aerogear.org/v1alpha1
+kind: AppMetricsService
+metadata:
+  name: {{ mobile_app_metrics_server_name }}
+{% if mobile_app_metrics_backup %}
+spec:
+  backups:
+    -
+      name: {{ mobile_app_metrics_backup_name }}
+      schedule: "{{ mobile_app_metrics_backup_schedule }}"
+      backendSecretName: {{ mobile_app_metrics_backup_secret }}
+      backendSecretNamespace: {{ mobile_app_metrics_backup_secret_namespace }}
+      {% if mobile_app_metrics_encryption_secret %}
+      encryptionKeySecretName: {{ mobile_app_metrics_encryption_secret }}
+      encryptionKeySecretNamespace: {{ mobile_app_metrics_encryption_secret_namespace }}
+      {% endif %}
+{% endif %}

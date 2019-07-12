@@ -1,0 +1,28 @@
+---
+- name: Check if there is an existing installation of Mobile Application Metrics
+  shell: oc get namespace {{ mobile_app_metrics_namespace }}
+  register: namespace_exists
+  failed_when: namespace_exists.stderr != '' and 'NotFound' not in namespace_exists.stderr
+
+- name: Install Mobile Application Metrics
+  include_role:
+    name: main.yml
+  tags: ['mobile_app_metrics']
+  when: namespace_exists.rc != 0 and mobile_app_metrics
+
+- name: Upgrade Mobile Application Metrics
+  block:
+  - name: Generate Mobile Application Metrics operator template
+    template:
+      src: "operator.yml.j2"
+      dest: /tmp/mobile-app-metrics-operator.yml
+  - name: Patch operator deployment
+    shell: "oc apply -f /tmp/mobile-app-metrics-operator.yml -n {{ mobile_app_metrics_namespace }}"
+  - name: Remove operator template
+    file:
+      path: "/tmp/mobile-app-metrics-operator.yml"
+      state: absent
+  - name: Patch the service image
+    shell: "oc patch deployment app-metrics-operator -n {{ mobile_app_metrics_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/1/image\", \"value\": \"{{ mobile_app_metrics_operator_image }}\"}]'
+"
+  when: namespace_exists.rc == 0 and mobile_app_metrics

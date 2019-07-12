@@ -1,0 +1,4 @@
+---
+- include_tasks: install-operator.yml
+
+- include_tasks: install-server.yml

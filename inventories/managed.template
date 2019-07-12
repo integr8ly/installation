@@ -22,3 +22,8 @@ user_rhsso=true
 
 # Don't setup the datasync (yet) on managed instance
 datasync=false
+
+ups=false
+application_metrics=false
+mobile_app_metrics=false
+

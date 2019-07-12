@@ -44,6 +44,13 @@
       tags: ['ups']
       when: ups | default(true) | bool
     - include_role:
+        name: mobile_app_metrics
+        tasks_from: backup.yml
+      vars:
+        mobile_app_metrics_patch_backup: true
+      tags: ['mobile_app_metrics']
+      when: mobile_app_metrics | default(true) | bool
+    - include_role:
         name: backup
         tasks_from: monitoring.yml
       when: backup_restore_monitoring | default(true) | bool

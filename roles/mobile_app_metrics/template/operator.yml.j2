@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-metrics-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: app-metrics-operator
+  template:
+    metadata:
+      labels:
+        name: app-metrics-operator
+    spec:
+      serviceAccountName: app-metrics-operator
+      containers:
+        - name: app-metrics-operator
+          image: "{{ mobile_app_metrics_operator_image }}"
+          command:
+          - app-metrics-operator
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              value: ""
+            - name: APP_NAMESPACES
+              value: "{{ mobile_app_metrics_app_namespaces }}"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "app-metrics-operator"

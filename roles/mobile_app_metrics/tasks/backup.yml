@@ -1,0 +1,34 @@
+---
+- name: "Create backup cluster role"
+  shell: oc apply -f {{ item }} -n {{ mobile_app_metrics_namespace }}
+  register: output
+  failed_when: output.stderr != '' and 'AlreadyExists' not in output.stderr
+  with_items: "{{ mobile_app_metrics_backup_rbac_resources }}"
+        
+- name: "Create backup cluster role binding"
+  shell: oc new-app -f {{ item }} --param 'SA_NAMESPACE={{ mobile_app_metrics_namespace }}'
+  register: output
+  failed_when: output.stderr != '' and 'already exists' not in output.stderr
+  with_items: "{{ mobile_app_metrics_backup_rbac_template }}"  
+
+- name: Patch mobile-app-metrics instance
+  block:
+    - name: Process mobile-app-metrics server template
+      template:
+        src: mobile-app-metrics.yml.j2
+        dest: "{{ mobile_app_metrics_template_dir }}/mobile-app-metrics.yml"
+      vars:
+        mobile_app_metrics_backup: true
+
+    - name: Apply mobile-app-metrics server resource
+      shell: "oc apply -f {{ mobile_app_metrics_template_dir }}/mobile-app-metrics.yml -n {{ mobile_app_metrics_namespace }}"
+
+    - name: Wait for mobile-app-metrics readiness
+      shell: "oc get appmetricsservice/{{ mobile_app_metrics_server_name }} -o jsonpath='{.status.phase}' -n {{ mobile_app_metrics_namespace }}"
+      register: result
+      until: result.stdout == 'Complete'
+      retries: 50
+      delay: 10
+      failed_when: result.stderr
+      changed_when: False
+  when: mobile_app_metrics_patch_backup | default(false) | bool

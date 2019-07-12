@@ -25,3 +25,7 @@
       name: ups
       tasks_from: monitoring
     when: (middleware_monitoring | default(true) | bool) and ups
+  - include_role:
+      name: mobile_app_metrics
+      tasks_from: monitoring
+    when: (middleware_monitoring | default(true) | bool) and mobile_app_metrics

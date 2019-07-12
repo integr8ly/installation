@@ -185,6 +185,12 @@
       tags: ['ups']
       when: ups | default(true) | bool
 
+    - name: Install mobile application metrics server
+      include_role:
+        name: mobile_app_metrics
+      tags: ['mobile_app_metrics']
+      when: mobile_app_metrics | default(true) | bool
+
     - name: Expose vars
       include_vars: "../roles/mobile_security_service/defaults/main.yml"
     -

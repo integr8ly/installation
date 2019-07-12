@@ -1,0 +1,39 @@
+---
+- include_role:
+    name: namespace
+    tasks_from: create
+  vars:
+    name: "{{ mobile_app_metrics_namespace }}"
+    display_name: "{{ mobile_app_metrics_display_name }}"
+    monitor: true
+    is_service: true
+
+- name: Ensure {{ mobile_app_metrics_template_dir }} exists
+  file:
+    path: "{{ mobile_app_metrics_template_dir }}"
+    state: directory
+
+- name: Install mobile-app-metrics resources
+  shell: "oc apply -f {{ item }} -n {{ mobile_app_metrics_namespace }}"
+  with_items: "{{ mobile_app_metrics_resources }}"
+
+- name: Process operator template
+  template:
+    src: operator.yml.j2
+    dest: "{{ mobile_app_metrics_template_dir }}/mobile-app-metrics-operator.yml"
+
+- name: Provision mobile-app-metrics operator
+  shell: "oc apply -f {{ mobile_app_metrics_template_dir }}/mobile-app-metrics-operator.yml -n {{ mobile_app_metrics_namespace }}"
+
+- name: Get deployment desired replicas
+  shell: "oc get deployment/app-metrics-operator -o jsonpath='{.spec.replicas}' -n {{ mobile_app_metrics_namespace }}"
+  register: mobile_app_metrics_operator_replicas_cmd
+
+- name: Wait for operator readiness
+  shell: "oc get deployment/app-metrics-operator -o jsonpath='{.status.availableReplicas}' -n {{ mobile_app_metrics_namespace }}"
+  register: result
+  until: result.stdout == mobile_app_metrics_operator_replicas_cmd.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  changed_when: False

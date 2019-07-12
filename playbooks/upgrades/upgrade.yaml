@@ -53,7 +53,7 @@
         loop_var: images_source_namespace
 
 
-    # Update Mobile Security Service - TODO at next version - change to upgrade - current version will run installation
+    # Update Mobile Security Service
     - name: Install/Upgrade Mobile Security Service as part of upgrade
       include_role:
         name: mobile_security_service
@@ -68,11 +68,18 @@
         ups_backup: "{{ backup_restore_install | default(false) | bool }}"
       when: ups
     
-    #applicatio metrics
+    #application metrics
     - name: Install application metrics
       include_role:
         name: application_monitoring
       when: application_metrics
+
+    #mobile application metrics
+    - name: Install Mobile Application Metrics Server
+      include_role:
+        name: mobile_app_metrics
+        tasks_from: upgrade
+      when: mobile_app_metrics
 
     - name: Upgrade code ready workspaces 1.0 to 1.2
       include_role:

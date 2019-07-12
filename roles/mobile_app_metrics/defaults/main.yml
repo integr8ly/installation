@@ -1,0 +1,31 @@
+---
+mobile_app_metrics_namespace: openshift-mobile-app-metrics
+mobile_app_metrics_display_name: Mobile App Metrics
+mobile_app_metrics_server_name: mobile-app-metrics
+
+mobile_app_metrics_app_namespaces: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"
+mobile_app_metrics_template_dir: /tmp
+mobile_app_metrics_resources:
+  - "{{ mobile_app_metrics_operator_resources }}/service_account.yaml"
+  - "{{ mobile_app_metrics_operator_resources }}/role.yaml"
+  - "{{ mobile_app_metrics_operator_resources }}/role_binding.yaml"
+  - "{{ mobile_app_metrics_operator_resources }}/crds/metrics_v1alpha1_appmetricsservice_crd.yaml"
+  - "{{ mobile_app_metrics_operator_resources }}/crds/metrics_v1alpha1_appmetricsconfig_crd.yaml"
+
+# back up
+mobile_app_metrics_backup: "{{ backup_restore_install | default(false) }}"
+mobile_app_metrics_backup_name: mobile-app-metrics-daily-at-midnight
+mobile_app_metrics_backup_schedule: "{{ backup_schedule }}"
+mobile_app_metrics_backup_secret: "s3-credentials"
+mobile_app_metrics_backup_secret_namespace: "{{ backup_namespace }}"
+mobile_app_metrics_encryption_secret: ''
+mobile_app_metrics_encryption_secret_namespace: "{{ backup_namespace }}"
+mobile_app_metrics_backup_rbac_template:
+  - "{{ backup_resources_location }}/rbac/role-binding-template.yaml"
+mobile_app_metrics_backup_rbac_resources:
+  - "{{ backup_resources_location }}/rbac/service-account.yaml"
+  - "{{ backup_resources_location }}/rbac/role.yaml"
+
+#monitor
+mobile_app_metrics_svc_monitor_resources:
+  - "{{ mobile_app_metrics_resources }}/service_monitor.yaml"
