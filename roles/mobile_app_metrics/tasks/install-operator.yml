@@ -17,6 +17,14 @@
   shell: "oc apply -f {{ item }} -n {{ mobile_app_metrics_namespace }}"
   with_items: "{{ mobile_app_metrics_resources }}"
 
+- name: Process operator role-binding template
+  template:
+    src: operator-role-binding.yml.j2
+    dest: "{{ mobile_app_metrics_template_dir }}/operator-role-binding.yml"
+
+- name: Create operator role-binding
+  shell: "oc apply -f {{ mobile_app_metrics_template_dir }}/operator-role-binding.yml -n {{ mobile_app_metrics_namespace }}"
+
 - name: Process operator template
   template:
     src: operator.yml.j2
