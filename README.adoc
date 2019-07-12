@@ -86,7 +86,7 @@ ansible_user=evals
 master.evals.example.com
 ----
 +
-NOTE: It is possible to add the variable `ansible_ssh_private_key_file` for the master host when the ssh connection requires a public key.(E.g`ansible_ssh_private_key_file=~/.ssh/ocp-workshop.pem`)
+NOTE: It is possible to add the variable `ansible_ssh_private_key_file` for the master host when the ssh connection requires a public key.(E.g `ansible_ssh_private_key_file=~/.ssh/ocp-workshop.pem`)
 
 == Check the connection with the OpenShift cluster
 
@@ -176,7 +176,7 @@ image::https://user-images.githubusercontent.com/7708031/48856868-7141d680-edaf-
 [source,shell]
 ----
 $ oc login https://<openshift-master-url> -u <user> -p <password>
-$ $ ansible-playbook -i inventories/hosts playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
+$ ansible-playbook -i inventories/hosts playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
 ----
 
 [TIP]
