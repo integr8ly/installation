@@ -1,5 +1,5 @@
 ---
-mobile_app_metrics_namespace: openshift-mobile-app-metrics
+mobile_app_metrics_namespace: "{{ eval_mobile_app_metrics_namespace | default('mobile-app-metrics') }}"
 mobile_app_metrics_display_name: Mobile App Metrics
 mobile_app_metrics_server_name: mobile-app-metrics
 

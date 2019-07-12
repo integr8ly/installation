@@ -162,6 +162,15 @@
         ups_namespace: "{{ eval_ups_namespace }}"
       tags: ['ups']
 
+    - 
+      name: Uninstall Mobile App Metrics server
+      include_role:
+        name: mobile_app_metrics
+        tasks_from: uninstall.yml
+      vars:
+        mobile_app_metrics_namespace: "{{ eval_mobile_app_metrics_namespace }}"
+      tags: ['mobile_app_metrics']
+
     -
       name: Reboot template broker
       include_role:
