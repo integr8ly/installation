@@ -4,8 +4,10 @@
     fuse_online_template: https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{ fuse_online_release_tag }}/resources/fuse-online-template.yml
 
 # Used to pull images from registry.redhat.io
+- name: Expose vars
+  include_vars: "../roles/imagestream_pull_secret/defaults/main.yml" 
 - include_role:
-    name: fuse_pull_secret
+    name: imagestream_pull_secret
   vars:
     namespace: "{{ fuse_namespace }}"
 
@@ -46,11 +48,11 @@
   register: fuse_serviceaccounts
 
 - name: Link syndesis-pull-secret to fuse service accounts for image pull
-  shell: "oc secrets link {{ item }} syndesis-pull-secret --for=pull -n {{ fuse_namespace }}"
+  shell: "oc secrets link {{ item }} {{ pull_secret_name }} --for=pull -n {{ fuse_namespace }}"
   with_items: "{{ fuse_serviceaccounts.stdout_lines }}"
 
 - name: Link syndesis-pull-secret to builder service account
-  shell: "oc secrets link builder syndesis-pull-secret --for=pull,mount -n {{ fuse_namespace }}"
+  shell: "oc secrets link builder {{ pull_secret_name }} --for=pull,mount -n {{ fuse_namespace }}"
 
 - name: Expose controllers via 3Scale
   shell: "oc set env dc syndesis-server CONTROLLERS_EXPOSE_VIA3SCALE=true -n {{ fuse_namespace }}"
