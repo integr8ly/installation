@@ -57,91 +57,96 @@ threescale_pull_secret_name: "threescale-registry-auth"
 threescale_resources:
 - name: apicast-production
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 50m
       memory: 50Mi
 - name: apicast-staging
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 5m
       memory: 32Mi
 - name: apicast-wildcard-router
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 12m
       memory: 16Mi
 - name: backend-cron
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 5m
       memory: 20Mi
 - name: backend-listener
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 50m
       memory: 300Mi
 - name: backend-redis
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 100m
       memory: 10Mi
 - name: backend-worker
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 15m
       memory: 30Mi
 - name: system-app
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 5m
       memory: 600Mi
 - name: system-memcache
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 5m
       memory: 10Mi
 - name: system-mysql
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 25m
       memory: 512Mi
 - name: system-redis
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 15m
       memory: 30Mi
 - name: system-sidekiq
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 10m
       memory: 50Mi
 - name: system-sphinx
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 8m
       memory: 250Mi
 - name: zync
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 15m
       memory: 120M
 - name: zync-database
   kind: dc
-  resources: 
-    requests: 
+  resources:
+    requests:
       cpu: 5m
       memory: 60M
+
+# Routes
+threescale_route_system_developer: system-developer
+threescale_route_system_master: system-master
+threescale_route_system_provider: system-provider
