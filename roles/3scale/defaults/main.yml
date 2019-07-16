@@ -53,3 +53,7 @@ threescale_backup_postgres_secret: threescale-postgres-secret
 threescale_backup_redis_secret: threescale-redis-secret
 
 threescale_pull_secret_name: "threescale-registry-auth"
+# Routes
+threescale_route_system_developer: system-developer
+threescale_route_system_master: system-master
+threescale_route_system_provider: system-provider
