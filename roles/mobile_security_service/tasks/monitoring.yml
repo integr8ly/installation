@@ -22,3 +22,9 @@
   with_items: "{{ mobile_security_service_monitoring_resource_templates }}"
   register: mss_monitoring_resources_create_cmd
   failed_when: mss_monitoring_resources_create_cmd.stderr != '' and 'AlreadyExists' not in mss_monitoring_resources_create_cmd.stderr
+
+- name: Delete Mobile Security Service Monitoring Resource Templates
+  file:
+    path: /tmp/{{ item }}.yml
+    state: absent
+  with_items: "{{ mobile_security_service_monitoring_resource_templates }}"

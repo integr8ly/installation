@@ -28,6 +28,11 @@
   register: mss_role_binding_cmd
   failed_when: mss_role_binding_cmd.stderr != '' and 'AlreadyExists' not in mss_role_binding_cmd.stderr
 
+- name: Delete cluster role binding template
+  file: 
+    path: /tmp/mss_cluster_role_binding.yml 
+    state: absent
+
 - name: Generate Mobile Security Service operator template
   template:
     src: "operator.yml.j2"
