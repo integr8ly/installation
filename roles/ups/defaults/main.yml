@@ -25,4 +25,10 @@ ups_backup_rbac_resources:
   - "{{ backup_resources_location }}/rbac/role.yaml"
 #monitor
 ups_svc_monitor_resources:
-  - "{{ ups_operator_resources }}/service_monitor.yaml"
+  - "{{ ups_operator_resources }}/monitor/service_monitor.yaml"
+  - "{{ ups_operator_resources }}/monitor/push_service_monitor.yaml"
+ups_svc_monitor_templates:
+  - grafana_dashboard
+  - prometheus_rule
+  - operator_grafana_dashboard
+  - operator_prometheus_rule

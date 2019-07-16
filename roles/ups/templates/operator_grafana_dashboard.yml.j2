@@ -1,14 +1,11 @@
 apiVersion: integreatly.org/v1alpha1
 kind: GrafanaDashboard
 metadata:
-  name: mobile-security-service-operator
+  name: unifiedpush-operator
   labels:
     monitoring-key: middleware
     prometheus: application-monitoring
 spec:
-  selector:
-    matchLabels:
-      name: mobile-security-service-operator
   json: |
     {
       "__inputs": [
@@ -60,7 +57,7 @@ spec:
             }
           ]
         },
-        "description": "Application metrics",
+        "description": "Operator metrics",
         "editable": true,
         "gnetId": null,
         "graphTooltip": 0,
@@ -142,14 +139,14 @@ spec:
             "tableColumn": "",
             "targets": [
               {
-                "expr": "(avg(up{job='mobile-security-service-operator'}))*100",
+                "expr": "(avg(up{service='unifiedpush-operator'}))*100",
                 "format": "time_series",
                 "intervalFactor": 1,
                 "refId": "A"
               }
             ],
             "thresholds": "98,99",
-            "title": "Average Percentage Uptime",
+            "title": "Daily Percentage Uptime",
             "transparent": false,
             "type": "singlestat",
             "valueFontSize": "70%",
@@ -203,7 +200,7 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "up{job='mobile-security-service-operator'}",
+                "expr": "up{service='unifiedpush-operator'}",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 2,
@@ -305,26 +302,18 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "process_virtual_memory_bytes{job='mobile-security-service-operator'}",
+                "expr": "process_virtual_memory_bytes{service='unifiedpush-operator'}",
                 "format": "time_series",
                 "intervalFactor": 1,
                 "legendFormat": "Virtual Memory",
                 "refId": "A"
               },
               {
-                "expr": "process_resident_memory_bytes{job='mobile-security-service-operator'}",
+                "expr": "process_resident_memory_bytes{service='unifiedpush-operator'}",
                 "format": "time_series",
                 "intervalFactor": 2,
                 "legendFormat": "Memory Usage",
                 "refId": "B",
-                "step": 2
-              },
-              {
-                "expr": "kube_pod_container_resource_limits_memory_bytes{container='mobile-security-service-operator'}",
-                "format": "time_series",
-                "intervalFactor": 2,
-                "legendFormat": "Max Memory Allocation",
-                "refId": "C",
                 "step": 2
               }
             ],
@@ -406,21 +395,12 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "sum(rate(process_cpu_seconds_total{job='mobile-security-service-operator'}[1m]))*1000",
+                "expr": "sum(rate(process_cpu_seconds_total{service='unifiedpush-operator'}[1m]))*1000",
                 "format": "time_series",
                 "interval": "",
                 "intervalFactor": 2,
-                "legendFormat": "Mobile Security Service Operator- CPU Usage in Millicores",
+                "legendFormat": "UnifiedPush Operator- CPU Usage in Millicores",
                 "refId": "A",
-                "step": 2
-              },
-              {
-                "expr": "(kube_pod_container_resource_limits_cpu_cores{container='mobile-security-service-operator'})*1000",
-                "format": "time_series",
-                "interval": "",
-                "intervalFactor": 2,
-                "legendFormat": "Maximum Limit of Millicores",
-                "refId": "B",
                 "step": 2
               }
             ],
@@ -504,7 +484,7 @@ spec:
           ]
         },
         "timezone": "browser",
-        "title": "Mobile Security Service Operator",
+        "title": "UnifiedPush Operator",
         "version": 2
       }
-  name: mobilesecurityservice.json
+  name: unifiedpushoperator.json

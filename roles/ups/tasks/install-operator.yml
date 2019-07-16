@@ -13,13 +13,18 @@
   shell: "oc apply -f {{ item }} -n {{ ups_namespace }}"
   with_items: "{{ ups_resources }}"
 
-- name: Process role_binding template
+- name: Copy role binding template
   template:
-    src: role_binding.yaml.j2
-    dest: "{{ ups_template_dir }}/role_binding.yaml"
+    src: role_binding.yml.j2
+    dest: "{{ ups_template_dir }}/role-binding.yml"
 
-- name: Apply role_binding resource
-  shell: "oc apply -f {{ ups_template_dir }}/role_binding.yaml"
+- name: Create role binding
+  shell: "oc apply -f {{ ups_template_dir }}/role-binding.yml -n {{ ups_namespace }}"
+
+- name: Delete role binding temporary file
+  file:
+    path: "{{ ups_template_dir }}/role-binding.yml"
+    state: absent
 
 - name: Process operator template
   template:
