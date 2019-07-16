@@ -1,0 +1,11 @@
+- hosts: localhost
+  tasks:
+    - include_role:
+        name: mdc
+
+    - shell: "oc get pods -o json -n mobile-developer-console"
+      register: get_pods_cmd
+
+    - assert:
+        that:
+          - (get_pods_cmd.stdout|from_json)['items']|length == 2

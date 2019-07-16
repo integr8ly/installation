@@ -1,0 +1,9 @@
+---
+- hosts: master
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: mdc
+        tasks_from: cors
+      tags: ['mdc', 'remote']
+      when: (run_master_tasks | default(true) | bool) and mdc

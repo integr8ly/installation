@@ -21,4 +21,4 @@ mobile_security_service_monitoring_resource_items:
   - "{{ mobile_security_service_operator_resources }}/monitor/mss_grafana_dashboard.yaml"
 
 
-mdc_namespace: "{{ eval_mdc_namespace | default('mobile-developer-console')"
+mdc_namespace: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"

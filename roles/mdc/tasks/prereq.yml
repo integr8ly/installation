@@ -1,0 +1,6 @@
+---
+
+- name: Ensure {{ mdc_template_dir }} exists
+  file:
+    path: "{{ mdc_template_dir }}"
+    state: directory

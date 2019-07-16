@@ -1,0 +1,39 @@
+---
+
+- include_role:
+    name: namespace
+    tasks_from: create
+  vars:
+    name: "{{ mdc_namespace }}"
+    display_name: "Mobile Developer Console"
+    monitor: true
+    is_service: true
+
+- name: Install mdc resources
+  shell: "oc apply -f {{ item }} -n {{ mdc_namespace }}"
+  with_items: "{{ mdc_resources }}"
+
+- set_fact:
+    mdc_openshift_host: "{{ openshift_master_url }}"
+  when: mdc_openshift_host is undefined
+
+- name: Process operator template
+  template:
+    src: operator.yaml.j2
+    dest: "{{ mdc_template_dir }}/mdc-operator.yaml"
+
+- name: Provision mdc operator
+  shell: "oc apply -f {{ mdc_template_dir }}/mdc-operator.yaml -n {{ mdc_namespace }}"
+
+- name: Get deployment desired replicas
+  shell: "oc get deployment/mobile-developer-console-operator -o jsonpath='{.spec.replicas}' -n {{ mdc_namespace }}"
+  register: mdc_operator_replicas_cmd
+
+- name: Wait for operator readiness
+  shell: "oc get deployment/mobile-developer-console-operator -o jsonpath='{.status.availableReplicas}' -n {{ mdc_namespace }}"
+  register: result
+  until: result.stdout == mdc_operator_replicas_cmd.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  changed_when: False

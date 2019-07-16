@@ -1,0 +1,23 @@
+---
+- set_fact:
+    mdc_oauth_client_secret: "{{ (ansible_date_time.epoch + mdc_namespace) | hash('sha512') }}"
+
+- include_tasks: prereq.yml
+
+- include_tasks: install-operator.yml
+
+- name: Check for current mobiledeveloperconsole
+  shell: "oc get mobiledeveloperconsole/{{ mdc_name }} -n {{ mdc_namespace }}"
+  register: mdc_get_instance_cmd
+  failed_when: false
+
+- include_tasks: install-console.yml
+  when: mdc_get_instance_cmd.stderr != '' and 'No resources found.' in mdc_get_instance_cmd.stderr
+
+- name: Check for current oauthclient
+  shell: "oc get oauthclient/{{ mdc_oauth_client_id }}"
+  register: mdc_get_client_cmd
+  failed_when: false
+
+- include_tasks: install-oauth-client.yml
+  when: mdc_get_client_cmd.stderr != '' and 'No resources found.' in mdc_get_client_cmd.stderr

@@ -1,0 +1,14 @@
+- hosts: localhost
+  tasks:
+    - include_role:
+        name: mdc
+        tasks_from: uninstall
+
+    - shell: oc get ns/mobile-developer-console
+      register: get_ns_cmd
+      failed_when: false
+
+    - assert:
+        that:
+          - "'No resources found.' in get_ns_cmd.stderr"
+          - "'Error from server (NotFound): namespaces \"mobile-developer-console\" not found' in get_ns_cmd.stderr"
