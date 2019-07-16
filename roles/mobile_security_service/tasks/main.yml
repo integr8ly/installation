@@ -18,6 +18,16 @@
   register: mobile_security_service_operator_resource_cmd
   failed_when: mobile_security_service_operator_resource_cmd.stderr != '' and 'AlreadyExists' not in mobile_security_service_operator_resource_cmd.stderr
 
+- name: Copy cluster role binding template
+  template:
+    src: cluster_role_binding.yml.j2
+    dest: /tmp/mss_cluster_role_binding.yml
+
+- name: Create cluster role binding
+  shell: "oc create -f /tmp/mss_cluster_role_binding.yml -n {{ mobile_security_service_namespace }}"
+  register: mss_role_binding_cmd
+  failed_when: mss_role_binding_cmd.stderr != '' and 'AlreadyExists' not in mss_role_binding_cmd.stderr
+
 - name: Generate Mobile Security Service operator template
   template:
     src: "operator.yml.j2"
