@@ -4,13 +4,17 @@
 
 - name: Retrieve 3Scale users
   uri:
-    url: "https://{{ threescale_admin_route }}/admin/api/users.xml"
+    url: "https://{{ threescale_admin_route }}/admin/api/users.xml?access_token={{ threescale_admin_token }}"
     method: GET
     return_content: yes
     dest: /tmp/3scale_users.xml
     body: "access_token={{ threescale_admin_token }}"
     validate_certs: "{{ threescale_sso_validate_certs }}"
     status_code: [200]
+  register: users_result
+  retries: 3
+  delay: 2
+  until: users_result.status == 503 or users_result.status in [200, 401, 403]
 
 - name: Retrieve default admin user ID
   xml:
