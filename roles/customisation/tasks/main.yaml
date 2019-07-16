@@ -31,12 +31,15 @@
   when: threescale
 
 - name: Retrieve 3Scale master auth token
-  shell:  oc describe dc/system-app -n {{ threescale_namespace }} | grep MASTER_ACCESS_TOKEN | head -1 | awk -F '"' '{print $2}'
+  shell: oc describe dc/system-app -n {{ threescale_namespace }} | grep MASTER_ACCESS_TOKEN | head -1 | awk -F '"' '{print $2}'
   register: master_auth_config
   when: threescale
 
-- name: Get threescale admin  route
-  shell: oc get route/system-master -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
+- name: Include threescale route vars
+  include_vars: ../../3scale/defaults/main.yml
+
+- name: Get threescale admin route
+  shell: oc get routes -l zync.3scale.net/route-to={{ threescale_route_system_master }} -o jsonpath='{.items[*].spec.host}' -n {{ threescale_namespace }}
   register: threescale_system_admin_route
   when: threescale
 - set_fact:
@@ -44,7 +47,7 @@
   when: threescale
 
 - name: Get 3scale dashboard url
-  shell: oc get route/system-provider-admin -o jsonpath='{.spec.host}' -n {{ threescale_namespace }}
+  shell: oc get routes -l zync.3scale.net/route-to={{ threescale_route_system_provider }} -o jsonpath='{.items[*].spec.host}' -n {{ threescale_namespace }}
   register: threescale_host_cmd
   when: threescale
 - set_fact:
