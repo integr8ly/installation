@@ -21,6 +21,8 @@ spec:
           imagePullPolicy: Always
           env:
             - name: WATCH_NAMESPACE
+              value: ""
+            - name: SERVICE_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
