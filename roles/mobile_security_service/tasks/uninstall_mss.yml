@@ -4,3 +4,15 @@
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
   changed_when: output.rc == 0
+
+- name: "Delete cluster role binding"
+  shell: oc delete clusterrolebinding mobile-security-service-operator
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+
+- name: "Delete cluster role"
+  shell: oc delete clusterrole mobile-security-service-operator
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0

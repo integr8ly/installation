@@ -10,3 +10,21 @@
   with_items: "{{ mobile_security_service_monitoring_resource_items }}"
   register: mobile_security_service_monitoring_resource_cmd
   failed_when: mobile_security_service_monitoring_resource_cmd.stderr != '' and 'AlreadyExists' not in mobile_security_service_monitoring_resource_cmd.stderr
+
+- name: Copy Mobile Security Service Monitoring Resource Templates
+  template:
+    src: "{{ item }}.yml.j2"
+    dest: "/tmp/{{ item }}.yml"
+  with_items: "{{ mobile_security_service_monitoring_resource_templates }}"
+
+- name: Create Mobile Security Service Monitoring Resources
+  shell: "oc apply -f /tmp/{{ item }}.yml -n {{ mobile_security_service_namespace }}"
+  with_items: "{{ mobile_security_service_monitoring_resource_templates }}"
+  register: mss_monitoring_resources_create_cmd
+  failed_when: mss_monitoring_resources_create_cmd.stderr != '' and 'AlreadyExists' not in mss_monitoring_resources_create_cmd.stderr
+
+- name: Delete Mobile Security Service Monitoring Resource Templates
+  file:
+    path: /tmp/{{ item }}.yml
+    state: absent
+  with_items: "{{ mobile_security_service_monitoring_resource_templates }}"

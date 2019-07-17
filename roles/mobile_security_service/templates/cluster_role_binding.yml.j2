@@ -1,0 +1,12 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mobile-security-service-operator
+subjects:
+- kind: ServiceAccount
+  name: mobile-security-service-operator
+  namespace: "{{ mobile_security_service_namespace }}"
+roleRef:
+  kind: ClusterRole
+  name: mobile-security-service-operator
+  apiGroup: rbac.authorization.k8s.io
