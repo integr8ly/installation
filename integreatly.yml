@@ -3,27 +3,28 @@ imageSync:
   projects:
     amq7:
       images:
-      - amq-online-1-address-space-controller:dev
-      - amq-online-1-agent:dev
-      - amq-online-1-api-server:dev
-      - amq-online-1-auth-plugin:dev
-      - amq-online-1-broker-plugin:dev
-      - amq-online-1-console-httpd:dev
-      - amq-online-1-console-init:dev
-      - amq-online-1-controller-manager:dev
-      - amq-online-1-mqtt-gateway:dev
-      - amq-online-1-mqtt-lwt:dev
-      - amq-online-1-none-auth-service:dev
-      - amq-online-1-service-broker:dev
-      - amq-online-1-standard-controller:dev
-      - amq-online-1-topic-forwarder:dev
+      - amq-interconnect:1.5
+      - amq-online-1-address-space-controller:1.2
+      - amq-online-1-agent:1.2
+      - amq-online-1-api-server:1.2
+      - amq-online-1-auth-plugin:1.2
+      - amq-online-1-broker-plugin:1.2
+      - amq-online-1-console-httpd:1.2
+      - amq-online-1-console-init:1.2
+      - amq-online-1-controller-manager:1.2
+      - amq-online-1-mqtt-gateway:1.2
+      - amq-online-1-mqtt-lwt:1.2
+      - amq-online-1-none-auth-service:1.2
+      - amq-online-1-service-broker:1.2
+      - amq-online-1-standard-controller:1.2
+      - amq-online-1-topic-forwarder:1.2
     amq7-tech-preview:
       images:
-      - amq-online-1-iot-auth-service:dev
-      - amq-online-1-iot-device-registry-file:dev
-      - amq-online-1-iot-device-registry-infinispan:dev
-      - amq-online-1-iot-gc:dev
-      - amq-online-1-iot-http-adapter:dev
-      - amq-online-1-iot-mqtt-adapter:dev
-      - amq-online-1-iot-proxy-configurator:dev
-      - amq-online-1-iot-tenant-service:dev
+      - amq-online-1-iot-auth-service:1.2
+      - amq-online-1-iot-device-registry-datagrid:1.2
+      - amq-online-1-iot-device-registry-file:1.2
+      - amq-online-1-iot-gc:1.2
+      - amq-online-1-iot-http-adapter:1.2
+      - amq-online-1-iot-mqtt-adapter:1.2
+      - amq-online-1-iot-proxy-configurator:1.2
+      - amq-online-1-iot-tenant-service:1.2
