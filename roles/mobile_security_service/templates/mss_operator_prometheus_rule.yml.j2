@@ -29,7 +29,7 @@ spec:
           summary: "Pod count for mobile-security-service is {{ '{{' }} printf '%.0f' $value {{ '}}' }}. Expected 3 pods. For more information see on the MSS operator https://github.com/aerogear/mobile-security-service-operator"
           sop_url: "https://github.com/aerogear/mobile-security-service-operator/blob/0.2.0/SOP/SOP-operator.adoc"
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="mobile-security-service"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ mobile_security_service_namespace }}"}) < 3
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ mobile_security_service_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ mobile_security_service_namespace }}"}) < 3
         for: 5m
         labels:
           severity: warning
