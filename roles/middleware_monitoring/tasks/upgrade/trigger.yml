@@ -4,20 +4,7 @@
   register: aom_role_apply_cmd
   failed_when: aom_role_apply_cmd.stderr != '' and 'Warning' not in aom_role_apply_cmd.stderr
   changed_when: aom_role_apply_cmd.rc == 0
-  with_items:
-    - "{{ middleware_monitoring_operator_resources }}/operator_roles/role.yaml"
-    - "{{ middleware_monitoring_operator_resources }}/crds/ApplicationMonitoring.yaml"
-
-- name: Upgrade the application monitoring operator
-  shell: "oc patch deployment application-monitoring-operator --patch='{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"application-monitoring-operator\",\"image\":\"quay.io/integreatly/application-monitoring-operator:{{ middleware_monitoring_operator_release_tag }}\" }]}}}}' -n {{ monitoring_namespace }}"
-  register: patch_deployment_cmd
-  failed_when: patch_deployment_cmd.stderr != ""
-
-- name: Redeploy the application monitoring operator
-  shell: "oc patch deployment application-monitoring-operator --patch '{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"last-restart\":\"`date +'%s'`\"}}}}}' -n {{ monitoring_namespace }}"
-  register: redeploy_aom_result
-  failed_when: redeploy_aom_result.stderr != ""
-  when: '"not patched" in patch_deployment_cmd.stdout'
+  with_items: "{{ monitoring_resources }}"
 
 - name: Delete the lockfile
   shell: "oc delete configmap application-monitoring-operator-lock -n {{ monitoring_namespace }}"
