@@ -5,7 +5,7 @@
     tasks_from: create
   vars:
     name: "{{ ups_namespace }}"
-    display_name: "Unified Push Server"
+    display_name: "Mobile UnifiedPush Server"
     monitor: true
     is_service: true
 
