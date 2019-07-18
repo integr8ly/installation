@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mobile-developer-console-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: mobile-developer-console-operator
+  template:
+    metadata:
+      labels:
+        name: mobile-developer-console-operator
+    spec:
+      serviceAccountName: mobile-developer-console-operator
+      containers:
+        - name: mobile-developer-console-operator
+          image: quay.io/aerogear/mobile-developer-console-operator:master
+          command:
+          - mobile-developer-console-operator
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "mobile-developer-console-operator"
+            - name: OPENSHIFT_HOST
+              value: "{{ mdc_openshift_host }}"
+            - name: MDC_IMAGE_STREAM_INITIAL_IMAGE
+              value: "{{ mdc_image }}"
+            - name: OAUTH_PROXY_IMAGE_STREAM_INITIAL_IMAGE
+              value: "{{ mdc_proxy_image }}"

@@ -109,6 +109,16 @@ ups_proxy_image: 'docker.io/openshift/oauth-proxy:{{ ups_proxy_release_tag }}'
 #application metrics
 application_metrics: false
 
+#mobile developer console
+mdc: false
+mdc_operator_release_tag: 'master'
+mdc_operator_resources: 'https://raw.githubusercontent.com/aerogear/mobile-developer-console-operator/{{ups_operator_release_tag}}/deploy'
+mdc_operator_image: 'quay.io/aerogear/mobile-developer-console-operator:{{ ups_operator_release_tag }}'
+mdc_release_tag: 'master'
+mdc_image: 'quay.io/aerogear/mobile-developer-console:{{ mdc_release_tag }}'
+mdc_proxy_release_tag: 'v1.1.0'
+mdc_proxy_image: 'docker.io/openshift/oauth-proxy:{{ mdc_proxy_release_tag }}'
+
 monitoring_label_name: 'monitoring-key'
 monitoring_label_value: 'middleware'
 middleware_monitoring_operator_release_tag: '0.0.17'

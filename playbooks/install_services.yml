@@ -185,6 +185,14 @@
       tags: ['ups']
       when: ups | default(true) | bool
 
+    - name: Install mobile developer console (mdc)
+      include_role:
+        name: mdc
+      vars:
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
+      tags: ['mdc']
+      when: mdc | default(true) | bool
+
     - name: Expose vars
       include_vars: "../roles/mobile_security_service/defaults/main.yml"
     -

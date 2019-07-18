@@ -7,6 +7,7 @@
 - import_playbook: "./install_infra.yml"
 - import_playbook: "./install_fuse_managed.yml"
 - import_playbook: "./install_services.yml"
+- import_playbook: "./install_mdc.yml"
 - import_playbook: "./install_webapp.yml"
 - import_playbook: "./install_middleware_monitoring.yml"
 - import_playbook: "./install_application_metrics.yml"
@@ -14,7 +15,7 @@
 - import_playbook: "./generate-customisation-inventory.yml"
 - import_playbook: "./customise_web_console_install.yml"
 - import_playbook: "./apply_ocp_roles.yml"
-
+- import_playbook: "./apply_mdc_manifest.yml"
 
 - hosts: master
   gather_facts: no

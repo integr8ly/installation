@@ -1,0 +1,26 @@
+---
+- name: Get secure route
+  shell: "oc get route/mdc-mdc-proxy -o jsonpath='{.spec.host}' -n {{ mdc_namespace }}"
+  register: mdc_route_cmd
+
+- name: Process oauth client template
+  template:
+    src: oauth.yaml.j2
+    dest: "{{ mdc_template_dir }}/oauth.yaml"
+  vars:
+    mdc_secure_route: "{{ mdc_route_cmd.stdout }}"
+
+- name: Apply oauth client file
+  shell: "oc apply -f {{ mdc_template_dir }}/oauth.yaml"
+
+- name: Rollout mdc deployment
+  shell: "oc rollout latest mdc -n {{ mdc_namespace }}"
+
+- name: Wait for mdc rollout
+  shell: "oc rollout status dc/mdc -n {{ mdc_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  changed_when: False

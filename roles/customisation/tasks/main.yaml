@@ -250,6 +250,7 @@
       - name: Mobile Security Service
         version: "{{ mss_version }}"
         host: "{{ mss_route }}"
+        mobile: true
   when: mobile_security_service
 
 - set_fact:
@@ -270,9 +271,29 @@
           - name: Unified Push Server
             version: "{{ ups_release_tag }}"
             host: "{{ ups_route }}"
+            mobile: true
     - set_fact:
         component_manifests: "{{ component_manifests }} + {{ ups_manifest }}"
   when: ups
+
+# mobile developer console (mdc)
+- name: Mobile Developer Console
+  block:
+    - name: Get mdc secure route
+      shell: "oc get route/mdc-mdc-proxy -o jsonpath='{.spec.host}' -n {{ mdc_namespace }}"
+      register: mdc_route_cmd
+    - set_fact:
+        mdc_route: "https://{{mdc_route_cmd.stdout}}"
+    - name: Set Mobile Developer Console component
+      set_fact:
+        mdc_manifest:
+          - name: Mobile Developer Console
+            version: "{{ mdc_release_tag }}"
+            host: "{{ mdc_route }}"
+            mobile: true
+    - set_fact:
+        component_manifests: "{{ component_manifests }} + {{ mdc_manifest }}"
+  when: mdc
 
 - name: Retrieve launcher sso hostvars
   shell: "oc get route/{{launcher_sso_prefix}} -o jsonpath='{.spec.host}' -n {{ launcher_namespace }}"
@@ -323,6 +344,21 @@
 
 - name: Create manifest secret
   shell: oc create secret generic manifest --from-file=/tmp/generated_manifest --type=application/json -n {{webapp_namespace}}
+
+- name: Create manifest file in mdc namespace
+  block:
+    - name: Check if manifest secret exists
+      shell: oc get secret manifest -n {{ mdc_namespace }}
+      register: manifest_secret
+      failed_when: manifest_secret.stderr != '' and 'NotFound' not in manifest_secret.stderr
+
+    - name: Delete secret if it exists
+      shell: oc delete secret manifest -n {{ mdc_namespace }}
+      when: manifest_secret.stderr == ""
+
+    - name: Create manifest secret
+      shell: oc create secret generic manifest --from-file=/tmp/generated_manifest --type=application/json -n {{ mdc_namespace }}
+  when: mdc
 
 - name: Check if inventory secret exists
   shell: oc get secret inventory -n {{webapp_namespace}}

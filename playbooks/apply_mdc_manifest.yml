@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: mdc
+        tasks_from: patch-manifest.yml
+      vars:
+        mdc_manifest_secret_name: manifest
+      tags: ['mdc', 'remote']
+      when: (run_master_tasks | default(true) | bool) and mdc

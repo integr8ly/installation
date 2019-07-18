@@ -1,0 +1,21 @@
+---
+#- include_tasks: backup.yml
+
+- name: Process mdc template
+  template:
+    src: mobiledeveloperconsole.yaml.j2
+    dest: "{{ mdc_template_dir }}/mobiledeveloperconsole.yaml"
+
+- name: Apply mdc resource
+  shell: "oc create -f {{ mdc_template_dir }}/mobiledeveloperconsole.yaml -n {{ mdc_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'AlreadyExists' not in output.stderr
+
+- name: Wait for mdc readiness
+  shell: "oc get mobiledeveloperconsole/{{ mdc_name }} -o jsonpath='{.status.phase}' -n {{ mdc_namespace }}"
+  register: result
+  until: result.stdout == 'Complete'
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  changed_when: False

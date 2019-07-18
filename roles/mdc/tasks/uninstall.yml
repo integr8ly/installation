@@ -1,0 +1,28 @@
+---
+- name: Delete oauth client
+  shell: "oc delete oauthclient/{{ mdc_oauth_client_id }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+
+- name: Delete mdc
+  shell: "oc delete mobiledeveloperconsole/{{ mdc_name }} -n {{ mdc_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
+  changed_when: output.rc == 0
+
+- name: "Wait for resources to be removed"
+  shell: oc get mobiledeveloperconsole/{{ mdc_name }} -n {{ mdc_namespace }}
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
+
+- include_role:
+    name: namespace
+    tasks_from: delete
+  vars:
+    names:
+      - "{{ mdc_namespace }}"

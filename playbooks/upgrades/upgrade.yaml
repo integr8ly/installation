@@ -8,7 +8,7 @@
       when: run_master_tasks | default(true) | bool
 
 - hosts: localhost
-  gather_facts: no
+  gather_facts: yes
   tasks:
     - include_role:
         name: prerequisites
@@ -67,6 +67,14 @@
       vars:
         ups_backup: "{{ backup_restore_install | default(false) | bool }}"
       when: ups
+
+    #mdc
+    - name: Install/Upgrade Mobile Developer Console (mdc) as part of upgrade
+      include_role:
+        name: mdc
+      vars:
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
+      when: mdc
     
     #applicatio metrics
     - name: Install application metrics

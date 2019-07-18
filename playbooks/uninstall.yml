@@ -162,6 +162,15 @@
         ups_namespace: "{{ eval_ups_namespace }}"
       tags: ['ups']
 
+    - 
+      name: Uninstall Mobile Developer Console (mdc)
+      include_role:
+        name: mdc
+        tasks_from: uninstall.yml
+      vars:
+        mdc_namespace: "{{ eval_mdc_namespace }}"
+      tags: ['mdc']
+
     -
       name: Reboot template broker
       include_role:
@@ -170,6 +179,13 @@
 - hosts: master
   tasks:
     - block:
+      -
+        name: Remove mdc cors data
+        include_role:
+          name: mdc
+          tasks_from: uninstall-cors
+        tags: ['mdc']
+        when: mdc
       -
         name: Remove webapp cors data
         include_role:
@@ -183,4 +199,3 @@
           tasks_from: remove_identityprovider
         tags: ['rhsso']
       when: run_master_tasks | default(true) | bool
-
