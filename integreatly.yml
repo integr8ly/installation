@@ -28,3 +28,6 @@ imageSync:
       - amq-online-1-iot-mqtt-adapter:1.2
       - amq-online-1-iot-proxy-configurator:1.2
       - amq-online-1-iot-tenant-service:1.2
+    amq-broker-7:
+      images:
+      - amq-broker-74-openshift:latest
