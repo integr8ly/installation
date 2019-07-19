@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   labels:
-    monitoring-key: middleware
+    monitoring-key: "{{monitoring_label_value}}"
   name: ksm-alerts
 spec:
   groups:
