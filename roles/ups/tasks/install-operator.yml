@@ -13,6 +13,14 @@
   shell: "oc apply -f {{ item }} -n {{ ups_namespace }}"
   with_items: "{{ ups_resources }}"
 
+- name: Process role_binding template
+  template:
+    src: role_binding.yaml.j2
+    dest: "{{ ups_template_dir }}/role_binding.yaml"
+
+- name: Apply role_binding resource
+  shell: "oc apply -f {{ ups_template_dir }}/role_binding.yaml"
+
 - name: Process operator template
   template:
     src: operator.yml.j2
