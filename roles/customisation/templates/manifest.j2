@@ -6,6 +6,12 @@
                 "name": "{{c.name}}",
                 "version": "{{c.version}}",
                 "host": "{{c.host}}"
+                {% if c.type is defined %}
+                , "type": "{{c.type}}"
+                {% endif %}
+                {% if c.mobile is defined %}
+                , "mobile": {{c.mobile | bool | to_json}}
+                {% endif %}
             }
             {% if not loop.last %}
             ,
