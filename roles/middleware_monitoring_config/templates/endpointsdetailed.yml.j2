@@ -3,7 +3,7 @@ kind: GrafanaDashboard
 metadata:
   name: endpointsdetailed
   labels:
-    monitoring-key: middleware
+    monitoring-key: "{{monitoring_label_value}}"
 spec:
   plugins:
     - name: "natel-discrete-panel"

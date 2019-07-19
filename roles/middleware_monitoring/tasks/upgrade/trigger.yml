@@ -1,5 +1,11 @@
 ---
-- name: Upgrade the monitoring operator role
+- name: Scale down the application monitoring operator
+  shell: "oc scale deployment/application-monitoring-operator --replicas 0 -n {{ monitoring_namespace }}"
+  register: amo_scale_down_cmd
+  failed_when: amo_scale_down_cmd.rc != 0
+  changed_when: amo_scale_down_cmd.rc == 0
+
+- name: Upgrade the application monitoring operator resources
   shell: "oc apply -f {{ item }} -n {{ monitoring_namespace }}"
   register: aom_role_apply_cmd
   failed_when: aom_role_apply_cmd.stderr != '' and 'Warning' not in aom_role_apply_cmd.stderr
@@ -11,12 +17,6 @@
   register: delete_lockfile_cmd
   failed_when: delete_lockfile_cmd.stderr != '' and 'NotFound' not in delete_lockfile_cmd.stderr
   changed_when: delete_lockfile_cmd.rc == 0
-
-- name: Wait for the new application monitoring operator to be ready
-  shell: "oc rollout status deployment/application-monitoring-operator -n {{ monitoring_namespace }}"
-  register: rollout_cmd
-  failed_when: rollout_cmd.rc != 0
-  changed_when: rollout_cmd.rc == 0
 
 - name: Get the name of the application monitoring CR
   shell: "oc get applicationmonitorings -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ monitoring_namespace }}"
@@ -34,3 +34,15 @@
   shell: oc patch applicationmonitoring {{ aom_cr_name }} -n {{ monitoring_namespace }} --type json -p '[{"op":"replace", "path":"/status/phase", "value":0}]'
   register: reconcile_cmd
   failed_when: reconcile_cmd.stderr != '' and 'not patched' not in reconcile_cmd.stderr
+
+- name: Scale up the application monitoring operator
+  shell: "oc scale deployment/application-monitoring-operator --replicas 1 -n {{ monitoring_namespace }}"
+  register: amo_scale_up_cmd
+  failed_when: amo_scale_up_cmd.rc != 0
+  changed_when: amo_scale_up_cmd.rc == 0
+
+- name: Wait for the new application monitoring operator to be ready
+  shell: "oc rollout status deployment/application-monitoring-operator -n {{ monitoring_namespace }}"
+  register: rollout_cmd
+  failed_when: rollout_cmd.rc != 0
+  changed_when: rollout_cmd.rc == 0
