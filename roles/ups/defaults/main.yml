@@ -3,7 +3,6 @@ ups_app_namespaces: "{{ eval_mdc_namespace | default('mobile-developer-console')
 ups_resources:
   - "{{ ups_operator_resources }}/service_account.yaml"
   - "{{ ups_operator_resources }}/role.yaml"
-  - "{{ ups_operator_resources }}/role_binding.yaml"
   - "{{ ups_operator_resources }}/crds/push_v1alpha1_androidvariant_crd.yaml"
   - "{{ ups_operator_resources }}/crds/push_v1alpha1_iosvariant_crd.yaml"
   - "{{ ups_operator_resources }}/crds/push_v1alpha1_pushapplication_crd.yaml"
