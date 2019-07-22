@@ -12,3 +12,33 @@ imageSync:
       images:
       - data-virtualization-server:1.4-4
       - fuse-postgres-exporter:1.4-1
+    amq7:
+      images:
+      - amq-interconnect:1.5
+      - amq-online-1-address-space-controller:1.2
+      - amq-online-1-agent:1.2
+      - amq-online-1-api-server:1.2
+      - amq-online-1-auth-plugin:1.2
+      - amq-online-1-broker-plugin:1.2
+      - amq-online-1-console-httpd:1.2
+      - amq-online-1-console-init:1.2
+      - amq-online-1-controller-manager:1.2
+      - amq-online-1-mqtt-gateway:1.2
+      - amq-online-1-mqtt-lwt:1.2
+      - amq-online-1-none-auth-service:1.2
+      - amq-online-1-service-broker:1.2
+      - amq-online-1-standard-controller:1.2
+      - amq-online-1-topic-forwarder:1.2
+    amq7-tech-preview:
+      images:
+      - amq-online-1-iot-auth-service:1.2
+      - amq-online-1-iot-device-registry-datagrid:1.2
+      - amq-online-1-iot-device-registry-file:1.2
+      - amq-online-1-iot-gc:1.2
+      - amq-online-1-iot-http-adapter:1.2
+      - amq-online-1-iot-mqtt-adapter:1.2
+      - amq-online-1-iot-proxy-configurator:1.2
+      - amq-online-1-iot-tenant-service:1.2
+    amq-broker-7:
+      images:
+      - amq-broker-74-openshift:latest
