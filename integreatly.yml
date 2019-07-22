@@ -10,7 +10,6 @@ imageSync:
       - fuse-online-operator:1.4-4
     fuse7-tech-preview:
       images:
-      - data-virtualization-server:1.4-4
       - fuse-postgres-exporter:1.4-1
     amq7:
       images:
