@@ -1,0 +1,54 @@
+apiVersion: applicationmonitoring.integreatly.org/v1alpha1
+kind: BlackboxTarget
+metadata:
+  name: integreatly-blackboxtargets
+spec:
+  blackboxTargets:
+{% if webapp %}
+  # Solution Explorer targets
+  - service: webapp-ui
+    url: https://{{ webapp_tutorial_web_app_route.stdout }}
+    module: http_2xx
+{% endif %}
+{% if launcher %}
+  # Developer Launcher targets
+  - service: launcher-ui
+    url: https://{{ launcher_launcher_route.stdout }}/launch/
+    module: http_2xx
+  - service: launcher-keycloak-ui
+    namespace: launcher
+    url: https://{{ launcher_launcher_sso_route.stdout }}/auth/admin/master/console/
+    module: http_2xx
+{% endif %}
+{% if enmasse %}
+  # AMQ Online targets
+  - service: amq-keycloak-ui
+    url: https://{{ enmasse_keycloak_route.stdout }}/auth/admin/master/console/
+    module: http_2xx
+  - service: amq-service-broker
+    url: https://{{ enmasse_console_proxy_route.stdout }}/healthz
+    module: http_2xx
+{% endif %}
+{% if che %}
+  # Codeready Workspaces targets
+  - service: codeready-ui
+    url: https://{{ codeready_codeready_route.stdout }}/dashboard/
+    module: http_2xx
+{% endif %}
+  # RH-SSO targets
+  - service: rhsso-ui
+    url: https://{{ rhsso_rhsso_route.stdout }}/auth/admin/master/console/
+    module: http_2xx
+{% if threescale %}
+  # 3scale targets
+  - service: 3scale-admin-ui
+    url: https://{{ threescale_system_provider_admin_route.stdout }}/p/login/
+    module: http_2xx
+  - service: 3scale-system-admin-ui
+    namespace: 3scale
+    url: https://{{ threescale_system_master_route.stdout }}
+    module: http_2xx
+  - service: 3scale-developer-console-ui
+    url: https://{{ threescale_system_developer_route.stdout }}
+    module: http_2xx
+{% endif %}
