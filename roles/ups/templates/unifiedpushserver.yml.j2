@@ -2,8 +2,9 @@ apiVersion: push.aerogear.org/v1alpha1
 kind: UnifiedPushServer
 metadata:
   name: {{ ups_server_name }}
-{% if ups_backup %}
 spec:
+  useMessageBroker: true
+{% if ups_backup %}
   backups:
     -
       name: {{ ups_backup_name }}
