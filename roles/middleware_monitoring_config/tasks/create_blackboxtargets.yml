@@ -1,0 +1,4 @@
+---
+- include: ./get_blackbox_routes.yml
+- include: ./create_from_template.yml
+  with_items: "{{ monitoring_blackboxtargets_resource_templates }}"

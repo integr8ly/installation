@@ -25,3 +25,7 @@ monitoring_grafanadashboards_resource_templates:
 # PrometheusRules template variables
 monitoring_prometheusrules_resource_templates:
 - kube_state_metrics_alerts.yml
+
+# BlackboxTargets template variables
+monitoring_blackboxtargets_resource_templates:
+- blackboxtargets.yml
