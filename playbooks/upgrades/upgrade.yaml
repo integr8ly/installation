@@ -20,6 +20,20 @@
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
 
+    # Managed Service Broker
+    - name: Expose vars
+      include_vars: "../../roles/rhsso/defaults/main.yml"
+    -
+      name: Set eval_app_host var
+      set_fact:
+        eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+    - include_role:
+        name: msbroker
+        tasks_from: upgrade
+      vars:
+        route_suffix: "{{ eval_app_host }}"
+        sso_realm: "{{ rhsso_realm }}"
+
     # Solution Explorer
     - name: Bump the Web App operator version to {{ webapp_operator_release_tag }}
       shell: oc patch deployment tutorial-web-app-operator -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_operator_image }}"}]'
