@@ -15,7 +15,6 @@
     che_dashboard_url: "https://{{ che_host_cmd.stdout}}"
   when: che and launcher
 
-
 - name: Get 3scale dashboard url
   shell: oc get route/system-provider-admin -o jsonpath='{.spec.host}' -n {{ threescale_namespace }}
   register: threescale_host_cmd
@@ -52,8 +51,11 @@
     monitor: true
     is_service: true
 
+# Used to pull images from registry.redhat.io
+- name: Expose vars
+  include_vars: "../roles/imagestream_pull_secret/defaults/main.yml"
 - include_role:
-    name: fuse_pull_secret
+    name: imagestream_pull_secret
   vars:
     namespace: "{{ msbroker_namespace }}"
   when: fuse_online

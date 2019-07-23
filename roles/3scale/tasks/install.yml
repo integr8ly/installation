@@ -9,6 +9,17 @@
     monitor: true
     is_service: true
 
+# Used to pull images from registry.redhat.io
+- name: Expose vars
+  include_vars: "../roles/imagestream_pull_secret/defaults/main.yml"
+- include_role:
+    name: imagestream_pull_secret
+  vars:
+    namespace: "{{ threescale_namespace }}"
+
+- name: Link imagestream pull secret for images
+  shell: oc secrets link default {{ pull_secret_name }} --for=pull -n {{ threescale_namespace }}
+
 - name: Check namespace for existing resources
   shell: oc get all -n {{ threescale_namespace }}
   register: threescale_resources_exist
