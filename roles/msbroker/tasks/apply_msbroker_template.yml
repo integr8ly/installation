@@ -42,8 +42,11 @@
   shell: oc get route sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
   register: sso_route
 
+# Used to pull images from registry.redhat.io
+- name: Expose vars
+  include_vars: "../roles/imagestream_pull_secret/defaults/main.yml"
 - include_role:
-    name: fuse_pull_secret
+    name: imagestream_pull_secret
   vars:
     namespace: "{{ msbroker_namespace }}"
   when: fuse_online
