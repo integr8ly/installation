@@ -1,24 +1,32 @@
 ---
-- name: Delete oauth client
-  shell: "oc delete oauthclient/{{ mdc_oauth_client_id }}"
+- name: Register available resources
+  shell: "oc get {{ item }} -n {{ mdc_namespace }} -o name"
+  register: mdc_resource_list_cmd
+  failed_when: false
+  with_items:
+    - oauthclient
+    - mobiledeveloperconsole
+    - keycloakrealm
+
+- set_fact:
+    mdc_resource_list: "{{ mdc_resource_list | default([]) + item.stdout_lines }}"
+  with_items: "{{ mdc_resource_list_cmd.results }}"
+
+- name: Delete available resources
+  shell: "oc delete {{ item }} -n {{ mdc_namespace }}"
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr
-  changed_when: output.rc == 0
-
-- name: Delete mdc
-  shell: "oc delete mobiledeveloperconsole/{{ mdc_name }} -n {{ mdc_namespace }}"
-  register: output
-  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
-  changed_when: output.rc == 0
+  with_items: "{{ mdc_resource_list }}"
 
 - name: "Wait for resources to be removed"
-  shell: oc get mobiledeveloperconsole/{{ mdc_name }} -n {{ mdc_namespace }}
+  shell: oc get {{ item }} -n {{ mdc_namespace }}
   register: result
   until: not result.stdout
   retries: 50
   delay: 10
   failed_when: result.stdout
   changed_when: False
+  with_items: "{{ mdc_resource_list }}"
 
 - include_role:
     name: namespace
