@@ -98,11 +98,11 @@ mss_version: '0.1.0'
 
 #unifiedpush
 ups: false
-ups_operator_release_tag: 'master'
+ups_operator_release_tag: '0.1.0'
 ups_operator_resources: 'https://raw.githubusercontent.com/aerogear/unifiedpush-operator/{{ups_operator_release_tag}}/deploy'
 ups_operator_image: 'quay.io/aerogear/unifiedpush-operator:{{ ups_operator_release_tag }}'
-ups_release_tag: '2.2.1.Final'
-ups_image: 'docker.io/aerogear/unifiedpush-wildfly-plain:{{ ups_release_tag }}'
+ups_release_tag: '2.3'
+ups_image: 'quay.io/aerogear/unifiedpush-configurable-container:{{ ups_release_tag }}'
 ups_proxy_release_tag: 'v1.1.0'
 ups_proxy_image: 'docker.io/openshift/oauth-proxy:{{ ups_proxy_release_tag }}'
 
@@ -142,4 +142,3 @@ backup_namespace: "openshift-integreatly-backups"
 # Supported oc versions
 supported_oc_versions:
   - "3.11"
-
