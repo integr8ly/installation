@@ -18,3 +18,4 @@
     - name: User rhsso configuration
       include_role:
         name: rhsso-user
+      when: (mdc | default(false) | bool) and (user_rhsso | default(true) | bool)
