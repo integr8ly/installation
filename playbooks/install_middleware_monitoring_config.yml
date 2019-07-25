@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  gather_facts: no
+  roles:
+  - role: middleware_monitoring_config
+    when: middleware_monitoring | default(true) | bool
+  - role: 3scale_config
+    when: middleware_monitoring | default(true) | bool
+  tasks:
+  - include_role:
+      name: gitea
+      tasks_from: monitoring
+    when: (middleware_monitoring | default(true) | bool) and gitea
+  - include_role:
+      name: webapp
+      tasks_from: monitoring
+    when: (middleware_monitoring | default(true) | bool) and webapp
+  - include_role:
+      name: mobile_security_service
+      tasks_from: monitoring
+    when: (middleware_monitoring | default(true) | bool) and mobile_security_service
+  - include_role:
+      name: ups
+      tasks_from: monitoring
+    when: (middleware_monitoring | default(true) | bool) and ups
