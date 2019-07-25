@@ -96,6 +96,8 @@ mobile_security_service_operator_resources: 'https://raw.githubusercontent.com/a
 mobile_security_service_operator_image: 'quay.io/aerogear/mobile-security-service-operator:{{ mobile_security_service_operator_release_tag }}'
 mss_version: '0.1.0'
 
+rhsso_user_operator_resources: "{{ rhsso_operator_resources }}"
+
 #unifiedpush
 ups: false
 ups_operator_release_tag: '0.1.0'

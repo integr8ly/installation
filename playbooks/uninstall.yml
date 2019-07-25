@@ -128,15 +128,6 @@
       tags: ['che']
       when: che | default(true) | bool
     -
-      name: Uninstall user-sso
-      include_role:
-        name: rhsso
-        tasks_from: uninstall_sso.yml
-      vars:
-        sso_namespace: "{{ eval_user_rhsso_namespace }}"
-      tags: ['user_rhsso']
-      when: user_rhsso | default(true) | bool
-    -
       name: Uninstall AMQ Streams
       include_role:
         name: amq_streams
@@ -170,6 +161,16 @@
       vars:
         mdc_namespace: "{{ eval_mdc_namespace }}"
       tags: ['mdc']
+
+    -
+      name: Uninstall user-sso
+      include_role:
+        name: rhsso
+        tasks_from: uninstall_sso.yml
+      vars:
+        sso_namespace: "{{ eval_user_rhsso_namespace }}"
+      tags: ['user_rhsso']
+      when: user_rhsso | default(true) | bool
 
     -
       name: Reboot template broker

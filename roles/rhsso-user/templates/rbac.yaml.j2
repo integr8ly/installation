@@ -1,0 +1,71 @@
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: keycloak-operator
+rules:
+  - apiGroups:
+      - batch
+    resources:
+      - "cronjobs"
+    verbs:
+      - "*"
+  - apiGroups:
+      - aerogear.org
+    resources:
+      - "*"
+    verbs:
+      - "*"
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+      - events
+      - secrets
+      - services
+      - pods
+    verbs:
+      - "*"
+  - apiGroups:
+      - "template.openshift.io"
+    resources:
+      - processedtemplates
+    verbs: [ get, list, create, update, delete, deletecollection, watch]
+  - apiGroups:
+      - apps.openshift.io
+    resources:
+      - deploymentconfigs
+    verbs: [ get, list, create, update, delete, deletecollection, watch]
+  - apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+      - routes/custom-host
+    verbs: [ get, list, create, update, delete, deletecollection, watch]
+  - apiGroups:
+      - integreatly.org
+    resources:
+      - grafanadashboards
+    verbs:
+      - '*'
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - prometheusrules
+      - servicemonitors
+    verbs:
+      - '*'
+---
+
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: "{{ rhsso_user_rbac_name }}"
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: "{{ rhsso_user_namespace }}"
+roleRef:
+  kind: Role
+  name: keycloak-operator
+  apiGroup: rbac.authorization.k8s.io

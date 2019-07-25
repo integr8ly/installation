@@ -1,0 +1,32 @@
+---
+- name: Ensure tmp folder exists
+  file:
+    path: "{{ rhsso_user_tmp_dir }}"
+    state: directory
+
+- include_role:
+    name: namespace
+    tasks_from: create
+  vars:
+    name: "{{ rhsso_user_namespace }}"
+    display_name: "User Facing Red Hat Single Sign-On"
+    monitor: true
+    is_service: true
+
+- name: Process rbac template
+  template:
+    src: rbac.yaml.j2
+    dest: "{{ rhsso_user_tmp_dir }}/rbac.yaml"
+
+- name: Apply rbac file
+  shell: "oc create -f {{ rhsso_user_tmp_dir }}/rbac.yaml -n {{ rhsso_user_mdc_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'AlreadyExists' not in output.stderr
+
+- name: Set consumer namespaces var
+  set_fact:
+    rhsso_user_consumer_namespaces: "{{ rhsso_user_namespace }};{{ rhsso_user_mdc_namespace }}"
+  when: rhsso_user_consumer_namespaces is undefined
+
+- name: Set new env var
+  shell: "oc set env deployment/keycloak-operator 'CONSUMER_NAMESPACES={{ rhsso_user_consumer_namespaces }}' -n {{ rhsso_user_namespace }}"
