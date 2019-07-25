@@ -135,3 +135,27 @@
 - import_playbook: install_user_rhsso.yml
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
+
+- hosts: master
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: mdc
+        tasks_from: cors.yml
+      vars:
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
+      when: mdc
+    - name: restart openshift master services
+      shell: "/usr/local/bin/master-restart {{ item }}"
+      become: yes
+      when: mdc
+      with_items:
+        - api
+        - controllers
+    - name: check if openshift master services are running
+      shell: oc get nodes
+      register: task_result
+      until: task_result.rc == 0
+      retries: 6
+      delay: 5
+      failed_when: task_result.rc != 0
