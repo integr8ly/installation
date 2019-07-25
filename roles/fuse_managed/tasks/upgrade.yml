@@ -19,6 +19,9 @@
 - name: Update fuse operator resources in {{ fuse_namespace }}
   shell: oc replace --force -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
 
+- name: TODO-REMOVE-THIS-AFTER-FUSE-ONLINE-INCLUDES-THESE-ARGS Patch args on operator to include monitoring resources addon
+  shell: oc patch dc/syndesis-operator -p='{"spec":{"template":{"spec":{"containers":[{"name":"syndesis-operator","args":["-a","/conf/addons"]}]}}}}}' -n {{ fuse_namespace }}
+
 # Upgrade syndesis resources. This should bypass the upgrade phase of the operator
 - name: Update and create new resources added to the fuse online template
   block:
