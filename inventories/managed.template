@@ -22,3 +22,6 @@ user_rhsso=true
 
 # Don't setup the datasync (yet) on managed instance
 datasync=false
+
+# Managed instances always have cluster type osd
+cluster_type=osd
