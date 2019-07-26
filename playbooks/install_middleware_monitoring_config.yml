@@ -23,3 +23,7 @@
       name: ups
       tasks_from: monitoring
     when: (middleware_monitoring | default(true) | bool) and ups
+  - include_role:
+      name: mdc
+      tasks_from: monitoring
+    when: (middleware_monitoring | default(true) | bool) and mdc
