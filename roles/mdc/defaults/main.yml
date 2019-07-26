@@ -13,3 +13,12 @@ mdc_resources:
   - "{{ mdc_operator_resources }}/mobiledeveloper_role.yaml"
   - "{{ mdc_operator_resources }}/mobiledeveloper_rolebinding.yaml"
 mdc_openshift_master_config_path: "{{ eval_openshift_master_config_path | default('/etc/origin/master/master-config.yaml') }}"
+
+documentation_url: https://docs.aerogear.org/limited-availability/downstream
+
+ups_documentation_url: "{{ documentation_url }}/ups.html"
+idm_documentation_url: "{{ documentation_url }}/idm.html"
+sync_documentation_url: "{{ documentation_url }}/sync.html"
+mss_documentation_url: "{{ documentation_url }}/mss.html"
+
+
