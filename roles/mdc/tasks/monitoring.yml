@@ -7,18 +7,18 @@
 
 - name: Copy MDC monitor templates
   template:
-    src: "{{ item }}.yml.j2"
-    dest: "{{ mdc_template_dir }}/{{ item }}.yml"
+    src: "{{ item }}.yaml.j2"
+    dest: "{{ mdc_template_dir }}/{{ item }}.yaml"
   with_items: "{{ mdc_monitor_templates }}"
 
 - name: Create MDC monitor resources
-  shell: "oc apply -f {{ mdc_template_dir }}/{{ item }}.yml -n {{ mdc_namespace }}"
+  shell: "oc apply -f {{ mdc_template_dir }}/{{ item }}.yaml -n {{ mdc_namespace }}"
   with_items: "{{ mdc_monitor_templates }}"
   register: output
   failed_when: output.stderr != '' and 'already exists' not in output.stderr
 
 - name: Delete MDC monitor temporary files
   file:
-    path: "{{ mdc_template_dir }}/{{ item }}.yml"
+    path: "{{ mdc_template_dir }}/{{ item }}.yaml"
     state: absent
   with_items: "{{ mdc_monitor_templates }}"
