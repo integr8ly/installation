@@ -47,7 +47,7 @@
   - name: get 3scale system-master route
     shell: oc get routes -l zync.3scale.net/route-to={{ threescale_route_system_master }} -o jsonpath='{.items[*].spec.host}' -n {{ threescale_namespace }}
     register: threescale_system_master_route
-  - name: get 3scale system-master route
+  - name: get 3scale system-developer route
     shell: oc get routes -l zync.3scale.net/route-to={{ threescale_route_system_developer }} -o jsonpath='{.items[*].spec.host}' -n {{ threescale_namespace }}
     register: threescale_system_developer_route
   when: threescale | bool
