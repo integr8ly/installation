@@ -2,5 +2,5 @@
 # Apply latest CR definitions
 - include_tasks: ./kube_state_metrics_alerts.yml
 - include_tasks: ./create_grafanadashboards.yml
-- include_tasks: ./get_blackbox_routes.yml
 - include_tasks: ./create_blackboxtargets.yml
+- include_tasks: ./prometheus_additional_scrape_config.yml
