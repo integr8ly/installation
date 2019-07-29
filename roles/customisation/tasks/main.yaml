@@ -240,6 +240,9 @@
     - name: Get route for user-facing rhsso
       shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace | default('user-sso') }}
       register: user_sso_route_cmd
+      until: not user_sso_route_cmd.stderr
+      retries: 5
+      delay: 2
     - set_fact:
         user_rhsso_route: "https://{{user_sso_route_cmd.stdout}}"
     - name: Set User RHSSO component
