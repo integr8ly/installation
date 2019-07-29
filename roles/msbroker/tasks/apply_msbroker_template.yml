@@ -16,7 +16,7 @@
   when: che and launcher
 
 - name: Include threescale route vars
-  include_vars: ../../middleware_monitoring_config/defaults/main.yml
+  include_vars: ../../3scale/defaults/main.yml
 
 - name: Get 3scale dashboard url
   shell: oc get routes -l zync.3scale.net/route-to={{ threescale_route_system_provider }} -o jsonpath='{.items[*].spec.host}' -n {{ threescale_namespace }}

@@ -29,7 +29,3 @@ monitoring_prometheusrules_resource_templates:
 # BlackboxTargets template variables
 monitoring_blackboxtargets_resource_templates:
 - blackboxtargets.yml
-
-threescale_route_system_developer: system-developer
-threescale_route_system_master: system-master 
-threescale_route_system_provider: system-provider
