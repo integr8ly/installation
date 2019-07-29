@@ -15,7 +15,7 @@ spec:
       serviceAccountName: mobile-developer-console-operator
       containers:
         - name: mobile-developer-console-operator
-          image: quay.io/aerogear/mobile-developer-console-operator:master
+          image: {{ mdc_operator_image }}
           command:
           - mobile-developer-console-operator
           imagePullPolicy: Always
