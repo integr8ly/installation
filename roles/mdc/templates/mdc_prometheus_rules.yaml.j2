@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    monitoring-key: middleware
+    prometheus: application-monitoring
+    role: alert-rules
+  name: mdc-monitoring
+spec:
+  groups:
+    - name: general.rules
+      rules:
+      - alert: MobileDeveloperConsoleDown
+        expr: absent(up{job="{{ mdc_name }}-mdc"} == 1)
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          description: "The Mobile Developer Console has been down for more than 5 minutes."
+          summary: "The Mobile Developer Console is down."
