@@ -9,3 +9,5 @@ monitoring_key: brokered-fuse-online
 msbroker_fuse_operator_resources_url: "{{ fuse_online_operator_resources }}"
 msbroker_required_crds:
   - "{{ fuse_online_crd_resources }}"
+
+fuse_pull_secret_name: "syndesis-pull-secret"
