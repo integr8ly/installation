@@ -91,7 +91,7 @@ nexus_version: '2.14.11-01'
 
 ## Enables datasync templates (enabled by default)
 ## datasync: true
-datasync_template_tag: '0.5.0'
+datasync_template_tag: '0.6.1'
 
 #controls whether the mobile security service is installed or not
 mobile_security_service: false
