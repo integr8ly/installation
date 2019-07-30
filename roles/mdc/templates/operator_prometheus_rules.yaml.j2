@@ -18,12 +18,4 @@ spec:
         annotations:
           description: "The MDC Operator has been down for more than 5 minutes."
           summary: "The MDC Operator is down. For more information on the MDC Operator, see https://github.com/aerogear/mobile-developer-console-operator"
-      - alert: MobileDeveloperConsolePodCount
-        annotations:
-          description: "The Pod count for the MDC Server has changed in the last 5 minutes and is lower than the required minimum."
-          summary: "Pod count for namespace {{ mdc_namespace }} is {{ '{{' }} $value {{ '}}' }}. Expected at least 2 pods. For more information on the MDC Operator, see https://github.com/aerogear/mobile-developer-console-operator"
-        expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ mdc_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ mdc_namespace }}"}) < 2
-        for: 5m
-        labels:
-          severity: warning
+
