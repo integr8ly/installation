@@ -15,7 +15,3 @@
         rhsso_provision_immediately: true
       tags: ['user_rhsso']
       when: user_rhsso | default(true) | bool
-    - name: User rhsso configuration
-      include_role:
-        name: rhsso-user
-      when: (mdc | default(false) | bool) and (user_rhsso | default(true) | bool)
