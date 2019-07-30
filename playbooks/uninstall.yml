@@ -135,43 +135,6 @@
       tags: ['amq_streams']
       when: amq_streams | default(true) | bool
 
-    - 
-      name: Uninstall Mobile Security Service
-      include_role:
-        name: mobile_security_service
-        tasks_from: uninstall_mss.yml
-      vars:
-        mss_namespace: "{{ eval_mobile_security_service_namespace }}"
-      tags: ['mss']
-
-    - 
-      name: Uninstall Unified Push Server (ups)
-      include_role:
-        name: ups
-        tasks_from: uninstall.yml
-      vars:
-        ups_namespace: "{{ eval_ups_namespace }}"
-      tags: ['ups']
-
-    - 
-      name: Uninstall Mobile Developer Console (mdc)
-      include_role:
-        name: mdc
-        tasks_from: uninstall.yml
-      vars:
-        mdc_namespace: "{{ eval_mdc_namespace }}"
-      tags: ['mdc']
-
-    -
-      name: Uninstall user-sso
-      include_role:
-        name: rhsso
-        tasks_from: uninstall_sso.yml
-      vars:
-        sso_namespace: "{{ eval_user_rhsso_namespace }}"
-      tags: ['user_rhsso']
-      when: user_rhsso | default(true) | bool
-
     -
       name: Reboot template broker
       include_role:
@@ -180,23 +143,15 @@
 - hosts: master
   tasks:
     - block:
-      -
-        name: Remove mdc cors data
-        include_role:
-          name: mdc
-          tasks_from: uninstall-cors
-        tags: ['mdc']
-        when: mdc
-      -
-        name: Remove webapp cors data
-        include_role:
-          name: webapp
-          tasks_from: cors-remove
-        tags: ['webapp']
-      -
-        name: Uninstall rhsso
-        include_role:
-          name: rhsso
-          tasks_from: remove_identityprovider
-        tags: ['rhsso']
+        - name: Remove webapp cors data
+          include_role:
+            name: webapp
+            tasks_from: cors-remove
+          tags: ['webapp']
+        -
+          name: Uninstall rhsso
+          include_role:
+            name: rhsso
+            tasks_from: remove_identityprovider
+          tags: ['rhsso']
       when: run_master_tasks | default(true) | bool

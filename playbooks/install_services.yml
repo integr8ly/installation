@@ -171,33 +171,3 @@
         apicurio_namespace: "{{ eval_apicurito_namespace }}"
         sso_realm: "{{ rhsso_realm }}"
       tags: ['msbroker']
-
-    - 
-      name: Install DataSync Templates
-      include_role:
-        name: datasync
-      tags: ['datasync']
-      when: datasync | default(true) | bool
-    
-    - name: Install unified push server (ups)
-      include_role:
-        name: ups
-      tags: ['ups']
-      when: ups | default(true) | bool
-
-    - name: Install mobile developer console (mdc)
-      include_role:
-        name: mdc
-      vars:
-        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
-      tags: ['mdc']
-      when: mdc | default(true) | bool
-
-    - name: Expose vars
-      include_vars: "../roles/mobile_security_service/defaults/main.yml"
-    -
-      name: Install Mobile Security Service
-      include_role:
-        name: mobile_security_service
-      tags: ['mobile_security_service']
-      when: mobile_security_service

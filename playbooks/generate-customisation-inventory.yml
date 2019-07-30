@@ -11,9 +11,10 @@
     - include_vars: ../roles/nexus/defaults/main.yml
     - include_vars: ../roles/rhsso/defaults/main.yml
     - include_vars: ../roles/webapp/defaults/main.yml
-    - include_vars: ../roles/mdc/defaults/main.yml
+    - include_vars: ../roles/mobile_security_service/defaults/main.yml
     - include_vars: ../roles/ups/defaults/main.yml
     - include_vars: ../roles/mobile_security_service/defaults/main.yml
+    - include_vars: ../roles/mdc/defaults/main.yml
 
     - name: Set eval_app_host var
       set_fact:
@@ -47,11 +48,16 @@
         - 'SSO_ADMIN_USERNAME'
         - 'SSO_ADMIN_PASSWORD'
       register: _eval_launcher_sso_dc_cmd
+
     - name: Set launcher sso playbook vars
       set_fact: "eval_launcher_{{ item.item | lower }}={{ item.stdout }}"
       with_items: "{{ _eval_launcher_sso_dc_cmd.results }}"
 
+    - set_fact:
+        customisation_vars: "{{ hostvars['EVAL_VARS']['eval_customisation_vars'] }}"
+      when: "'customisation_vars' in hostvars['EVAL_VARS']"
+
     - include_role:
         name: customisation
       vars:
-         components: []
+        components: []

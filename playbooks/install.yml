@@ -8,7 +8,6 @@
 - import_playbook: "./install_infra.yml"
 - import_playbook: "./install_fuse_managed.yml"
 - import_playbook: "./install_services.yml"
-- import_playbook: "./install_mdc.yml"
 - import_playbook: "./install_webapp.yml"
 - import_playbook: "./install_middleware_monitoring_config.yml"
 - import_playbook: "./install_application_metrics.yml"
@@ -16,7 +15,6 @@
 - import_playbook: "./generate-customisation-inventory.yml"
 - import_playbook: "./customise_web_console_install.yml"
 - import_playbook: "./apply_ocp_roles.yml"
-- import_playbook: "./apply_mdc_manifest.yml"
 
 - hosts: master
   gather_facts: no
@@ -26,8 +24,8 @@
       become: yes
       when: (run_master_tasks | default(true) | bool) and (create_cluster_admin == true)
 
-- import_playbook: ./install_backups.yml
-  when: backup_restore_install | default(false) | bool
+- import_playbook: ./install_mobile.yml
+  when: mobile | default(false) | bool
 
 - hosts: localhost
   gather_facts: no
