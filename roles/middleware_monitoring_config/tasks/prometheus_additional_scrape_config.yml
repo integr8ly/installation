@@ -35,6 +35,9 @@
   - name: Create additional scrape config secret
     shell: oc create secret generic {{ additional_scrape_config_name }} --from-file=/tmp/{{ config_secret_contents_file }} -n {{ middleware_monitoring_namespace }} --dry-run -o yaml | oc apply -f -
 
+  - name: Label additional scrape config secret
+    shell: oc label secret {{ additional_scrape_config_name }} monitoring-key={{ monitoring_label_value }} -n {{ middleware_monitoring_namespace }}
+
   - name: Check if the middleware monitoring prometheus CR is available
     shell: oc get prometheus application-monitoring -n {{ middleware_monitoring_namespace }}
     register: monitoring_prometheus_check
