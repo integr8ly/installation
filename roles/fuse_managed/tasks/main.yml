@@ -12,6 +12,23 @@
 # Used to pull images from registry.redhat.io
 - name: Expose vars
   include_vars: "../roles/imagestream_pull_secret/defaults/main.yml"
+
+- name: Create shared fuse roles template
+  template:
+    src: roles.yaml
+    dest: /tmp/shared-fuse-roles.yaml
+
+- name: Apply shared fuse roles to cluster
+  shell: "oc create -f /tmp/shared-fuse-roles.yaml -n {{ fuse_namespace }}"
+  register: create_fuse_roles_cmd
+  failed_when: create_fuse_roles_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_roles_cmd.stderr
+
+- name: "include rhsso vars"
+  include_vars: ../../rhsso/defaults/main.yml
+
+- name: Give role-binder role to customer-admin
+  shell: "oc adm policy add-role-to-user role-binder {{ rhsso_evals_admin_username }} --role-namespace={{ fuse_namespace }} -n {{ fuse_namespace }}"
+
 - include_role:
     name: imagestream_pull_secret
   vars:

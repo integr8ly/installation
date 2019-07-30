@@ -9,3 +9,7 @@
 - name: Remove the Fuse Managed namespace
   shell: oc delete project {{ fuse_namespace }}
   failed_when: false
+
+- name: Delete Fuse roles
+  shell: oc delete role role-binder -n {{ fuse_namespace }}
+  failed_when: false
