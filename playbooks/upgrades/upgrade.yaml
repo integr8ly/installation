@@ -102,6 +102,9 @@
         tasks_from: upgrade_1.0_to_1.2.yml
 
     # Monitoring upgrade
+    - name: Expose vars
+      include_vars: "../../roles/middleware_monitoring_config/defaults/main.yml"
+
     # Grafana
     - include_role:
         name: middleware_monitoring
