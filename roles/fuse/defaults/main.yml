@@ -4,3 +4,5 @@ fuse_apicurito: https://raw.githubusercontent.com/jboss-fuse/application-templat
 fuse_templates_url: https://raw.githubusercontent.com/jboss-fuse/application-templates/{{fuse_release_tag}}/quickstarts
 
 msbroker_namespace: "{{ eval_msbroker_namespace | default('managed-service-broker')}}"
+
+fuse_pull_secret_name: "syndesis-pull-secret"

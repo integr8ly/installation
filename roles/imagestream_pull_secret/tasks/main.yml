@@ -4,7 +4,7 @@
     dest: /tmp/imagestream-golang-template.tpl
 
 - name: Read the registry pull secret
-  shell: "oc get secret {{ pull_secret_name }} -n openshift -o go-template-file=/tmp/imagestream-golang-template.tpl"
+  shell: "oc get secret imagestreamsecret -n openshift -o go-template-file=/tmp/imagestream-golang-template.tpl"
   register: image_stream_secret_data
   changed_when: image_stream_secret_data.rc == 0
   failed_when: image_stream_secret_data.stderr != ''
