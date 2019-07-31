@@ -32,6 +32,5 @@
   until: result.stdout == 'reconcile'
   retries: 50
   delay: 10
-  failed_when: result.stderr
   changed_when: False
   when: rhsso_provision_immediately
