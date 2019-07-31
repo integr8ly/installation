@@ -12,6 +12,14 @@
   changed_when: aom_role_apply_cmd.rc == 0
   with_items: "{{ monitoring_resources }}"
 
+- name: Upgrade the prometheus operator roles
+  include: ./apply_resource_from_template.yml
+  with_items:
+    - "prometheus_operator_cluster_role.yml"
+
+- name: Label additional scrape config secret
+  shell: "oc label secret {{ additional_scrape_config_name }} monitoring-key={{ monitoring_label_value }} -n {{ monitoring_namespace }} --overwrite"
+
 - name: Delete the lockfile
   shell: "oc delete configmap application-monitoring-operator-lock -n {{ monitoring_namespace }}"
   register: delete_lockfile_cmd
