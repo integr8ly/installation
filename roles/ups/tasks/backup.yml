@@ -1,15 +1,11 @@
 ---
-- name: "Create backup cluster role"
-  shell: oc apply -f {{ item }} -n {{ ups_namespace }}
-  register: output
-  failed_when: output.stderr != '' and 'AlreadyExists' not in output.stderr
-  with_items: "{{ ups_backup_rbac_resources }}"
-        
-- name: "Create backup cluster role binding"
-  shell: oc new-app -f {{ item }} --param 'SA_NAMESPACE={{ ups_namespace }}'
-  register: output
-  failed_when: output.stderr != '' and 'already exists' not in output.stderr
-  with_items: "{{ ups_backup_rbac_template }}"  
+- name: Create ServiceAccount and role binding
+  include_role:
+    name: backup
+    tasks_from: _setup_service_account.yml
+  vars:
+    binding_name: ups-backup-binding
+    serviceaccount_namespace: '{{ ups_namespace }}'
 
 - name: Patch ups instance
   block:
