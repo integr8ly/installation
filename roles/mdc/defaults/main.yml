@@ -1,6 +1,6 @@
 ---
 mdc_template_dir: /tmp
-mdc_namespace: mobile-developer-console
+mdc_namespace: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"
 mdc_name: mdc
 mdc_oauth_client_id: mobile-developer-console
 mdc_resources:
