@@ -1,4 +1,12 @@
 ---
+- name: Create ServiceAccount and role binding
+  include_role:
+    name: backup
+    tasks_from: _setup_service_account.yml
+  vars:
+    binding_name: mss-backup-binding
+    serviceaccount_namespace: '{{ mobile_security_service_namespace }}'
+
 - name: Generate Mobile Security Service Backup CR template
   template:
     src: "backup_cr.yml.j2"
