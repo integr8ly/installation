@@ -23,13 +23,4 @@ spec:
           description: "The mobile-security-service-operator has been down for more than 5 minutes. "
           summary: "The mobile-security-service-operator is down. For more information see on the MSS operator https://github.com/aerogear/mobile-security-service-operator"
           sop_url: "https://github.com/aerogear/mobile-security-service-operator/blob/0.2.0/SOP/SOP-operator.adoc"
-      - alert: MobileSecurityServicePodCount
-        annotations:
-          description: "The Pod count for the mobile-security-service has changed in the last 5 minutes and is less than the minimal required value."
-          summary: "Pod count for mobile-security-service is {{ '{{' }} $value {{ '}}' }}. Expected 3 pods. For more information see on the MSS operator https://github.com/aerogear/mobile-security-service-operator"
-          sop_url: "https://github.com/aerogear/mobile-security-service-operator/blob/0.2.0/SOP/SOP-operator.adoc"
-        expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ mobile_security_service_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ mobile_security_service_namespace }}"}) < 3
-        for: 5m
-        labels:
-          severity: warning
+

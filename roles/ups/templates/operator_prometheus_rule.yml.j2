@@ -19,13 +19,3 @@ spec:
           description: "The UnifiedPush Operator has been down for more than 5 minutes. "
           summary: "The UnifiedPush Operator is down. For more information see on the UnifiedPush Operator https://github.com/aerogear/unifiedpush-operator"
           sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/0.1.0/SOP/SOP-operator.adoc"
-      - alert: UnifiedPushPodCount
-        annotations:
-          description: "The Pod count for the UnifiedPush Server has changed in the last 5 minutes and is lower than the required minimum."
-          summary: "Pod count for namespace UnifiedPush is {{ '{{' }} $value {{ '}}' }}. Expected 3 pods at least. For more information see on the UnifiedPush Operator https://github.com/aerogear/unifiedpush-operator"
-          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/0.1.0/SOP/SOP-operator.adoc"
-        expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ ups_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ ups_namespace }}"}) < 3
-        for: 5m
-        labels:
-          severity: warning
