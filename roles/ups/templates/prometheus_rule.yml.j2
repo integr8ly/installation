@@ -18,7 +18,7 @@ spec:
         annotations:
           description: "The UnifiedPush Pod Server has been down for more than 5 minutes. "
           summary: "The UnifiedPush Pod Server is down. For more information see on the UnifiedPush at https://github.com/aerogear/aerogear-unifiedpush-server"
-          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/0.1.0/SOP/SOP-push.adoc"
+          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/{{ ups_operator_release_tag }}/SOP/SOP-push.adoc"
       - alert: UnifiedPushConsoleDown
         expr: absent(kube_endpoint_address_available{endpoint="{{ ups_server_name }}-unifiedpush"} == 1)
         for: 5m
@@ -27,7 +27,7 @@ spec:
         annotations:
           description: "The UnifiedPush admin console has been down for more than 5 minutes. "
           summary: "The UnifiedPush admin console endpoint has been unavailable for more that 5 minutes. For more information see on the UnifiedPush  at https://github.com/aerogear/UnifiedPush "
-          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/0.1.0/SOP/SOP-push.adoc"
+          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/{{ ups_operator_release_tag }}/SOP/SOP-push.adoc"
       - alert: UnifiedPushDatabaseDown
         expr: absent(kube_pod_container_status_running{namespace="{{ ups_namespace }}",container="postgresql"} == 1)
         for: 5m
@@ -36,7 +36,7 @@ spec:
         annotations:
           description: "The UnifiedPush Database pod has been down for more than 5 minutes"
           summary: "The UnifiedPush Database is down. For more information see on the UnifiedPush at https://github.com/aerogear/aerogear-unifiedpush-serve"
-          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/0.1.0/SOP/SOP-push.adoc"
+          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/{{ ups_operator_release_tag }}/SOP/SOP-push.adoc"
       - alert:  UnifiedPushJavaHeapThresholdExceeded
         expr: |
           100 * jvm_memory_bytes_used{area="heap",namespace="{{ ups_namespace }}"}
@@ -48,7 +48,7 @@ spec:
         annotations:
           description: "The Heap Usage of the UnifiedPush Server exceeded 90% of usage"
           summary: "The UnifiedPush Server JVM Heap Threshold Exceeded 90% of usage. For more information see on the UnifiedPush Server at https://github.com/aerogear/UnifiedPush "
-          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/0.1.0/SOP/SOP-push.adoc"
+          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/{{ ups_operator_release_tag }}/SOP/SOP-push.adoc"
       - alert: UnifiedPushJavaNonHeapThresholdExceeded
         expr: |
           100 * jvm_memory_bytes_used{area="nonheap",namespace="{{ ups_namespace }}"}
@@ -60,7 +60,7 @@ spec:
         annotations:
           description: "The nonheap usage of the UnifiedPush Server exceeded 90% of usage"
           summary: "The nonheap usage of the UnifiedPush Server exceeded 90% of usage .For more information see on the UnifiedPush Server at https://github.com/aerogear/UnifiedPush "
-          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/0.1.0/SOP/SOP-push.adoc"
+          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/{{ ups_operator_release_tag }}/SOP/SOP-push.adoc"
       - alert: UnifiedPushJavaGCTimePerMinuteScavenge
         expr: |
           increase(jvm_gc_collection_seconds_sum{namespace="{{ ups_namespace }}",service="{{ ups_server_name }}-unifiedpush"}[1m]) > 1 * 60 * 0.9
@@ -70,7 +70,7 @@ spec:
         annotations:
           description: "Amount of time per minute spent on garbage collection in the UnifiedPush Server pod exceeds 90%"
           summary: "Amount of time per minute spent on garbage collection in the UnifiedPush Server pod exceeds 90%. This could indicate that the available heap memory is insufficient..For more information see on the UnifiedPush Server at https://github.com/aerogear/UnifiedPush "
-          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/0.1.0/SOP/SOP-push.adoc"
+          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/{{ ups_operator_release_tag }}/SOP/SOP-push.adoc"
       - alert: UnifiedPushJavaDeadlockedThreads
         expr: |
           jvm_threads_deadlocked{namespace="{{ ups_namespace }}",service="{{ ups_server_name }}-unifiedpush"}
@@ -81,7 +81,7 @@ spec:
         annotations:
           description: "Number of threads in deadlock state of the UnifiedPush Server > 0"
           summary: "Number of threads in deadlock state of the UnifiedPush Server > 0.For more information see on the UnifiedPush Server at https://github.com/aerogear/UnifiedPush "
-          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/0.1.0/SOP/SOP-push.adoc"
+          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/{{ ups_operator_release_tag }}/SOP/SOP-push.adoc"
       - alert: UnifiedPushMessagesFailures
         expr: >
           rate(aerogear_ups_push_requests_fail_total{namespace="{{ ups_namespace }}",service="{{ ups_server_name }}-unifiedpush"}[5m])
@@ -92,4 +92,4 @@ spec:
         annotations:
           description: "More than 50 failed requests attempts for UnifiedPush Server fails over the last 5 minutes."
           summary: "More than 50 failed messages attempts for UnifiedPush Server fails over the last 5 minutes. For more information see on the UnifiedPush Server at https://github.com/aerogear/UnifiedPush "
-          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/0.1.0/SOP/SOP-push.adoc"
+          sop_url: "https://github.com/aerogear/unifiedpush-operator/blob/{{ ups_operator_release_tag }}/SOP/SOP-push.adoc"
