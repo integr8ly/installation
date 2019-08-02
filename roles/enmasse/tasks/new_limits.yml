@@ -1,0 +1,8 @@
+---
+- name: Apply resource overrides for enmasse
+  include_role:
+    name: resource_limits
+  vars:
+    ns: "{{ enmasse_namespace }}"
+    resources: "{{ enmasse_resources }}"
+

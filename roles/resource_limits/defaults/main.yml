@@ -1,0 +1,2 @@
+---
+resource_limits_managed: true   # TODO this value should be used to trigger the logic from install/upgrade playbooks
