@@ -1,0 +1,23 @@
+---
+
+#TODO Add support for multiple containers with different resource values by pausing first and resuming after all patches have been made
+
+# - name: Export resource config for {{ resource_patch.kind }}/{{ resource_patch.name }}
+#   shell: |
+#     oc get {{ resource_patch.kind }} {{ resource_patch.name }} -o yaml \
+#       -n {{ ns }} > /tmp/old_limits_{{ resource_patch.kind }}_{{ resource_patch.name }}.yaml
+#   changed_when: false
+
+- name: Update resource values for {{ resource_patch.kind }}/{{ resource_patch.name }}
+  shell: |
+    oc set resources {{ resource_patch.kind }} {{ resource_patch.name }} -n {{ ns }}
+      {%- for k,v in resource_patch.resources.iteritems() %}
+      --{{ k }}={% for k2,v2 in v.items() %}{{ k2 }}={{ v2 }}{% if not loop.last %},{% endif %}{% endfor %}
+      {%- endfor %}
+  register: set_resources_cmd
+  changed_when: ('not changed' not in set_resources_cmd.stderr)
+  failed_when: set_resources_cmd.stderr != '' and 'not changed' not in set_resources_cmd.stderr
+
+# - name: Apply new resource config for {{ resource_patch.kind }}/{{ resource_patch.name }}
+#   shell: |
+#     oc apply -f /tmp/new_limits_{{ resource_patch.kind }}_{{ resource_patch.name }}.yaml --dry-run -o yaml
