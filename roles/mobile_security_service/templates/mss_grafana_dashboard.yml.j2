@@ -630,14 +630,14 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "process_virtual_memory_bytes{job='mobile-security-service-operator'}",
+              "expr": "kube_pod_container_resource_limits_memory_bytes{namespace='{{ mobile_security_service_namespace }}', container='application'}",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Virtual Memory",
               "refId": "A"
             },
             {
-              "expr": "process_resident_memory_bytes{job='mobile-security-service-operator'}",
+              "expr": "kube_pod_container_resource_requests_memory_bytes{namespace='{{ mobile_security_service_namespace }}', container='application}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Memory Usage",
@@ -645,7 +645,7 @@ spec:
               "step": 2
             },
             {
-              "expr": "kube_pod_container_resource_limits_memory_bytes{container='mobile-security-service-operator'}",
+              "expr": "kube_pod_container_resource_limits_memory_bytes{namespace='{{ mobile_security_service_namespace }}', container='application'}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Max Memory Allocation",
@@ -653,7 +653,7 @@ spec:
               "step": 2
             },
             {
-              "expr": "((kube_pod_container_resource_limits_memory_bytes{container='mobile-security-service-operator'})/100)*90",
+              "expr": "((kube_pod_container_resource_limits_memory_bytes{namespace='{{ mobile_security_service_namespace }}', container='application'})/100)*90",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 2,
@@ -687,112 +687,6 @@ spec:
               "logBase": 2,
               "max": null,
               "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "Prometheus",
-          "fill": 1,
-          "gridPos": {
-            "h": 8,
-            "w": 24,
-            "x": 0,
-            "y": 34
-          },
-          "id": 2,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(rate(process_cpu_seconds_total{job='mobile-security-service-operator'}[1m]))*1000",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Mobile Security Service Application - CPU Usage in Millicores",
-              "refId": "A",
-              "step": 2
-            },
-            {
-              "expr": "(kube_pod_container_resource_limits_cpu_cores{container='mobile-security-service-operator'})*1000",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Maximum Limit of Millicores",
-              "refId": "B",
-              "step": 2
-            },
-            {
-              "expr": "(((kube_pod_container_resource_limits_cpu_cores{container='mobile-security-service-operator'})*1000)/100)*90",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "90% Limit of Millicores",
-              "refId": "C",
-              "step": 2
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "CPU Usage",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "transparent": false,
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "Millicores",
-              "logBase": 10,
-              "max": null,
-              "min": null,
               "show": true
             },
             {
