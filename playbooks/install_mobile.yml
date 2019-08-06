@@ -53,11 +53,9 @@
     - name: Get Mobile Security Service rest route
       shell: oc get route/route -o template --template \{\{.spec.host\}\} -n {{ eval_mobile_security_service_namespace | default('mobile-security-service') }}
       register: mss_route_cmd
-      when: mobile_security_service
 
     - set_fact:
         mss_route: "https://{{mss_route_cmd.stdout}}"
-      when: mobile_security_service
 
     - name: Set Mobile Security Service component
       set_fact:
@@ -67,11 +65,9 @@
             host: "{{ mss_route }}"
             mobile: true
             type: "security"
-      when: mobile_security_service
 
     - set_fact:
         mobile_components: "{{mobile_components}} + {{ mss_manifest }}"
-      when: mobile_security_service
 
     #unified push server(ups)
     - name: Unified Push Server
