@@ -474,7 +474,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "avg(up{job=\"mobile-security-service-application\"})*100",
+              "expr": "avg(kube_pod_container_status_running{namespace='{{ mobile_security_service_namespace }}',container='application'})*100",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 1,
@@ -531,10 +531,10 @@ spec:
           "steppedLine": true,
           "targets": [
             {
-              "expr": "up{job='mobile-security-service-application'}",
+              "expr": "kube_pod_container_status_running{namespace='{{ mobile_security_service_namespace }}',container='application'}",
               "format": "time_series",
               "intervalFactor": 1,
-              "legendFormat": "Mobile Security Service Applition - Uptime",
+              "legendFormat": "Mobile Security Service Application - Uptime",
               "refId": "A"
             }
           ],
