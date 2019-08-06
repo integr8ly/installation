@@ -49,11 +49,11 @@
   register: fuse_serviceaccounts
 
 - name: Link syndesis-pull-secret to fuse service accounts for image pull
-  shell: "oc secrets link {{ item }} {{ pull_secret_name }} --for=pull -n {{ fuse_namespace }}"
+  shell: "oc secrets link {{ item }} {{ fuse_pull_secret_name }} --for=pull -n {{ fuse_namespace }}"
   with_items: "{{ fuse_serviceaccounts.stdout_lines }}"
 
 - name: Link syndesis-pull-secret to builder service account
-  shell: "oc secrets link builder {{ pull_secret_name }} --for=pull,mount -n {{ fuse_namespace }}"
+  shell: "oc secrets link builder {{ fuse_pull_secret_name }} --for=pull,mount -n {{ fuse_namespace }}"
 
 - name: Expose controllers via 3Scale
   shell: "oc set env dc syndesis-server CONTROLLERS_EXPOSE_VIA3SCALE=true -n {{ fuse_namespace }}"
