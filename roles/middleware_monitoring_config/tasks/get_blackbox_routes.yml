@@ -52,3 +52,23 @@
     register: threescale_system_developer_route
   when: threescale | bool
 
+- name: Get Mobile Developer Console routes for blackbox targets
+  block:
+  - name: get mdc route
+    shell: oc get route mdc-mdc-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_mdc_namespace }}
+    register: mdc_mdc_route
+  when: mdc | bool
+
+- name: Get UnifiedPushServer routes for blackbox targets
+  block:
+  - name: get ups route
+    shell: oc get route unifiedpush-unifiedpush-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_ups_namespace }}
+    register: ups_ups_route
+  when: ups | bool
+
+- name: Get Mobile Security Service routes for blackbox targets
+  block:
+  - name: get mss route
+    shell: oc get route route -o template --template \{\{.spec.host\}\} -n {{ eval_mobile_security_service_namespace }}
+    register: mss_mss_route
+  when: mobile_security_service | bool
