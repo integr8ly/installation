@@ -10,6 +10,7 @@
 - import_playbook: "./install_user_rhsso.yml"
 - import_playbook: "./install_services.yml"
 - import_playbook: "./install_webapp.yml"
+- import_playbook: "./install_mobile.yml"
 - import_playbook: "./install_middleware_monitoring_config.yml"
 - import_playbook: "./install_application_metrics.yml"
 - import_playbook: "./generate-customisation-inventory.yml"
@@ -23,8 +24,6 @@
       shell: "htpasswd -D /etc/origin/master/htpasswd integreatly-admin"
       become: yes
       when: (run_master_tasks | default(true) | bool) and (create_cluster_admin == true)
-
-- import_playbook: ./install_mobile.yml
 
 - hosts: localhost
   gather_facts: no
