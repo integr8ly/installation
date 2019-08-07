@@ -1,6 +1,15 @@
 - hosts: localhost
   tasks:
     - 
+      # MDC namespace needs to be deleted first to make sure all the CRs can be removed by their operators
+      name: Uninstall Mobile Developer Console (mdc)
+      include_role:
+        name: mdc
+        tasks_from: uninstall.yml
+      vars:
+        mdc_namespace: "{{ eval_mdc_namespace }}"
+      tags: ['mdc']
+    - 
       name: Uninstall Mobile Security Service
       include_role:
         name: mobile_security_service
@@ -8,7 +17,6 @@
       vars:
         mss_namespace: "{{ eval_mobile_security_service_namespace }}"
       tags: ['mss']
-
     - 
       name: Uninstall Unified Push Server (ups)
       include_role:
@@ -17,15 +25,6 @@
       vars:
         ups_namespace: "{{ eval_ups_namespace }}"
       tags: ['ups']
-
-    - 
-      name: Uninstall Mobile Developer Console (mdc)
-      include_role:
-        name: mdc
-        tasks_from: uninstall.yml
-      vars:
-        mdc_namespace: "{{ eval_mdc_namespace }}"
-      tags: ['mdc']
 
 - hosts: master
   tasks:
