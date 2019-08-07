@@ -28,7 +28,6 @@
     - "spring-boot-camel-infinispan-template.json"
     - "spring-boot-camel-rest-3scale-template.json"
     - "spring-boot-camel-rest-sql-template.json"
-    - "spring-boot-camel-teiid-template.json"
     - "spring-boot-camel-template.json"
     - "spring-boot-camel-xa-template.json"
     - "spring-boot-camel-xml-template.json"
