@@ -42,6 +42,10 @@
   shell: oc get route sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
   register: sso_route
 
+- name: Get user SSO route
+  shell: oc get route sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace }}
+  register: user_sso_route
+
 # Used to pull images from registry.redhat.io
 - name: Expose vars
   include_vars: "{{ role_path }}/../imagestream_pull_secret/defaults/main.yml"
@@ -74,6 +78,7 @@
     -p 'APICURIO_DASHBOARD_URL={{ apicurito_dashboard_url }}' \
     -p 'SHARED_FUSE_DASHBOARD_URL={{ fuse_dashboard_url }}' \
     -p 'SSO_URL=https://{{ sso_route.stdout }}/auth/admin/{{ sso_realm }}/console' \
+    -p 'USER_SSO_URL=https://{{ user_sso_route.stdout }}' \
     -p 'FUSE_OPERATOR_RESOURCES_URL={{ msbroker_fuse_operator_resources_url }}' \
     -p 'IMAGE_ORG={{ msbroker_image_org }}' \
     -p 'IMAGE_TAG={{ msbroker_release_tag }}' \
