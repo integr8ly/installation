@@ -1,0 +1,38 @@
+---
+- import_playbook: "./prerequisites.yml"
+- import_playbook: "./openshift.yml"
+
+- hosts: localhost
+  tasks:
+    - include_vars: ../roles/mobile_security_service/defaults/main.yml
+    - include_vars: ../roles/ups/defaults/main.yml
+    - include_vars: ../roles/mdc/defaults/main.yml
+
+    - 
+      name: Install DataSync Templates
+      include_role:
+        name: datasync
+      tags: ['datasync']
+    
+    - name: Install unified push server (ups)
+      include_role:
+        name: ups
+      tags: ['ups']
+
+    -
+      name: Install Mobile Security Service
+      include_role:
+        name: mobile_security_service
+      tags: ['mobile_security_service']
+
+    - name: Install mobile developer console (mdc)
+      include_role:
+        name: mdc
+      vars:
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
+      tags: ['mdc']
+
+    - name: User rhsso configuration
+      include_role:
+        name: rhsso-user
+      when: user_rhsso | default(true) | bool
