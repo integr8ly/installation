@@ -10,6 +10,7 @@
       tasks_from: login
 
 - import_playbook: "./customise_web_console_uninstall.yml"
+- import_playbook: "./uninstall_mobile.yml"
 
 - hosts: localhost
   tasks:
