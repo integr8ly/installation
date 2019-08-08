@@ -20,10 +20,7 @@
 
 - set_fact:
     walkthrough_locations: 
-      - "{{ webapp_default_walkthrough_location }}"
-
-- set_fact:
-    walkthrough_locations: "{{ walkthrough_locations }} + {{ [webapp_mobile_walkthrough_location] }}"
+      - "{{ webapp_mobile_walkthrough_location }}"
   when: mdc | default(true) | bool
 
 - name: Generate WebApp custom resource template
