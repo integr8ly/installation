@@ -53,7 +53,7 @@
     name: imagestream_pull_secret
   vars:
     namespace: "{{ msbroker_namespace }}"
-    pull_secret_name: "{{ fuse_pull_secret_name }}"
+    product_ns_pull_secret_name: "{{ fuse_pull_secret_name }}"
   when: fuse_online
 
 - name: Create CRDs
