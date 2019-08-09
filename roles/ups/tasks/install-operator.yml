@@ -26,6 +26,27 @@
     path: "{{ ups_template_dir }}/role-binding.yml"
     state: absent
 
+- name: Wait for operator ServiceAccount to have access to AddressSpace resource from enmasse
+  shell: "oc auth can-i create addressspace -n {{ ups_namespace }} --as system:serviceaccount:{{ ups_namespace }}:unifiedpush-operator"
+  register: result
+  until: result.rc == 0
+  retries: 50
+  delay: 10
+
+- name: Wait for operator ServiceAccount to have access to Address resource from enmasse
+  shell: "oc auth can-i create address -n {{ ups_namespace }} --as system:serviceaccount:{{ ups_namespace }}:unifiedpush-operator"
+  register: result
+  until: result.rc == 0
+  retries: 50
+  delay: 10
+
+- name: Wait for operator ServiceAccount to have access to MessagingUser resource from enmasse
+  shell: "oc auth can-i create messaginguser -n {{ ups_namespace }} --as system:serviceaccount:{{ ups_namespace }}:unifiedpush-operator"
+  register: result
+  until: result.rc == 0
+  retries: 50
+  delay: 10
+
 - name: Process operator template
   template:
     src: operator.yml.j2
@@ -44,5 +65,4 @@
   until: result.stdout == ups_operator_replicas_cmd.stdout
   retries: 50
   delay: 10
-  failed_when: result.stderr
   changed_when: False
