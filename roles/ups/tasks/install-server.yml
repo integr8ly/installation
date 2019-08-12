@@ -17,5 +17,4 @@
   until: result.stdout == 'Complete'
   retries: 50
   delay: 10
-  failed_when: result.stderr
   changed_when: False
