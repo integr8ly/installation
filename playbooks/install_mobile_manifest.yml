@@ -147,7 +147,9 @@
       with_items:
         - api
         - controllers
-      when: mdc | default(true) | bool
+      when:
+        - run_master_tasks | default(true) | bool 
+        - mdc | default(true) | bool
 
     - name: check if openshift master services are running
       shell: oc get nodes
@@ -156,4 +158,7 @@
       retries: 6
       delay: 5
       failed_when: task_result.rc != 0
-      when: mdc | default(true) | bool
+      when:
+        - run_master_tasks | default(true) | bool 
+        - mdc | default(true) | bool
+      
