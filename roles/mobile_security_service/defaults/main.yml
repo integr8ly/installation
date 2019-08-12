@@ -12,6 +12,7 @@ mobile_security_service_operator_resource_items:
 
 mobile_security_service_monitoring_resource_items:
   - "{{ mobile_security_service_operator_resources }}/monitor/service_monitor.yaml"
+  - "{{ mobile_security_service_operator_resources }}/monitor/operator_service.yaml"
   - "{{ mobile_security_service_operator_resources }}/monitor/mss_service_monitor.yaml"
 
 mobile_security_service_monitoring_resource_templates:
@@ -21,3 +22,4 @@ mobile_security_service_monitoring_resource_templates:
   - mss_prometheus_rule
 
 mdc_namespace: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"
+
