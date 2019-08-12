@@ -39,12 +39,24 @@
     fuse_dashboard_url: "https://{{ fuse_host_cmd.stdout}}"
 
 - name: Get SSO route
-  shell: oc get route sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
+  shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
   register: sso_route
 
 - name: Get user SSO route
-  shell: oc get route sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace }}
+  shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace }}
   register: user_sso_route
+
+- name: Get mdc route
+  shell: oc get route/mdc-mdc-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_mdc_namespace }}
+  when: mdc_route
+
+- name: Set mdc url var
+  set_fact:
+    msb_mdc_url: "{{ mdc_route.stdout }}"
+
+- name: Set mdc url var to empty string
+  set_fact:
+    msb_mdc_url: ""
 
 # Used to pull images from registry.redhat.io
 - name: Expose vars
@@ -80,6 +92,7 @@
     -p 'SSO_URL=https://{{ sso_route.stdout }}/auth/admin/{{ sso_realm }}/console' \
     -p 'USER_SSO_URL=https://{{ user_sso_route.stdout }}' \
     -p 'FUSE_OPERATOR_RESOURCES_URL={{ msbroker_fuse_operator_resources_url }}' \
+    -p 'MDC_DASHBOARD_URL={{ msb_mdc_url }}' \
     -p 'IMAGE_ORG={{ msbroker_image_org }}' \
     -p 'IMAGE_TAG={{ msbroker_release_tag }}' \
     -p 'MONITORING_KEY={{ monitoring_key }}' | oc apply -n "{{ msbroker_namespace }}" -f -

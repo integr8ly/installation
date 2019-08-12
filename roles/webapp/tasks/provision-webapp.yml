@@ -43,6 +43,20 @@
   failed_when: result.stdout
   changed_when: False
 
+- name: Add mdc in service list
+  set_fact:
+    webapp_provision_services: "{{ webapp_provision_services + ['mdc'] }}"
+    webapp_watch_services: "{{ webapp_watch_services + ['mdc'] }}"
+  when: mdc | bool | default(true)
+
+- name: Set webapp env var
+  shell: "oc set env \
+  dc/tutorial-web-app \
+  'OPTIONAL_PROVISION_SERVICES={{ webapp_provision_services|join(',') }}' \
+  'OPTIONAL_WATCH_SERVICES={{ webapp_watch_services|join(',') }}' \
+  -n {{ webapp_namespace }}"
+  when: webapp_provision_services|length > 0 or webapp_watch_services|length > 0
+
 - name: Get webapp secure route
   shell: oc get route/{{ webapp_route }} -o template --template \{\{.spec.host\}\} -n {{ webapp_namespace }}
   register: webapp_secure_route
