@@ -120,6 +120,15 @@
         - name: Create manifest secret
           shell: oc create secret generic manifest --from-file=generated_manifest=/tmp/mobile-manifest.json --type=application/json -n {{ mdc_namespace }}
       when: mdc | default(true) | bool
+    
+    - include_role:
+        name: mdc
+        tasks_from: patch-manifest.yml
+      vars:
+        mdc_manifest_secret_name: manifest
+      tags: ['mdc']
+      when:
+        - mdc | default(true) | bool
 
 - hosts: master
   gather_facts: no
@@ -131,16 +140,6 @@
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
       when:    
         - run_master_tasks | default(true) | bool
-        - mdc | default(true) | bool
-
-    - include_role:
-        name: mdc
-        tasks_from: patch-manifest.yml
-      vars:
-        mdc_manifest_secret_name: manifest
-      tags: ['mdc', 'remote']
-      when: 
-        - run_master_tasks | default(true) | bool 
         - mdc | default(true) | bool
     
     - name: restart openshift master services
