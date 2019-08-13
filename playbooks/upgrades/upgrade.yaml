@@ -35,15 +35,14 @@
         sso_realm: "{{ rhsso_realm }}"
 
     # Solution Explorer
-    - name: Bump the Web App operator version to {{ webapp_operator_release_tag }}
-      shell: oc patch deployment tutorial-web-app-operator -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_operator_image }}"}]'
-      register: upgrade_webapp_operator
-      failed_when: upgrade_webapp_operator.stderr != '' and 'not patched' not in upgrade_webapp_operator.stderr
-
-    - name: Bump the Web App deployment version to {{ webapp_version }}
-      shell: oc patch dc tutorial-web-app -n {{ eval_webapp_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_webapp_image }}"}]'
-      register: upgrade_webapp
-      failed_when: upgrade_webapp.stderr != '' and 'not patched' not in upgrade_webapp.stderr
+    - name: Webapp upgrade
+      include_role:
+        name: webapp
+        tasks_from: upgrade
+      vars:
+        rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
+        rhsso_namespace: "{{ eval_rhsso_namespace }}"
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
 
     - name: SSO upgrade
       include_role:
