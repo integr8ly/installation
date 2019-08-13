@@ -29,6 +29,9 @@
       become: yes
       when: (run_master_tasks | default(true) | bool) and (create_cluster_admin == true)
 
+- import_playbook: ./install_backups.yml
+  when: backup_restore_install | default(false) | bool
+
 - hosts: localhost
   gather_facts: no
   tasks:

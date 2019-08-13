@@ -11,7 +11,6 @@
     - include_vars: ../roles/nexus/defaults/main.yml
     - include_vars: ../roles/rhsso/defaults/main.yml
     - include_vars: ../roles/webapp/defaults/main.yml
-    - include_vars: ../roles/mobile_security_service/defaults/main.yml
     - include_vars: ../roles/ups/defaults/main.yml
     - include_vars: ../roles/mobile_security_service/defaults/main.yml
     - include_vars: ../roles/mdc/defaults/main.yml
