@@ -9,6 +9,7 @@
       vars:
         mdc_namespace: "{{ eval_mdc_namespace }}"
       tags: ['mdc']
+      when: mdc | default(true) | bool
     - 
       name: Uninstall Mobile Security Service
       include_role:
@@ -17,6 +18,7 @@
       vars:
         mss_namespace: "{{ eval_mobile_security_service_namespace }}"
       tags: ['mss']
+      when: mobile_security_service | default(true) | bool
     - 
       name: Uninstall Unified Push Server (ups)
       include_role:
@@ -25,6 +27,7 @@
       vars:
         ups_namespace: "{{ eval_ups_namespace }}"
       tags: ['ups']
+      when: ups | default(true) | bool
 
 - hosts: master
   tasks:
@@ -48,4 +51,6 @@
         retries: 6
         delay: 5
         failed_when: task_result.rc != 0
-      when: run_master_tasks | default(true) | bool
+      when:
+        - run_master_tasks | default(true) | bool
+        - mdc | default(true) | bool
