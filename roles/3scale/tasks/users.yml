@@ -11,6 +11,10 @@
     body: "access_token={{ threescale_admin_token }}"
     validate_certs: "{{ threescale_sso_validate_certs }}"
     status_code: [200]
+  register: result
+  until: result.status == 200
+  retries: 50
+  delay: 10
 
 - name: Retrieve default admin user ID
   xml:
