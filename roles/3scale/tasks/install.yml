@@ -82,15 +82,7 @@
       when: threescale_resources_exist.stderr == "No resources found." and storageclass_exists.rc == 0
   when: threescale_file_upload_storage == "filesystem"
 
-- name: "Verify 3Scale deployment succeeded"
-  shell: sleep 5; oc get pods --namespace {{ threescale_namespace }}  |  grep  "deploy"
-  register: result
-  until: not result.stdout
-  retries: 50
-  delay: 10
-  failed_when: result.stdout
-  changed_when: False
-
+- import_tasks: check_readiness.yml
 - import_tasks: access_token.yml
 - import_tasks: users.yml
 - import_tasks: sso.yml
