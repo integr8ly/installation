@@ -48,15 +48,18 @@
 
 - name: Get mdc route
   shell: oc get route/mdc-mdc-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_mdc_namespace }}
-  when: mdc_route
+  register: mdc_route
+  failed_when: false
 
 - name: Set mdc url var
   set_fact:
     msb_mdc_url: "{{ mdc_route.stdout }}"
+  when: mdc_route.rc == 0
 
 - name: Set mdc url var to empty string
   set_fact:
     msb_mdc_url: ""
+  when: mdc_route.rc != 0
 
 # Used to pull images from registry.redhat.io
 - name: Expose vars
