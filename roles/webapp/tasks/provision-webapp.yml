@@ -18,13 +18,18 @@
   register: create_webapp_operator_resource_cmd
   failed_when: create_webapp_operator_resource_cmd.stderr != '' and 'AlreadyExists' not in create_webapp_operator_resource_cmd.stderr
 
+- set_fact:
+    walkthrough_locations: 
+      - "{{ webapp_mobile_walkthrough_location }}"
+  when: mdc | default(true) | bool
+
 - name: Generate WebApp custom resource template
   template:
     src: "cr.yaml.j2"
     dest: /tmp/webapp-cr.yml
 
 - name: Create WebApp custom resource
-  shell: oc create -f /tmp/webapp-cr.yml -n {{ webapp_namespace }}
+  shell: oc apply -f /tmp/webapp-cr.yml -n {{ webapp_namespace }}
   register: create_webapp_custom_resource_cmd
   failed_when: create_webapp_custom_resource_cmd.stderr != '' and 'AlreadyExists' not in create_webapp_custom_resource_cmd.stderr
   changed_when: create_webapp_custom_resource_cmd.rc == 0

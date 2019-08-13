@@ -11,3 +11,4 @@ webapp_operator_resource_items:
   - "{{ webapp_operator_resources }}/sa.yaml"
   - "{{ webapp_operator_resources }}/crd.yaml"
   - "{{ webapp_operator_resources }}/operator.yaml"
+webapp_mobile_walkthrough_location: 'https://github.com/aerogear/mobile-walkthrough#master'
