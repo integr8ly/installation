@@ -22,6 +22,22 @@
 - name: TODO-REMOVE-THIS-AFTER-FUSE-ONLINE-INCLUDES-THESE-ARGS Patch args on operator to include monitoring resources addon
   shell: oc patch dc/syndesis-operator -p='{"spec":{"template":{"spec":{"containers":[{"name":"syndesis-operator","args":["-a","/conf/addons"]}]}}}}}' -n {{ fuse_namespace }}
 
+# Upgrade syndesis resources. This should bypass the upgrade phase of the operator
+- name: Update and create new resources added to the fuse online template
+  block:
+    - name: Get syndesis global config secret params
+      shell: oc get secret syndesis-global-config -o template --template \{\{.data.params\}\} -n {{ fuse_namespace }} | base64 --decode > /tmp/syndesis-params.yaml
+    - name: Format syndesis parameter file
+      shell: "sed -i 's/^/-p /' /tmp/syndesis-params.yaml"
+    - shell: sed -i -z "s/\\n/ /g" /tmp/syndesis-params.yaml
+    - name: Get syndesis parameters
+      shell: "cat /tmp/syndesis-params.yaml"
+      register: syndesis_parameters
+    - name: Create new resources added to the fuse online template
+      shell: "oc process -n {{ fuse_namespace }} -f {{ fuse_online_template }} -p SAR_PROJECT={{ fuse_namespace }} -p MAX_INTEGRATIONS_PER_USER=0 {{ syndesis_parameters.stdout }} | oc apply -n {{ fuse_namespace }} -f -"
+      register: update_fuse_online_template_resources
+      failed_when: update_fuse_online_template_resources.stderr != '' and 'Warning' not in update_fuse_online_template_resources.stderr and 'metadata.resourceVersion' not in update_fuse_online_template_resources.stderr
+
 - name: Verify Fuse upgrade succeeded
   shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
   register: fuse_verify_result
