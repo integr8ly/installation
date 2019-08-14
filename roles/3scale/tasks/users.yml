@@ -44,7 +44,7 @@
 - name: Redeploy system-app
   shell: oc rollout latest system-app -n {{ threescale_namespace }}
   register: result
-  failed_when: result.stderr != '' and "already in progress" not in result.stderr
+  failed_when: not result.stdout
   changed_when: False
 
 - name: Verify 3scale deployment succeeded
