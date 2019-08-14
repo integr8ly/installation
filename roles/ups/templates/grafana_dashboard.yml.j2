@@ -726,7 +726,7 @@ spec:
             "steppedLine": true,
             "targets": [
             {
-              "expr": "sum(jvm_memory_bytes_max{namespace='{{ ups_namespace }}')",
+              "expr": "sum(jvm_memory_bytes_max{namespace='{{ ups_namespace }}'})",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -736,7 +736,7 @@ spec:
               "refId": "A"
             },
             {
-              "expr": "sum(jvm_memory_bytes_committed{namespace='{{ ups_namespace }}')",
+              "expr": "sum(jvm_memory_bytes_committed{namespace='{{ ups_namespace }}'})",
               "format": "time_series",
               "interval": "1s",
               "intervalFactor": 1,
@@ -744,7 +744,7 @@ spec:
               "refId": "B"
             },
             {
-              "expr": "sum(jvm_memory_bytes_used{namespace='{{ ups_namespace }}')",
+              "expr": "sum(jvm_memory_bytes_used{namespace='{{ ups_namespace }}'})",
               "format": "time_series",
               "hide": false,
               "interval": "1s",
@@ -833,7 +833,7 @@ spec:
             "steppedLine": true,
             "targets": [
             {
-              "expr": "sum(process_cpu_seconds_total{namespace='{{ ups_namespace }}')",
+              "expr": "sum(process_cpu_seconds_total{namespace='{{ ups_namespace }}'})",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -1141,7 +1141,7 @@ spec:
             "steppedLine": false,
             "targets": [
             {
-              "expr": "aerogear_ups_device_register_requests_total{namespace='{{ ups_namespace }}',service='{{ ups_server_name }}-unifiedpush'}}",
+              "expr": "aerogear_ups_device_register_requests_total{namespace='{{ ups_namespace }}',service='{{ ups_server_name }}-unifiedpush'}",
               "format": "time_series",
               "hide": false,
               "interval": "",
