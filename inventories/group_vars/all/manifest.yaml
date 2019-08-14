@@ -25,7 +25,7 @@ che_git_url: https://github.com/redhat-developer/codeready-workspaces-deprecated
 
 #controls whether enmasse is installed or not
 enmasse: true
-enmasse_version: '1.1.1.GA'
+enmasse_version: '1.2.1.GA'
 enmasse_git_url: https://github.com/jboss-container-images/amq-online-images.git
 
 #controls whether fuse is installed or not
@@ -95,10 +95,10 @@ datasync_template_tag: '0.7.1'
 
 #controls whether the mobile security service is installed or not
 mobile_security_service: true
-mobile_security_service_operator_release_tag: '0.3.0'
+mobile_security_service_operator_release_tag: '0.4.0'
 mobile_security_service_operator_resources: 'https://raw.githubusercontent.com/aerogear/mobile-security-service-operator/{{mobile_security_service_operator_release_tag}}/deploy'
 mobile_security_service_operator_image: 'quay.io/aerogear/mobile-security-service-operator:{{ mobile_security_service_operator_release_tag }}'
-mss_version: '0.1.0'
+mss_version: '0.2.2'
 
 rhsso_user_operator_resources: "{{ rhsso_operator_resources }}"
 
@@ -139,7 +139,7 @@ amq_streams_repo_url: https://github.com/jboss-container-images/amqstreams-1-ope
 amq_version: 1.1.0
 
 # information about backups
-backup_version: '1.0.9'
+backup_version: '1.0.10'
 backup_resources_location: 'https://raw.githubusercontent.com/integr8ly/backup-container-image/{{ backup_version }}/templates/openshift'
 backup_image: quay.io/integreatly/backup-container:{{ backup_version }}
 backup_schedule: '30 2 * * *'

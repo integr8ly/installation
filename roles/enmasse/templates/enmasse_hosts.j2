@@ -9,9 +9,14 @@ service_catalog={{ enmasse_service_catalog }}
 register_api_server={{ enmasse_register_api_server }}
 keycloak_admin_password={{ enmasse_keycloak_admin_password }}
 authentication_services={{ enmasse_authentication_services }}
-enable_monitoring={{ enmasse_enable_monitoring }}
-monitoring_infrastructure={{ enmasse_enable_monitoring }}
-service_monitors={{ enmasse_enable_monitoring }}
 standard_authentication_service_postgresql=True
 postgresql_password={{ enmasse_postgres_password }}
-alerting={{ enmasse_enable_monitoring }}
+
+# Not used when monitoring_operator=False
+monitoring_namespace=enmasse-monitoring
+
+# Don't need to install a monitoring stack. Will use existing middleware monitoring one.
+monitoring_operator=False
+
+# Create monitoring resources in the enmasse namespace.
+monitoring=True
