@@ -25,12 +25,28 @@
 
 - name: Redeploy system-app
   shell: oc rollout latest system-app -n {{ threescale_namespace }}
+  changed_when: False
+
+- name: Wait for system-app rollout
+  shell: "oc rollout status dc/system-app -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
-  failed_when: not result.stdout
+  until: result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
   changed_when: False
 
 - name: Redeploy system-sidekiq
   shell: oc rollout latest system-sidekiq -n {{ threescale_namespace }}
   register: result
   failed_when: not result.stdout
+  changed_when: False
+
+- name: Wait for system-sidekiq rollout
+  shell: "oc rollout status dc/system-sidekiq -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
   changed_when: False
