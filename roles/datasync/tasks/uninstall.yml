@@ -1,0 +1,10 @@
+---
+- name: "Delete Mobile Developer Services Data Sync Application template"
+  shell: oc delete -f {{ datasync_app_template }} -n {{ datasync_template_namespace }}
+  register: data_sync_app
+  failed_when: data_sync_app.stderr != '' and 'NotFound' not in data_sync_app.stderr
+
+- name: "Delete Mobile Developer Services Data Sync Showcase template"
+  shell: oc delete -f {{ datasync_showcase_template }} -n {{ datasync_template_namespace }}
+  register: data_sync_showcase
+  failed_when: data_sync_showcase.stderr != '' and 'NotFound' not in data_sync_showcase.stderr

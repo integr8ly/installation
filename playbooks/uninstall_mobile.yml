@@ -29,6 +29,14 @@
       tags: ['ups']
       when: ups | default(true) | bool
 
+    -
+      name: Uninstall Data Sync Templates
+      include_role:
+        name: datasync
+        tasks_from: uninstall.yml
+      tags: ['datasync']
+      when: datasync | default(true) | bool
+
 - hosts: master
   tasks:
     - block:
