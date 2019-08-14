@@ -2,10 +2,10 @@
 -
   name: "Check 3Scale readiness"
   block:
-    - name: "Verify 3Scale pods are running"
-      shell: oc get pods -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' -n {{ threescale_namespace }} | wc -w
+    - name: "Verify all services have at least 1 endpoint"
+      shell: oc get ep -n {{ threescale_namespace }} --no-headers | grep -v "<none>" | wc -l
       register: result
-      until: result.stdout == "17"
+      until: result.stdout == "14"
       retries: 50
       delay: 10
       changed_when: False
