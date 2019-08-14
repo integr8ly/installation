@@ -125,6 +125,10 @@ mdc_image: 'quay.io/aerogear/mobile-developer-console:{{ mdc_release_tag }}'
 mdc_proxy_release_tag: 'v1.1.0'
 mdc_proxy_image: 'docker.io/openshift/oauth-proxy:{{ mdc_proxy_release_tag }}'
 
+#mobile
+mobile_walkthrough_tag: '0.3.0'
+mobile_walkthrough_location: 'https://github.com/aerogear/mobile-walkthrough#{{ mobile_walkthrough_tag }}'
+
 monitoring_label_name: 'monitoring-key'
 monitoring_label_value: 'middleware'
 middleware_monitoring_operator_release_tag: '0.0.22'

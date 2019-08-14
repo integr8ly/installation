@@ -18,10 +18,9 @@
   register: create_webapp_operator_resource_cmd
   failed_when: create_webapp_operator_resource_cmd.stderr != '' and 'AlreadyExists' not in create_webapp_operator_resource_cmd.stderr
 
-- set_fact:
-    walkthrough_locations: 
-      - "{{ webapp_mobile_walkthrough_location }}"
-  when: mdc | default(true) | bool
+- name: Add additional walkthrough locations in the default list
+  set_fact:
+    webapp_walkthrough_locations: "{{ webapp_walkthrough_locations + webapp_walkthrough_additional_locations }}" 
 
 - name: Generate WebApp custom resource template
   template:
