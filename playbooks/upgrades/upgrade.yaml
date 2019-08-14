@@ -44,10 +44,17 @@
         rhsso_namespace: "{{ eval_rhsso_namespace }}"
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
 
+    # RH SSO / Keycloak
     - name: SSO upgrade
       include_role:
         name: rhsso
         tasks_from: upgrade
+
+    - name: "Upgrade tasks for RHSSO 1.4.1 to 1.5.0"
+      include_role:
+        name: rhsso
+        tasks_from: upgrade/upgrade_1.4.1_1.5.0.yml 
+      when: target_version.stdout == "release-1.4.1"
 
     - name: AMQ Online upgrade
       include_role:

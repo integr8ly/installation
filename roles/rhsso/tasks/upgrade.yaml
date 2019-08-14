@@ -2,9 +2,11 @@
 - name: Setup RH-SSO Imagestreams
   include_tasks: imagestreams.yaml
   vars:
-    sso_namespace: "{{ rhsso_namespace }}"
+    sso_namespace: "{{ eval_rhsso_namespace }}"
 
-- name: patch new operator version
-  shell: "oc patch deployment keycloak-operator -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_sso_operator_image }}\"}]'"
-  register: patch
-  failed_when: patch.stderr != ''
+# apply these resources, will include any new changes
+- name: "Update required objects"
+  shell: "oc apply -f {{ item }} -n {{ eval_rhsso_namespace }}"
+  with_items: "{{ rhsso_operator_resource_items }}"
+  register: rhsso_operator_resources_update_result
+  failed_when: rhsso_operator_resources_update_result.rc != 0

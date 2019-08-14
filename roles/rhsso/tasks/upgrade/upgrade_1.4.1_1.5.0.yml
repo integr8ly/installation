@@ -1,0 +1,37 @@
+---
+- name: "patch the sso-ping service, and add the service.alpha.openshift.io/serving-cert-secret-name annotation"
+  shell: 'oc annotate service sso-ping "service.alpha.openshift.io/serving-cert-secret-name"="sso-x509-jgroups-secret" -n {{ eval_rhsso_namespace }}'
+  register: add_cert_annotation
+  failed_when: add_cert_annotation.stderr != ''
+
+- name: "delete the sso deployment"
+  shell: "oc delete dc/sso -n {{ eval_rhsso_namespace }}"
+  register: delete_sso_deployment
+  failed_when: delete_sso_deployment.stderr != ''
+
+- name: "patch the keycloak version in the rhsso CR"
+  shell: "oc patch keycloak rhsso -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/status/version\", \"value\": \"v7.3.2.GA\"}]'"
+  register: cr_patch_keycloak_version
+  failed_when: cr_patch_keycloak_version.stderr != ''
+
+- name: "patch the keycloak operator phase in the rhsso CR"
+  shell: "oc patch keycloak rhsso -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/status/phase\", \"value\": \"provisionApplication\"}]'"
+  register: cr_patch_keycloak_version
+  failed_when: cr_patch_keycloak_version.stderr != ''
+
+- name: "Wait for keycloak to be ready"
+  shell: "oc get keycloak/rhsso -o jsonpath='{.status.phase}' -n {{ eval_rhsso_namespace }}"
+  register: result
+  until: result.stdout == 'provisionApplication'
+  retries: 5
+  delay: 10
+  changed_when: False
+
+- name: "Wait for keycloak to be ready"
+  shell: "oc get keycloak/rhsso -o jsonpath='{.status.phase}' -n {{ eval_rhsso_namespace }}"
+  register: result
+  until: result.stdout == 'reconcile'
+  retries: 50
+  delay: 10
+  changed_when: False
+
