@@ -44,7 +44,15 @@
 - name: Redeploy system-app
   shell: oc rollout latest system-app -n {{ threescale_namespace }}
   register: result
-  failed_when: not result.stdout
+  changed_when: False
+
+- name: Wait for system-app rollout
+  shell: "oc rollout status dc/system-app -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
   changed_when: False
 
 - name: Verify 3scale deployment succeeded
