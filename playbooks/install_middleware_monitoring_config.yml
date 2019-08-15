@@ -10,20 +10,30 @@
   - include_role:
       name: gitea
       tasks_from: monitoring
-    when: (middleware_monitoring | default(true) | bool) and gitea
+    when:
+      - middleware_monitoring | default(true) | bool
+      - gitea | default(true) | bool
   - include_role:
       name: webapp
       tasks_from: monitoring
-    when: (middleware_monitoring | default(true) | bool) and webapp
+    when:
+      - middleware_monitoring | default(true) | bool
+      - webapp | default(true) | bool
   - include_role:
       name: mobile_security_service
       tasks_from: monitoring
-    when: (middleware_monitoring | default(true) | bool) and mobile_security_service
+    when:
+      - middleware_monitoring | default(true) | bool
+      - mobile_security_service | default(true) | bool
   - include_role:
       name: ups
       tasks_from: monitoring
-    when: (middleware_monitoring | default(true) | bool) and ups
+    when:
+      - middleware_monitoring | default(true) | bool
+      - ups | default(true) | bool
   - include_role:
       name: mdc
       tasks_from: monitoring
-    when: (middleware_monitoring | default(true) | bool) and mdc
+    when:
+      - middleware_monitoring | default(true) | bool
+      - mdc | default(true) | bool

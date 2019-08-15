@@ -4,7 +4,7 @@
   - name: get solution explorer route
     shell: oc get route tutorial-web-app -o template --template \{\{.spec.host\}\} -n {{ eval_webapp_namespace }}
     register: webapp_tutorial_web_app_route
-  when: webapp | bool
+  when: webapp | default(true) | bool
 
 - name: get launcher routes for blackbox targets
   block:
@@ -14,7 +14,7 @@
   - name: get launcher sso route
     shell: oc get route launcher-sso -o template --template \{\{.spec.host\}\} -n {{ eval_launcher_namespace }}
     register: launcher_launcher_sso_route
-  when: launcher | bool
+  when: launcher | default(true) | bool
 
 - name: Get enmasse routes for blackbox targets
   block:
@@ -24,14 +24,14 @@
   - name: get enmasse keycloak route
     shell: oc get route console-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_enmasse_namespace }}
     register: enmasse_console_proxy_route
-  when: enmasse | bool
+  when: enmasse | default(true) | bool
 
 - name: Get codeready routes for blackbox targets
   block:
   - name: get codeready route
     shell: oc get route codeready -o template --template \{\{.spec.host\}\} -n {{ eval_che_namespace }}
     register: codeready_codeready_route
-  when: che | bool
+  when: che | default(true) | bool
 
 - name: Get rhsso routes for blackbox targets
   block:
@@ -50,25 +50,25 @@
   - name: get 3scale system-master route
     shell: oc get route system-developer -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
     register: threescale_system_developer_route
-  when: threescale | bool
+  when: threescale | default(true) | bool
 
 - name: Get Mobile Developer Console routes for blackbox targets
   block:
   - name: get mdc route
     shell: oc get route mdc-mdc-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_mdc_namespace }}
     register: mdc_mdc_route
-  when: mdc | bool
+  when: mdc | default(true) | bool
 
 - name: Get UnifiedPushServer routes for blackbox targets
   block:
   - name: get ups route
     shell: oc get route unifiedpush-unifiedpush-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_ups_namespace }}
     register: ups_ups_route
-  when: ups | bool
+  when: ups | default(true) | bool
 
 - name: Get Mobile Security Service routes for blackbox targets
   block:
   - name: get mss route
     shell: oc get route route -o template --template \{\{.spec.host\}\} -n {{ eval_mobile_security_service_namespace }}
     register: mss_mss_route
-  when: mobile_security_service | bool
+  when: mobile_security_service | default(true) | bool
