@@ -53,7 +53,7 @@
 
 - name: Set mdc url var
   set_fact:
-    msb_mdc_url: "{{ mdc_route.stdout }}"
+    msb_mdc_url: "https://{{ mdc_route.stdout }}"
   when: mdc_route.rc == 0
 
 - name: Set mdc url var to empty string
