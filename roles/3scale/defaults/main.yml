@@ -52,6 +52,8 @@ threescale_backup_mysql_secret: threescale-mysql-secret
 threescale_backup_postgres_secret: threescale-postgres-secret
 threescale_backup_redis_secret: threescale-redis-secret
 
+threescale_pull_secret_name: "threescale-registry-auth"
+
 threescale_resources:
 - name: apicast-production
   kind: dc

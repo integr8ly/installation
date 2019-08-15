@@ -49,6 +49,10 @@
         name: rhsso
         tasks_from: upgrade
 
+    - name: AMQ Online upgrade
+      include_role:
+        name: enmasse
+
     - name: Update image streams
       include_role:
         name: images
