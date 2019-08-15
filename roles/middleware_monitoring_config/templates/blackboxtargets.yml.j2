@@ -4,13 +4,13 @@ metadata:
   name: integreatly-blackboxtargets
 spec:
   blackboxTargets:
-{% if webapp %}
+{% if webapp | default(true) | bool %}
   # Solution Explorer targets
   - service: webapp-ui
     url: https://{{ webapp_tutorial_web_app_route.stdout }}
     module: http_2xx
 {% endif %}
-{% if launcher %}
+{% if launcher | default(true) | bool %}
   # Developer Launcher targets
   - service: launcher-ui
     url: https://{{ launcher_launcher_route.stdout }}/launch/
@@ -20,7 +20,7 @@ spec:
     url: https://{{ launcher_launcher_sso_route.stdout }}/auth/admin/master/console/
     module: http_2xx
 {% endif %}
-{% if enmasse %}
+{% if enmasse | default(true) | bool %}
   # AMQ Online targets
   - service: amq-keycloak-ui
     url: https://{{ enmasse_keycloak_route.stdout }}/auth/admin/master/console/
@@ -29,7 +29,7 @@ spec:
     url: https://{{ enmasse_console_proxy_route.stdout }}/healthz
     module: http_2xx
 {% endif %}
-{% if che %}
+{% if che | default(true) | bool %}
   # Codeready Workspaces targets
   - service: codeready-ui
     url: https://{{ codeready_codeready_route.stdout }}/dashboard/
@@ -39,7 +39,7 @@ spec:
   - service: rhsso-ui
     url: https://{{ rhsso_rhsso_route.stdout }}/auth/admin/master/console/
     module: http_2xx
-{% if threescale %}
+{% if threescale | default(true) | bool %}
   # 3scale targets
   - service: 3scale-admin-ui
     url: https://{{ threescale_system_provider_admin_route.stdout }}/p/login/
@@ -52,19 +52,19 @@ spec:
     url: https://{{ threescale_system_developer_route.stdout }}
     module: http_2xx
 {% endif %}
-{% if mdc %}
+{% if mdc | default(true) | bool %}
   # Mobile Developer Console targets
   - service: mdc-ui
     url: https://{{ mdc_mdc_route.stdout }}/about
     module: http_2xx
 {% endif %}
-{% if ups %}
+{% if ups | default(true) | bool %}
   # Unified Push Server targets
   - service: ups-ui
     url: https://{{ ups_ups_route.stdout }}/rest/auth/config/
     module: http_2xx
 {% endif %}
-{% if mobile_security_service %}
+{% if mobile_security_service | bool %}
   # Mobile Security Service targets
   - service: mss-ui
     url: https://{{ mss_mss_route.stdout }}/api/healthz
