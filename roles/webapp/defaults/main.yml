@@ -11,4 +11,8 @@ webapp_operator_resource_items:
   - "{{ webapp_operator_resources }}/sa.yaml"
   - "{{ webapp_operator_resources }}/crd.yaml"
   - "{{ webapp_operator_resources }}/operator.yaml"
-webapp_mobile_walkthrough_location: 'https://github.com/aerogear/mobile-walkthrough#master'
+webapp_walkthrough_locations:
+  - "https://github.com/integr8ly/tutorial-web-app-walkthroughs#v1.6.5"
+webapp_walkthrough_additional_locations: []
+webapp_provision_services: []
+webapp_watch_services: []

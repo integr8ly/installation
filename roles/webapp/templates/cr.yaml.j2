@@ -14,6 +14,6 @@ spec:
       SSO_ROUTE: "{{ sso_route.stdout }}"
       INTEGREATLY_VERSION: "{{ integreatly_version }}"
       CLUSTER_TYPE: "{{ cluster_type }}"
-{% if walkthrough_locations is defined  %}
-      WALKTHROUGH_LOCATIONS: "{{ walkthrough_locations|join(',') }}"
+{% if webapp_walkthrough_locations is defined  %}
+      WALKTHROUGH_LOCATIONS: "{{ webapp_walkthrough_locations|join(',') }}"
 {% endif %}
