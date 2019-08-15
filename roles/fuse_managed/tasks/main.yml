@@ -47,6 +47,9 @@
 - name: Create fuse Operator resources in {{ fuse_namespace }}
   shell: oc apply -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
 
+- name: TODO-REMOVE-THIS-AFTER-FUSE-ONLINE-INCLUDES-THESE-ARGS Patch args on operator to include monitoring resources addon
+  shell: oc patch dc/syndesis-operator -p='{"spec":{"template":{"spec":{"containers":[{"name":"syndesis-operator","args":["-a","/conf/addons"]}]}}}}}' -n {{ fuse_namespace }}
+
 - template:
     src: syndesis-customresource.yml.j2
     dest: /tmp/syndesis-customresource.yml

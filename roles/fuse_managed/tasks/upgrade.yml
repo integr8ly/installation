@@ -5,7 +5,7 @@
 
 # Used to pull images from registry.redhat.io
 - name: Expose vars
-  include_vars: "../roles/imagestream_pull_secret/defaults/main.yml" 
+  include_vars: "{{ role_path }}/../imagestream_pull_secret/defaults/main.yml"
 - include_role:
     name: imagestream_pull_secret
   vars:
@@ -18,6 +18,9 @@
 
 - name: Update fuse operator resources in {{ fuse_namespace }}
   shell: oc replace --force -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
+
+- name: TODO-REMOVE-THIS-AFTER-FUSE-ONLINE-INCLUDES-THESE-ARGS Patch args on operator to include monitoring resources addon
+  shell: oc patch dc/syndesis-operator -p='{"spec":{"template":{"spec":{"containers":[{"name":"syndesis-operator","args":["-a","/conf/addons"]}]}}}}}' -n {{ fuse_namespace }}
 
 # Upgrade syndesis resources. This should bypass the upgrade phase of the operator
 - name: Update and create new resources added to the fuse online template
@@ -58,6 +61,6 @@
 - name: Expose controllers via 3Scale
   shell: "oc set env dc syndesis-server CONTROLLERS_EXPOSE_VIA3SCALE=true -n {{ fuse_namespace }}"
 
-# Update Syndesis CR to 1.3
-- name: Update version of Fuse custom resource to 1.3
-  shell: "oc patch syndesis/fuse-managed --type=json --patch='[{\"op\": \"replace\", \"path\": \"/status/version\", \"value\": \"1.3\"}]' -n {{ fuse_namespace }}"
+# Update Syndesis CR to 1.4
+- name: Update version of Fuse custom resource to 1.4
+  shell: "oc patch syndesis/fuse-managed --type=json --patch='[{\"op\": \"replace\", \"path\": \"/status/version\", \"value\": \"1.4\"}]' -n {{ fuse_namespace }}"

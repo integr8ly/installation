@@ -19,6 +19,7 @@
     - set_fact:
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
+        upgrade_fuse_image_tag: 1.7
 
     # Managed Service Broker
     - name: Expose vars
@@ -137,7 +138,21 @@
         name: backup
         tasks_from: upgrade
       when: target_version.stdout == "release-1.4.1"
-      
+
+    # Fuse
+    - include_role:
+        name: fuse
+        tasks_from: upgrade
+      vars:
+        old_fuse_tag: "application-templates-2.1.fuse-730065-redhat-00002"
+        fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
+
+    - include_role:
+        name: fuse_managed
+        tasks_from: upgrade
+      vars:
+        fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
+
 - import_playbook: install_user_rhsso.yml
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

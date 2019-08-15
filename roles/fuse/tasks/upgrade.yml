@@ -30,7 +30,6 @@
     - "spring-boot-camel-drools-template.json"
     - "spring-boot-camel-infinispan-template.json"
     - "spring-boot-camel-rest-sql-template.json"
-    - "spring-boot-camel-teiid-template.json"
     - "spring-boot-camel-template.json"
     - "spring-boot-camel-xa-template.json"
     - "spring-boot-camel-xml-template.json"
@@ -67,7 +66,6 @@
     - "spring-boot-camel-infinispan-template.json"
     - "spring-boot-camel-rest-3scale-template.json"
     - "spring-boot-camel-rest-sql-template.json"
-    - "spring-boot-camel-teiid-template.json"
     - "spring-boot-camel-template.json"
     - "spring-boot-camel-xa-template.json"
     - "spring-boot-camel-xml-template.json"
@@ -89,7 +87,7 @@
 
 # Used to pull images from registry.redhat.io
 - name: Expose vars
-  include_vars: "../roles/imagestream_pull_secret/defaults/main.yml"
+  include_vars: "{{ role_path }}/../imagestream_pull_secret/defaults/main.yml"
 - include_role:
     name: imagestream_pull_secret
   vars:
