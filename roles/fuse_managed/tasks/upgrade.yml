@@ -61,6 +61,6 @@
 - name: Expose controllers via 3Scale
   shell: "oc set env dc syndesis-server CONTROLLERS_EXPOSE_VIA3SCALE=true -n {{ fuse_namespace }}"
 
-# Update Syndesis CR to 1.7
-- name: Update version of Fuse custom resource to 1.7
-  shell: "oc patch syndesis/fuse-managed --type=json --patch='[{\"op\": \"replace\", \"path\": \"/status/version\", \"value\": \"1.7\"}]' -n {{ fuse_namespace }}"
+# Update Syndesis CR to 1.4
+- name: Update version of Fuse custom resource to 1.4
+  shell: "oc patch syndesis/fuse-managed --type=json --patch='[{\"op\": \"replace\", \"path\": \"/status/version\", \"value\": \"1.4\"}]' -n {{ fuse_namespace }}"
