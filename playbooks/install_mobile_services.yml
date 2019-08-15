@@ -7,9 +7,9 @@
     - include_vars: ../roles/mobile_security_service/defaults/main.yml
     - include_vars: ../roles/ups/defaults/main.yml
     - include_vars: ../roles/mdc/defaults/main.yml
+    - include_vars: ../roles/datasync/defaults/main.yml
 
-    - 
-      name: Install DataSync Templates
+    - name: Install DataSync Templates
       include_role:
         name: datasync
       tags: ['datasync']
@@ -21,8 +21,7 @@
       tags: ['ups']
       when: ups | default(true) | bool
 
-    -
-      name: Install Mobile Security Service
+    - name: Install Mobile Security Service
       include_role:
         name: mobile_security_service
       tags: ['mobile_security_service']
