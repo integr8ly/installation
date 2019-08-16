@@ -135,6 +135,14 @@
         tasks_from: uninstall
       tags: ['amq_streams']
       when: amq_streams | default(true) | bool
+    -
+      name: Uninstall user-rhsso
+      include_role:
+        name: rhsso
+        tasks_from: uninstall_sso
+      vars:
+        sso_namespace: "{{ eval_user_rhsso_namespace | default('user-sso') }}"
+      tags: ['rhsso-user']
 
     -
       name: Reboot template broker
