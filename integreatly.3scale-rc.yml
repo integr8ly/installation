@@ -7,3 +7,6 @@ imageSync:
       - backend
       - system
       - zync
+    3scale-amp20:
+      images:
+      - memcached
