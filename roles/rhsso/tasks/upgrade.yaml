@@ -4,7 +4,24 @@
   vars:
     sso_namespace: "{{ rhsso_namespace }}"
 
-- name: patch new operator version
+- name: patch new keycloak operator version
   shell: "oc patch deployment keycloak-operator -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_sso_operator_image }}\"}]'"
   register: patch
   failed_when: patch.stderr != ''
+
+- name: Wait for the new keycloak operator to be ready
+  shell: "oc rollout status deployment/keycloak-operator -n {{ eval_rhsso_namespace }}"
+  register: rollout_cmd
+  failed_when: rollout_cmd.rc != 0
+  changed_when: rollout_cmd.rc == 0
+
+- name: Delete existing prometheus rule
+  shell: "oc delete prometheusrule application-monitoring -n {{ eval_rhsso_namespace }}"
+  register: delete_cmd
+  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
+  changed_when: delete_cmd.rc == 0
+
+- name: "patch the monitoringResourcesCreated boolean to false in the rhsso CR"
+  shell: "oc patch keycloak rhsso -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]'"
+  register: cr_patch_keycloak_version
+  failed_when: cr_patch_keycloak_version.stderr != ''
