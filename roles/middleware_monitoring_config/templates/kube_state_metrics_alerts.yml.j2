@@ -148,3 +148,39 @@ spec:
         for: 5m
         labels:
           severity: critical
+      - alert: ThreeScalePodHighMemory
+        annotations:
+          message: The {{ '{{' }} $labels.container {{ '}}' }} pod is using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory.
+          scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/3scale-scaling.md
+        expr: |
+          sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ threescale_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ threescale_namespace }}"}) * 100 > 80
+        for: 10m
+        labels:
+          severity: critical
+      - alert: SSOPodHighMemory
+        annotations:
+          message: The {{ '{{' }} $labels.container {{ '}}' }} pod is using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory.
+          scaling_plan: <to-do add SSO scaling plan once it's available>
+        expr: |
+          sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ eval_rhsso_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ eval_rhsso_namespace }}"}) * 100 > 80
+        for: 10m
+        labels:
+          severity: critical
+      - alert: AMQOnlinePodHighMemory
+        annotations:
+          message: The {{ '{{' }} $labels.container {{ '}}' }} pod is using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory.
+          scaling_plan: <to-do add AMQ scaling plan once it's available>
+        expr: |
+          sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ eval_enmasse_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ eval_enmasse_namespace }}"}) * 100 > 80
+        for: 10m
+        labels:
+          severity: critical
+      - alert: ThreeScalePodHighCPU
+        annotations:
+          message: The {{ '{{' }} $labels.container {{ '}}' }} pod is using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of CPU.
+          scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/3scale-scaling.md
+        expr: |
+          sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace="{{ threescale_namespace }}"}, 'container', '$1', 'container_name', '(.*)')) by (container) / sum(kube_pod_container_resource_limits_cpu_cores{namespace="{{ threescale_namespace }}"}) by (container) * 100 > 80
+        for: 10m
+        labels:
+          severity: critical
