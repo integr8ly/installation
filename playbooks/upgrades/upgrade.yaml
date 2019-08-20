@@ -7,6 +7,9 @@
         tasks_from: set_master_vars
       when: run_master_tasks | default(true) | bool
 
+# Required for Ansible Tower installs that need to login via oc as a prerequisite      
+- import_playbook: "./openshift.yml"
+
 - hosts: localhost
   gather_facts: yes
   tasks:
@@ -154,5 +157,7 @@
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
 
 - import_playbook: install_user_rhsso.yml
+- import_playbook: 3scale_upgrade_2.5_to_2.6.yml
+
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
