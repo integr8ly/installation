@@ -55,7 +55,10 @@
   delay: 5
 
 - name: Patch oauth proxy image to use new registry
-  shell: "oc patch imagestream/oauth-proxy -n openshift --type json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/0/from/name\", \"value\": \"{{ fuse_registry }}/openshift4/ose-oauth-proxy:v4.1\"}]'"
+  shell: "oc patch imagestream/oauth-proxy -n openshift --type json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/0/from/name\", \"value\": \"{{ fuse_registry }}/openshift4/ose-oauth-proxy:4.1\"}]'"
 
 - name: Patch prometheus image to use new registry
   shell: "oc patch imagestream/prometheus -n openshift --type json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/0/from/name\", \"value\": \"{{ fuse_registry }}/openshift3/prometheus:v3.9.25\"}]'"
+
+- name: Patch postgres exporter imagestream
+  shell: "oc patch imagestream/prometheus -n openshift --type json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/0/from/name\", \"value\": \"{{ fuse_registry }}/fuse7-tech-preview/fuse-postgres-exporter:1.4-4\"}]'"
