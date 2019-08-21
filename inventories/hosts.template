@@ -1,3 +1,11 @@
+[local:vars]
+ansible_connection=local
+
+run_master_tasks=true
+
+[local]
+127.0.0.1
+
 [OSEv3:children]
 master
 
@@ -5,4 +13,4 @@ master
 ansible_user=ec2-user
 
 [master]
-master.evals.example.com
+127.0.0.1
