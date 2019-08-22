@@ -64,3 +64,41 @@
 # Update Syndesis CR to 1.4
 - name: Update version of Fuse custom resource to 1.4
   shell: "oc patch syndesis/fuse-managed --type=json --patch='[{\"op\": \"replace\", \"path\": \"/status/version\", \"value\": \"1.4\"}]' -n {{ fuse_namespace }}"
+
+- name: Get fuse monitoring resources
+  get_url:
+    url: "https://raw.githubusercontent.com/syndesisio/syndesis/1.7.x/install/addons/{{ item }}"
+    dest: "/tmp/{{ item }}"
+  with_items:
+    - syndesis-db-dashboard.yml
+    - syndesis-db-prometheus-rule.yml
+    - syndesis-db-servicemonitor.yml
+    - syndesis-integration-dashboard.yml
+    - syndesis-integrations-service.yml
+    - syndesis-integrations-servicemonitor.yml
+    - syndesis-jvm-dashboard.yml
+    - syndesis-legacy-ui-serviceaccount.yml
+    - syndesis-legacy-ui.yml
+    - syndesis-meta-servicemonitor.yml
+    - syndesis-rest-api-dashboard.yml
+    - syndesis-rest-api-prometheus-rule.yml
+    - syndesis-server-servicemonitor.yml
+
+- name: Create fuse monitoring resources
+  shell: "oc create -f /tmp/{{ item }} -n {{ fuse_namespace }}"
+  register: fuse_monitoring_resource
+  failed_when: fuse_monitoring_resource.stderr != '' and 'already exists' not in fuse_monitoring_resource.stderr
+  with_items:
+    - syndesis-db-dashboard.yml
+    - syndesis-db-prometheus-rule.yml
+    - syndesis-db-servicemonitor.yml
+    - syndesis-integration-dashboard.yml
+    - syndesis-integrations-service.yml
+    - syndesis-integrations-servicemonitor.yml
+    - syndesis-jvm-dashboard.yml
+    - syndesis-legacy-ui-serviceaccount.yml
+    - syndesis-legacy-ui.yml
+    - syndesis-meta-servicemonitor.yml
+    - syndesis-rest-api-dashboard.yml
+    - syndesis-rest-api-prometheus-rule.yml
+    - syndesis-server-servicemonitor.yml
