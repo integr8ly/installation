@@ -54,3 +54,38 @@
   register: rollout_cmd
   failed_when: rollout_cmd.rc != 0
   changed_when: rollout_cmd.rc == 0
+
+- name: Wait for Grafana to become available
+  shell: "oc get grafanas grafana -n {{ monitoring_namespace }}"
+  register: get_grafana_cmd
+  failed_when: get_grafana_cmd.rc != 0
+  changed_when: get_grafana_cmd.rc == 0
+  until: "'not found' not in get_grafana_cmd.stdout"
+  retries: 10
+  delay: 5
+
+- name: Patch grafana dashboard selector
+  register: grafana_patch
+  failed_when: grafana_patch.stderr != '' and 'not patched' not in grafana_patch.stderr
+  changed_when: grafana_patch.rc == 0
+  shell: |
+    oc patch -n {{ monitoring_namespace }} grafanas grafana --type=json -p '[
+      {
+        "op": "replace",
+        "path": "/spec/dashboardLabelSelector",
+        "value": [
+                {
+                    "matchExpressions": [
+                        {
+                            "key": "monitoring-key",
+                            "operator": "In",
+                            "values": ["middleware"]
+                        }
+                    ]
+                },
+                {
+                    "matchLabels": {
+                        "app": "syndesis"
+                    }
+                }
+            ]}]'
