@@ -1,5 +1,5 @@
 ---
-integreatly_version: release-1.5.0-rc1
+integreatly_version: release-1.5.0-alpha
 
 # Possible values are: rhpds, poc, osd, dev
 cluster_type: rhpds
