@@ -25,14 +25,14 @@ backup_expected_cronjobs: |
       "launcher-postgres-backup"
     ],
     "{{eval_rhsso_namespace}}": [
-      "daily-at-midnight"
+      "daily-at-midnight-{{eval_rhsso_namespace}}"
     ]
   }
 
 sso_expected_cronjobs: |
   {
     "{{eval_user_rhsso_namespace}}": [
-      "daily-at-midnight"
+      "daily-at-midnight-{{eval_user_rhsso_namespace}}"
     ]
   }
 

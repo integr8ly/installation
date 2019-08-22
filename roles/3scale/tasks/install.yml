@@ -48,7 +48,7 @@
 
     - name: 'Install 3scale using s3 template'
       shell: >
-        oc process -n {{ threescale_namespace }} -f {{ threescale_template_s3 }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} {{ wildcard_policy_param }} -p FILE_UPLOAD_STORAGE={{ threescale_file_upload_storage }} -p AWS_BUCKET={{ threescale_storage_s3_aws_bucket }} -p AWS_REGION={{ threescale_storage_s3_aws_region }} -p AWS_ACCESS_KEY_ID={{ threescale_storage_s3_aws_access_key }} -p AWS_SECRET_ACCESS_KEY={{ threescale_storage_s3_aws_secret_key }}  | oc create -n {{ threescale_namespace }} -f -
+        oc process -n {{ threescale_namespace }} -f {{ threescale_template_s3 }} -p WILDCARD_DOMAIN={{ threescale_route_suffix }} {{ wildcard_policy_param }} -p AWS_BUCKET={{ threescale_storage_s3_aws_bucket }} -p AWS_REGION={{ threescale_storage_s3_aws_region }} -p AWS_ACCESS_KEY_ID={{ threescale_storage_s3_aws_access_key }} -p AWS_SECRET_ACCESS_KEY={{ threescale_storage_s3_aws_secret_key }}  | oc create -n {{ threescale_namespace }} -f -
       when: threescale_file_upload_storage == "s3"
   when: threescale_resources_exist.stderr == "No resources found."
 

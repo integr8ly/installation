@@ -41,14 +41,14 @@
 
 - name: Get 3scale routes for blackbox targets
   block:
-  - name: get 3scale system-provider-admin route
-    shell: oc get route system-provider-admin -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
+  - name: get 3scale system-provider route
+    shell: oc get routes -l zync.3scale.net/route-to={{ threescale_route_system_provider }} -o jsonpath='{.items[*].spec.host}' -n {{ threescale_namespace }}
     register: threescale_system_provider_admin_route
   - name: get 3scale system-master route
-    shell: oc get route system-master -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
+    shell: oc get routes -l zync.3scale.net/route-to={{ threescale_route_system_master }} -o jsonpath='{.items[*].spec.host}' -n {{ threescale_namespace }}
     register: threescale_system_master_route
-  - name: get 3scale system-master route
-    shell: oc get route system-developer -o template --template \{\{.spec.host\}\} -n {{ threescale_namespace }}
+  - name: get 3scale system-developer route
+    shell: oc get routes -l zync.3scale.net/route-to={{ threescale_route_system_developer }} -o jsonpath='{.items[*].spec.host}' -n {{ threescale_namespace }}
     register: threescale_system_developer_route
   when: threescale | default(true) | bool
 

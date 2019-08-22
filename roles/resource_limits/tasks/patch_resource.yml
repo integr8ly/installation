@@ -1,0 +1,11 @@
+---
+
+- name: Update resource values for {{ resource_patch.kind }}/{{ resource_patch.name }}
+  shell: |
+    oc set resources {{ resource_patch.kind }} {{ resource_patch.name }} -n {{ ns }}
+      {%- for k,v in resource_patch.resources.items() %}
+      --{{ k }}={% for k2,v2 in v.items() %}{{ k2 }}={{ v2 }}{% if not loop.last %},{% endif %}{% endfor %}
+      {%- endfor %}
+  register: set_resources_cmd
+  changed_when: ('not changed' not in set_resources_cmd.stderr)
+  failed_when: set_resources_cmd.stderr != '' and 'not changed' not in set_resources_cmd.stderr

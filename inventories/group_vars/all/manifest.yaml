@@ -10,7 +10,7 @@ cluster_type: rhpds
 threescale: true
 # below threescale variables below are not currently used. They define where and what to pull in from github. These will be important as we look to break out and decouple the resources from the installer ###############
 # not currently used but records the version installed by the operator, this should come from the status block
-threescale_version: '2.5.0.GA'
+threescale_version: '2.6.0.GA'
 threescale_namespace: "{{ns_prefix | default('')}}3scale"
 threescale_display_name: "Red Hat 3scale API Management Platform"
 threescale_resources_base: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp'
@@ -91,7 +91,7 @@ nexus_version: '2.14.11-01'
 
 ## Enables datasync templates (enabled by default)
 datasync: true
-datasync_template_tag: '0.7.1'
+datasync_template_tag: '0.7.2'
 
 #controls whether the mobile security service is installed or not
 mobile_security_service: true
@@ -104,7 +104,7 @@ rhsso_user_operator_resources: "{{ rhsso_operator_resources }}"
 
 #unifiedpush
 ups: true
-ups_operator_release_tag: '0.1.1'
+ups_operator_release_tag: '0.1.2'
 ups_operator_resources: 'https://raw.githubusercontent.com/aerogear/unifiedpush-operator/{{ups_operator_release_tag}}/deploy'
 ups_operator_image: 'quay.io/aerogear/unifiedpush-operator:{{ ups_operator_release_tag }}'
 ups_release_tag: '2.3'
