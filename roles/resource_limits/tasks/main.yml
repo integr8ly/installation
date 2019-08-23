@@ -7,7 +7,7 @@
   loop_control:
     loop_var: resource_patch
 
-- name: Set up watch for rollout status of {{ item.kind }}/{{ item.name }}
+- name: Set up watch for rollout status of resources with overrides
   shell: oc rollout status {{ item.kind }}/{{ item.name }} -n {{ ns }} -w
   async: 7200
   poll: 0
