@@ -3,7 +3,7 @@ kind: UnifiedPushServer
 metadata:
   name: {{ ups_server_name }}
 spec:
-  useMessageBroker: true
+  useMessageBroker: {{ ups_message_broker | default(false) | bool }}
 {% if ups_backup %}
   backups:
     -
