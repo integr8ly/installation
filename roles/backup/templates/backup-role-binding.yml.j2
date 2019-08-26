@@ -1,7 +1,7 @@
 apiVersion: authorization.openshift.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ name }}
+  name: {{ role_binding_name }}
 roleRef:
   name: backupjob
 subjects:
