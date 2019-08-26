@@ -60,120 +60,6 @@ spec:
         expr: |
           (kube_pod_container_status_waiting_reason{reason="ContainerCreating"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
         for: 15m
-      - alert: ThreeScaleApicastStagingPod
-        annotations:
-          message: >-
-            3Scale apicast-staging has no pods in a ready state.
-        expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"apicast-staging.*"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScaleApicastProductionPod
-        annotations:
-          message: >-
-            3Scale apicast-production has no pods in a ready state.
-        expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"apicast-production.*"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScaleBackendWorkerPod
-        annotations:
-          message: >-
-            3Scale backend-worker has no pods in a ready state.
-        expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"backend-worker.*"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScaleBackendListenerPod
-        annotations:
-          message: >-
-            3Scale backend-listener has no pods in a ready state.
-        expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"backend-listener.*"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScaleBackendRedisPod
-        annotations:
-          message: >-
-            3Scale backend-redis has no pods in a ready state.
-        expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"backend-redis.*"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScaleSystemRedisPod
-        annotations:
-          message: >-
-            3Scale system-redis has no pods in a ready state.
-        expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"system-redis.*"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScaleSystemMySQLPod
-        annotations:
-          message: >-
-            3Scale system-mysql has no pods in a ready state.
-        expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"system-mysql.*"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScaleSystemAppPod
-        annotations:
-          message: >-
-            3Scale system-app has no pods in a ready state.
-        expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"system-app-.*"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScaleAdminUIBBT
-        annotations:
-          message: >-
-            3Scale Admin UI Blackbox Target: If this console is unavailable,
-            the client is unable to configure or administer their API setup.
-        expr: |
-          absent(probe_success{job="blackbox", service="3scale-admin-ui"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScaleDeveloperUIBBT
-        annotations:
-          message: >-
-            3Scale Developer UI Blackbox Target: If this console is
-            unavailable, the clients developers are unable signup or perform
-            API management.
-        expr: >
-          absent(probe_success{job="blackbox",
-          service="3scale-developer-console-ui"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScaleSystemAdminUIBBT
-        annotations:
-          message: >-
-            3Scale System Admin UI Blackbox Target: If this console is
-            unavailable, the client is unable to perform Account Management,
-            Analytics or Billing.
-        expr: >
-          absent(probe_success{job="blackbox",
-          service="3scale-system-admin-ui"})
-        for: 5m
-        labels:
-          severity: critical
-      - alert: ThreeScalePodCount
-        annotations:
-          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 15 pods.
-        expr: |
-          absent(sum(kube_pod_status_ready{condition="true",namespace="3scale"}) >= 15)
-        for: 5m
-        labels:
-          severity: warning
       - alert: AMQOnlinePodCount
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 6 pods.
@@ -254,15 +140,6 @@ spec:
         for: 5m
         labels:
           severity: critical
-      - alert: ThreeScalePodHighMemory
-        annotations:
-          message: The {{ '{{' }} $labels.container {{ '}}' }} pod is using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory.
-          scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/3scale-scaling.md
-        expr: |
-          sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ threescale_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ threescale_namespace }}"}) * 100 > 80
-        for: 10m
-        labels:
-          severity: critical
       - alert: SSOPodHighMemory
         annotations:
           message: The {{ '{{' }} $labels.container {{ '}}' }} pod is using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory.
@@ -278,15 +155,6 @@ spec:
           scaling_plan: <to-do add AMQ scaling plan once it's available>
         expr: |
           sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ eval_enmasse_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ eval_enmasse_namespace }}"}) * 100 > 80
-        for: 10m
-        labels:
-          severity: critical
-      - alert: ThreeScalePodHighCPU
-        annotations:
-          message: The {{ '{{' }} $labels.container {{ '}}' }} pod is using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of CPU.
-          scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/3scale-scaling.md
-        expr: |
-          sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace="{{ threescale_namespace }}"}, 'container', '$1', 'container_name', '(.*)')) by (container) / sum(kube_pod_container_resource_limits_cpu_cores{namespace="{{ threescale_namespace }}"}) by (container) * 100 > 80
         for: 10m
         labels:
           severity: critical
