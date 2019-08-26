@@ -170,10 +170,10 @@ spec:
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 15 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ threescale_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ threescale_namespace }}"}) != 15
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ threescale_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ threescale_namespace }}"}) >= 15
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: AMQOnlinePodCount
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 6 pods.
