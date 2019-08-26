@@ -16,4 +16,22 @@
   failed_when: policy_cmd.rc != 0
   when: user_rhsso | default(true) | bool
 
+- name: Generate {{ rhsso_threescale_route_creator_role }} cluster role template
+  template:
+    src: 3scale_route_creator.yml.j2
+    dest: "{{ rhsso_threescale_route_creator_role_filepath }}"
 
+- name: Create {{ rhsso_threescale_route_creator_role }} cluster role
+  shell: oc create -f {{ rhsso_threescale_route_creator_role_filepath }}
+  register: threescale_route_creator_output
+  failed_when: threescale_route_creator_output.stderr != '' and 'AlreadyExists' not in threescale_route_creator_output.stderr
+
+- name: Add role {{ rhsso_threescale_route_creator_role }} to user {{ rhsso_evals_admin_username }} in {{ threescale_namespace }} namespace
+  shell: oc adm policy add-role-to-user {{ rhsso_threescale_route_creator_role }} {{ rhsso_evals_admin_username }} -n {{ threescale_namespace }}
+  register: policy_cmd
+  failed_when: policy_cmd.rc != 0
+
+- name: Clean up generated {{ rhsso_threescale_route_creator_role }} cluster role template
+  file:
+    state: absent
+    path: "{{ rhsso_threescale_route_creator_role_filepath }}"
