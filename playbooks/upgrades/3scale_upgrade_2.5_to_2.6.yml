@@ -447,8 +447,7 @@
       shell: "oc patch imagestream/amp-system --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP system 2.6\"}, \"from\": { \"kind\": \"DockerImage\", \"name\": \"registry.redhat.io/3scale-amp26/system\"}, \"name\": \"2.6\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
 
     - name: Patch amp-system image stream image stream tag
-      shell: "oc patch imagestream/amp-system --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP system (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.6\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'
-"
+      shell: "oc patch imagestream/amp-system --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP system (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.6\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
       register: amp_system_image_stream_patched
 
     - name: Wait for system-sphinx rollout
