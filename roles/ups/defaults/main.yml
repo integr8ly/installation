@@ -27,3 +27,4 @@ ups_svc_monitor_templates:
   - prometheus_rule
   - operator_grafana_dashboard
   - operator_prometheus_rule
+ups_message_broker: false
