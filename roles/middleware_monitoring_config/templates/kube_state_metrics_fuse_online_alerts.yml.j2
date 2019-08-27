@@ -1,0 +1,37 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    monitoring-key: "{{monitoring_label_value}}"
+  name: ksm-fuse-online-alerts
+spec:
+  groups:
+    - name: fuseOnline.rules
+      rules:
+        - alert: FuseOnlineSyndesisServerInstanceDown
+          annotations:
+            message: >-
+              Fuse Online Syndesis Server instance {{ "{{" }}$labels.pod{{ "}}" }} in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down.
+          expr: >
+            absent(kube_pod_status_ready{namespace="fuse", condition="true", pod=~"syndesis-server-.*"})
+          for: 5m
+          labels:
+            severity: critical
+        - alert: FuseOnlineSyndesisUIInstanceDown
+          annotations:
+            message: >-
+              Fuse Online Syndesis UI instance {{ "{{" }}$labels.pod{{ "}}" }} in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down.
+          expr: >
+            absent(kube_pod_status_ready{namespace="fuse", condition="true", pod=~"syndesis-ui-.*"})
+          for: 5m
+          labels:
+            severity: critical
+        - alert: FuseOnlineSyndesisDBInstanceDown
+          annotations:
+            message: >-
+              Fuse Online Syndesis DB instance {{ "{{" }}$labels.pod{{ "}}" }} in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down.
+          expr: >
+            absent(kube_pod_status_ready{namespace="fuse", condition="true", pod=~"syndesis-db-.*"})
+          for: 5m
+          labels:
+            severity: critical
