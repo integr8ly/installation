@@ -103,7 +103,7 @@ mss_version: '0.2.2'
 rhsso_user_operator_resources: "{{ rhsso_operator_resources }}"
 
 #unifiedpush
-ups: false
+ups: true
 ups_operator_release_tag: '0.1.2'
 ups_operator_resources: 'https://raw.githubusercontent.com/aerogear/unifiedpush-operator/{{ups_operator_release_tag}}/deploy'
 ups_operator_image: 'quay.io/aerogear/unifiedpush-operator:{{ ups_operator_release_tag }}'
