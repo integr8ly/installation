@@ -18,7 +18,7 @@ che_keycloak_host: '{{che_protocol}}://{{eval_launcher_sso_host}}'
 
 #pvc vars
 che_persistent_volume: true
-che_persistent_volume_size: 1Gi
+che_persistent_volume_size: 2Gi
 che_persistent_volume_storageclassname: efs
 
 #postgre
