@@ -1,17 +1,27 @@
 ---
+- import_playbook: "./prerequisites.yml"
+- import_playbook: "./openshift.yml"
+
 - hosts: localhost
   gather_facts: true
   tasks:
     - name: Include vars from rhsso
       include_vars: "../roles/rhsso/defaults/main.yml"
-    -
-      name: Install user rhsso
-      include_role:
-        name: rhsso
-        tasks_from: install_sso.yml
-      vars:
-        sso_namespace: "{{ eval_user_rhsso_namespace }}"
-        sso_namespace_display_name: "User Facing Red Hat Single Sign-On"
-        rhsso_provision_immediately: true
+    - block:
+      - name: Install user rhsso
+        include_role:
+          name: rhsso
+          tasks_from: install_sso.yml
+        vars:
+          sso_namespace: "{{ eval_user_rhsso_namespace }}"
+          sso_namespace_display_name: "User Facing Red Hat Single Sign-On"
+          rhsso_provision_immediately: true
+      - name: Setup IDP and customer-admin permissions in master realm
+        include_role:
+          name: rhsso-user
+          tasks_from: setup-master-realm.yml
+        vars:
+          openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+
       tags: ['user_rhsso']
-      when: user_rhsso | default(true) | bool
+      when: user_rhsso | default(true) | bool  

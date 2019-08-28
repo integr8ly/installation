@@ -10,7 +10,6 @@
 - import_playbook: "./install_user_rhsso.yml"
 - import_playbook: "./install_services.yml"
 - import_playbook: "./install_webapp.yml"
-- import_playbook: "./install_user_rhsso.yml"
 # the mobile services need to be installed before the monitoring config playbook is run
 - import_playbook: "./install_mobile_services.yml"
 - import_playbook: "./install_middleware_monitoring_config.yml"
