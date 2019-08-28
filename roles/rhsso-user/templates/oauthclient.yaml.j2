@@ -1,0 +1,8 @@
+apiVersion: oauth.openshift.io/v1
+grantMethod: auto
+kind: OAuthClient
+metadata:
+  name: "{{ rhsso_user_client_id }}"
+redirectURIs:
+  - "https://{{ user_sso_route }}/auth/realms/master/broker/openshift-v3/endpoint"
+secret: "{{ rhsso_user_client_secret }}"
