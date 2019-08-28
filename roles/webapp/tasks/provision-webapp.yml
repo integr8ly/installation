@@ -5,7 +5,7 @@
   failed_when: false
 
 - name: Construct openshift host string
-  shell: echo {{ openshift_master_url }} | cut -d '/' -f3
+  shell: echo {{ openshift_master_public_url | default(openshift_master_url) }} | cut -d '/' -f3
   register: openshift_host
 
 - name: Get SSO route
