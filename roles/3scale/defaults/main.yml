@@ -61,18 +61,14 @@ threescale_resources:
     requests:
       cpu: 50m
       memory: 50Mi
+  replicas: 2
 - name: apicast-staging
   kind: dc
   resources:
     requests:
       cpu: 5m
       memory: 32Mi
-- name: apicast-wildcard-router
-  kind: dc
-  resources:
-    requests:
-      cpu: 12m
-      memory: 16Mi
+  replicas: 2
 - name: backend-cron
   kind: dc
   resources:
@@ -85,18 +81,22 @@ threescale_resources:
     requests:
       cpu: 50m
       memory: 300Mi
+  replicas: 2
 - name: backend-redis
   kind: dc
   resources:
     requests:
       cpu: 100m
       memory: 10Mi
+#    limits:
+#      memory: 0
 - name: backend-worker
   kind: dc
   resources:
     requests:
       cpu: 15m
       memory: 30Mi
+  replicas: 2
 - name: system-app
   kind: dc
   resources:
@@ -121,12 +121,15 @@ threescale_resources:
     requests:
       cpu: 15m
       memory: 30Mi
+#    limits:
+#      memory: 0
 - name: system-sidekiq
   kind: dc
   resources:
     requests:
       cpu: 10m
       memory: 50Mi
+  replicas: 2
 - name: system-sphinx
   kind: dc
   resources:
@@ -139,6 +142,7 @@ threescale_resources:
     requests:
       cpu: 15m
       memory: 120M
+  replicas: 2
 - name: zync-database
   kind: dc
   resources:
