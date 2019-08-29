@@ -1,0 +1,17 @@
+apiVersion: authorization.openshift.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ rhsso_threescale_route_creator_role }}
+rules:
+- apiGroups:
+  - route.openshift.io
+  attributeRestrictions: null
+  resources:
+  - routes
+  - routes/custom-host
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
