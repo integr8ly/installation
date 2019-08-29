@@ -68,6 +68,7 @@ threescale_resources:
     requests:
       cpu: 5m
       memory: 32Mi
+  replicas: 2
 - name: backend-cron
   kind: dc
   resources:
