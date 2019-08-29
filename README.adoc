@@ -140,8 +140,11 @@ By default Mobile Developer Services will not be installed. In order to install 
 
 .Install Mobile Developer Services
 |===
-| Variable | Description
-| mobile_security_service | Whether Mobile Security Service will be installed or not. Defaults to `false`
+| Variable | Description | Default Value
+| mobile_security_service | Whether Mobile Security Service will be installed or not | `true`
+| mdc | Whether Mobile Developer Console will be installed or not | `true`
+| ups | Whether Mobile Unified Push Server will be installed or not | `true`
+| datasync | Whether DataSync components will be installed or not | `true`
 |===
 
 === Create GitHub OAuth to enable GitHub authorization for Launcher
