@@ -1,0 +1,63 @@
+{
+    "apiVersion": "aerogear.org/v1alpha1",
+    "kind": "KeycloakRealm",
+    "metadata": {
+      "name": "master"
+    },
+    "spec": {
+        "browserRedirectorIdentityProvider": "openshift-v3",
+        "createOnly": true,
+        "id": "master",
+        "realm": "master",
+        "displayName": "master",
+        "enabled": true,
+        "users": [
+            {
+                "enabled":true,
+                "attributes":{},
+                "username":"{{ rhsso_evals_admin_username }}",
+                "emailVerified":true,
+                "email":"{{ rhsso_evals_admin_email }}",
+                "password": "{{ rhsso_evals_admin_password }}",
+                "realmRoles": [
+                    "offline_access",
+                    "uma_authorization",
+                    "create-realm"
+                ],
+                "clientRoles": {
+                    "account": [
+                        "manage-account",
+                        "view-profile"
+                    ],
+                    "master-realm": [
+                        "manage-users",
+                        "view-clients",
+                        "view-realm"
+                    ]
+                },
+                "outputSecret": "customer-admin-user-credentials"
+            }
+        ],
+        "identityProviders": [
+            {
+                "alias": "openshift-v3",
+                "providerId": "openshift-v3",
+                "enabled": true,
+                "trustEmail": false,
+                "storeToken": true,
+                "addReadTokenRoleOnCreate": true,
+                "firstBrokerLoginFlowAlias": "first broker login",
+                "config": {
+                    "hideOnLoginPage": "",
+                    "baseUrl": "{{ openshift_master_url }}",
+                    "clientId": "{{ rhsso_user_client_id }}",
+                    "disableUserInfo": "",
+                    "clientSecret": "{{ rhsso_user_client_secret }}",
+                    "defaultScope": "user:full",
+                    "useJwksUrl": "true"
+                }
+            }
+        ]
+                    
+    }
+  }

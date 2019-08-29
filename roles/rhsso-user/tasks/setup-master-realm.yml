@@ -1,0 +1,43 @@
+---
+
+- set_fact:
+    rhsso_user_client_secret: "{{ 99999 | random | to_uuid }}"
+
+- name: Get user SSO route
+  shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace }}
+  register: user_sso_route_cmd
+
+- set_fact:
+    user_sso_route: "{{ user_sso_route_cmd.stdout }}"
+
+- template:
+    src: master-realm.json.j2
+    dest: /tmp/master-realm.json
+
+- name: Create template for OpenShift OAuth client
+  template:
+    src: oauthclient.yaml.j2
+    dest: /tmp/rhsso_user_oauthclient.yaml
+
+- name: Check if OpenShift OAuth client already exists
+  shell: oc get keycloakrealm master -n {{ eval_user_rhsso_namespace }}
+  register: user_sso_realm_check_cmd
+  changed_when: false
+  failed_when: false
+
+- name: Create OpenShift OAuth client
+  shell: oc apply -f /tmp/rhsso_user_oauthclient.yaml
+  when: user_sso_realm_check_cmd.rc != 0
+
+- name: "Create master realm resource"
+  shell: oc create -f /tmp/master-realm.json -n {{ eval_user_rhsso_namespace }}
+  when: user_sso_realm_check_cmd.rc != 0
+
+- name: "Verify master realm is provisioned"
+  shell: sleep 5; oc get keycloakrealm master -o template --template \{\{.status.phase\}\}  -n {{ eval_user_rhsso_namespace }}  |  grep  'reconcile'
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 10
+  failed_when: not result.stdout
+  changed_when: False
