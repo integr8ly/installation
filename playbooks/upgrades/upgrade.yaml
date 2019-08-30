@@ -24,6 +24,12 @@
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
         upgrade_fuse_image_tag: 1.7
 
+
+- import_playbook: install_user_rhsso.yml
+
+- hosts: localhost
+  gather_facts: yes
+  tasks:
     # Managed Service Broker
     - name: Expose vars
       include_vars: "../../roles/rhsso/defaults/main.yml"
@@ -156,7 +162,6 @@
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
 
-- import_playbook: install_user_rhsso.yml
 - import_playbook: 3scale_upgrade_2.5_to_2.6.yml
 
 #Update product version (should always be last)
