@@ -88,8 +88,8 @@ threescale_resources:
     requests: 
       cpu: 100m
       memory: 10Mi
-#    limits:
-#      memory: 0
+    limits:
+      memory: 0
 - name: backend-worker
   kind: dc
   resources: 
@@ -121,8 +121,8 @@ threescale_resources:
     requests: 
       cpu: 15m
       memory: 30Mi
-#    limits:
-#      memory: 0
+    limits:
+      memory: 0
 - name: system-sidekiq
   kind: dc
   resources: 
