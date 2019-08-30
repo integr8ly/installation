@@ -9,7 +9,7 @@
     name: backup
     tasks_from: _setup_service_account.yml
   vars:
-    binding_name: rhsso-backup-binding
+    binding_name: "backup-binding-{{ sso_namespace }}"
     serviceaccount_namespace: '{{ sso_namespace }}'
 
 -
