@@ -8,7 +8,7 @@
       when: run_master_tasks | default(true) | bool
 
 # Required for Ansible Tower installs that need to login via oc as a prerequisite      
-- import_playbook: "./openshift.yml"
+- import_playbook: "../openshift.yml"
 
 - hosts: localhost
   gather_facts: yes
