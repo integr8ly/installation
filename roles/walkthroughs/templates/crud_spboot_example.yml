@@ -56,11 +56,11 @@ objects:
 - kind: Route
   apiVersion: route.openshift.io/v1
   metadata:
-    name: spring-boot-rest-http-crud
+    name: crud
   spec:
     to:
       kind: Service
-      name: crud-app
+      name: spring-boot-rest-http-crud
     port:
       targetPort: 8080
     tls:
