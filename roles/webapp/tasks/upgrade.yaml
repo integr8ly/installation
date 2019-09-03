@@ -12,6 +12,12 @@
   register: upgrade_webapp_operator
   failed_when: upgrade_webapp_operator.stderr != '' and 'not patched' not in upgrade_webapp_operator.stderr
 
+- name: Wait for the new web app operator to be ready
+  shell: "oc rollout status deployment/tutorial-web-app-operator -n {{ eval_webapp_namespace }}"
+  register: rollout_cmd
+  failed_when: rollout_cmd.rc != 0
+  changed_when: rollout_cmd.rc == 0
+
 - name: Generate WebApp custom resource template
   template:
     src: "cr.yaml.j2"
