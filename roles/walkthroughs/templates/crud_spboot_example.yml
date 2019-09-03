@@ -13,7 +13,7 @@ objects:
 - kind: DeploymentConfig
   apiVersion: apps.openshift.io/v1
   metadata:
-    name: crud-app
+    name: spring-boot-rest-http-crud
     labels:
       app: crud-app
   spec:
@@ -45,7 +45,7 @@ objects:
 - kind: Service
   apiVersion: v1
   metadata:
-    name: crud-app
+    name: spring-boot-rest-http-crud
   spec:
     ports:
     - protocol: TCP
