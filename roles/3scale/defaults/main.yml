@@ -81,7 +81,7 @@ threescale_resources:
     requests:
       cpu: 50m
       memory: 300Mi
-  replicas: 2
+  replicas: 5
 - name: backend-redis
   kind: dc
   resources:
