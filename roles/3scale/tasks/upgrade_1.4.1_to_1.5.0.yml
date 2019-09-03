@@ -1,0 +1,14 @@
+# upgrade_1.4.1_to_1.5.0
+# oc scale deploymentconfigs apicast-production --replicas=2 -n 3scale
+
+- name: "Update number of replicas for dc/apicast-production to 2"
+  shell: oc scale deploymentconfigs apicast-production --replicas=2 -n {{ threescale_namespace }}
+  register: 3scale_apicast_cmd
+
+- name: "Update number of replicas for dc/backend-worker to 1"
+  shell: oc scale deploymentconfigs backend-worker --replicas=1 -n {{ threescale_namespace }}
+  register: 3scale_worker_cmd
+
+- name: "Update number of replicas for dc/backend-listener to 5"
+  shell: oc scale deploymentconfigs backend-listener --replicas=5 -n {{ threescale_namespace }}
+  register: 3scale_listener_cmd

@@ -156,6 +156,12 @@
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
 
+    # 3Scale
+    - include_role:
+        name: 3scale
+        tasks_from: upgrade_1.4.1_to_1.5.0.yml
+      when: target_version.stdout == "release-1.4.1"
+
 - import_playbook: install_user_rhsso.yml
 - import_playbook: 3scale_upgrade_2.5_to_2.6.yml
 
