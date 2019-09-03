@@ -26,12 +26,3 @@ spec:
           for: 5m
           labels:
             severity: critical
-        - alert: FuseOnlineSyndesisDBInstanceDown
-          annotations:
-            message: >-
-              Fuse Online Syndesis DB instance {{ "{{" }}$labels.pod{{ "}}" }} in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down.
-          expr: >
-            absent(kube_pod_status_ready{namespace="{{ eval_managed_fuse_namespace }}", condition="true", pod=~"syndesis-db-.*"})
-          for: 5m
-          labels:
-            severity: critical
