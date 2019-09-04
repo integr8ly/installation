@@ -25,8 +25,3 @@ datasync=False
 
 # Managed instances always have cluster type osd
 cluster_type=osd
-
-# Turn off mobile services for now
-mobile_security_service=False
-ups=False
-mdc=False
