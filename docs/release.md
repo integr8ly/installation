@@ -10,6 +10,21 @@
     
     ``` ./scripts/release.sh -b v2.7 -r release-2.7.0-rc1```
 
+
+### Resetting the upgrade playbook on master
+
+There may be logic in the upgrade playbook that is targetted at the upcoming release only.
+Once the release branch is created, the upgrade playbook should be reviewed and reset on `master` to remove any version specific blocks, tasks or roles being included.
+
+As this is a manual task, here are some guidelines for doing the review.
+
+* Any blocks that include a version specific upgrade task such as `upgrade_sso_72_to_73` can be removed
+* Any blocks that are doing an install of a new product can be removed.
+* Any blocks that are calling out to a generic `upgrade` task in a product role can usually be kept. These are likely to be doing an `oc apply` to resources that have been modified between releases and are safe to apply. Alternatively, they may be changing the version of a product operator, and the operator could be upgrading the product.
+
+All changes should be PR'd against `master`.
+Any release specific upgrade changes that need to be merged while a release is in progress should probably only land on the release branch. Discretion is advised based on the upgrade change being proposed and the above guidelines.
+
 ### SOPs/help repo
 
 1) Checkout and pull down the latest `master` of https://github.com/fheng/integreatly-help (private repo)
