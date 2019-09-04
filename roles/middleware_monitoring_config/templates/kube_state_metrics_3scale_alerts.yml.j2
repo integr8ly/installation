@@ -124,19 +124,19 @@ spec:
           severity: warning
       - alert: ThreeScalePodHighMemory
         annotations:
-          message: The {{ '{{' }} $labels.container {{ '}}' }} pod is using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory.
+          message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory for longer than 15 minutes.
           scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/3scale-scaling.md
         expr: |
-          sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ threescale_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ threescale_namespace }}"}) * 100 > 80
-        for: 10m
+          sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ threescale_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ threescale_namespace }}"}) * 100 > 90
+        for: 15m
         labels:
           severity: critical
       - alert: ThreeScalePodHighCPU
         annotations:
-          message: The {{ '{{' }} $labels.container {{ '}}' }} pod is using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of CPU.
+          message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available CPU for longer than 15 minutes.
           scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/3scale-scaling.md
         expr: |
-          sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace="{{ threescale_namespace }}"}, 'container', '$1', 'container_name', '(.*)')) by (container) / sum(kube_pod_container_resource_limits_cpu_cores{namespace="{{ threescale_namespace }}"}) by (container) * 100 > 80
-        for: 10m
+          sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace="{{ threescale_namespace }}"}, 'container', '$1', 'container_name', '(.*)')) by (container) / sum(kube_pod_container_resource_limits_cpu_cores{namespace="{{ threescale_namespace }}"}) by (container) * 100 > 90
+        for: 15m
         labels:
           severity: critical
