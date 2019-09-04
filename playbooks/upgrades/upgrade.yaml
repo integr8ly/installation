@@ -97,16 +97,24 @@
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
       when: mdc
     
-    #applicatio metrics
+    #application metrics
     - name: Install application metrics
       include_role:
         name: application_monitoring
       when: application_metrics
 
+    # CodeReady
     - name: Upgrade code ready workspaces 1.0 to 1.2
       include_role:
         name: code-ready
         tasks_from: upgrade_1.0_to_1.2.yml
+
+    # Launcher
+    - name: Launcher upgrade
+      include_role:
+        name: launcher
+        tasks_from: upgrade
+      when: launcher
 
     # Monitoring upgrade
     - name: Expose vars
