@@ -8,3 +8,22 @@
   shell: "oc patch deployment keycloak-operator -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_sso_operator_image }}\"}]'"
   register: patch
   failed_when: patch.stderr != ''
+
+- name: Change backup CronJob name in Keycloak CR to include namespace suffix
+  shell: "oc patch keycloak rhsso -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\":\"replace\",\"path\":\"/spec/backups/0/name\",\"value\":\"daily-at-midnight-{{eval_rhsso_namespace}}\"}]'"
+  register: patch
+  failed_when: patch.rc != 0
+
+- name: Wait for new CronJob to be created by operator
+  shell: "oc get cronjob daily-at-midnight-{{eval_rhsso_namespace}} -n {{ eval_rhsso_namespace }}"
+  register: cronjob_exists
+  until: cronjob_exists.rc == 0
+  retries: 50
+  delay: 5
+  failed_when: false
+  changed_when: false
+
+- name: Remove old Cronjob
+  shell: "oc delete cronjob daily-at-midnight -n {{ eval_rhsso_namespace }}"
+  register: removed
+  failed_when: removed.rc != 0
