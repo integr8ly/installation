@@ -21,3 +21,17 @@
 
 - include_tasks: install-oauth-client.yml
   when: mdc_get_client_cmd.stderr != '' and 'No resources found.' in mdc_get_client_cmd.stderr
+
+# Get the current value of the walkthrough locations for the webapp...
+- name: Get the current value of the webapp walkthroughs
+  shell: "oc get webapps tutorial-web-app-operator -n {{ eval_webapp_namespace }} -o jsonpath='{.spec.template.parameters.WALKTHROUGH_LOCATIONS}'"
+  register: wts
+  failed_when: wts.stderr != '' and 'NotFound' not in wts.stderr
+  changed_when: wts.rc == 0
+
+# ...and append the mobile walkthrough to it
+- name: Add the MDC Walkthrough to the webapp
+  shell: "oc patch webapps tutorial-web-app-operator -n {{ eval_webapp_namespace }} --type=merge --patch='{\"spec\": {\"template\": {\"parameters\": {\"WALKTHROUGH_LOCATIONS\": \"{{ wts.stdout }},{{ mobile_walkthrough_location }}\"}}}}'"
+  register: webapp_patch
+  failed_when: webapp_patch.stderr != '' and 'not patched' not in webapp_patch.stderr
+  changed_when: webapp_patch.rc == 0
