@@ -128,7 +128,7 @@
       vars:
         mdc: false
         mobile_security_service: false
-        mdc: false
+        ups: false
 
     # Backup alerts upgrade
     - include_role:
