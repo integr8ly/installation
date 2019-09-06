@@ -200,7 +200,7 @@ spec:
           "steppedLine": true,
           "targets": [
             {
-              "expr": "kube_pod_container_status_running{namespace='{{ mobile_security_service_namespace }}',container='database'}",
+              "expr": "kube_endpoint_address_available{namespace='{{ mobile_security_service_namespace }}',endpoint='mobile-security-service-db'}",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 1,
@@ -286,7 +286,7 @@ spec:
           "steppedLine": true,
           "targets": [
             {
-              "expr": "kube_pod_container_status_running{namespace='{{ mobile_security_service_namespace }}',container='application'}",
+              "expr": "kube_endpoint_address_available{namespace='{{ mobile_security_service_namespace }}',endpoint='mobile-security-service-application'}",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "Mobile Security Service Application - Uptime",
