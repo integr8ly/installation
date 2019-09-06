@@ -26,4 +26,4 @@
 - name: Remove old Cronjob
   shell: "oc delete cronjob daily-at-midnight -n {{ eval_rhsso_namespace }}"
   register: removed
-  failed_when: removed.rc != 0
+  failed_when: "removed.rc != 0 and 'NotFound' not in removed.stderr"
