@@ -138,20 +138,12 @@
     - name: Expose vars
       include_vars: "../roles/apicurito/defaults/main.yml"
     
-    - name: Set additional walkthrough paths
-      block:
-        - set_fact:
-            webapp_wt_list: []
-        - set_fact:
-            webapp_wt_list: "{{ webapp_wt_list + [mobile_walkthrough_location] }}"
-          when: mdc
     -
       name: Install webapp
       include_role:
         name: webapp
       vars:
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
-        webapp_walkthrough_additional_locations: "{{ webapp_wt_list }}"
       tags: ['webapp']
       when: eval_action == 'install' and webapp
 
