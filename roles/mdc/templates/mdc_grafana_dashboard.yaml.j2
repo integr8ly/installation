@@ -190,7 +190,7 @@ spec:
             "steppedLine": true,
             "targets": [
               {
-                "expr": "up{job='{{ mdc_name }}-mdc'}",
+                "expr": "kube_endpoint_address_available{namespace='{{ mdc_namespace }}',endpoint='{{ mdc_name }}-mdc'}",
                 "format": "time_series",
                 "intervalFactor": 1,
                 "legendFormat": "MDC Application - Uptime",
@@ -290,7 +290,7 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "process_virtual_memory_bytes{job='{{ mdc_name }}-mdc'}",
+                "expr": "process_virtual_memory_bytes{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 1,
@@ -298,7 +298,7 @@ spec:
                 "refId": "A"
               },
               {
-                "expr": "process_resident_memory_bytes{job='{{ mdc_name }}-mdc'}",
+                "expr": "process_resident_memory_bytes{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 2,
@@ -307,7 +307,7 @@ spec:
                 "step": 2
               },
               {
-                "expr": "kube_pod_container_resource_limits_memory_bytes{container='mdc'}",
+                "expr": "kube_pod_container_resource_limits_memory_bytes{namespace='{{ mdc_namespace }}',container='mdc'}",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 2,
@@ -316,7 +316,7 @@ spec:
                 "step": 2
               },
               {
-                "expr": "((kube_pod_container_resource_limits_memory_bytes{container='mdc'})/100)*90",
+                "expr": "((kube_pod_container_resource_limits_memory_bytes{namespace='{{ mdc_namespace }}',container='mdc'})/100)*90",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 2,
@@ -404,7 +404,7 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "sum(rate(process_cpu_seconds_total{job='{{ mdc_name }}-mdc'}[1m]))*1000",
+                "expr": "sum(rate(process_cpu_seconds_total{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}[1m]))*1000",
                 "format": "time_series",
                 "interval": "",
                 "intervalFactor": 2,
@@ -413,7 +413,7 @@ spec:
                 "step": 2
               },
               {
-                "expr": "(kube_pod_container_resource_limits_cpu_cores{container='mdc'})*1000",
+                "expr": "(kube_pod_container_resource_limits_cpu_cores{namespace='{{ mdc_namespace }}',container='mdc'})*1000",
                 "format": "time_series",
                 "interval": "",
                 "intervalFactor": 2,
@@ -422,7 +422,7 @@ spec:
                 "step": 2
               },
               {
-                "expr": "(((kube_pod_container_resource_limits_cpu_cores{container='mdc'})*1000)/100)*90",
+                "expr": "(((kube_pod_container_resource_limits_cpu_cores{namespace='{{ mdc_namespace }}',container='mdc'})*1000)/100)*90",
                 "format": "time_series",
                 "interval": "",
                 "intervalFactor": 2,
@@ -668,7 +668,7 @@ spec:
              "steppedLine": true,
              "targets": [
                {
-                 "expr": "up{job='{{ mdc_name }}-mdc'}",
+                 "expr": "kube_endpoint_address_available{namespace='{{ mdc_namespace }}',endpoint='{{ mdc_name }}-mdc'}",
                  "format": "time_series",
                  "intervalFactor": 1,
                  "legendFormat": "MDC Application - Uptime",
@@ -768,7 +768,7 @@ spec:
              "steppedLine": false,
              "targets": [
                {
-                 "expr": "process_virtual_memory_bytes{job='{{ mdc_name }}-mdc'}",
+                 "expr": "process_virtual_memory_bytes{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}",
                  "format": "time_series",
                  "hide": false,
                  "intervalFactor": 1,
@@ -776,7 +776,7 @@ spec:
                  "refId": "A"
                },
                {
-                 "expr": "process_resident_memory_bytes{job='{{ mdc_name }}-mdc'}",
+                 "expr": "process_resident_memory_bytes{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}",
                  "format": "time_series",
                  "hide": false,
                  "intervalFactor": 2,
@@ -785,7 +785,7 @@ spec:
                  "step": 2
                },
                {
-                 "expr": "kube_pod_container_resource_limits_memory_bytes{container='mdc'}",
+                 "expr": "kube_pod_container_resource_limits_memory_bytes{namespace='{{ mdc_namespace }}',container='mdc'}",
                  "format": "time_series",
                  "hide": false,
                  "intervalFactor": 2,
@@ -794,7 +794,7 @@ spec:
                  "step": 2
                },
                {
-                 "expr": "((kube_pod_container_resource_limits_memory_bytes{container='mdc'})/100)*90",
+                 "expr": "((kube_pod_container_resource_limits_memory_bytes{namespace='{{ mdc_namespace }}',container='mdc'})/100)*90",
                  "format": "time_series",
                  "hide": false,
                  "intervalFactor": 2,
@@ -882,7 +882,7 @@ spec:
              "steppedLine": false,
              "targets": [
                {
-                 "expr": "sum(rate(process_cpu_seconds_total{job='{{ mdc_name }}-mdc'}[1m]))*1000",
+                 "expr": "sum(rate(process_cpu_seconds_total{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}[1m]))*1000",
                  "format": "time_series",
                  "interval": "",
                  "intervalFactor": 2,
@@ -891,7 +891,7 @@ spec:
                  "step": 2
                },
                {
-                 "expr": "(kube_pod_container_resource_limits_cpu_cores{container='mdc'})*1000",
+                 "expr": "(kube_pod_container_resource_limits_cpu_cores{namespace='{{ mdc_namespace }}',container='mdc'})*1000",
                  "format": "time_series",
                  "interval": "",
                  "intervalFactor": 2,
@@ -900,7 +900,7 @@ spec:
                  "step": 2
                },
                {
-                 "expr": "(((kube_pod_container_resource_limits_cpu_cores{container='mdc'})*1000)/100)*90",
+                 "expr": "(((kube_pod_container_resource_limits_cpu_cores{namespace='{{ mdc_namespace }}',container='mdc'})*1000)/100)*90",
                  "format": "time_series",
                  "interval": "",
                  "intervalFactor": 2,

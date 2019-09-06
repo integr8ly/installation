@@ -193,7 +193,7 @@ spec:
             "steppedLine": false,
             "targets": [
             {
-              "expr": "kube_endpoint_address_available{endpoint='{{ ups_server_name  }}-unifiedpush'}",
+              "expr": "kube_endpoint_address_available{namespace='{{ ups_namespace }}',endpoint='{{ ups_server_name  }}-unifiedpush'}",
               "format": "time_series",
               "hide": false,
               "interval": "1s",
@@ -366,7 +366,7 @@ spec:
             "steppedLine": true,
             "targets": [
             {
-              "expr": "avg(kube_pod_container_status_running{namespace='{{ ups_namespace }}',container='postgresql'})",
+              "expr": "kube_endpoint_address_available{namespace='{{ ups_namespace }}',endpoint='{{ ups_server_name }}-postgresql'}",
               "format": "time_series",
               "hide": false,
               "interval": "1s",
@@ -534,7 +534,7 @@ spec:
             "steppedLine": true,
             "targets": [
             {
-              "expr": "avg(kube_pod_container_status_running{namespace='{{ ups_namespace }}',container='ups'})",
+              "expr": "kube_endpoint_address_available{namespace='{{ ups_namespace }}',endpoint='{{ ups_server_name }}-unifiedpush'}",
               "format": "time_series",
               "interval": "1s",
               "intervalFactor": 1,

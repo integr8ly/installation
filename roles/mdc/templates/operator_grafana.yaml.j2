@@ -164,7 +164,7 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "up{job='mobile-developer-console-operator'}",
+                "expr": "kube_endpoint_address_available{namespace='{{ mdc_namespace }}',endpoint='mobile-developer-console-operator'}",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 2,
@@ -266,14 +266,14 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "process_virtual_memory_bytes{job='mobile-developer-console-operator'}",
+                "expr": "process_virtual_memory_bytes{namespace='{{ mdc_namespace }}',job='mobile-developer-console-operator'}",
                 "format": "time_series",
                 "intervalFactor": 1,
                 "legendFormat": "Virtual Memory",
                 "refId": "A"
               },
               {
-                "expr": "process_resident_memory_bytes{job='mobile-developer-console-operator'}",
+                "expr": "process_resident_memory_bytes{namespace='{{ mdc_namespace }}',job='mobile-developer-console-operator'}",
                 "format": "time_series",
                 "intervalFactor": 2,
                 "legendFormat": "Memory Usage",
@@ -359,7 +359,7 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "sum(rate(process_cpu_seconds_total{job='mobile-developer-console-operator'}[1m]))*1000",
+                "expr": "sum(rate(process_cpu_seconds_total{namespace='{{ mdc_namespace }}',job='mobile-developer-console-operator'}[1m]))*1000",
                 "format": "time_series",
                 "interval": "",
                 "intervalFactor": 2,

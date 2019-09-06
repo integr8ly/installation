@@ -190,7 +190,7 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "up{service='unifiedpush-operator'}",
+                "expr": "kube_endpoint_address_available{namespace='{{ ups_namespace }}',endpoint='unifiedpush-operator'}",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 2,
@@ -292,14 +292,14 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "process_virtual_memory_bytes{service='unifiedpush-operator'}",
+                "expr": "process_virtual_memory_bytes{namespace='{{ ups_namespace }}',service='unifiedpush-operator'}",
                 "format": "time_series",
                 "intervalFactor": 1,
                 "legendFormat": "Virtual Memory",
                 "refId": "A"
               },
               {
-                "expr": "process_resident_memory_bytes{service='unifiedpush-operator'}",
+                "expr": "process_resident_memory_bytes{namespace='{{ ups_namespace }}',service='unifiedpush-operator'}",
                 "format": "time_series",
                 "intervalFactor": 2,
                 "legendFormat": "Memory Usage",
@@ -385,7 +385,7 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "sum(rate(process_cpu_seconds_total{service='unifiedpush-operator'}[1m]))*1000",
+                "expr": "sum(rate(process_cpu_seconds_total{namespace='{{ ups_namespace }}',service='unifiedpush-operator'}[1m]))*1000",
                 "format": "time_series",
                 "interval": "",
                 "intervalFactor": 2,
