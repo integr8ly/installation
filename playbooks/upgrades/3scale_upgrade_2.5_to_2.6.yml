@@ -686,6 +686,11 @@
       register: apicast_wildcard_router_dc_removed
       failed_when: apicast_wildcard_router_dc_removed.stderr and 'NotFound' not in apicast_wildcard_router_dc_removed.stderr
 
+    - name: "Remove 3amp wildcard route from {{ threescale_namespace }} namespace"
+      shell: oc delete route apicast-wildcard-router-routing-shard
+      register: apicast_wildcard_router_shard_removed
+      failed_when: apicast_wildcard_router_shard_removed.stderr and 'NotFound' not in apicast_wildcard_router_shard_removed.stderr
+
     - name: Clean up patch file directory
       file:
         path: "{{ threescale_patch_file_dir }}"
