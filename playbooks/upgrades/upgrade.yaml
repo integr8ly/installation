@@ -125,6 +125,10 @@
       include_role:
         name: middleware_monitoring_config
         tasks_from: upgrade.yml
+      vars:
+        mdc: false
+        mobile_security_service: false
+        mdc: false
 
     # Backup alerts upgrade
     - include_role:
@@ -151,6 +155,7 @@
 #install mobile services
 - import_playbook: ../install_mobile_services.yml
 
+#setup mobile monitoring
 - import_playbook: "../install_mobile_middleware_monitoring_config.yml"
 
 #Update product version (should always be last)
