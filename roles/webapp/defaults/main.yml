@@ -13,6 +13,5 @@ webapp_operator_resource_items:
   - "{{ webapp_operator_resources }}/operator.yaml"
 webapp_walkthrough_locations:
   - "https://github.com/integr8ly/tutorial-web-app-walkthroughs#v1.7.2"
-webapp_walkthrough_additional_locations: []
 webapp_provision_services: []
 webapp_watch_services: []
