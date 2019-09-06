@@ -71,88 +71,6 @@ spec:
             "type": "row"
           },
           {
-            "cacheTimeout": null,
-            "colorBackground": false,
-            "colorValue": false,
-            "colors": [
-              "#d44a3a",
-              "rgba(237, 129, 40, 0.89)",
-              "#299c46"
-            ],
-            "datasource": "Prometheus",
-            "format": "percent",
-            "gauge": {
-              "maxValue": 100,
-              "minValue": 95,
-              "show": true,
-              "thresholdLabels": true,
-              "thresholdMarkers": true
-            },
-            "gridPos": {
-              "h": 8,
-              "w": 3,
-              "x": 0,
-              "y": 1
-            },
-            "id": 18,
-            "interval": null,
-            "links": [],
-            "mappingType": 1,
-            "mappingTypes": [
-              {
-                "name": "value to text",
-                "value": 1
-              },
-              {
-                "name": "range to text",
-                "value": 2
-              }
-            ],
-            "maxDataPoints": 100,
-            "nullPointMode": "connected",
-            "nullText": null,
-            "options": {},
-            "postfix": "",
-            "postfixFontSize": "50%",
-            "prefix": "",
-            "prefixFontSize": "50%",
-            "rangeMaps": [
-              {
-                "from": "null",
-                "text": "N/A",
-                "to": "null"
-              }
-            ],
-            "sparkline": {
-              "fillColor": "rgba(31, 118, 189, 0.18)",
-              "full": false,
-              "lineColor": "rgb(31, 120, 193)",
-              "show": false
-            },
-            "tableColumn": "",
-            "targets": [
-              {
-                "expr": "avg(up{job='{{ mdc_name }}-mdc'})*100",
-                "format": "time_series",
-                "hide": false,
-                "intervalFactor": 1,
-                "refId": "A"
-              }
-            ],
-            "thresholds": "98,99",
-            "title": "MDC Application Average Percentage Uptime",
-            "type": "singlestat",
-            "valueFontSize": "80%",
-            "valueMaps": [
-              {
-                "op": "=",
-                "text": "N/A",
-                "value": "null"
-              }
-            ],
-            "valueName": "avg"
-          },
-          {
             "aliasColors": {},
             "bars": true,
             "dashLength": 10,
@@ -161,7 +79,7 @@ spec:
             "fill": 1,
             "gridPos": {
               "h": 8,
-              "w": 21,
+              "w": 24,
               "x": 3,
               "y": 1
             },
@@ -190,7 +108,7 @@ spec:
             "steppedLine": true,
             "targets": [
               {
-                "expr": "up{job='{{ mdc_name }}-mdc'}",
+                "expr": "kube_endpoint_address_available{namespace='{{ mdc_namespace }}',endpoint='{{ mdc_name }}-mdc'}",
                 "format": "time_series",
                 "intervalFactor": 1,
                 "legendFormat": "MDC Application - Uptime",
@@ -290,7 +208,7 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "process_virtual_memory_bytes{job='{{ mdc_name }}-mdc'}",
+                "expr": "process_virtual_memory_bytes{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 1,
@@ -298,7 +216,7 @@ spec:
                 "refId": "A"
               },
               {
-                "expr": "process_resident_memory_bytes{job='{{ mdc_name }}-mdc'}",
+                "expr": "process_resident_memory_bytes{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 2,
@@ -307,7 +225,7 @@ spec:
                 "step": 2
               },
               {
-                "expr": "kube_pod_container_resource_limits_memory_bytes{container='mdc'}",
+                "expr": "kube_pod_container_resource_limits_memory_bytes{namespace='{{ mdc_namespace }}',container='mdc'}",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 2,
@@ -316,7 +234,7 @@ spec:
                 "step": 2
               },
               {
-                "expr": "((kube_pod_container_resource_limits_memory_bytes{container='mdc'})/100)*90",
+                "expr": "((kube_pod_container_resource_limits_memory_bytes{namespace='{{ mdc_namespace }}',container='mdc'})/100)*90",
                 "format": "time_series",
                 "hide": false,
                 "intervalFactor": 2,
@@ -404,7 +322,7 @@ spec:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "sum(rate(process_cpu_seconds_total{job='{{ mdc_name }}-mdc'}[1m]))*1000",
+                "expr": "sum(rate(process_cpu_seconds_total{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}[1m]))*1000",
                 "format": "time_series",
                 "interval": "",
                 "intervalFactor": 2,
@@ -413,7 +331,7 @@ spec:
                 "step": 2
               },
               {
-                "expr": "(kube_pod_container_resource_limits_cpu_cores{container='mdc'})*1000",
+                "expr": "(kube_pod_container_resource_limits_cpu_cores{namespace='{{ mdc_namespace }}',container='mdc'})*1000",
                 "format": "time_series",
                 "interval": "",
                 "intervalFactor": 2,
@@ -422,7 +340,7 @@ spec:
                 "step": 2
               },
               {
-                "expr": "(((kube_pod_container_resource_limits_cpu_cores{container='mdc'})*1000)/100)*90",
+                "expr": "(((kube_pod_container_resource_limits_cpu_cores{namespace='{{ mdc_namespace }}',container='mdc'})*1000)/100)*90",
                 "format": "time_series",
                 "interval": "",
                 "intervalFactor": 2,
@@ -549,88 +467,6 @@ spec:
              "type": "row"
            },
            {
-             "cacheTimeout": null,
-             "colorBackground": false,
-             "colorValue": false,
-             "colors": [
-               "#d44a3a",
-               "rgba(237, 129, 40, 0.89)",
-               "#299c46"
-             ],
-             "datasource": "Prometheus",
-             "format": "percent",
-             "gauge": {
-               "maxValue": 100,
-               "minValue": 95,
-               "show": true,
-               "thresholdLabels": true,
-               "thresholdMarkers": true
-             },
-             "gridPos": {
-               "h": 8,
-               "w": 3,
-               "x": 0,
-               "y": 1
-             },
-             "id": 18,
-             "interval": null,
-             "links": [],
-             "mappingType": 1,
-             "mappingTypes": [
-               {
-                 "name": "value to text",
-                 "value": 1
-               },
-               {
-                 "name": "range to text",
-                 "value": 2
-               }
-             ],
-             "maxDataPoints": 100,
-             "nullPointMode": "connected",
-             "nullText": null,
-             "options": {},
-             "postfix": "",
-             "postfixFontSize": "50%",
-             "prefix": "",
-             "prefixFontSize": "50%",
-             "rangeMaps": [
-               {
-                 "from": "null",
-                 "text": "N/A",
-                 "to": "null"
-               }
-             ],
-             "sparkline": {
-               "fillColor": "rgba(31, 118, 189, 0.18)",
-               "full": false,
-               "lineColor": "rgb(31, 120, 193)",
-               "show": false
-             },
-             "tableColumn": "",
-             "targets": [
-               {
-                 "expr": "avg(up{job='{{ mdc_name }}-mdc'})*100",
-                 "format": "time_series",
-                 "hide": false,
-                 "intervalFactor": 1,
-                 "refId": "A"
-               }
-             ],
-             "thresholds": "98,99",
-             "title": "MDC Application Average Percentage Uptime",
-             "type": "singlestat",
-             "valueFontSize": "80%",
-             "valueMaps": [
-               {
-                 "op": "=",
-                 "text": "N/A",
-                 "value": "null"
-               }
-             ],
-             "valueName": "avg"
-           },
-           {
              "aliasColors": {},
              "bars": true,
              "dashLength": 10,
@@ -639,7 +475,7 @@ spec:
              "fill": 1,
              "gridPos": {
                "h": 8,
-               "w": 21,
+               "w": 24,
                "x": 3,
                "y": 1
              },
@@ -668,7 +504,7 @@ spec:
              "steppedLine": true,
              "targets": [
                {
-                 "expr": "up{job='{{ mdc_name }}-mdc'}",
+                 "expr": "kube_endpoint_address_available{namespace='{{ mdc_namespace }}',endpoint='{{ mdc_name }}-mdc'}",
                  "format": "time_series",
                  "intervalFactor": 1,
                  "legendFormat": "MDC Application - Uptime",
@@ -768,7 +604,7 @@ spec:
              "steppedLine": false,
              "targets": [
                {
-                 "expr": "process_virtual_memory_bytes{job='{{ mdc_name }}-mdc'}",
+                 "expr": "process_virtual_memory_bytes{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}",
                  "format": "time_series",
                  "hide": false,
                  "intervalFactor": 1,
@@ -776,7 +612,7 @@ spec:
                  "refId": "A"
                },
                {
-                 "expr": "process_resident_memory_bytes{job='{{ mdc_name }}-mdc'}",
+                 "expr": "process_resident_memory_bytes{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}",
                  "format": "time_series",
                  "hide": false,
                  "intervalFactor": 2,
@@ -785,7 +621,7 @@ spec:
                  "step": 2
                },
                {
-                 "expr": "kube_pod_container_resource_limits_memory_bytes{container='mdc'}",
+                 "expr": "kube_pod_container_resource_limits_memory_bytes{namespace='{{ mdc_namespace }}',container='mdc'}",
                  "format": "time_series",
                  "hide": false,
                  "intervalFactor": 2,
@@ -794,7 +630,7 @@ spec:
                  "step": 2
                },
                {
-                 "expr": "((kube_pod_container_resource_limits_memory_bytes{container='mdc'})/100)*90",
+                 "expr": "((kube_pod_container_resource_limits_memory_bytes{namespace='{{ mdc_namespace }}',container='mdc'})/100)*90",
                  "format": "time_series",
                  "hide": false,
                  "intervalFactor": 2,
@@ -882,7 +718,7 @@ spec:
              "steppedLine": false,
              "targets": [
                {
-                 "expr": "sum(rate(process_cpu_seconds_total{job='{{ mdc_name }}-mdc'}[1m]))*1000",
+                 "expr": "sum(rate(process_cpu_seconds_total{namespace='{{ mdc_namespace }}',job='{{ mdc_name }}-mdc'}[1m]))*1000",
                  "format": "time_series",
                  "interval": "",
                  "intervalFactor": 2,
@@ -891,7 +727,7 @@ spec:
                  "step": 2
                },
                {
-                 "expr": "(kube_pod_container_resource_limits_cpu_cores{container='mdc'})*1000",
+                 "expr": "(kube_pod_container_resource_limits_cpu_cores{namespace='{{ mdc_namespace }}',container='mdc'})*1000",
                  "format": "time_series",
                  "interval": "",
                  "intervalFactor": 2,
@@ -900,7 +736,7 @@ spec:
                  "step": 2
                },
                {
-                 "expr": "(((kube_pod_container_resource_limits_cpu_cores{container='mdc'})*1000)/100)*90",
+                 "expr": "(((kube_pod_container_resource_limits_cpu_cores{namespace='{{ mdc_namespace }}',container='mdc'})*1000)/100)*90",
                  "format": "time_series",
                  "interval": "",
                  "intervalFactor": 2,
