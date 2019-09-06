@@ -676,11 +676,10 @@
       register: apicast_wildcard_removed
       failed_when: apicast_wildcard_removed.stderr and 'NotFound' not in apicast_wildcard_removed.stderr
 
-    # Maybe we shouldnt do this, not sure of knock on impact to existing amp wildcard on OSD
-    # - name: Remove amp-wildcard-router imagestream
-    #   shell: oc delete ImageStream amp-wildcard-router
-    #   register: amp_wildcard_route_is_removed
-    #   failed_when: amp_wildcard_route_is_removed.stderr
+    - name: Remove amp-wildcard-router imagestream
+      shell: oc delete ImageStream amp-wildcard-router
+      register: amp_wildcard_route_is_removed
+      failed_when: amp_wildcard_route_is_removed.stderr and 'NotFound' not in amp_wildcard_route_is_removed.stderr
 
     - name: Remove apicast-wildcard-router deploymentconfig
       shell: oc delete DeploymentConfig apicast-wildcard-router
