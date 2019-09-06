@@ -35,6 +35,16 @@
       tags: ['mdc']
       when: mdc | default(true) | bool
 
+    - name: Patch webapp
+      include_role:
+        name: webapp
+        tasks_from: provision_webapp
+      vars:
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+      tags: ['mdc']
+      when: mdc | default(true) | bool
+
+
     - name: User rhsso configuration
       include_role:
         name: rhsso-user
