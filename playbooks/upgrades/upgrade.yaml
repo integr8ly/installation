@@ -151,6 +151,8 @@
 #install mobile services
 - import_playbook: ../install_mobile_services.yml
 
+- import_playbook: "../install_mobile_middleware_monitoring_config.yml"
+
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
 
