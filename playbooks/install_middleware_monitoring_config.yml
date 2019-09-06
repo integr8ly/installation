@@ -19,9 +19,3 @@
     when:
       - middleware_monitoring | default(true) | bool
       - webapp | default(true) | bool
-  - include_role:
-      name: mobile_security_service
-      tasks_from: monitoring
-    when:
-      - middleware_monitoring | default(true) | bool
-      - mobile_security_service | default(true) | bool
