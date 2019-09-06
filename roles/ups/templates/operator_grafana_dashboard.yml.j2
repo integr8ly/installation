@@ -68,88 +68,6 @@ spec:
             "type": "row"
           },
           {
-            "cacheTimeout": null,
-            "colorBackground": false,
-            "colorValue": true,
-            "colors": [
-              "#d44a3a",
-              "rgba(237, 129, 40, 0.89)",
-              "#299c46"
-            ],
-            "datasource": "Prometheus",
-            "decimals": null,
-            "format": "percent",
-            "gauge": {
-              "maxValue": 100,
-              "minValue": 95,
-              "show": true,
-              "thresholdLabels": true,
-              "thresholdMarkers": true
-            },
-            "gridPos": {
-              "h": 8,
-              "w": 3,
-              "x": 0,
-              "y": 1
-            },
-            "id": 8,
-            "interval": null,
-            "links": [],
-            "mappingType": 1,
-            "mappingTypes": [
-              {
-                "name": "value to text",
-                "value": 1
-              },
-              {
-                "name": "range to text",
-                "value": 2
-              }
-            ],
-            "maxDataPoints": 100,
-            "nullPointMode": "connected",
-            "nullText": null,
-            "postfix": "",
-            "postfixFontSize": "50%",
-            "prefix": "",
-            "prefixFontSize": "50%",
-            "rangeMaps": [
-              {
-                "from": "null",
-                "text": "N/A",
-                "to": "null"
-              }
-            ],
-            "sparkline": {
-              "fillColor": "rgba(31, 118, 189, 0.18)",
-              "full": false,
-              "lineColor": "rgb(31, 120, 193)",
-              "show": false
-            },
-            "tableColumn": "",
-            "targets": [
-              {
-                "expr": "(avg(up{service='unifiedpush-operator'}))*100",
-                "format": "time_series",
-                "intervalFactor": 1,
-                "refId": "A"
-              }
-            ],
-            "thresholds": "98,99",
-            "title": "Daily Percentage Uptime",
-            "transparent": false,
-            "type": "singlestat",
-            "valueFontSize": "70%",
-            "valueMaps": [
-              {
-                "op": "=",
-                "text": "N/A",
-                "value": "null"
-              }
-            ],
-            "valueName": "avg"
-          },
-          {
             "aliasColors": {},
             "bars": true,
             "dashLength": 10,
@@ -158,7 +76,7 @@ spec:
             "fill": 1,
             "gridPos": {
               "h": 8,
-              "w": 21,
+              "w": 24,
               "x": 3,
               "y": 1
             },
