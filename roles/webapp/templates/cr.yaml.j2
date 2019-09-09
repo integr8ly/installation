@@ -11,6 +11,7 @@ spec:
     parameters:
       OPENSHIFT_OAUTHCLIENT_ID: "{{ webapp_client_id }}"
       OPENSHIFT_HOST: "{{ openshift_host.stdout }}"
+      OPENSHIFT_OAUTH_HOST: "{{ openshift_oauth_host.stdout }}"
       SSO_ROUTE: "{{ sso_route.stdout }}"
       INTEGREATLY_VERSION: "{{ integreatly_version }}"
       CLUSTER_TYPE: "{{ cluster_type }}"
