@@ -1,0 +1,131 @@
+{
+    "kind": "DeploymentConfig",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "launcher-sso",
+        "labels": {
+            "application": "launcher-sso"
+        }
+    },
+    "spec": {
+        "strategy": {
+            "type": "Recreate"
+        },
+        "triggers": [
+            {
+                "type": "ImageChange",
+                "imageChangeParams": {
+                    "automatic": true,
+                    "containerNames": [
+                        "launcher-sso"
+                    ],
+                    "from": {
+                        "kind": "ImageStreamTag",
+                        "namespace": "openshift",
+                        "name": "redhat-sso73-openshift:1.0"
+                    }
+                }
+            },
+            {
+                "type": "ConfigChange"
+            }
+        ],
+        "replicas": 1,
+        "selector": {
+            "deploymentConfig": "launcher-sso"
+        },
+        "template": {
+            "metadata": {
+                "name": "launcher-sso",
+                "labels": {
+                    "deploymentConfig": "launcher-sso",
+                    "application": "launcher-sso"
+                }
+            },
+            "spec": {
+                "terminationGracePeriodSeconds": 75,
+                "containers": [
+                    {
+                        "name": "launcher-sso",
+                        "image": "launcher-sso",
+                        "imagePullPolicy": "Always",
+                        "resources": {
+                            "limits": {
+                                "memory": "1Gi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "sso-x509-https-volume",
+                                "mountPath": "/etc/x509/https",
+                                "readOnly": true
+                            },
+                            {
+                                "name": "sso-x509-jgroups-volume",
+                                "mountPath": "/etc/x509/jgroups",
+                                "readOnly": true
+                            }
+                        ],
+                        "livenessProbe": {
+                            "exec": {
+                                "command": [
+                                    "/bin/bash",
+                                    "-c",
+                                    "/opt/eap/bin/livenessProbe.sh"
+                                ]
+                            },
+                            "initialDelaySeconds": 60
+                        },
+                        "readinessProbe": {
+                            "exec": {
+                                "command": [
+                                    "/bin/bash",
+                                    "-c",
+                                    "/opt/eap/bin/readinessProbe.sh"
+                                ]
+                            }
+                        },
+                        "ports": [
+                            {
+                                "name": "jolokia",
+                                "containerPort": 8778,
+                                "protocol": "TCP"
+                            },
+                            {
+                                "name": "http",
+                                "containerPort": 8080,
+                                "protocol": "TCP"
+                            },
+                            {
+                                "name": "https",
+                                "containerPort": 8443,
+                                "protocol": "TCP"
+                            },
+                            {
+                                "name": "ping",
+                                "containerPort": 8888,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "env": {{ launcher_sso_environment_vars.stdout }} 
+		    }
+	        ],    
+                "volumes": [
+                    {
+                        "name": "sso-x509-https-volume",
+                        "secret": {
+                            "secretName": "sso-x509-https-secret"
+                        }
+                    },
+                    {
+                        "name": "sso-x509-jgroups-volume",
+                        "secret": {
+                            "secretName": "sso-x509-jgroups-secret"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
+
