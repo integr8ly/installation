@@ -676,16 +676,20 @@
       register: apicast_wildcard_removed
       failed_when: apicast_wildcard_removed.stderr and 'NotFound' not in apicast_wildcard_removed.stderr
 
-    # Maybe we shouldnt do this, not sure of knock on impact to existing amp wildcard on OSD
-    # - name: Remove amp-wildcard-router imagestream
-    #   shell: oc delete ImageStream amp-wildcard-router
-    #   register: amp_wildcard_route_is_removed
-    #   failed_when: amp_wildcard_route_is_removed.stderr
+    - name: Remove amp-wildcard-router imagestream
+      shell: oc delete ImageStream amp-wildcard-router
+      register: amp_wildcard_route_is_removed
+      failed_when: amp_wildcard_route_is_removed.stderr and 'NotFound' not in amp_wildcard_route_is_removed.stderr
 
     - name: Remove apicast-wildcard-router deploymentconfig
       shell: oc delete DeploymentConfig apicast-wildcard-router
       register: apicast_wildcard_router_dc_removed
       failed_when: apicast_wildcard_router_dc_removed.stderr and 'NotFound' not in apicast_wildcard_router_dc_removed.stderr
+
+    - name: "Remove 3amp wildcard route from {{ threescale_namespace }} namespace"
+      shell: oc delete route apicast-wildcard-router-routing-shard
+      register: apicast_wildcard_router_shard_removed
+      failed_when: apicast_wildcard_router_shard_removed.stderr and 'NotFound' not in apicast_wildcard_router_shard_removed.stderr
 
     - name: Clean up patch file directory
       file:
