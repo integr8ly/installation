@@ -1,0 +1,97 @@
+- name: "Patch the volumes"
+  shell: "oc patch deploymentconfig launcher-sso -n {{ launcher_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/status/phase\", \"value\": \"provisionApplication\"}]'"
+
+"volumes": [
+  {
+      "name": "sso-x509-https-volume",
+      "secret": {
+          "secretName": "sso-x509-https-secret"
+      }
+  },
+  {
+      "name": "sso-x509-jgroups-volume",
+      "secret": {
+          "secretName": "sso-x509-jgroups-secret"
+      }
+  }
+]
+
+- name: "Patch the spec/template/spec/containers[0] volumemounts"
+  shell: "oc patch deploymentconfig launcher-sso -n {{ launcher_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/status/phase\", \"value\": \"provisionApplication\"}]'"
+
+"volumeMounts": [
+  {
+      "name": "sso-x509-https-volume",
+      "mountPath": "/etc/x509/https",
+      "readOnly": true
+  },
+  {
+      "name": "sso-x509-jgroups-volume",
+      "mountPath": "/etc/x509/jgroups",
+      "readOnly": true
+  }
+],
+
+
+
+- name: "Patch the spec/triggers"
+  shell: "oc patch deploymentconfig launcher-sso -n {{ launcher_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/status/phase\", \"value\": \"provisionApplication\"}]'"
+
+"triggers": [
+  {                                                                                                          
+      "type": "ImageChange",                                                                                 
+      "imageChangeParams": {                                                                                 
+          "automatic": true,
+          "containerNames": [                                                                                
+              "${APPLICATION_NAME}"                                                                          
+          ],
+          "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "${IMAGE_STREAM_NAMESPACE}",                                                      
+              "name": "redhat-sso73-openshift:1.0"                                                           
+          }                                                                                                  
+      }
+  },                                                                                                         
+  {                                                                                                          
+      "type": "ConfigChange"                                                                                 
+  }                                                                                                          
+]
+
+- name: "Patch the image"
+  shell: "oc patch deploymentconfig launcher-sso -n {{ launcher_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/status/phase\", \"value\": \"provisionApplication\"}]'"
+
+- name: "Patch the initContainers"
+  shell: 'oc annotate service SERVICENAME!!!!!!sso-ping "service.alpha.openshift.io/serving-cert-secret-name"="sso-x509-jgroups-secret" -n {{ launcher_namespace }}'
+
+- name: "Patch the containers env"
+  shell: "oc patch deploymentconfig launcher-sso -n {{ launcher_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/status/phase\", \"value\": \"provisionApplication\"}]'"
+
+{
+  "name": "SSO_HOSTNAME",
+  "value": "${SSO_HOSTNAME}"
+},
+
+
+
+
+######################################################
+
+
+- name: "Export the existing launcher-sso deploymentconfig"
+  shell: "oc get deploymentconfigs launcher-sso -n {{ launcher_namespace }} --export -o json > /tmp/sso_7.2_deploymentconfig.json"
+
+- name: "Capture the environment variables in the launcher-sso deploymentconfig"
+  shell: 'jq ".spec.template.spec.containers[0].env" /tmp/sso_7.2_deploymentconfig.yml'
+  register: launcher-sso-environment-vars
+
+- name: "Delete the existing launcher-sso deploymentconfig"
+  shell: "oc delete deploymentconfigs launcher-sso -n {{ launcher_namespace }}"
+
+- name: "Patch the launcher-sso-ping service with the serving-cert-secret-name annotation"
+  shell: 'oc annotate service launcher-sso-ping "service.alpha.openshift.io/serving-cert-secret-name"="sso-x509-jgroups-secret" -n {{ launcher_namespace }}'
+
+- name: "Recreate the launcher-sso deploymentconfig"
+  shell: "oc delete deploymentconfigs launcher-sso -n {{ launcher_namespace }}"
+
+- name: "Overwrite the environment vars in the launcher-sso deploymentconfig"
+  shell: 'oc something or other'
