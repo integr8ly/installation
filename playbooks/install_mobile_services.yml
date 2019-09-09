@@ -27,6 +27,15 @@
       tags: ['mobile_security_service']
       when: mobile_security_service | default(true) | bool
 
+    - name: Enable Mobile Security Service Backups
+      include_role:
+        name: mobile_security_service
+        tasks_from: backup.yml
+      tags: ['mobile_security_service']
+      when:
+        - mobile_security_service | default(true) | bool
+        - backup_restore_install | default(false) | bool
+
     - name: Patch webapp
       include_role:
         name: webapp
