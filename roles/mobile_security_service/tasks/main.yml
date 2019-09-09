@@ -48,7 +48,7 @@
   register: mobile_security_service_operator_result
   until: mobile_security_service_operator_result.stdout.find("1") != -1
   retries: 50
-  delay: 5
+  delay: 10
 
 - name: "Delete operator Template File"
   file: path=/tmp/mobile-security-service-operator.yml state=absent
@@ -64,7 +64,7 @@
   register: mobile_security_service_db_result
   until: mobile_security_service_db_result.stdout.find("1") != -1
   retries: 50
-  delay: 5
+  delay: 10
 
 - name: Create Mobile Security Service custom resource
   shell: oc create -f {{ mobile_security_service_operator_resources }}/crds/mobile-security-service_v1alpha1_mobilesecurityservice_cr.yaml -n {{ mobile_security_service_namespace }}
@@ -77,5 +77,5 @@
   register: mobile_security_service_result
   until: mobile_security_service_result.stdout.find("2") != -1
   retries: 50
-  delay: 5
+  delay: 10
 
