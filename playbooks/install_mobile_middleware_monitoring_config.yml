@@ -1,6 +1,9 @@
 ---
 - hosts: localhost
   gather_facts: no
+  roles:
+    - role: middleware_monitoring_config
+      when: middleware_monitoring | default(true) | bool
   tasks:
     - include_role:
         name: mobile_security_service
