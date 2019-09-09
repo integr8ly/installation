@@ -16,6 +16,13 @@
     - { key: 'identityProviderRealm', value: "'{{ che_keycloak_realm }}'" }
     - { key: 'identityProviderClientId', value: "'{{ che_keycloak_client_id }}'" }
 
+- name: Update Che Cluster Custom Resource pvc claim size for POC and OSD
+  replace:
+    path: "{{ codeready_install_scripts_dir }}/custom-resource.yaml"
+    regexp: 'pvcClaimSize:.*$'
+    replace: 'pvcClaimSize: {{ che_persistent_volume_size }}'
+  when: cluster_type == "osd" or cluster_type == "poc" or cluster_type == "dev"
+
 - name: install code ready with self signed cert
   shell: "cd {{ codeready_install_scripts_dir }} && OPENSHIFT_PROJECT={{ che_namespace }} ./deploy.sh --deploy --secure"
   when: eval_self_signed_certs|bool
