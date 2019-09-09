@@ -3,12 +3,11 @@
   gather_facts: no
   tasks:
     - include_role:
-      name: mobile_security_service
-      tasks_from: monitoring
-    when:
-      - middleware_monitoring | default(true) | bool
-      - mobile_security_service | default(true) | bool
-    
+        name: mobile_security_service
+        tasks_from: monitoring
+      when:
+        - middleware_monitoring | default(true) | bool
+        - mobile_security_service | default(true) | bool
     - include_role:
         name: ups
         tasks_from: monitoring
