@@ -5,8 +5,12 @@
   failed_when: false
 
 - name: Construct openshift host string
-  shell: echo {{ openshift_master_public_url | default(openshift_master_url) }} | cut -d '/' -f3
+  shell: echo {{ openshift_master_public_url | default(openshift_asset_url) }} | cut -d '/' -f3
   register: openshift_host
+
+- name: Construct openshift oauth string
+  shell: echo {{ openshift_master_url }} | cut -d '/' -f3
+  register: openshift_oauth_host
 
 - name: Get SSO route
   shell: oc get route sso -o template --template \{\{.spec.host\}\} -n {{ eval_rhsso_namespace }}
