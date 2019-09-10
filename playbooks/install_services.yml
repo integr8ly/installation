@@ -144,6 +144,7 @@
         name: webapp
       vars:
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+        openshift_asset_url: "{{ hostvars['EVAL_VARS']['openshift_asset_url'] }}"
       tags: ['webapp']
       when: eval_action == 'install' and webapp
 
