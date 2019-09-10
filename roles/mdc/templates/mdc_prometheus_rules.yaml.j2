@@ -11,7 +11,7 @@ spec:
   - name: general.rules
     rules:
     - alert: MobileDeveloperConsoleContainerDown
-      expr: absent(kube_pod_container_status_running{namespace="mobile-developer-console",container="mdc"}>=1)
+      expr: absent(kube_pod_container_status_running{namespace="{{ mdc_namespace }}",container="mdc"}>=1)
       for: 5m
       labels:
         severity: critical
