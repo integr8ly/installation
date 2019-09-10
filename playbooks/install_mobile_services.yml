@@ -27,6 +27,24 @@
       tags: ['mobile_security_service']
       when: mobile_security_service | default(true) | bool
 
+    - name: Enable Mobile Security Service Backups
+      include_role:
+        name: mobile_security_service
+        tasks_from: backup.yml
+      tags: ['mobile_security_service']
+      when:
+        - mobile_security_service | default(true) | bool
+        - backup_restore_install | default(false) | bool
+
+    - name: Patch webapp
+      include_role:
+        name: webapp
+        tasks_from: provision-webapp.yml
+      vars:
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+      tags: ['mdc']
+      when: mdc | default(true) | bool
+
     - name: Install mobile developer console (mdc)
       include_role:
         name: mdc
@@ -34,6 +52,7 @@
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
       tags: ['mdc']
       when: mdc | default(true) | bool
+
 
     - name: User rhsso configuration
       include_role:

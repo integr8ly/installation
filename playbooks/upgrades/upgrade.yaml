@@ -79,30 +79,6 @@
         - webapp
       loop_control:
         loop_var: images_source_namespace
-
-
-    # Update Mobile Security Service - TODO at next version - change to upgrade - current version will run installation
-    - name: Install/Upgrade Mobile Security Service as part of upgrade
-      include_role:
-        name: mobile_security_service
-        tasks_from: upgrade
-      when: mobile_security_service
-
-    #ups
-    - name: Install/Upgrade Unified Push Server (ups) as part of upgrade
-      include_role:
-        name: ups
-      vars:
-        ups_backup: "{{ backup_restore_install | default(false) | bool }}"
-      when: ups
-
-    #mdc
-    - name: Install/Upgrade Mobile Developer Console (mdc) as part of upgrade
-      include_role:
-        name: mdc
-      vars:
-        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
-      when: mdc
     
     #application metrics
     - name: Install application metrics
@@ -150,6 +126,10 @@
       include_role:
         name: middleware_monitoring_config
         tasks_from: upgrade.yml
+      vars:
+        mdc: false
+        mobile_security_service: false
+        ups: false
 
     # Backup alerts upgrade
     - include_role:
@@ -173,5 +153,14 @@
 
 - import_playbook: 3scale_upgrade_2.5_to_2.6.yml
 
+#install mobile services
+- import_playbook: ../install_mobile_services.yml
+
+#setup mobile monitoring
+- import_playbook: "../install_mobile_middleware_monitoring_config.yml"
+
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
+
+#patch manifest file with mobile services info
+- import_playbook: ../install_mobile_manifest.yml
