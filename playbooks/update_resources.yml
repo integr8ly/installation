@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: 3scale
+        tasks_from: new_limits.yml
+      tags: ['3scale']
+    - include_role:
+        name: enmasse
+        tasks_from: new_limits.yml
+      tags: ['enmasse']

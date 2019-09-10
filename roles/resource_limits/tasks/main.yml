@@ -1,0 +1,24 @@
+---
+
+-
+  include_tasks: patch_resource.yml
+  with_items:
+    "{{ resources }}"
+  loop_control:
+    loop_var: resource_patch
+
+- name: Set up watch for rollout status of resources with overrides
+  shell: oc rollout status {{ item.kind }}/{{ item.name }} -n {{ ns }} -w
+  async: 7200
+  poll: 0
+  register: rollout_status
+  with_items:
+    "{{ resources }}"
+
+- name: Wait for all rollouts to complete for ns={{ ns }}
+  async_status: jid={{ item.ansible_job_id }}
+  register: patch_jobs
+  until: patch_jobs.finished
+  retries: 300
+  with_items:
+    "{{ rollout_status.results }}"

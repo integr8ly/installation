@@ -1,0 +1,9 @@
+---
+resource_limits_managed: true
+
+# horizontal scaling enables managing number of replicas
+resource_limits_horizontal_scaling: false
+
+# vertical scaling enables management of resource requests/limits
+resource_limits_vertical_scaling: true
+
