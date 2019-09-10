@@ -42,6 +42,7 @@
         tasks_from: provision-webapp.yml
       vars:
         openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+        openshift_asset_url: "{{ hostvars['EVAL_VARS']['openshift_asset_url'] }}"
       tags: ['mdc']
       when: mdc | default(true) | bool
 
