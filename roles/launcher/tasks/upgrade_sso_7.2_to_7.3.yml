@@ -1,0 +1,30 @@
+---
+- name: "Export the existing launcher-sso deploymentconfig"
+  shell: "oc get deploymentconfigs launcher-sso -n {{ launcher_namespace }} --export -o json > /tmp/sso_7.2_deploymentconfig.json"
+
+- name: "Capture the environment variables in the launcher-sso deploymentconfig"
+  shell: 'jq ".spec.template.spec.containers[0].env" /tmp/sso_7.2_deploymentconfig.json'
+  register: launcher_sso_environment_vars
+
+- name: "Patch the launcher-sso-ping service with the serving-cert-secret-name annotation"
+  shell: 'oc annotate service launcher-sso-ping "service.alpha.openshift.io/serving-cert-secret-name"="sso-x509-jgroups-secret" --overwrite -n {{ launcher_namespace }}'
+
+- name: "Copy over the Keycloak 7.3 deploymentconfig template"
+  template:
+    src: sso_7.3_deploymentconfig.json
+    dest: /tmp/sso_7.3_deploymentconfig.json
+
+- name: "Delete the existing launcher-sso deploymentconfig"
+  shell: "oc delete deploymentconfigs launcher-sso -n {{ launcher_namespace }}"
+
+- name: "Recreate the launcher-sso deploymentconfig"
+  shell: "oc apply -f /tmp/sso_7.3_deploymentconfig.json -n {{ launcher_namespace }}"
+
+- name: "Wait for deploymentconfig launcher-sso readiness"
+  shell: "oc get dc/launcher-sso -o jsonpath='{.status.availableReplicas}' -n {{ launcher_namespace }}"
+  register: launcher_sso_replicas
+  until: launcher_sso_replicas.stdout == "1"
+  retries: 50
+  delay: 10
+  failed_when: launcher_sso_replicas.stderr
+  changed_when: False
