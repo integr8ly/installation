@@ -1,0 +1,27 @@
+---
+
+- name: Configure AlertManager
+  block:
+  - name: get alertmanager route for alertmanager config
+    shell: oc get route alertmanager-route -o template --template \{\{.spec.host\}\} -n {{ middleware_monitoring_namespace }}
+    register: alertmanager
+
+  - set_fact:
+      alertmanager_route: "{{alertmanager.stdout}}"
+    when: alertmanager
+
+  - name: Generate custom alertmanager config
+    template:
+      src: "alertmanager.yml.j2"
+      dest: /tmp/alertmanager.yaml
+
+  - name: Create and apply alertmanager-application-monitoring secret
+    shell: oc create secret generic alertmanager-application-monitoring --from-file=/tmp/alertmanager.yaml --dry-run -o yaml | oc apply -n {{ middleware_monitoring_namespace }} -f -
+
+  - name: Remove generated alertmanager template
+    file: path='/tmp/alertmanager.yaml' state=absent
+
+  # Once any of these are present, update alertmanager secret
+  when: smtp_auth_password != '' or
+        dms_webhook_url != '' or
+        pd_service_key != ''

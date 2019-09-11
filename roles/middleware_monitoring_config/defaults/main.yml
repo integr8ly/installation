@@ -31,3 +31,17 @@ monitoring_prometheusrules_resource_templates:
 # BlackboxTargets template variables
 monitoring_blackboxtargets_resource_templates:
 - blackboxtargets.yml
+
+# Alertmanager template variables
+alertmanager_to_email: "{{ cluster_mailto | default('blank@example.com') }}"
+
+# Sengrid Defaults
+smtp_smarthost: smtp.sendgrid.net:587
+smtp_auth_username: apikey
+smtp_auth_password: "{{ sendgrid_api_key | default('') }}"
+
+# DMS
+dms_webhook_url: "{{ deadmanssnitch_url | default('') }}"
+
+# pagerduty
+pd_service_key: "{{ pagerduty_integration_key | default('') }}"
