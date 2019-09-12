@@ -21,10 +21,6 @@ customise_web_console:
       name: Solution Explorer
       icon: fa fa-noicon
       description: Red Hat Managed Middleware Solution Explorer
-    rh-sso:
-      name: Red Hat Single Sign-On
-      icon: fa fa-noicon
-      description: Identity management.
     3scale:
       name: Red Hat 3scale API Management Platform
       icon: fa fa-noicon
