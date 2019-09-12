@@ -16,7 +16,7 @@ toc::[]
 
 = Overview
 
-The purpose of this repository is to provide a set of Ansible playbooks that can be used to install a range of Red Hat middleware products on Openshift.
+The purpose of this repository is to provide a set of Ansible playbooks that can be used to install a range of Red Hat middleware products & other projects via Ansible Tower on openshift.
 
 These products include:
 
@@ -26,6 +26,16 @@ These products include:
 * Eclipse Che
 * Launcher
 * 3Scale
+* Fuse 
+* Gitea
+* Apicurito
+* Nexus
+* Datasync
+* Unified push
+* Mobile developer console
+* AMQ streams
+
+
 
 == Prerequisites
 
@@ -50,75 +60,122 @@ These products include:
 
 == Installation Steps
 
-The following section demonstrates how to install each of the products listed above on an existing Openshift cluster.
+The following will provide information on how to install Integreatly on a openshift cluster via an bastion host.
 
-:numbered:
-== Clone installation GIT repository locally
+
+#### 1. Sign into your bastion host and become root of the host
 
 [source,shell]
-----
+
+```
+ssh -i /path/ocpkey.pem ec2-user@bastion.NAME-GUID.openshiftworkshop.com
+
+sudo -i
+```
+
+
+#### 2. Clone installation GIT repository on the bastion host
+
+[source,shell]
+```
 git clone https://github.com/integr8ly/installation.git
-----
+```
 
-== Create the inventory hosts file
+#### 3. Obtain your openshift master hostname using the following command
 
-. Create the host file based on the template(`../inventories/hosts.default`). Following the an example.
+
+__NOTE__: This hostname will be needed in a following step to allow connection to your cluster
+
+[source,shell]
+
+```
+oc get nodes
+```
+
+#### 4. Create the inventory hosts file
+
+. Create the host file based on the template(`../inventories/hosts.default`) located in the inventories directory.
 +
 [source,shell]
 ----
-$ cp inventories/hosts.template inventories/hosts
+cp inventories/hosts.template inventories/hosts
 ----
-. Update the host file to connect in your OpenShift cluster
+. Update the hosts file master field with the master hostname from the previous step.
 +
-Prior to running the playbooks the master hostname and associated SSH username *must* be set in the inventory host file to match the target cluster configuration. The following example sets the SSH username to *evals* and the master hostname to *master.evals.example.com*:
-+
+
 [source]
 ----
 ~/installation/inventories/hosts
+
+[local:vars]
+ansible_connection=local
+
+run_master_tasks=true
+
+[local]
+127.0.0.1
 
 [OSEv3:children]
 master
 
 [OSEv3:vars]
-ansible_user=evals
+ansible_user=ec2-user
 
 [master]
-master.evals.example.com
+127.0.0.1
 ----
-+
-NOTE: It is possible to add the variable `ansible_ssh_private_key_file` for the master host when the ssh connection requires a public key.(E.g `ansible_ssh_private_key_file=~/.ssh/ocp-workshop.pem`)
 
-== Check the connection with the OpenShift cluster
 
-Run the following command in order to check the connection with the OpenShift cluster from the root of the repository.
+#### 5. Check the connection with the OpenShift cluster
+
+Run the following command to verify the connection to the OpenShift cluster.
+[source,shell]
+```
+ansible -m ping all
+```
+
+Output:
 
 [source,shell]
-----
-$ ansible -m ping all
-----
 
-Following an example of the expected output.
-
-[source,shell]
-----
-$ ansible -m ping all
+```
+ansible -m ping all
 master.example.openshiftworkshop.com | SUCCESS => {
     "changed": false,
     "ping": "pong"
 }
-----
+```
 
-== Log into OpenShift
+#### 6. Create GitHub OAuth to enable GitHub authorization
 
-Before run the scripts it is required login via oc client tool to the master/OCP. Following an example.
+. Login into GitHub
+. Go to `Settings >> Developer Settings >> New OAuth App`.
++
+image::https://user-images.githubusercontent.com/7708031/48856646-dea13780-edae-11e8-9999-16b61dcc05ca.png[GitHub OAuth App]
 
-[source,shell]
-----
-oc login master.example.openshiftworkshop.com -u <user> -p <password>
-----
+. Add the following fields values
++
+.Fields values descriptions
+|===
+|Field |Value
+|Application Name
+|Any value
+|Home Page URL
+|http://localhost
+|Authorization callback URL
+|http://localhost
+|===
++
+IMPORTANT: The callback URL is a placeholder for now and will be changed after the installation playbook is finished.
+
+. Click on `Register Application`
+. The values found in GitHub OAuth App, `Client ID` and `Client Secret`, will be needed in the next step to install Integreatly.
+
+image::https://user-images.githubusercontent.com/7708031/48856868-7141d680-edaf-11e8-836f-4d533f8ed402.png[GitHub OAuth App Fields]
+
 
 [[install-all]]
-== Install all products from a single playbook
+#### 7. Install all products from a single playbook
 
 All products can be installed using the *install.yml* playbook located in the *playbooks/* directory.
 
@@ -147,44 +204,29 @@ By default Mobile Developer Services will not be installed. In order to install 
 | datasync | Whether DataSync components will be installed or not | `true`
 |===
 
-=== Create GitHub OAuth to enable GitHub authorization for Launcher
 
-. Login into GitHub
-. Go to `Settings >> Developer Settings >> New OAuth App`. Following an image as example to ilustrate this area.
-+
-image::https://user-images.githubusercontent.com/7708031/48856646-dea13780-edae-11e8-9999-16b61dcc05ca.png[GitHub OAuth App]
-
-. Add the following fields values
-+
-.Fields values descriptions
-|===
-|Field |Value
-|Application Name
-|Any value
-|Home Page URL
-|http://localhost
-|Authorization callback URL
-|http://localhost
-|===
-+
-IMPORTANT: The callback URL is a placeholder for now and will be changed after the installation playbook is finished.
-
-. Click on `Register Application`
-. The values found in GitHub OAuth App, `Client ID` and `Client Secret`, will be required in the next step to install Integreatly enabling GitHub authorization for Launcher. Following an example of this screen.
-+
-image::https://user-images.githubusercontent.com/7708031/48856868-7141d680-edaf-11e8-836f-4d533f8ed402.png[GitHub OAuth App Fields]
-
-=== Run the playbook
+#### 8. Run the playbook
 
 [source,shell]
 ----
-$ oc login https://<openshift-master-url> -u <user> -p <password>
-$ ansible-playbook -i inventories/hosts playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
+ ansible-playbook -i inventories/hosts playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
 ----
+
+
+====
+The following flag can be used if self signed certs are used.
+
+
+[source,shell]
+----
+-e eval_self_signed_certs=true
+----
+====
 
 [TIP]
 ====
 The following command installs Integreatly without GitHub authorization for Launcher.
+
 
 [source,shell]
 ----
@@ -192,9 +234,11 @@ $ ansible-playbook -i inventories/hosts playbooks/install.yml
 ----
 ====
 
-=== Add the generated Authorization callback URL to GitHub OAuth
 
-Following and example of the output made at the end of the playbook with this URL.
+
+#### 9. Add the generated Authorization callback URL to GitHub OAuth
+
+Replace the authorization callback URL previously containing a temporary localhost value with the output of the installation seen below.
 
 [source,shell]
 ----
@@ -204,11 +248,10 @@ ok: [127.0.0.1] => {
 }
 ----
 
-The `http://localhost` placeholder added in the GitHub OAuth App should be replaced with this value. Following an example.
 
 image::https://user-images.githubusercontent.com/7708031/48856981-c1209d80-edaf-11e8-9d23-f550c7ec31be.png[GitHub OAuth auhotization callback URL, 640]
 
-=== Add backup jobs
+#### 10.Add backup jobs (Optional not needed for dev)
 
 __NOTE__: Needs to be used in an existing integreatly cluster.
 
@@ -235,28 +278,22 @@ Parameters:
 | backup_namespace | backup namespace name to add all cronjobs | `openshift-integreatly-backups`
 |===
 
-== Check the installation
+#### 11. Check the installation
 
 IMPORTANT: Once the installation has finished you will no longer be able to login via the Openshift console or oc cli as the admin if there is an sso redirect in place. The new admin user is `admin@example.com` password is `Password1`
 
-The URL for the Integraly view is `https://tutorial-web-app-webapp.apps.<domain>/` 
+The URL for the solution explorer is `https://tutorial-web-app-webapp.apps.<domain>/` 
 For example, if the master url is `https://master.example.openshiftworkshop.com/`, the web app is available at  `https://tutorial-web-app-webapp.apps.example.openshiftworkshop.com/`.
 
-image::https://user-images.githubusercontent.com/7708031/48856455-528f1000-edae-11e8-8c1a-f0b37a1049ce.png[integr8ly WebApp]
+image::https://user-images.githubusercontent.com/53817495/64680924-a3bfdb80-d476-11e9-801e-08f8a28c47a8.png[integr8ly WebApp]
 
-TIP: The project https://github.com/integr8ly/tutorial-web-app[Webapp] is responsible for the Integraly interface. You can find the URL looking for the router created for this project. As the following example.
 
-image::https://user-images.githubusercontent.com/7708031/48856461-5884f100-edae-11e8-92ca-ef4c93f8961f.png[integr8ly WebApp Router]
+TIP: The project https://github.com/integr8ly/tutorial-web-app[Webapp] is responsible for the solution explorer. You can find the URL looking for the router created for this project. 
 
-Also, with the *evals* users created by the installer is possible to check the services in the OpenShift catalog.
 
 IMPORTANT: The default login credentials are `admin@example.com` / `Password1`
 
-Following an image of this console as example.
 
-image::https://user-images.githubusercontent.com/7708031/48856465-5ae74b00-edae-11e8-954d-2267a5d5d5d2.png[OCP Console with integr8ly]
-
-:numbered!:
 == Uninstalling Integreatly
 
 Run the uninstall.yml playbook from the root of the repository:
