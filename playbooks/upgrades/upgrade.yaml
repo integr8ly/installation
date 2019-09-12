@@ -165,6 +165,12 @@
 
 #setup mobile monitoring
 - import_playbook: "../install_mobile_middleware_monitoring_config.yml"
+    
+# Webconsole customizations
+- name: Customise Openshift Console
+  include_role:
+    name: customise-web-console
+    tasks_from: install
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

@@ -7,7 +7,3 @@
       include_role:
         name: customise-web-console
         tasks_from: install
-    - name: Web console config Patch SSO URLs
-      include_role:
-        name: customise-web-console
-        tasks_from: web_cm_patch_sso_url
