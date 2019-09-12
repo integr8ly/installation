@@ -28,3 +28,64 @@
   delay: 10
   failed_when: launcher_sso_replicas.stderr
   changed_when: False
+
+- name: Retrieve launcher SSO Admin Password
+  shell: "oc get dc/launcher-sso \
+        -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name==\"SSO_ADMIN_PASSWORD\")].value}' \
+        -n {{ launcher_namespace }}"
+  register: launcher_admin_password_cmd
+
+- set_fact:
+    launcher_sso_password: "{{ launcher_admin_password_cmd.stdout }}"
+
+- name: Find encrypted RH-SSO route
+  shell: for route in $(oc get routes -n {{ launcher_namespace }} | awk '{print $1}' | grep 'sso' | grep -v 'NAME'); do term=$(oc get route $route -n {{ launcher_namespace }} -o template --template \{\{.spec.tls.termination\}\}); if [ "$term" == "edge" ] || [ "$term" == "reencrypt" ]; then echo $route; break; fi; done
+  register: rhsso_secure_route_name
+  retries: 60
+  delay: 5
+  failed_when: rhsso_secure_route_name.stdout == ''
+  until: rhsso_secure_route_name.stdout != ''
+  when: launcher
+
+- name: Get RH-SSO secure route
+  local_action: command oc get route/{{ rhsso_secure_route_name.stdout }} -o template --template \{\{.spec.host\}\} -n {{ launcher_namespace }}
+  register: rhsso_secure_route
+
+- set_fact:
+    launcher_sso_route: "{{ rhsso_secure_route.stdout }}"
+
+- name: Generate Launcher SSO auth token for admin user on {{ launcher_sso_route }}
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/realms/master/protocol/openid-connect/token"
+    method: POST
+    body: "client_id=admin-cli&username={{ launcher_sso_username }}&password={{ launcher_sso_password }}&grant_type=password"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+  register: launcher_sso_auth_response
+  retries: 60
+  delay: 5
+  until: launcher_sso_auth_response.status == 200
+
+- name: Retrieve the GitHub identity provider config from Launcher SSO
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/identity-provider/instances/github"
+    method: GET
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: [200]
+  register: github_idp_config_output
+
+- name: Update the GitHub identity provider config var
+  shell: "echo '{{ github_idp_config_output.json | to_json }}' | jq '.config.defaultScope = \"{{ launcher_github_default_scopes }}\"'"
+  register: github_idp_config
+
+- name: Update GitHub identity provider default scopes in Launcher SSO
+  uri:
+    url: "https://{{ launcher_sso_route }}/auth/admin/realms/{{ launcher_sso_realm }}/identity-provider/instances/github"
+    method: PUT
+    body: "{{ github_idp_config.stdout }}"
+    validate_certs: "{{ launcher_sso_validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "Bearer {{ launcher_sso_auth_response.json.access_token }}"
+    status_code: [204]

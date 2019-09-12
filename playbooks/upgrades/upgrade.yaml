@@ -105,7 +105,6 @@
         tasks_from: upgrade_sso_7.2_to_7.3.yml
       when: target_version.stdout == "release-1.4.1"
 
-
     # Monitoring upgrade
     - name: Expose vars
       include_vars: "../../roles/middleware_monitoring_config/defaults/main.yml"
