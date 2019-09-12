@@ -282,13 +282,13 @@ Parameters:
 
 IMPORTANT: Once the installation has finished you will no longer be able to login via the Openshift console or oc cli as the admin if there is an sso redirect in place. The new admin user is `admin@example.com` password is `Password1`
 
-The URL for the Integreatly view is `https://tutorial-web-app-webapp.apps.<domain>/` 
+The URL for the solution explorer is `https://tutorial-web-app-webapp.apps.<domain>/` 
 For example, if the master url is `https://master.example.openshiftworkshop.com/`, the web app is available at  `https://tutorial-web-app-webapp.apps.example.openshiftworkshop.com/`.
 
 image::https://user-images.githubusercontent.com/53817495/64680924-a3bfdb80-d476-11e9-801e-08f8a28c47a8.png[integr8ly WebApp]
 
 
-TIP: The project https://github.com/integr8ly/tutorial-web-app[Webapp] is responsible for the Integraly interface. You can find the URL looking for the router created for this project. 
+TIP: The project https://github.com/integr8ly/tutorial-web-app[Webapp] is responsible for the solution explorer. You can find the URL looking for the router created for this project. 
 
 
 IMPORTANT: The default login credentials are `admin@example.com` / `Password1`
