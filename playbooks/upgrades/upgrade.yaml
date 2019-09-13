@@ -156,6 +156,12 @@
         tasks_from: upgrade
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
+        
+    # Webconsole customizations
+    - name: Customise Openshift Console
+      include_role:
+        name: customise-web-console
+        tasks_from: install
 
 - import_playbook: 3scale_upgrade_2.5_to_2.6.yml
 
@@ -164,12 +170,6 @@
 
 #setup mobile monitoring
 - import_playbook: "../install_mobile_middleware_monitoring_config.yml"
-    
-# Webconsole customizations
-- name: Customise Openshift Console
-  include_role:
-    name: customise-web-console
-    tasks_from: install
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
