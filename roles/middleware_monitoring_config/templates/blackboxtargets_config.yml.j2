@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  blackbox.yml: |-
+    modules:
+      http_extern_2xx:
+        prober: http
+        http:
+          preferred_ip_protocol: ip4
+      http_2xx:
+        prober: http
+        http:
+          preferred_ip_protocol: ip4
+      http_post_2xx:
+        prober: http
+        http:
+          method: POST
+          preferred_ip_protocol: ip4
+kind: ConfigMap
+metadata:
+  name: blackbox-exporter-config
