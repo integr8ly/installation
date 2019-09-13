@@ -19,6 +19,7 @@
       vars:
         from_versions:
           - "release-1.4.1"
+          - "release-1.5.0"
     - set_fact:
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
