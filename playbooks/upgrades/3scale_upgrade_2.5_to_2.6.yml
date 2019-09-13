@@ -9,6 +9,7 @@
         threescale_target_deployment_configs: ['apicast-production', 'apicast-staging', 'backend-cron', 'backend-listener', 'backend-redis', 'backend-worker', 'system-memcache', 'system-mysql', 'system-redis', 'system-sidekiq', 'system-sphinx', 'zync', 'zync-database']
         threescale_amp_sa_template: "'{\"apiVersion\": \"v1\",\"kind\": \"ServiceAccount\",\"imagePullSecrets\": [{\"name\": \"{{ threescale_pull_secret_name }}\"}],\"metadata\": {\"name\": \"amp\"}}'"
         threescale_patch_file_dir: "/tmp/3scale26-patch-files"
+        threescale_route_creator_role: "'{\"apiVersion\": \"authorization.openshift.io/v1\", \"kind\": \"ClusterRole\", \"metadata\": {\"name\": \"3scale-route-creator\"},\"rules\": [{\"apiGroups\": [\"route.openshift.io\"],\"attributeRestrictions\": null,\"resources\": [\"routes\",\"routes/custom-host\"],\"verbs\": [\"create\",\"get\",\"list\",\"patch\",\"update\"]}]}'"
 
     - name: Create patch file directory
       file:
@@ -695,3 +696,13 @@
       file:
         path: "{{ threescale_patch_file_dir }}"
         state: absent
+
+    - name: Create route creator clusterrole
+      shell: echo {{ threescale_route_creator_role }} | oc create -f -
+      register: clusterrole_route_create_exists
+      failed_when: clusterrole_route_create_exists.stderr and 'AlreadyExists' not in clusterrole_route_create_exists.stderr
+
+    - name: Add role 3scale-route-creator to customer-admin user
+      shell: oc adm policy add-role-to-user 3scale-route-creator customer-admin
+      register: customer_admin_rolebinding_exists
+      failed_when: customer_admin_rolebinding_exists.stderr
