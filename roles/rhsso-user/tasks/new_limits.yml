@@ -1,0 +1,8 @@
+---
+- name: Apply resource overrides for user rhsso
+  include_role:
+    name: resource_limits
+  vars:
+    ns: "{{ rhsso_user_namespace }}"
+    resources: "{{ rhsso_user_resources }}"
+

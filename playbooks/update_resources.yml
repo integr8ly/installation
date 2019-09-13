@@ -14,3 +14,7 @@
         name: rhsso
         tasks_from: new_limits.yml
       tags: ['rhsso']
+    - include_role:
+        name: rhsso-user
+        tasks_from: new_limits.yml
+      tags: ['user_rhsso']
