@@ -1,0 +1,7 @@
+---
+- name: Remove tlsconfig from blackbox exporter config
+  include: ./create_from_template.yml
+  with_items: "blackboxtargets_config.yml"
+
+- name: Delete the prometheus pod to force a redeploy
+  shell: "oc delete pod -n {{ eval_middleware_monitoring_namespace }} -l app=prometheus"
