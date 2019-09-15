@@ -148,7 +148,7 @@ spec:
           sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ eval_rhsso_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ eval_rhsso_namespace }}"}) * 100 > 90
         for: 15m
         labels:
-          severity: critical
+          severity: warning
       - alert: AMQOnlinePodHighMemory
         annotations:
           message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory for longer than 15 minutes.
@@ -157,4 +157,4 @@ spec:
           sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ eval_enmasse_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ eval_enmasse_namespace }}"}) * 100 > 90
         for: 15m
         labels:
-          severity: critical
+          severity: warning
