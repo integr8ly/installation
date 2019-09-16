@@ -156,7 +156,7 @@ spec:
           sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ threescale_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ threescale_namespace }}"}) * 100 > 90
         for: 15m
         labels:
-          severity: critical
+          severity: warning
       - alert: ThreeScalePodHighCPU
         annotations:
           message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available CPU for longer than 15 minutes.
@@ -165,7 +165,7 @@ spec:
           sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace="{{ threescale_namespace }}"}, 'container', '$1', 'container_name', '(.*)')) by (container) / sum(kube_pod_container_resource_limits_cpu_cores{namespace="{{ threescale_namespace }}"}) by (container) * 100 > 90
         for: 15m
         labels:
-          severity: critical
+          severity: warning
       - alert: SSOPodHighMemory
         annotations:
           message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory for longer than 15 minutes.
@@ -174,7 +174,7 @@ spec:
           sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ eval_rhsso_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ eval_rhsso_namespace }}"}) * 100 > 90
         for: 15m
         labels:
-          severity: critical
+          severity: warning
       - alert: AMQOnlinePodHighMemory
         annotations:
           message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory for longer than 15 minutes.
@@ -183,5 +183,5 @@ spec:
           sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ eval_enmasse_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ eval_enmasse_namespace }}"}) * 100 > 90
         for: 15m
         labels:
-          severity: critical
+          severity: warning
       
