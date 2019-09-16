@@ -2,29 +2,46 @@
 - hosts: localhost
   gather_facts: true
   tasks:
-    - name: Include vars from rhsso
-      include_vars: "../../roles/rhsso/defaults/main.yml"
-    -
-      name: Install user rhsso
-      include_role:
-        name: rhsso
-        tasks_from: install_sso.yml
-      vars:
-        sso_namespace: "{{ eval_user_rhsso_namespace }}"
-        sso_namespace_display_name: "User Facing Red Hat Single Sign-On"
-        rhsso_provision_immediately: True
+    - block:
+      - name: Include vars from rhsso
+        include_vars: "../../roles/rhsso/defaults/main.yml"
+
+      - name: "Update KeycloakRealm CRD"
+        shell: "oc replace -f {{ rhsso_operator_resources }}/crds/KeycloakRealm_crd.yaml -n {{ eval_rhsso_namespace }}"
+
+      - name: Find out original customer-admin password
+        shell: "oc get secret customer-admin-user-credentials -n {{ eval_rhsso_namespace }} --template='{{ '{{' }} index .data \"password\" {{ '}}' }}' | base64 --decode"
+        register: customer_admin_password_output
+
+      - name: Install user rhsso
+        include_role:
+          name: rhsso
+          tasks_from: install_sso.yml
+        vars:
+          sso_namespace: "{{ eval_user_rhsso_namespace }}"
+          sso_namespace_display_name: "User Facing Red Hat Single Sign-On"
+          rhsso_provision_immediately: true
+          
+      - name: Setup IDP and customer-admin permissions in master realm
+        include_role:
+          name: rhsso-user
+          tasks_from: setup-master-realm.yml
+        vars:
+          openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+          rhsso_evals_admin_password: "{{ customer_admin_password_output.stdout }}"
+      
+      - name: Setup backup for user rhsso
+        include_role:
+          name: rhsso
+          tasks_from: backup.yaml
+        vars:
+          sso_namespace: "{{ eval_user_rhsso_namespace }}"
+        tags: ['user_rhsso']
+        when: backup_restore_install | default(false) | bool
+      - name: apply {{ eval_user_rhsso_namespace }}/view role to {{ rhsso_evals_admin_username }} user
+        shell: "oc adm policy add-role-to-user view {{rhsso_evals_admin_username}} -n {{ eval_user_rhsso_namespace }}"
+        register: policy_cmd
+        failed_when: policy_cmd.rc != 0
+
       tags: ['user_rhsso']
       when: user_rhsso | default(true) | bool
-    -
-      name: Setup backup for user rhsso
-      include_role:
-        name: rhsso
-        tasks_from: backup.yaml
-      vars:
-        sso_namespace: "{{ eval_user_rhsso_namespace }}"
-      tags: ['user_rhsso']
-      when: user_rhsso | default(true) | bool and backup_restore_install | bool
-    - name: apply {{ eval_user_rhsso_namespace }}/view role to {{ rhsso_evals_admin_username }} user
-      shell: "oc adm policy add-role-to-user view {{rhsso_evals_admin_username}} -n {{ eval_user_rhsso_namespace }}"
-      register: policy_cmd
-      failed_when: policy_cmd.rc != 0
