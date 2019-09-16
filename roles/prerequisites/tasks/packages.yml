@@ -17,5 +17,17 @@
   shell: brew install gnu-tar
   when: ansible_os_family == "Darwin"
 
+- name: Check if git is available
+  shell: git --version
+  register: git_version
+  changed_when: false
+
+- name: Install git if not present
+  yum:
+    name: git
+    state: installed
+  become: yes
+  when: ansible_os_family != "Darwin" and git_version.rc != 0
+
 - include: "download_binary.yml name={{ item.name }} path={{ item.path }} url={{ item.url }}"
   with_items: "{{ prerequisite_binaries }}"
