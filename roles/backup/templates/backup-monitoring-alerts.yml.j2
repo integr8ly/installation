@@ -15,6 +15,7 @@ spec:
           message: Job {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.job {{ '}}' }} has been running for longer than {{ check['time'] }} seconds
         expr: |
           time() - (max(kube_job_status_active * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"}) BY (job) * ON(job) GROUP_RIGHT() max(kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"}) BY (job, namespace, label_cronjob_name) > 0) > {{ check['time'] }}
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: {{ check['severity'] }}
       {% endfor %}
@@ -24,11 +25,13 @@ spec:
         expr: |
           kube_cronjob_labels{ label_monitoring_key="middleware" } * ON (cronjob) GROUP_RIGHT() kube_cronjob_spec_suspend > 0
         for: 60s
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: CronJobNotRunInThreshold
         annotations:
           message: CronJob {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.label_cronjob_name {{ '}}' }} has not started a Job in 25 hours
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         expr: |
           (time() - (max( kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"} ) BY (job, label_cronjob_name) == ON(label_cronjob_name) GROUP_LEFT() max( kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"} ) BY (label_cronjob_name))) > 60*60*25
       - alert: CronJobsFailed
@@ -38,6 +41,7 @@ spec:
           sum(kube_job_status_failed{namespace="{{ backup_namespace }}"})
           > 0
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       {% for namespace, cronjobs in expected_cronjobs.iteritems() %}
@@ -48,6 +52,7 @@ spec:
         expr: |
           absent(kube_cronjob_info{cronjob="{{ cronjob }}", namespace="{{ namespace }}"})
         for: 60s
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       {% endfor %}

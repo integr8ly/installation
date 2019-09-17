@@ -15,6 +15,7 @@ spec:
         expr: |
           absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"apicast-staging.*"})
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: ThreeScaleApicastProductionPod
@@ -24,6 +25,7 @@ spec:
         expr: |
           absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"apicast-production.*"})
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: ThreeScaleBackendWorkerPod
@@ -33,6 +35,7 @@ spec:
         expr: |
           absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"backend-worker.*"})
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: ThreeScaleBackendListenerPod
@@ -42,6 +45,7 @@ spec:
         expr: |
           absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"backend-listener.*"})
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: ThreeScaleBackendRedisPod
@@ -51,6 +55,7 @@ spec:
         expr: |
           absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"backend-redis.*"})
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: ThreeScaleSystemRedisPod
@@ -60,6 +65,7 @@ spec:
         expr: |
           absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"system-redis.*"})
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: ThreeScaleSystemMySQLPod
@@ -69,6 +75,7 @@ spec:
         expr: |
           absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"system-mysql.*"})
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: ThreeScaleSystemAppPod
@@ -88,6 +95,7 @@ spec:
         expr: |
           absent(probe_success{job="blackbox", service="3scale-admin-ui"})
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: ThreeScaleDeveloperUIBBT
@@ -100,6 +108,7 @@ spec:
           absent(probe_success{job="blackbox",
           service="3scale-developer-console-ui"})
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: ThreeScaleSystemAdminUIBBT
@@ -112,6 +121,7 @@ spec:
           absent(probe_success{job="blackbox",
           service="3scale-system-admin-ui"})
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: critical
       - alert: ThreeScalePodCount
@@ -120,6 +130,7 @@ spec:
         expr: |
           absent(sum(kube_pod_status_ready{condition="true",namespace="3scale"}) >= 15)
         for: 5m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: warning
       - alert: ThreeScalePodHighMemory
@@ -129,6 +140,7 @@ spec:
         expr: |
           sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ threescale_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ threescale_namespace }}"}) * 100 > 90
         for: 15m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: warning
       - alert: ThreeScalePodHighCPU
@@ -138,5 +150,6 @@ spec:
         expr: |
           sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace="{{ threescale_namespace }}"}, 'container', '$1', 'container_name', '(.*)')) by (container) / sum(kube_pod_container_resource_limits_cpu_cores{namespace="{{ threescale_namespace }}"}) by (container) * 100 > 90
         for: 15m
+        sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         labels:
           severity: warning

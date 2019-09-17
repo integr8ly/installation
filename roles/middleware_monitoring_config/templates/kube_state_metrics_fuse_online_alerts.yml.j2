@@ -15,6 +15,7 @@ spec:
           expr: >
             absent(kube_pod_status_ready{namespace="{{ eval_managed_fuse_namespace }}", condition="true", pod=~"syndesis-server-.*"})
           for: 5m
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           labels:
             severity: critical
         - alert: FuseOnlineSyndesisUIInstanceDown
@@ -24,5 +25,6 @@ spec:
           expr: >
             absent(kube_pod_status_ready{namespace="{{ eval_managed_fuse_namespace }}", condition="true", pod=~"syndesis-ui-.*"})
           for: 5m
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           labels:
             severity: critical
