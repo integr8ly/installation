@@ -5,3 +5,5 @@
 - include_tasks: ./create_blackboxtargets.yml
 - include_tasks: ./patch_blackboxtargets_config.yml
   when: not eval_self_signed_certs|bool
+- include_tasks: ./create_alertmanager.yml 
+
