@@ -10,21 +10,21 @@ spec:
       rules:
         - alert: FuseOnlineSyndesisServerInstanceDown
           annotations:
+            sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
             message: >-
               Fuse Online Syndesis Server instance {{ "{{" }}$labels.pod{{ "}}" }} in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down.
           expr: >
             absent(kube_pod_status_ready{namespace="{{ eval_managed_fuse_namespace }}", condition="true", pod=~"syndesis-server-.*"})
           for: 5m
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           labels:
             severity: critical
         - alert: FuseOnlineSyndesisUIInstanceDown
           annotations:
+            sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
             message: >-
               Fuse Online Syndesis UI instance {{ "{{" }}$labels.pod{{ "}}" }} in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down.
           expr: >
             absent(kube_pod_status_ready{namespace="{{ eval_managed_fuse_namespace }}", condition="true", pod=~"syndesis-ui-.*"})
           for: 5m
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           labels:
             severity: critical
