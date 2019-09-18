@@ -10,6 +10,7 @@ spec:
       rules: 
       - alert: ThreeScaleApicastStagingPod
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale apicast-staging has no pods in a ready state.
         expr: |
@@ -19,6 +20,7 @@ spec:
           severity: critical
       - alert: ThreeScaleApicastProductionPod
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale apicast-production has no pods in a ready state.
         expr: |
@@ -28,6 +30,7 @@ spec:
           severity: critical
       - alert: ThreeScaleBackendWorkerPod
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale backend-worker has no pods in a ready state.
         expr: |
@@ -37,6 +40,7 @@ spec:
           severity: critical
       - alert: ThreeScaleBackendListenerPod
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale backend-listener has no pods in a ready state.
         expr: |
@@ -46,6 +50,7 @@ spec:
           severity: critical
       - alert: ThreeScaleBackendRedisPod
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale backend-redis has no pods in a ready state.
         expr: |
@@ -55,6 +60,7 @@ spec:
           severity: critical
       - alert: ThreeScaleSystemRedisPod
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale system-redis has no pods in a ready state.
         expr: |
@@ -64,6 +70,7 @@ spec:
           severity: critical
       - alert: ThreeScaleSystemMySQLPod
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale system-mysql has no pods in a ready state.
         expr: |
@@ -73,6 +80,7 @@ spec:
           severity: critical
       - alert: ThreeScaleSystemAppPod
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale system-app has no pods in a ready state.
         expr: |
@@ -82,6 +90,7 @@ spec:
           severity: critical
       - alert: ThreeScaleAdminUIBBT
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale Admin UI Blackbox Target: If this console is unavailable,
             the client is unable to configure or administer their API setup.
@@ -92,6 +101,7 @@ spec:
           severity: critical
       - alert: ThreeScaleDeveloperUIBBT
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale Developer UI Blackbox Target: If this console is
             unavailable, the clients developers are unable signup or perform
@@ -104,6 +114,7 @@ spec:
           severity: critical
       - alert: ThreeScaleSystemAdminUIBBT
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: >-
             3Scale System Admin UI Blackbox Target: If this console is
             unavailable, the client is unable to perform Account Management,
@@ -116,6 +127,7 @@ spec:
           severity: critical
       - alert: ThreeScalePodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 15 pods.
         expr: |
           absent(sum(kube_pod_status_ready{condition="true",namespace="3scale"}) >= 15)
@@ -124,6 +136,7 @@ spec:
           severity: warning
       - alert: ThreeScalePodHighMemory
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory for longer than 15 minutes.
           scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/3scale-scaling.md
         expr: |
@@ -133,6 +146,7 @@ spec:
           severity: warning
       - alert: ThreeScalePodHighCPU
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available CPU for longer than 15 minutes.
           scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/3scale-scaling.md
         expr: |

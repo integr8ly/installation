@@ -10,6 +10,7 @@ spec:
       rules:
       - alert: KubePodCrashLooping
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.pod {{ '}}' }} ({{ '{{' }} $labels.container {{ '}}' }}) is restarting {{ '{{' }} printf "%.2f" $value {{ '}}' }} times every 5 minutes; for the last 15 minutes.
         expr: |
           rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[15m]) * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"} * 60 * 5 > 0
@@ -18,6 +19,7 @@ spec:
           severity: critical
       - alert: ESPodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Expected at least Elastic Search 1 pods in namespace {{ '{{' }} $labels.namespace {{ '}}' }}.
         expr: |
           (1 - absent(kube_pod_status_ready{condition="true",namespace="openshift-logging", pod=~"logging-es-data-master-.*"})) 
@@ -26,6 +28,7 @@ spec:
           severity: warning
       - alert: ESNotReady
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Not all Elastic Search replication controllers are in a ready state.
         expr: |
           count(kube_replicationcontroller_status_ready_replicas{namespace="openshift-logging", replicationcontroller=~"logging-es-data-master-.*"}) != sum(kube_replicationcontroller_status_ready_replicas{namespace="openshift-logging", replicationcontroller=~"logging-es-data-master-.*"})
@@ -34,6 +37,7 @@ spec:
           severity: warning
       - alert: KubePodNotReady
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.pod {{ '}}' }} has been in a non-ready state for longer than 15 minutes.
         expr: |
           sum by(pod, namespace) (kube_pod_status_phase{phase=~"Pending|Unknown"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
@@ -42,6 +46,7 @@ spec:
           severity: critical
       - alert: KubePodImagePullBackOff
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.pod {{ '}}' }} has been unable to pull it's image for longer than 5 minutes.
         expr: |
           (kube_pod_container_status_waiting_reason{reason="ImagePullBackOff"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
@@ -50,18 +55,21 @@ spec:
           severity: critical
       - alert: KubePodBadConfig
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.pod {{ '}}' }} has been unable to start due to a bad configuration for longer than 5 minutes.
         expr: |
           (kube_pod_container_status_waiting_reason{reason="CreateContainerConfigError"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
         for: 5m
       - alert: KubePodStuckCreating
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.pod {{ '}}' }} has been trying to start for longer than 15 minutes - this could indicate a configuration error.
         expr: |
           (kube_pod_container_status_waiting_reason{reason="ContainerCreating"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
         for: 15m
       - alert: AMQOnlinePodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 6 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="{{eval_enmasse_namespace}}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{eval_enmasse_namespace}}"}) < 6
@@ -70,6 +78,7 @@ spec:
           severity: critical
       - alert: FuseOnlinePodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 8 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="{{eval_managed_fuse_namespace}}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{eval_managed_fuse_namespace}}"}) < 8
@@ -79,6 +88,7 @@ spec:
       - alert: ApicuritoPodCount
         annotations:
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 2 pods.
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_apicurito_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_apicurito_namespace }}"}) != 2
         for: 5m
@@ -86,6 +96,7 @@ spec:
           severity: critical
       - alert: CodeReadyPodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 2 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_che_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_che_namespace }}"}) < 2
@@ -94,6 +105,7 @@ spec:
           severity: critical
       - alert: LauncherPodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 6 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_launcher_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_launcher_namespace }}"}) != 6
@@ -102,6 +114,7 @@ spec:
           severity: critical
       - alert: ManagedServiceBrokerPodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 1 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_msbroker_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_msbroker_namespace }}"}) != 1
@@ -110,6 +123,7 @@ spec:
           severity: critical
       - alert: MiddlewareMonitoringPodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 6 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_middleware_monitoring_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_middleware_monitoring_namespace }}"}) != 6
@@ -118,6 +132,7 @@ spec:
           severity: critical
       - alert: NexusPodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 1 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_nexus_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_nexus_namespace }}"}) != 1
@@ -126,6 +141,7 @@ spec:
           severity: critical
       - alert: SSOPodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 3 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_rhsso_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_rhsso_namespace }}"}) != 3
@@ -134,6 +150,7 @@ spec:
           severity: critical
       - alert: SolutionExplorerPodCount
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 2 pods.
         expr: |
           (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_webapp_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_webapp_namespace }}"}) != 2
@@ -142,6 +159,7 @@ spec:
           severity: critical
       - alert: SSOPodHighMemory
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory for longer than 15 minutes.
           scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/sso-scaling.md
         expr: |
@@ -151,6 +169,7 @@ spec:
           severity: warning
       - alert: AMQOnlinePodHighMemory
         annotations:
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory for longer than 15 minutes.
           scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/amq-scaling.md
         expr: |
