@@ -7,7 +7,7 @@
         tasks_from: set_master_vars
       when: run_master_tasks | default(true) | bool
 
-# Required for Ansible Tower installs that need to login via oc as a prerequisite      
+# Required for Ansible Tower installs that need to login via oc as a prerequisite
 - import_playbook: "../openshift.yml"
 
 - hosts: localhost
@@ -80,7 +80,7 @@
         - webapp
       loop_control:
         loop_var: images_source_namespace
-    
+
     #application metrics
     - name: Install application metrics
       include_role:
@@ -101,7 +101,7 @@
       when: launcher
 
     - name: "Upgrade SSO in Launcher to 7.3"
-      include_role: 
+      include_role:
         name: launcher
         tasks_from: upgrade_sso_7.2_to_7.3.yml
       when: target_version.stdout == "release-1.4.1"
@@ -142,6 +142,10 @@
     - include_role:
         name: backup
         tasks_from: upgrade
+      vars:
+        upgrade_backup_container_image: "{{ backup_image }}"
+        rhsso_namespace: "{{ eval_rhsso_namespace }}"
+        user_rhsso_namespace: "{{ eval_user_rhsso_namespace }}"
       when: target_version.stdout == "release-1.4.1"
 
     # Fuse
@@ -157,7 +161,7 @@
         tasks_from: upgrade
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
-        
+
     # Webconsole customizations
     - name: Customise Openshift Console
       include_role:
