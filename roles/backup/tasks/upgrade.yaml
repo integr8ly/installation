@@ -25,32 +25,16 @@
   with_items: "{{ cronjobs }}"
 
 # Cluster SSO namespace cronjobs
-- name: "get all cronjobs in {{ rhsso_namespace }} namespace"
-  shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ rhsso_namespace }}"
-  register: cronjobs_result
-
-- set_fact:
-    cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
-
-- name: "patch all cronjobs in {{ rhsso_namespace }} namespace"
-  shell: "oc patch cronjob {{ item }} -n {{ rhsso_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
-  register: upgrade_cronjob
-  failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
-  with_items: "{{ cronjobs }}"
+- name: Change backup CronJob name in Keycloak CR to include namespace suffix
+  shell: "oc patch keycloak rhsso -n {{ rhsso_namespace }} --type json -p '[{\"op\":\"replace\",\"path\":\"/spec/backups/0/image_tag\",\"value\":\"{{ upgrade_backup_container_tag }}\"}]'"
+  register: patch
+  failed_when: patch.rc != 0
 
 # User SSO namespace cronjobs
-- name: "get all cronjobs in {{ user_rhsso_namespace }} namespace"
-  shell: "oc get cronjobs -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ user_rhsso_namespace }}"
-  register: cronjobs_result
-
-- set_fact:
-    cronjobs: "{{ cronjobs_result.stdout.splitlines() }}"
-
-- name: "patch all cronjobs in {{ user_rhsso_namespace }} namespace"
-  shell: "oc patch cronjob {{ item }} -n {{ user_rhsso_namespace }} --patch='[{\"op\": \"add\", \"path\": \"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_backup_container_image }}\"}]' --type=json"
-  register: upgrade_cronjob
-  failed_when: upgrade_cronjob.stderr != '' and 'not patched' not in upgrade_cronjob.stderr
-  with_items: "{{ cronjobs }}"
+- name: Change backup CronJob name in Keycloak CR to include namespace suffix
+  shell: "oc patch keycloak rhsso -n {{ user_rhsso_namespace }} --type json -p '[{\"op\":\"replace\",\"path\":\"/spec/backups/0/image_tag\",\"value\":\"{{ upgrade_backup_container_tag }}\"}]'"
+  register: patch
+  failed_when: patch.rc != 0
 
 # Verify cronjobs
 - name: Verify all middleware cronjobs use new image

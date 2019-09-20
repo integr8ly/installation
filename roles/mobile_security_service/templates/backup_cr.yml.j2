@@ -3,6 +3,7 @@ kind: MobileSecurityServiceBackup
 metadata:
   name: mobile-security-service-backup
 spec:
+  image: {{ backup_image }}
   awsCredentialsSecretName: {{ aws_s3_backup_secret_name }}
   productName: mss
   awsCredentialsSecretNamespace: {{ backup_namespace  }}
