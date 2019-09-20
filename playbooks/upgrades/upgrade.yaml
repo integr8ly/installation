@@ -143,6 +143,7 @@
         name: backup
         tasks_from: upgrade
       vars:
+        upgrade_backup_container_tag: "{{ backup_version }}"
         upgrade_backup_container_image: "{{ backup_image }}"
         rhsso_namespace: "{{ eval_rhsso_namespace }}"
         user_rhsso_namespace: "{{ eval_user_rhsso_namespace }}"
