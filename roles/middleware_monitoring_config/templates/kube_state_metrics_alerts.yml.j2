@@ -176,7 +176,7 @@ spec:
           severity: warning
       - alert: ClusterSchedulableMemoryLow
         annotations:
-          message: The {{ '{{' }} $labels.node {{ '}}' }} node has {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory left for longer than 2 minutes.
+          message: The cluster has {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory left for longer than 2 minutes.
         expr: |
           sum(sum(kube_node_status_allocatable_memory_bytes) by (node) - (sum(sum(kube_pod_container_resource_requests_memory_bytes{node=~"node.*"}) by (pod, node)* on (pod) group_left() (sum(kube_pod_status_phase{phase="Running"}) by (pod) == 1)) by (node))) < 1000000
         for: 2m
@@ -184,9 +184,20 @@ spec:
           severity: warning
       - alert: ClusterSchedulableCPULow
         annotations:
-          message: The {{ '{{' }} $labels.node {{ '}}' }} node has {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory left for longer than 2 minutes.
+          message: The cluster has {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory left for longer than 2 minutes.
         expr: |
           sum(sum(kube_node_status_allocatable_cpu_cores) by (node) - (sum(sum(kube_pod_container_resource_requests_cpu_cores{node=~"node.*"}) by (pod, node)* on (pod) group_left() (sum(kube_pod_status_phase{phase="Running"}) by (pod) == 1)) by (node))) < 5
         for: 2m
         labels:
           severity: warning
+      - alert: PVCStorageAvailable
+        annotations:
+          message: The {{ '{{' }} $labels.persistentvolumeclaim {{ '}}' }} PVC has has been {{ '{{' }} printf "%.0f" $value {{ '}}' }}% full for longer than 2 minutes.
+        expr: |
+          (sum by (persistentvolumeclaim, namespace) (kubelet_volume_stats_used_bytes)) / (sum by (persistentvolumeclaim, namespace) (kube_persistentvolumeclaim_resource_requests_storage_bytes)) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+
+
+
