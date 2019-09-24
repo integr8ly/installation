@@ -58,15 +58,19 @@ spec:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.pod {{ '}}' }} has been unable to start due to a bad configuration for longer than 5 minutes.
         expr: |
-          (kube_pod_container_status_waiting_reason{reason="CreateContainerConfigError"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
+          (kube_pod_container_status_waiting_reason{reason="CreateContainerConfigError"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
         for: 5m
+        labels:
+          severity: critical
       - alert: KubePodStuckCreating
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.pod {{ '}}' }} has been trying to start for longer than 15 minutes - this could indicate a configuration error.
         expr: |
-          (kube_pod_container_status_waiting_reason{reason="ContainerCreating"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key=~".*"}) > 0
+          (kube_pod_container_status_waiting_reason{reason="ContainerCreating"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
         for: 15m
+        labels:
+          severity: critical
       - alert: AMQOnlinePodCount
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
