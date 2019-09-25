@@ -89,15 +89,15 @@
   shell: oc process -f {{ msbroker_template }} \
     -p 'NAMESPACE={{ msbroker_namespace }}' \
     -p 'ROUTE_SUFFIX={{ route_suffix }}' \
-    -p 'LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url }}' \
-    -p 'CHE_DASHBOARD_URL={{ che_dashboard_url }}' \
-    -p 'THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url }}' \
-    -p 'APICURIO_DASHBOARD_URL={{ apicurito_dashboard_url }}' \
-    -p 'SHARED_FUSE_DASHBOARD_URL={{ fuse_dashboard_url }}' \
+    -p 'LAUNCHER_DASHBOARD_URL={{ launcher_dashboard_url | default('#') }}' \
+    -p 'CHE_DASHBOARD_URL={{ che_dashboard_url | default('#') }}' \
+    -p 'THREESCALE_DASHBOARD_URL={{ threescale_dashboard_url | default('#') }}' \
+    -p 'APICURIO_DASHBOARD_URL={{ apicurito_dashboard_url | default('#') }}' \
+    -p 'SHARED_FUSE_DASHBOARD_URL={{ fuse_dashboard_url | default('#') }}' \
     -p 'SSO_URL=https://{{ sso_route.stdout }}/auth/admin/{{ sso_realm }}/console' \
     -p 'USER_SSO_URL=https://{{ user_sso_route.stdout }}' \
     -p 'FUSE_OPERATOR_RESOURCES_URL={{ msbroker_fuse_operator_resources_url }}' \
-    -p 'MDC_DASHBOARD_URL={{ msb_mdc_url }}' \
+    -p 'MDC_DASHBOARD_URL={{ msb_mdc_url | default('#') }}' \
     -p 'IMAGE_ORG={{ msbroker_image_org }}' \
     -p 'IMAGE_TAG={{ msbroker_release_tag }}' \
     -p 'MONITORING_KEY={{ monitoring_key }}' | oc apply -n "{{ msbroker_namespace }}" -f -
