@@ -10,10 +10,10 @@
 - name: Get Che dashboard url
   shell: oc get route/codeready -o jsonpath='{.spec.host}' -n {{ eval_che_namespace }}
   register: che_host_cmd
-  when: che and launcher
+  when: (che | bool) and (launcher | bool)
 - set_fact:
     che_dashboard_url: "https://{{ che_host_cmd.stdout}}"
-  when: che and launcher
+  when: (che | bool) and (launcher | bool)
 
 - name: Include threescale route vars
   include_vars: ../../3scale/defaults/main.yml
