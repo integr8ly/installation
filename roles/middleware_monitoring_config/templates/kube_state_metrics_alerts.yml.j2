@@ -200,7 +200,7 @@ spec:
         annotations:
           message: The {{ '{{' }} $labels.persistentvolumeclaim {{ '}}' }} PVC has has been {{ '{{' }} printf "%.0f" $value {{ '}}' }}% full for longer than 15 minutes.
         expr: |
-          (sum by (persistentvolumeclaim, namespace) (kubelet_volume_stats_used_bytes)) / (sum by (persistentvolumeclaim, namespace) (kube_persistentvolumeclaim_resource_requests_storage_bytes)) * 100 > 80
+          ((sum by(persistentvolumeclaim, namespace) (kubelet_volume_stats_used_bytes) * on ( namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) / (sum by(persistentvolumeclaim, namespace) (kube_persistentvolumeclaim_resource_requests_storage_bytes) * on ( namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"})) * 100 > 85
         for: 15m
         labels:
           severity: warning
