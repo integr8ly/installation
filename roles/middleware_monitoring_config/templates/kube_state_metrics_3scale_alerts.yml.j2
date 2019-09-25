@@ -14,7 +14,7 @@ spec:
           message: >-
             3Scale apicast-staging has no pods in a ready state.
         expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"apicast-staging.*"})
+          absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"apicast-staging.*"})
         for: 5m
         labels:
           severity: critical
@@ -24,7 +24,7 @@ spec:
           message: >-
             3Scale apicast-production has no pods in a ready state.
         expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"apicast-production.*"})
+          absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"apicast-production.*"})
         for: 5m
         labels:
           severity: critical
@@ -34,7 +34,7 @@ spec:
           message: >-
             3Scale backend-worker has no pods in a ready state.
         expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"backend-worker.*"})
+          absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"backend-worker.*"})
         for: 5m
         labels:
           severity: critical
@@ -44,7 +44,7 @@ spec:
           message: >-
             3Scale backend-listener has no pods in a ready state.
         expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"backend-listener.*"})
+          absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"backend-listener.*"})
         for: 5m
         labels:
           severity: critical
@@ -54,7 +54,7 @@ spec:
           message: >-
             3Scale backend-redis has no pods in a ready state.
         expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"backend-redis.*"})
+          absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"backend-redis.*"})
         for: 5m
         labels:
           severity: critical
@@ -64,7 +64,7 @@ spec:
           message: >-
             3Scale system-redis has no pods in a ready state.
         expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"system-redis.*"})
+          absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"system-redis.*"})
         for: 5m
         labels:
           severity: critical
@@ -74,7 +74,7 @@ spec:
           message: >-
             3Scale system-mysql has no pods in a ready state.
         expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"system-mysql.*"})
+          absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"system-mysql.*"})
         for: 5m
         labels:
           severity: critical
@@ -84,7 +84,7 @@ spec:
           message: >-
             3Scale system-app has no pods in a ready state.
         expr: |
-          absent(kube_pod_status_ready{namespace="3scale", condition="true", pod=~"system-app-.*"})
+          absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"system-app-.*"})
         for: 5m
         labels:
           severity: critical
@@ -130,7 +130,7 @@ spec:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 15 pods.
         expr: |
-          absent(sum(kube_pod_status_ready{condition="true",namespace="3scale"}) >= 15)
+          absent(sum(kube_pod_status_ready{condition="true",namespace="{{ threescale_namespace }}"}) >= 15)
         for: 5m
         labels:
           severity: warning
