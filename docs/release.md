@@ -13,8 +13,8 @@
 There is a release dashboard that shows all relevant issues for a release and their status (https://issues.jboss.org/secure/Dashboard.jspa?selectPageId=12329297).
 This dashboard and all it's sub-filters are driven by 2 main filters:
 
-* RHMI Release - _fixVersion (https://issues.jboss.org/issues/?filter=12341116)
-* RHMI Release - _affectedVersion (https://issues.jboss.org/issues/?filter=12341117)
+* RHMI Release - `_fixVersion` (https://issues.jboss.org/issues/?filter=12341116)
+* RHMI Release - `_affectedVersion` (https://issues.jboss.org/issues/?filter=12341117)
 
 When a release has started, this dashboard can be reused by updating the fixVersion & affectsVersion accordingly in these 2 filters.
 You may need to request permissions to modify these.
