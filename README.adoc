@@ -48,6 +48,10 @@ These products include:
 |>= v3.10
 |Openshift CLI (OC)
 |>= v3.10
+|Template Service Broker
+|n/a
+|Ansible Service Broker
+|n/a
 |===
 
 
@@ -234,7 +238,30 @@ $ ansible-playbook -i inventories/hosts playbooks/install.yml
 ----
 ====
 
+[TIP]
+====
+The following command installs Integreatly disabling some components and enabling others.
 
+[source,shell]
+----
+$ ansible-playbook -i inventories/hosts playbooks/install.yml \
+ -e rhsso_hide_default_identity_providers=False \
+ -e create_cluster_admin=False \
+ -e eval_seed_users_count=5 \
+ -e ns_prefix="integr8tly-" \
+ -e gitea=False \
+ -e che=False \
+ -e datasync=False \
+ -e mobile_security_service=False \
+ -e ups=False \
+ -e mdc=False \
+ -e application_metrics=True \
+ -e eval_self_signed_certs=True \
+ -e eval_app_host=apps.$GUID.open.redhat.com
+----
+====
+
+For more detailed description of each variable used in the above example see the link:inventories/group_vars/all/manifest.yaml[manifest.yaml] file.
 
 #### 9. Add the generated Authorization callback URL to GitHub OAuth
 
