@@ -44,7 +44,9 @@ To cut subsequent RCs for a patch release:
 
 `./scripts/release.sh -b v1.5 -r release-1.5.1-rc2`
 
+
 ## Resetting the upgrade playbook
+
 
 ### Minor Release
 
@@ -66,7 +68,9 @@ The upgrade playbook in `playbooks/upgrades/upgrade.yml` should be emptied of al
 A patch release relies on the previous patch version having being installed/upgraded to already.
 For example
 
+
 ## SOPs/help repo
+
 
 ### Minor Release
 
