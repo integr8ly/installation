@@ -1,0 +1,87 @@
+---
+# Ansible configurations
+ansible_connection: local
+
+# The namespace where the aws credential secret will be
+aws_s3_backup_secret_namespace: openshift-integreatly-backups
+
+# the secret containing the aws credentials
+aws_s3_backup_secret_name: s3-credentials
+
+# AMQ Streams does not get included in the pour for managed environments
+amq_streams: False
+
+# backup_restore_install decides whether to run and install the backup and restore features
+backup_restore_install: True
+
+# Backup AWS configuration
+backup_s3_aws_access_key: "{{ backup_s3_access_key }}"
+backup_s3_aws_secret_key: "{{ backup_s3_secret_key }}"
+backup_s3_aws_bucket: "{{ backup_s3_bucket_name }}"
+
+# Managed instances always have cluster type osd
+cluster_type: osd
+
+# For managed production environments the cluster admin user should not be created
+create_cluster_admin: False
+
+# Don't setup the datasync (yet) on managed instance
+datasync: False
+
+# Set based on OSD cluster router shard and name
+eval_app_host: "{{ router_shard }}.{{ cluster_name }}.openshiftapps.com"
+
+# Evals users are only seeded as part of POC environments
+# For managed production environments this should be set to 0
+eval_seed_users_count: 0
+
+# Gitea does not get included in the pour for managed environments
+gitea: False
+
+# Github client credentials set via ansible tower survey
+github_client_id: "{{ github_client_id }}"
+github_client_secret: "{{ github_client_secret }}"
+
+# Namespace prefix for managed environments
+ns_prefix: openshift-
+
+# Ensures ansible tower attempts to login to the target cluster prior to running install/uninstall/upgrade
+openshift_login: True
+
+# Openshift cluster configurations
+openshift_master_public_url: "https://console.{{ cluster_name }}.openshift.com"
+openshift_master_url: "https://api.{{ cluster_name }}.openshift.com"
+
+# Auth token set via ansible tower survey
+openshift_token: "{{ openshift_token }}"
+
+# Prerequisite packages not required for ansible tower runs
+prerequisites_install: False
+
+# Managed environments have a separate pull secret compared to other environment types
+pull_secret_name: registry-redhat-io-dockercfg
+
+# Reads in password set via ansible tower survey
+rhsso_evals_admin_password: "{{ rhsso_admin_pass }}"
+
+# Don't run any tasks on the master.
+# See group_vars/all/common.yml & relevant SOP for more info when 
+# setting this to False.
+run_master_tasks: False
+
+# 3Scale AWS configuration
+eval_threescale_storage_s3_aws_access_key: "{{ threescale_s3_access_key }}"
+eval_threescale_storage_s3_aws_secret_key: "{{ threescale_s3_secret_key }}"
+eval_threescale_storage_s3_aws_bucket: "{{ threescale_s3_bucket_name }}"
+eval_threescale_storage_s3_aws_region: "{{ threescale_s3_bucket_region }}"
+eval_threescale_file_upload_storage: s3
+
+# Setup the rh-sso instance for user applications
+# See group_vars/all/common.yml & relevant SOP for more info when 
+# setting this to False.
+user_rhsso: True
+
+# Mobile Developer Services configuration
+mobile_security_service: False
+ups: False
+mdc: False

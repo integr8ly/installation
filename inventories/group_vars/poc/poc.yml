@@ -1,0 +1,49 @@
+---
+# Ansible configurations
+ansible_connection: local
+ansible_user: root
+
+# AMQ Streams does not get included in the pour for managed environments
+amq_streams: False
+
+# backup_restore_install decides whether to run and install the backup and restore features
+backup_restore_install: True
+
+# Managed instances always have cluster type osd
+cluster_type: poc
+
+# For managed production environments the cluster admin user should not be created
+create_cluster_admin: False
+
+# Configures datasync on POC environments
+datasync: True
+
+# Gitea does not get included in the pour for POC environments
+gitea: False
+
+# Namespace prefix for POC environments
+ns_prefix: openshift-
+
+# Ensures ansible tower attempts to login to the target cluster prior to running install/uninstall/upgrade
+openshift_login: True
+
+# Prerequisite packages not required for ansible tower runs
+prerequisites_install: False
+
+# Run tasks on master nodes
+# See group_vars/all/common.yml & relevant SOP for more info when 
+# setting this to False.
+run_master_tasks: True
+
+# 3Scale AWS configuration
+# These variables are dynamically set during POC cluster creation
+eval_threescale_file_upload_storage: s3
+eval_threescale_storage_s3_aws_access_key: "{{ aws_access_key }}"
+eval_threescale_storage_s3_aws_secret_key: "{{ aws_secret_key }}"
+eval_threescale_storage_s3_aws_region: "{{ openshift_aws_region }}"
+eval_threescale_storage_s3_aws_bucket: "{{ openshift_aws_clusterid }}-3scale"
+
+# Mobile Developer Services configuration
+mobile_security_service: True
+ups: True
+mdc: True
