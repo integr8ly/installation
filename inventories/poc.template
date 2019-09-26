@@ -1,0 +1,11 @@
+[local]
+127.0.0.1
+
+[master]
+
+[master:vars]
+ansible_connection=ssh
+
+[poc:children]
+local
+master
