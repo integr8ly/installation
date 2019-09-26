@@ -9,6 +9,7 @@
   metrics_path: /federate
   params:
     match[]:
+    - '{{ "{" }} endpoint="https-metrics" {{ "}" }}'
     - '{{ "{" }} service="kube-state-metrics" {{ "}" }}'
     - '{{ "{" }} service="node-exporter" {{ "}" }}'
     - '{{ "{" }} __name__=~"namespace_pod_name_container_name:.*" {{ "}" }}'
