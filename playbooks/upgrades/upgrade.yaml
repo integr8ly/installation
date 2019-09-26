@@ -4,8 +4,11 @@
   tasks:
     - include_role:
         name: openshift
-        tasks_from: set_master_vars
+        tasks_from: set_master_vars          
       when: run_master_tasks | default(true) | bool
+    - include_role:
+        name: openshift
+        tasks_from: check_customer_admin
 
 # Required for Ansible Tower installs that need to login via oc as a prerequisite
 - import_playbook: "../openshift.yml"
