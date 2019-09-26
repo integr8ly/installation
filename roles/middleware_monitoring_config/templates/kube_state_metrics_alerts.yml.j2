@@ -182,3 +182,11 @@ spec:
         for: 15m
         labels:
           severity: warning
+      - alert: PVCStorageMetricsAvailable
+        annotations:
+          message: PVC storage metrics are not available
+        expr: |
+          absent(kubelet_volume_stats_available_bytes) == 1
+        for: 15m
+        labels:
+          severity: warning
