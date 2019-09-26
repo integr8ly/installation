@@ -86,7 +86,7 @@
         cluster_url: "{{ hostvars['master']['master_url'] }}"
         che_keycloak_realm: "{{ eval_launcher_sso_realm }}"
       tags: ['che']
-      when: eval_action == 'install' and che and launcher
+      when: eval_action == 'install' and (che | bool) and (launcher | bool)
 
     - name: Expose vars
       include_vars: "../roles/3scale/defaults/main.yml"

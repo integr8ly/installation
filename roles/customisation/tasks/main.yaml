@@ -95,11 +95,11 @@
 - name: Get codeready secure route
   shell: oc get route/codeready -o template --template \{\{.spec.host\}\} -n {{ che_namespace }}
   register: che_secure_route
-  when: che and launcher
+  when: (che | bool) and (launcher | bool)
 
 - set_fact:
     che_secure_route: "https://{{che_secure_route.stdout}}"
-  when: che and launcher
+  when: (che | bool) and (launcher | bool)
 
 - name: set che component
   set_fact:
@@ -107,11 +107,11 @@
     - name: codeready
       version: "{{che_version}}"
       host: "{{che_secure_route}}"
-  when: che and launcher
+  when: (che | bool) and (launcher | bool)
 
 - set_fact:
     component_manifests: "{{component_manifests}} + {{che_manifest}}"
-  when: che and launcher
+  when: (che | bool) and (launcher | bool)
 
 - name: Find encrypted RH-SSO route
   shell: for route in $(oc get routes -n {{ rhsso_namespace}} | awk '{print $1}' | grep 'sso' | grep -v 'NAME'); do term=$(oc get route $route -n {{ rhsso_namespace }} -o template --template \{\{.spec.tls.termination\}\}); if [ "$term" == "edge" ] || [ "$term" == "reencrypt" ]; then echo $route; break; fi; done
