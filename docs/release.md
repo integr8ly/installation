@@ -1,20 +1,57 @@
 # Releases
 
-## New Releases
+## Jira & other non-code process
 
-### Installation Repo
+* Ensure the scope of the release is agreed on with relevant stakeholders.
+* All issues should have a fixVersion of the planned patch release e.g. 1.5.0.
+* A test plan to cover the installation and upgrade paths for what's changing in the release should be agreed with QE.
+* Setup the release dashboard in Jira (See Jira Release Dashboard section below)
+* Setup a recurring checkpoint call for the release (once per day) as soon as an ER1 or RC1 is cut
 
-1) Check with the team to see do any of our components need a new release (gitea operator, webapp operator, keycloak operator etc)
-2) To cut a brand new release checkout master and create a new branch e.g. v2.7 and push this branch to integr8ly upstream
-3) Run the release script:
-    
-    ``` ./scripts/release.sh -b v2.7 -r release-2.7.0-rc1```
+## Jira Release Dashboard
+
+There is a release dashboard that shows all relevant issues for a release and their status (https://issues.jboss.org/secure/Dashboard.jspa?selectPageId=12329297).
+This dashboard and all it's sub-filters are driven by 2 main filters:
+
+* RHMI Release - `_fixVersion` (https://issues.jboss.org/issues/?filter=12341116)
+* RHMI Release - `_affectedVersion` (https://issues.jboss.org/issues/?filter=12341117)
+
+When a release has started, this dashboard can be reused by updating the fixVersion & affectsVersion accordingly in these 2 filters.
+You may need to request permissions to modify these.
+
+## Installation Repo
+
+* Check with the team if there is anything remaining to be merged/cherry-picked to the appropriate branch.
+
+### Minor Release
+
+To cut the first RC for a new minor release (e.g. 1.5.0):
+
+* Checkout master and create a new branch e.g. v1.5 and push this branch to integr8ly upstream
+* Run the release script e.g. `./scripts/release.sh -b v1.5 -r release-1.5.0-rc1`
+
+For subsequent RCs, do the following:
+       
+`./scripts/release.sh -b v1.5 -r release-1.5.0-rc2`
+
+### Patch Release
+
+To cut the first RC for a new patch release (e.g. v1.5.1):
+
+`./scripts/release.sh -b v1.5 -r release-1.5.1-rc1`
+
+To cut subsequent RCs for a patch release:
+
+`./scripts/release.sh -b v1.5 -r release-1.5.1-rc2`
 
 
-### Resetting the upgrade playbook on master
+## Resetting the upgrade playbook
 
-There may be logic in the upgrade playbook that is targetted at the upcoming release only.
-Once the release branch is created, the upgrade playbook should be reviewed and reset on `master` to remove any version specific blocks, tasks or roles being included.
+
+### Minor Release
+
+There may be logic in the upgrade playbook that is targetted at a specific release only.
+After the minor release branch is created, the upgrade playbook in `playbooks/upgrades/upgrade.yml` should be reviewed and reset on `master` to remove any version specific blocks, tasks or roles being included.
 
 As this is a manual task, here are some guidelines for doing the review.
 
@@ -25,27 +62,41 @@ As this is a manual task, here are some guidelines for doing the review.
 All changes should be PR'd against `master`.
 Any release specific upgrade changes that need to be merged while a release is in progress should probably only land on the release branch. Discretion is advised based on the upgrade change being proposed and the above guidelines.
 
-### SOPs/help repo
+### Patch Release
+
+The upgrade playbook in `playbooks/upgrades/upgrade.yml` should be emptied of all tasks except for the version prerequisite check and manifest update task.
+A patch release relies on the previous patch version having being installed/upgraded to already.
+For example
+
+
+## SOPs/help repo
+
+
+### Minor Release
 
 1) Checkout and pull down the latest `master` of https://github.com/fheng/integreatly-help (private repo)
 2) Create a new branch for the release. e.g.:
 
-    ```git checkout -b v2.7```
+    ```git checkout -b v1.5```
 3) Review any `Known Issues` in the [Installation SOP](https://github.com/fheng/integreatly-help/blob/master/sops/OSD_SRE_integreatly_install.asciidoc), and add/remove as appropriate for this release.
 4) Commit and push back the new branch to the upstream
 
-## New RCs and Patch releases     
-If you are cutting a new rc or a patch release for an existing release then do the following
+### Patch Release
 
-1) Check with the team if there is anything remaining to be cherry picked to the release branch
-2) Run the release script:
+1) Checkout and pull down the release branch (e.g. v1.5) of https://github.com/fheng/integreatly-help (private repo)
 
-For example to cut rc2 for release 2.7.0
-       
-       ``` ./scripts/release.sh -b v2.7 -r release-2.7.0-rc2```
-       
-To create rc1 of a patch release       
+    ```git checkout v1.5```
+2) Review any `Known Issues` in the [Installation SOP](https://github.com/fheng/integreatly-help/blob/master/sops/OSD_SRE_integreatly_install.asciidoc), and add/remove as appropriate for this patch release.
+3) Commit and push back any changes to the upstream
 
-    ``` ./scripts/release.sh -b v2.7 -r release-2.7.1-rc1```
-       
-            
+### Tagging the help repo
+
+Once a release has been signed off, the [help repo](https://github.com/fheng/integreatly-help) will need to be tagged on the release branch:
+
+```
+git checkout v1.5
+git fetch origin
+git reset --hard HEAD
+git tag release-1.5.0
+git push origin release-1.5.0
+```
