@@ -91,7 +91,7 @@ For example
 
 ### Tagging the help repo
 
-Once a release has been signed off, the help repo will need to be tagged on the release branch:
+Once a release has been signed off, the [help repo](https://github.com/fheng/integreatly-help) will need to be tagged on the release branch:
 
 ```
 git checkout v1.5
