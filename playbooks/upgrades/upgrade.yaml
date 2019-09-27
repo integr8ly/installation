@@ -24,8 +24,11 @@
   gather_facts: yes
   tasks:
     # Monitoring upgrade
-    - name: Expose vars
+    - name: Expose monitoring vars
       include_vars: "../../roles/middleware_monitoring_config/defaults/main.yml"
+
+    - name: Expose 3scale vars
+      include_vars: "../../roles/3scale/defaults/main.yml"
 
     - name: Recreate any CRs for alerts to ensure we have the latest
       include_role:
