@@ -18,116 +18,17 @@
         tasks_from: upgrade
       vars:
         from_versions:
-          - "release-1.4.1"
           - "release-1.5.0"
-    - set_fact:
-        upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
-        upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
-        upgrade_fuse_image_tag: 1.7
-
-
-- import_playbook: install_user_rhsso.yml
 
 - hosts: localhost
   gather_facts: yes
   tasks:
-    # Managed Service Broker
-    - name: Expose vars
-      include_vars: "../../roles/rhsso/defaults/main.yml"
-    -
-      name: Set eval_app_host var
-      set_fact:
-        eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
-    - include_role:
-        name: msbroker
-        tasks_from: upgrade
-      vars:
-        route_suffix: "{{ eval_app_host }}"
-        sso_realm: "{{ rhsso_realm }}"
-
-    # Solution Explorer
-    - name: Webapp upgrade
-      include_role:
-        name: webapp
-        tasks_from: upgrade
-      vars:
-        rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
-        rhsso_namespace: "{{ eval_rhsso_namespace }}"
-        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
-        openshift_asset_url: "{{ hostvars['EVAL_VARS']['openshift_asset_url'] | replace('https://', '') }}"
-
-    - name: SSO upgrade
-      include_role:
-        name: rhsso
-        tasks_from: upgrade
-
-    - name: AMQ Online upgrade
-      include_role:
-        name: enmasse
-
-    - name: Update image streams
-      include_role:
-        name: images
-        tasks_from: import
-      with_items:
-        - 3scale
-        - apicurito
-        - codeready
-        - enmasse
-        - fuse
-        - launcher
-        - sso
-        - webapp
-      loop_control:
-        loop_var: images_source_namespace
-
-    #application metrics
-    - name: Install application metrics
-      include_role:
-        name: application_monitoring
-      when: application_metrics
-
-    # CodeReady
-    - name: Upgrade code ready workspaces 1.0 to 1.2
-      include_role:
-        name: code-ready
-        tasks_from: upgrade_1.0_to_1.2.yml
-
-    # Launcher
-    - name: Launcher upgrade
-      include_role:
-        name: launcher
-        tasks_from: upgrade
-      when: launcher
-
-    - name: "Upgrade SSO in Launcher to 7.3"
-      include_role:
-        name: launcher
-        tasks_from: upgrade_sso_7.2_to_7.3.yml
-      when: target_version.stdout == "release-1.4.1"
-
     # Monitoring upgrade
-    - name: Expose vars
+    - name: Expose monitoring vars
       include_vars: "../../roles/middleware_monitoring_config/defaults/main.yml"
 
-    # Grafana
-    - include_role:
-        name: middleware_monitoring
-        tasks_from: upgrade/grafana
-      when: target_version.stdout == "release-1.4.1"
-
-    # Prometheus & Alertmanager
-    - include_role:
-        name: middleware_monitoring
-        tasks_from: upgrade/prometheus
-      when: target_version.stdout == "release-1.4.1"
-
-    # Pull the trigger on the monitoring upgrade
-    - include_role:
-        name: middleware_monitoring
-        tasks_from: upgrade/trigger
-      when: target_version.stdout == "release-1.4.1"
-    # End monitoring upgrade
+    - name: Expose 3scale vars
+      include_vars: "../../roles/3scale/defaults/main.yml"
 
     - name: Recreate any CRs for alerts to ensure we have the latest
       include_role:
@@ -138,47 +39,5 @@
         mobile_security_service: false
         ups: false
 
-    # Backup alerts upgrade
-    - include_role:
-        name: backup
-        tasks_from: upgrade
-      vars:
-        upgrade_backup_container_tag: "{{ backup_version }}"
-        upgrade_backup_container_image: "{{ backup_image }}"
-        rhsso_namespace: "{{ eval_rhsso_namespace }}"
-        user_rhsso_namespace: "{{ eval_user_rhsso_namespace }}"
-      when: target_version.stdout == "release-1.4.1"
-
-    # Fuse
-    - include_role:
-        name: fuse
-        tasks_from: upgrade
-      vars:
-        old_fuse_tag: "application-templates-2.1.fuse-730065-redhat-00002"
-        fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
-
-    - include_role:
-        name: fuse_managed
-        tasks_from: upgrade
-      vars:
-        fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
-
-    # Webconsole customizations
-    - name: Customise Openshift Console
-      include_role:
-        name: customise-web-console
-        tasks_from: install
-
-- import_playbook: 3scale_upgrade_2.5_to_2.6.yml
-
-#install mobile services
-- import_playbook: ../install_mobile_services.yml
-
-#setup mobile monitoring
-- import_playbook: "../install_mobile_middleware_monitoring_config.yml"
-
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
-
-#patch manifest file with mobile services info
-- import_playbook: ../install_mobile_manifest.yml
