@@ -39,5 +39,11 @@
         mobile_security_service: false
         ups: false
 
+    - name: Uninstall nexus
+      include_role:
+        name: nexus
+        tasks_from: uninstall.yml
+      when: cluster_type == "poc" or cluster_type == "osd"
+
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
