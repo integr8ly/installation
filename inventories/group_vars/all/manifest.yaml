@@ -31,7 +31,7 @@ enmasse_git_url: https://github.com/jboss-container-images/amq-online-images.git
 #controls whether fuse is installed or not
 fuse: True
 #This is the release tag for fuse on openshift in github currently used to pull in the templates and image streams
-fuse_release_tag: 'application-templates-2.1.fuse-740025-redhat-00004'
+fuse_release_tag: 'application-templates-application-templates-2.1.fuse-750031-redhat-00001'
 #not currently used as the operator decides what to install
 fuse_version: '7.4'
 
