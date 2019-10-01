@@ -14,7 +14,8 @@ Add the steps required to check this change. Following an example.
 ## Is an upgrade task required and are there additional steps needed to test this?
 <!-- If there is an upgrade required, either outline the steps to test it or link to the issue for the upgrade -->
 
-
+- [ ] Yes
+- [ ] No
 
 
 
