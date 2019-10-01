@@ -1,0 +1,7 @@
+---
+- name: Apply resource overrides for fuse
+  include_role:
+    name: resource_limits
+  vars:
+    ns: "{{ fuse_namespace }}"
+    resources: "{{ fuse_resources }}"

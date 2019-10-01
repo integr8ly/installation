@@ -1,0 +1,11 @@
+---
+- name: Apply resource overrides for codeready
+  include_role:
+    name: resource_limits
+  vars:
+    ns: "{{ che_namespace }}"
+    resources: "{{ codeready_resources }}"
+  when:
+    - codeready_resources
+    - not codeready_resources is none
+    - (codeready_resources | length) > 0

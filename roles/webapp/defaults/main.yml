@@ -15,3 +15,10 @@ webapp_walkthrough_locations:
   - "https://github.com/integr8ly/tutorial-web-app-walkthroughs#v1.7.3"
 webapp_provision_services: []
 webapp_watch_services: []
+
+webapp_resources:
+  # - name: tutorial-web-app
+  #   kind: dc
+  # - name: tutorial-web-app-operator
+  #   kind: deploy
+  

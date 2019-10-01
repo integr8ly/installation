@@ -13,29 +13,51 @@ enmasse_postgres_cronjob_name: 'enmasse-postgres-backup'
 enmasse_pv_cronjob_name: 'enmasse-pv-backup'
 
 enmasse_resources:
-  - name: postgresql
-    kind: dc
-    resources:
-      requests:
-        memory: 50Mi
+  # - name: address-space-controller
+  #   kind: deploy
+  #   resources: 
+  #     limits: 
+  #       memory: 512Mi
+  #     requests: 
+  #       memory: 256Mi
   - name: api-server
     kind: deploy
     resources:
       requests:
         memory: 256Mi
+      # limits:
+      #   memory: 512Mi
+  # - name: console
+  #   kind: deploy
+  #   resources: 
+  #     - container: console-proxy
+  #     - container: console-httpd
   - name: enmasse-operator
     kind: deploy
     resources:
       requests:
         memory: 75M
-  # keycloak operator undoes any externally made changes
+      # limits:
+      #   memory: 128Mi
+  # operator undoes any attempt to reduce keycloak mem requests to 750Mi
   # - name: keycloak
   #   kind: deploy
   #   resources:
   #     requests:
-  #       memory: 750M
+  #       memory: 2G
+  #     limits:
+  #       memory: 2G
+  - name: postgresql
+    kind: dc
+    resources:
+      requests:
+        memory: 50Mi
+      # limits: 
+      #   memory: 1Gi
   - name: service-broker
     kind: deploy
     resources:
       requests:
-        memory: 200M
+        memory: 200Mi
+      # limits:
+      #   memory: 512Mi

@@ -11,7 +11,7 @@
 
 - name: Install ups resources
   shell: "oc apply -f {{ item }} -n {{ ups_namespace }}"
-  with_items: "{{ ups_resources }}"
+  with_items: "{{ ups_resources_list }}"
 
 - name: Copy role binding template
   template:

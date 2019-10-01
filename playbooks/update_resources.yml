@@ -2,19 +2,42 @@
 - hosts: localhost
   gather_facts: no
   tasks:
+    # - include_role:
+    #     name: 3scale
+    #     tasks_from: new_limits.yml
     - include_role:
-        name: 3scale
+        name: apicurito
         tasks_from: new_limits.yml
-      tags: ['3scale']
-    - include_role:
-        name: enmasse
-        tasks_from: new_limits.yml
-      tags: ['enmasse']
-    - include_role:
-        name: rhsso
-        tasks_from: new_limits.yml
-      tags: ['rhsso']
-    - include_role:
-        name: rhsso-user
-        tasks_from: new_limits.yml
-      tags: ['user_rhsso']
+    # - include_role:
+    #     name: code-ready
+    #     tasks_from: new_limits.yml
+    # - include_role:
+    #     name: enmasse
+    #     tasks_from: new_limits.yml
+    # - include_role:
+    #     name: fuse_managed
+    #     tasks_from: new_limits.yml
+    # - include_role:
+    #     name: launcher
+    #     tasks_from: new_limits.yml
+    # - include_role:
+    #     name: mdc
+    #     tasks_from: new_limits.yml
+    # - include_role:
+    #     name: middleware_monitoring
+    #     tasks_from: new_limits.yml
+    # - include_role:
+    #     name: mobile_security_service
+    #     tasks_from: new_limits.yml
+    # - include_role:
+    #     name: rhsso
+    #     tasks_from: new_limits.yml
+    # - include_role:
+    #     name: rhsso-user
+    #     tasks_from: new_limits.yml
+    # - include_role:
+    #     name: ups
+    #     tasks_from: new_limits.yml
+    # - include_role:
+    #     name: webapp
+    #     tasks_from: new_limits.yml

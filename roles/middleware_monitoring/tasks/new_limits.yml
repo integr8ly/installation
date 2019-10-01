@@ -1,0 +1,11 @@
+---
+- name: Apply resource overrides for middleware monitoring
+  include_role:
+    name: resource_limits
+  vars:
+    ns: "{{ monitoring_namespace }}"
+    resources: "{{ monitoring_resources }}"
+  when:
+    - monitoring_resources
+    - not monitoring_resources is none
+    - (monitoring_resources | length) > 0

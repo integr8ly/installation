@@ -7,3 +7,10 @@ resource_limits_horizontal_scaling: false
 # vertical scaling enables management of resource requests/limits
 resource_limits_vertical_scaling: true
 
+# wait for all rollouts for a given namespace to complete before moving to next
+# if disabled, failed rollouts will not be detected
+# if enabled, if any rollout failed or timed out, script will halt
+resource_limits_wait_for_rollouts_per_ns: true
+
+# if enabled, script will halt if an override is specified for a resource that does not exist
+resource_limits_fail_on_missing_resource: false

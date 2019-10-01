@@ -1,0 +1,11 @@
+---
+- name: Apply resource overrides for apicurito
+  include_role:
+    name: resource_limits
+  vars:
+    ns: "{{ apicurito_namespace }}"
+    resources: "{{ apicurito_resources }}"
+  when:
+    - apicurito_resources
+    - not apicurito_resources is none
+    - (apicurito_resources | length) > 0

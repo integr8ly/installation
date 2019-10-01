@@ -11,7 +11,7 @@
 
 - name: Install mdc resources
   shell: "oc apply -f {{ item }} -n {{ mdc_namespace }}"
-  with_items: "{{ mdc_resources }}"
+  with_items: "{{ mdc_resource_items }}"
 
 - set_fact:
     mdc_openshift_host: "{{ openshift_master_url }}"

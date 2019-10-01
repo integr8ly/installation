@@ -4,3 +4,65 @@ fuse_cr_name: fuse-managed
 fuse_backup_postgres_secret_name: fuse-postgres-auth
 
 fuse_pull_secret_name: "syndesis-pull-secret"
+
+fuse_resources:
+  - name: syndesis-db
+    kind: dc
+    resources: 
+      - container: postgresql
+        limits: 
+          memory: 255Mi
+        requests: 
+          memory: 255Mi
+      - container: syndesis-db-metrics
+        limits: 
+          memory: 256Mi
+        requests: 
+          memory: 20Mi
+  - name: syndesis-meta
+    kind: dc
+    resources: 
+      limits: 
+        memory: 512Mi
+      requests: 
+        memory: 280Mi
+  - name: syndesis-oauthproxy
+    kind: dc
+    resources: 
+      limits: 
+        memory: 512Mi
+      requests: 
+        memory: 40Mi
+  - name: syndesis-operator
+    kind: dc
+    replicas: 1
+  - name: syndesis-prometheus
+    kind: dc
+    resources: 
+      limits: 
+        memory: 512Mi
+      requests: 
+        memory: 512Mi
+  - name: syndesis-server
+    kind: dc
+    resources: 
+      limits: 
+        cpu: 750m
+        memory: 800Mi
+      requests: 
+        cpu: 450m
+        memory: 256Mi
+  - name: syndesis-ui
+    kind: dc
+    resources: 
+      limits: 
+        memory: 255Mi
+      requests: 
+        memory: 50Mi
+  - name: todo
+    kind: dc
+    resources: 
+      limits: 
+        memory: 256Mi
+      requests: 
+        memory: 256Mi

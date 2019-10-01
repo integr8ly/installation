@@ -17,18 +17,39 @@
 # the first place; however, people aren't used to seeing this.  Since we are already piping the
 # output anyway, we go ahead and remove the confusing values=0 with a simple pass thru jq 
 - name: Update resource requests/limits for {{ resource_patch.kind }}/{{ resource_patch.name }}
+  vars:
+    containerResources: |
+      {% if resource_patch.resources is not defined -%}
+        []
+      {%- elif (resource_patch.resources | type_debug) == "list" -%}
+        {{ resource_patch.resources }}
+      {%- else -%}
+        {{ [resource_patch.resources] }}
+      {%- endif %}
   shell: |
-    oc set resources {{ resource_patch.kind }} {{ resource_patch.name }} -n {{ ns }}
-      {%- for k,v in resource_patch.resources.items() %}
-      --{{ k }}={% for k2,v2 in v.items() %}{{ k2 }}={{ v2 }}{% if not loop.last %},{% endif %}{% endfor %}
-      {%- endfor %}
-      --dry-run -o json | jq 'del(.spec.template.spec.containers[].resources[][]|select(.=="0"))' | oc replace -f -
+      oc set resources {{ resource_patch.kind }} {{ resource_patch.name }} -n {{ ns }}
+        {%- if item.container is defined %}
+        --containers={{ item.container }} \
+        {%- endif %}
+        {%- if item.requests is defined %}
+        --requests={% for k,v in item.requests.items() %}{{ k }}={{ v }}{% if not loop.last %},{% endif %}{% endfor %} \
+        {%- endif %}
+        {%- if item.limits is defined %}
+        --limits={% for k,v in item.limits.items() %}{{ k }}={{ v }}{% if not loop.last %},{% endif %}{% endfor %} \
+        {%- endif %}
+        --dry-run -o json | jq 'del(.spec.template.spec.containers[].resources[][]|select(.=="0"))' | oc replace -f -
   register: set_resources_cmd
-  changed_when: ('not changed' not in set_resources_cmd.stderr)
-  failed_when: set_resources_cmd.stderr != '' and ("not changed" not in set_resources_cmd.stderr)
+  changed_when: set_resources_cmd.rc != 0 and ('not changed' not in set_resources_cmd.stderr)
+  failed_when:
+    - set_resources_cmd.stderr != ""
+    - ("not changed" not in set_resources_cmd.stderr)
+    - ("not found" in set_resources_cmd.stderr and (resource_limits_fail_on_missing_resource | default(true) | bool))
+    - ("server doesn't have a resource type" in set_resources_cmd.stderr and (resource_limits_fail_on_missing_resource | default(true) | bool))
   when:
     - resource_limits_vertical_scaling | default(true) | bool
     - resource_patch.resources is defined
+    - (item.requests is defined or item.limits is defined)
+  loop: "{{ containerResources }}"
 
 - name: Update number of replicas for {{ resource_patch.kind }}/{{ resource_patch.name }}
   shell: oc scale {{ resource_patch.kind }} {{ resource_patch.name }} --replicas={{ resource_patch.replicas }} -n {{ ns }}

@@ -7,13 +7,20 @@
   loop_control:
     loop_var: resource_patch
 
+
+#     {%- if  -%}
+# name=sso; oc get deploymentconfig -n sso -o name | cut -d/ -f2 | egrep "^${name}\$" && oc rollout status dc/sso -n sso -w
+#     {%- endif -%}
+
 - name: Set up watch for rollout status of resources with overrides
-  shell: oc rollout status {{ item.kind }}/{{ item.name }} -n {{ ns }} -w
+  shell: oc rollout status {{ item.kind }}/{{ item.name }} -n {{ ns }} -w 
   async: 7200
   poll: 0
   register: rollout_status
   with_items:
     "{{ resources }}"
+  when: resource_limits_wait_for_rollouts_per_ns | default(true) | bool
+
 
 - name: Wait for all rollouts to complete for ns={{ ns }}
   async_status: jid={{ item.ansible_job_id }}
@@ -22,3 +29,9 @@
   retries: 300
   with_items:
     "{{ rollout_status.results }}"
+  when: resource_limits_wait_for_rollouts_per_ns | default(true) | bool
+  changed_when: patch_jobs.stderr is defined and patch_jobs.stderr != "" and (patch_jobs.stderr is regex("not found|server doesn't have a resource type"))
+  failed_when:
+    - patch_jobs.rc is defined
+    - patch_jobs.rc != 0
+    - not (patch_jobs.stderr is regex("not found|server doesn't have a resource type") and not (resource_limits_fail_on_missing_resource | default(false) | bool))

@@ -103,6 +103,28 @@ threescale_resources:
     requests:
       cpu: 5m
       memory: 600Mi
+  # resources: 
+  # - container: system-master
+  #   limits: 
+  #     cpu: 1
+  #     memory: 800Mi
+  #   requests: 
+  #     cpu: 50m
+  #     memory: 600Mi
+  # - container: system-provider
+  #   limits: 
+  #     cpu: 1
+  #     memory: 800Mi
+  #   requests: 
+  #     cpu: 50m
+  #     memory: 600Mi
+  # - container: system-developer
+  #   limits: 
+  #     cpu: 1
+  #     memory: 800Mi
+  #   requests: 
+  #     cpu: 50m
+  #     memory: 600Mi
 - name: system-memcache
   kind: dc
   resources:
@@ -149,6 +171,85 @@ threescale_resources:
     requests:
       cpu: 5m
       memory: 60M
+
+
+  # - name: system-memcache
+  #   kind: dc
+  #   resources: 
+  #     limits: 
+  #       cpu: 250m
+  #       memory: 96Mi
+  #     requests: 
+  #       cpu: 50m
+  #       memory: 64Mi
+  # - name: system-mysql
+  #   kind: dc
+  #   resources: 
+  #     limits: 
+  #       memory: 2Gi
+  #     requests: 
+  #       cpu: 250m
+  #       memory: 512Mi
+  # - name: system-redis
+  #   kind: dc
+  #   resources: 
+  #     limits: 
+  #       cpu: 500m
+  #       memory: 32Gi
+  #     requests: 
+  #       cpu: 150m
+  #       memory: 256Mi
+  # - name: system-sidekiq
+  #   kind: dc
+  #   replicas: 1
+  #   resources: 
+  #     limits: 
+  #       cpu: 1
+  #       memory: 2Gi
+  #     requests: 
+  #       cpu: 100m
+  #       memory: 500Mi
+  # - name: system-sphinx
+  #   kind: dc
+  #   replicas: 1
+  #   resources: 
+  #     limits: 
+  #       cpu: 1
+  #       memory: 512Mi
+  #     requests: 
+  #       cpu: 80m
+  #       memory: 250Mi
+  # - name: zync
+  #   kind: dc
+  #   replicas: 1
+  #   resources: 
+  #     limits: 
+  #       cpu: 1
+  #       memory: 512Mi
+  #     requests: 
+  #       cpu: 150m
+  #       memory: 250M
+  # - name: zync-database
+  #   kind: dc
+  #   replicas: 1
+  #   resources: 
+  #     limits: 
+  #       cpu: 250m
+  #       memory: 2G
+  #     requests: 
+  #       cpu: 50m
+  #       memory: 250M
+  # - name: zync-que
+  #   kind: dc
+  #   replicas: 1
+  #   resources: 
+  #     limits: 
+  #       cpu: 1
+  #       memory: 512Mi
+  #     requests: 
+  #       cpu: 250m
+  #       memory: 250M
+
 
 # Routes
 threescale_route_system_developer: system-developer

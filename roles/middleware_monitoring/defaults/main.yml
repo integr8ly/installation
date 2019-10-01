@@ -7,7 +7,7 @@ monitoring_prometheus_retention: 45d
 monitoring_prometheus_storage_request: 10Gi
 
 # Resources to create via the oc tool.
-monitoring_resources:
+monitoring_resource_items:
 - "{{ middleware_monitoring_operator_resources }}/crds/BlackboxTarget.yaml"
 - "{{ middleware_monitoring_operator_resources }}/crds/ApplicationMonitoring.yaml"
 - "{{ middleware_monitoring_operator_resources }}/operator_roles/service_account.yaml"
@@ -40,3 +40,51 @@ monitoring_resource_templates_pre:
 monitoring_resource_templates_post:
   # Application monitoring resources
   - "application_monitoring_cr.yml"
+
+monitoring_resources:
+  - name: application-monitoring-operator
+    kind: deploy
+  - name: grafana-deployment
+    resources: 
+      - container: grafana
+      - container: grafana-proxy
+    kind: deploy
+  - name: grafana-operator
+    kind: deploy
+  - name: prometheus-operator
+    kind: deploy
+    resources: 
+      limits: 
+        cpu: 200m
+        memory: 200Mi
+      requests: 
+        cpu: 100m
+        memory: 100Mi
+  - name: alertmanager-application-monitoring
+    kind: sts
+    resources: 
+      - container: alertmanager
+        requests: 
+          memory: 200Mi
+      - container: config-reloader
+        limits: 
+          cpu: 50m
+          memory: 10Mi
+      - container: alertmanager-proxy
+    replicas: 1
+  - name: prometheus-application-monitoring
+    kind: sts
+    resources: 
+      - container: prometheus
+        requests: 
+          memory: 400Mi
+      - container: prometheus-config-reloader
+        limits: 
+          cpu: 50m
+          memory: 50Mi
+      - container: blackbox-exporter
+      - container: prometheus-proxy
+      - container: rules-configmap-reloader
+        limits: 
+          cpu: 25m
+          memory: 10Mi
