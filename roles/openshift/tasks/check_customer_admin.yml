@@ -1,10 +1,11 @@
 ---
 
-- block: 
-    - name: Check user if 'customer-admin' exists
-      shell: oc get user customer-admin; echo $?
-      register: result
+- name: Check user if 'customer-admin' exists
+  shell: oc get user customer-admin
+  register: result
+  ignore_errors: true
 
-    - fail:
-        msg: "'customer-admin' user doesn't exist. Please make sure that you log in to the cluster as 'customer-admin' first."
-        when: result.stdout != "0"
+- name: Fail if the 'customer-admin' doesn't exist
+  fail:
+    msg: "'customer-admin' user doesn't exist. Please make sure that you log in to the cluster as 'customer-admin' first."
+  when: result.rc != 0
