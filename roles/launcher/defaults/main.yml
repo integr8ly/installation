@@ -39,39 +39,39 @@ launcher_frontend_route_name: "launcher"
 launcher_frontend_protocol: "https"
 
 launcher_resources:
-  - name: configmapcontroller
-    kind: dc
-  - name: launcher-backend
-    kind: dc
-    resources: 
-      limits: 
-        cpu: 1
-        memory: 2G
-      requests: 
-        cpu: 10m
-        memory: 768Mi
-  - name: launcher-creator-backend
-    kind: dc
-    resources: 
-      limits: 
-        cpu: 1
-        memory: 128Mi
-      requests: 
-        cpu: 10m
-        memory: 10Mi
-  - name: launcher-frontend
-    kind: dc
-    resources: 
-      limits: 
-        cpu: 50m
-        memory: 64M
-      requests: 
-        cpu: 10m
-        memory: 15M
-  - name: launcher-sso
-    kind: dc
-    resources: 
-      limits: 
-        memory: 1Gi
-  - name: launcher-sso-postgresql
-    kind: dc
+  # - name: configmapcontroller
+  #   kind: dc
+  # - name: launcher-backend
+  #   kind: dc
+  #   resources: 
+  #     limits: 
+  #       cpu: 1
+  #       memory: 2G
+  #     requests: 
+  #       cpu: 10m
+  #       memory: 768Mi
+  # - name: launcher-creator-backend
+  #   kind: dc
+  #   resources: 
+  #     limits: 
+  #       cpu: 1
+  #       memory: 128Mi
+  #     requests: 
+  #       cpu: 10m
+  #       memory: 10Mi
+  # - name: launcher-frontend
+  #   kind: dc
+  #   resources: 
+  #     limits: 
+  #       cpu: 50m
+  #       memory: 64M
+  #     requests: 
+  #       cpu: 10m
+  #       memory: 15M
+  # - name: launcher-sso
+  #   kind: dc
+  #   resources: 
+  #     limits: 
+  #       memory: 1Gi
+  # - name: launcher-sso-postgresql
+  #   kind: dc
