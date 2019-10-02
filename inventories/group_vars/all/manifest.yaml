@@ -86,7 +86,7 @@ apicurito: true
 apicurito_version: '0.2.18.Final'
 
 #controls whether nexus is installed or not
-nexus: true
+nexus: "{{ 'true' if cluster_type == 'rhpds' else 'false' }}"
 nexus_version: '2.14.11-01'
 
 ## Enables datasync templates (enabled by default)
