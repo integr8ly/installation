@@ -12,7 +12,6 @@ As the verifier of the PR the following process should be done:
 - Ensure the developer of the PR has attached a log of the upgrade run from his branch to the jira or pr and check that it exited as expected. 
 - If possible, look at the tasks that ran and see they match the PR
 - Verify the upgrade is correct on cluster provided by PR author 
-- Re check the cluster and ensure the changes expected happend after the upgrade.
 
 <!--
 Add the steps required to check this change. Following an example.
