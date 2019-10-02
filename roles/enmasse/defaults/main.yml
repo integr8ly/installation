@@ -25,8 +25,8 @@ enmasse_resources:
     resources:
       requests:
         memory: 256Mi
-      # limits:
-      #   memory: 512Mi
+  #    limits:
+  #      memory: 512Mi
   # - name: console
   #   kind: deploy
   #   resources: 
@@ -37,8 +37,8 @@ enmasse_resources:
     resources:
       requests:
         memory: 75M
-      # limits:
-      #   memory: 128Mi
+  #    limits:
+  #      memory: 128Mi
   # operator undoes any attempt to reduce keycloak mem requests to 750Mi
   # - name: keycloak
   #   kind: deploy
@@ -52,12 +52,12 @@ enmasse_resources:
     resources:
       requests:
         memory: 50Mi
-      # limits: 
-      #   memory: 1Gi
+  #    limits: 
+  #      memory: 1Gi
   - name: service-broker
     kind: deploy
     resources:
       requests:
         memory: 200Mi
-      # limits:
-      #   memory: 512Mi
+  #    limits:
+  #      memory: 512Mi

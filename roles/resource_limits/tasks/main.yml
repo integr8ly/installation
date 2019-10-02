@@ -7,11 +7,6 @@
   loop_control:
     loop_var: resource_patch
 
-
-#     {%- if  -%}
-# name=sso; oc get deploymentconfig -n sso -o name | cut -d/ -f2 | egrep "^${name}\$" && oc rollout status dc/sso -n sso -w
-#     {%- endif -%}
-
 - name: Set up watch for rollout status of resources with overrides
   shell: oc rollout status {{ item.kind }}/{{ item.name }} -n {{ ns }} -w 
   async: 7200

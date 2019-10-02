@@ -33,22 +33,22 @@ mdc_monitor_templates:
 
 #scaling
 mdc_resources:
-  - name: mdc
-    kind: dc
-    resources: 
-      - container: mdc
-        requests: 
-          cpu: 50m
-          memory: 128Mi
-        limits: 
-          cpu: 100m
-          memory: 256Mi
-      - container: mdc-oauth-proxy
-        requests: 
-          cpu: 10m
-          memory: 32Mi
-        limits: 
-          cpu: 20m
-          memory: 64Mi
-  - name: mobile-developer-console-operator
-    kind: deploy
+  # - name: mdc
+  #   kind: dc
+  #   resources: 
+  #     - container: mdc
+  #       requests: 
+  #         cpu: 50m
+  #         memory: 128Mi
+  #       limits: 
+  #         cpu: 100m
+  #         memory: 256Mi
+  #     - container: mdc-oauth-proxy
+  #       requests: 
+  #         cpu: 10m
+  #         memory: 32Mi
+  #       limits: 
+  #         cpu: 20m
+  #         memory: 64Mi
+  # - name: mobile-developer-console-operator
+  #   kind: deploy

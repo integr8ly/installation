@@ -17,8 +17,8 @@ webapp_provision_services: []
 webapp_watch_services: []
 
 webapp_resources:
-  # - name: tutorial-web-app
-  #   kind: dc
-  # - name: tutorial-web-app-operator
-  #   kind: deploy
+  #  - name: tutorial-web-app
+  #    kind: dc
+  #  - name: tutorial-web-app-operator
+  #    kind: deploy
   

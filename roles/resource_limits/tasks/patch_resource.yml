@@ -41,10 +41,10 @@
   register: set_resources_cmd
   changed_when: set_resources_cmd.rc != 0 and ('not changed' not in set_resources_cmd.stderr)
   failed_when:
+    - set_resources_cmd.rc != 0
     - set_resources_cmd.stderr != ""
     - ("not changed" not in set_resources_cmd.stderr)
-    - ("not found" in set_resources_cmd.stderr and (resource_limits_fail_on_missing_resource | default(true) | bool))
-    - ("server doesn't have a resource type" in set_resources_cmd.stderr and (resource_limits_fail_on_missing_resource | default(true) | bool))
+    - not (set_resources_cmd.stderr is regex("not found|server doesn't have a resource type") and not (resource_limits_fail_on_missing_resource | default(false) | bool))
   when:
     - resource_limits_vertical_scaling | default(true) | bool
     - resource_patch.resources is defined

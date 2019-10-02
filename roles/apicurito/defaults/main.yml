@@ -8,15 +8,15 @@ apicurito_route_hostname: apicurito-app
 
 
 apicurito_resources:
-  - name: apicurito-ui
-    kind: dc
-    resources: 
-      limits: 
-        cpu: 1
-        memory: 256Mi
-      requests: 
-        cpu: 200m
-        memory: 64Mi
+  # - name: apicurito-ui
+  #   kind: dc
+  #   resources: 
+  #     limits: 
+  #       cpu: 1
+  #       memory: 256Mi
+  #     requests: 
+  #       cpu: 200m
+  #       memory: 64Mi
   # - name: fuse-apicurito-generator
   #   kind: dc
   #   resources: 
@@ -26,14 +26,3 @@ apicurito_resources:
   #     requests: 
   #       cpu: 200m
   #       memory: 64Mi
-  - name: missing-resource
-    kind: dc
-    resources:
-      requests:
-        memory: 20M
-  - name: name-is-irrelevant 
-    kind: bad-kind
-    resources:
-      - container: xyz
-        requests:
-          memory: 20M
