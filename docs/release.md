@@ -23,7 +23,7 @@ You may need to request permissions to modify these.
 
 * Check with the team if there is anything remaining to be merged/cherry-picked to the appropriate branch.
 
-### Minor Release
+### Minor Release
 
 To cut the first RC for a new minor release (e.g. 1.5.0):
 
@@ -34,7 +34,7 @@ For subsequent RCs, do the following:
        
 `./scripts/release.sh -b v1.5 -r release-1.5.0-rc2`
 
-### Patch Release
+### Patch Release
 
 To cut the first RC for a new patch release (e.g. v1.5.1):
 
@@ -45,10 +45,10 @@ To cut subsequent RCs for a patch release:
 `./scripts/release.sh -b v1.5 -r release-1.5.1-rc2`
 
 
-## Resetting the upgrade playbook
+## Resetting the upgrade playbook
 
 
-### Minor Release
+### Minor Release
 
 There may be logic in the upgrade playbook that is targetted at a specific release only.
 After the minor release branch is created, the upgrade playbook in `playbooks/upgrades/upgrade.yml` should be reviewed and reset on `master` to remove any version specific blocks, tasks or roles being included.
@@ -72,7 +72,7 @@ For example
 ## SOPs/help repo
 
 
-### Minor Release
+### Minor Release
 
 1) Checkout and pull down the latest `master` of https://github.com/fheng/integreatly-help (private repo)
 2) Create a new branch for the release. e.g.:
