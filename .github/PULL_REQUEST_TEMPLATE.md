@@ -4,7 +4,8 @@
 ## Verification Steps
 As the verifier of the PR the following process should be done:
 
-- Ensure the developer of the PR has attached a log of the installation run from his branch to the jira or pr and check that it exited as expected.
+### Installation Verification
+- Ensure the author of the PR has attached a log of the installation run from his branch to the jira or pr and check that it exited as expected.
 - Verify the fresh installation is correct on cluster provided by PR author 
 - Ask the developer to run the upgrade and attach an upgrade log. Ensure and that it exited as expected. If possible look at the tasks that ran and see they match the PR
 - Re check the cluster and ensure the changes expected happend after the upgrade.
