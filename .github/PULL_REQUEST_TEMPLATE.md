@@ -2,6 +2,13 @@
 <!-- Add any additional information needed. Such as the Jira or GH issue this PR relates to or any other context you feel is necessary.) -->
 
 ## Verification Steps
+As the verifier of the PR the following process should be done:
+
+- Ensure the developer of the PR has attached a log of the installation run from his branch to the jira or pr and check that it exited as expected.
+- Ask the developer do they have a cluster on which you can verify the fresh installation is correct.
+- Ask the developer to run the upgrade and attach an upgrade log. Ensure and that it exited as expected. If possible look at the tasks that ran and see they match the PR
+- Re check the cluster and ensure the changes expected happend after the upgrade.
+
 <!--
 Add the steps required to check this change. Following an example.
 
