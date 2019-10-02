@@ -5,3 +5,7 @@
   vars:
     ns: "{{ fuse_namespace }}"
     resources: "{{ fuse_resources }}"
+  when:
+    - fuse_resources
+    - not fuse_resources is none
+    - (fuse_resources | length) > 0

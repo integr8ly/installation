@@ -5,3 +5,7 @@
   vars:
     ns: "{{ webapp_namespace }}"
     resources: "{{ webapp_resources }}"
+  when:
+    - webapp_resources
+    - not webapp_resources is none
+    - (webapp_resources | length) > 0
