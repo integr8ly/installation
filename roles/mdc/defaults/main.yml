@@ -21,15 +21,5 @@ idm_documentation_url: "{{ documentation_url }}/idm.html"
 sync_documentation_url: "{{ documentation_url }}/sync.html"
 mss_documentation_url: "{{ documentation_url }}/mss.html"
 
-#monitor
-mdc_monitor_resource_items:
-  - "{{ mdc_operator_resources }}/monitor/service_monitor.yaml"
-  - "{{ mdc_operator_resources }}/monitor/mdc_service_monitor.yaml"
-mdc_monitor_templates:
-  - operator_grafana
-  - operator_prometheus_rules
-  - mdc_prometheus_rules
-  - mdc_grafana_dashboard
-
 #scaling
 mdc_resources: []
