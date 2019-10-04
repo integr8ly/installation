@@ -1,5 +1,5 @@
-*                               @pmccarthy @odra @JameelB @philbrookes @david-martin @mikenairn @maleck13 @pb82 @tremes @matskiv @pawelpaszki @jessesarn @davidkirwan @StevenTobin @davidffrench @obrienrobert @damienomurchu
-playbooks/install_mobile_*      @pmccarthy @odra @JameelB @philbrookes @david-martin @mikenairn @maleck13 @pb82 @tremes @matskiv @pawelpaszki @jessesarn @davidkirwan @StevenTobin @davidffrench @obrienrobert @damienomurchu @wei-lee @grdryn
-roles/mdc/                      @pmccarthy @odra @JameelB @philbrookes @david-martin @mikenairn @maleck13 @pb82 @tremes @matskiv @pawelpaszki @jessesarn @davidkirwan @StevenTobin @davidffrench @obrienrobert @damienomurchu @wei-lee @grdryn
-roles/mobile-security-service/  @pmccarthy @odra @JameelB @philbrookes @david-martin @mikenairn @maleck13 @pb82 @tremes @matskiv @pawelpaszki @jessesarn @davidkirwan @StevenTobin @davidffrench @obrienrobert @damienomurchu @wei-lee @grdryn
-roles/ups/                      @pmccarthy @odra @JameelB @philbrookes @david-martin @mikenairn @maleck13 @pb82 @tremes @matskiv @pawelpaszki @jessesarn @davidkirwan @StevenTobin @davidffrench @obrienrobert @damienomurchu @wei-lee @grdryn
+*                               @pmccarthy @philbrookes @david-martin @mikenairn @maleck13 @pb82 @jessesarn @davidffrench
+playbooks/install_mobile_*      @pmccarthy @philbrookes @david-martin @mikenairn @maleck13 @pb82 @jessesarn @davidffrench @wei-lee @grdryn
+roles/mdc/                      @pmccarthy @philbrookes @david-martin @mikenairn @maleck13 @pb82 @jessesarn @davidffrench @wei-lee @grdryn
+roles/mobile-security-service/  @pmccarthy @philbrookes @david-martin @mikenairn @maleck13 @pb82 @jessesarn @davidffrench @wei-lee @grdryn
+roles/ups/                      @pmccarthy @philbrookes @david-martin @mikenairn @maleck13 @pb82 @jessesarn @davidffrench @wei-lee @grdryn
