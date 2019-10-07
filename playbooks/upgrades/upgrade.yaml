@@ -133,3 +133,4 @@
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
+- import_playbook: "../mobile_generate_manifest.yml"
