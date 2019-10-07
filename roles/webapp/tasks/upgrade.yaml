@@ -22,6 +22,15 @@
   failed_when: rollout_cmd.rc != 0
   changed_when: rollout_cmd.rc == 0
 
+- name: Add mobile walkthrough if mdc is installed
+  set_fact:
+    webapp_walkthrough_locations: "{{ webapp_walkthrough_locations + [mobile_walkthrough_location] }}"
+  when:
+    - mdc is defined
+    - mobile_walkthrough_location is defined
+    - mdc|bool == True
+    - mobile_walkthrough_location|length > 0
+
 - name: Generate WebApp custom resource template
   template:
     src: "cr.yaml.j2"
