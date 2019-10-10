@@ -8,6 +8,9 @@
 * Setup the release dashboard in Jira (See Jira Release Dashboard section below)
 * Setup a recurring checkpoint call for the release (once per day) as soon as an ER1 or RC1 is cut
 
+
+RANDOM UPDATE 
+
 ## Jira Release Dashboard
 
 There is a release dashboard that shows all relevant issues for a release and their status (https://issues.jboss.org/secure/Dashboard.jspa?selectPageId=12329297).
