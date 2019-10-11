@@ -1,9 +1,40 @@
 ---
 
+- set_fact:
+    valid_resource_patches: '{{ resources | selectattr("kind","defined") | selectattr("name","defined") | list }}'
+
+- name: Warn about invalid patches that will be skipped
+  pause:
+    prompt: |
+
+      ***************************************************************************
+
+      WARNING: one or more patch items are invalid for namespace for ns={{ ns }}
+
+      ***************************************************************************
+
+      The following resource patches will be processed:
+      
+      {% for i in (resources | intersect(valid_resource_patches)) %}
+        {{ i }}
+      {% endfor %}
+      
+      The following resource patches will NOT be processed:
+
+      {% for i in (resources | difference(valid_resource_patches)) %}
+        {{ i }}
+      {% endfor %}
+      
+      {{  (resources | difference(valid_resource_patches)) }}
+      {{  (resources | difference(valid_resource_patches)) | length }}
+
+      Press enter to continue or Ctrl+C to abort?
+  when: (resources | difference(valid_resource_patches)) | length > 0
+
 -
   include_tasks: patch_resource.yml
   with_items:
-    "{{ resources }}"
+    "{{ valid_resource_patches }}"
   loop_control:
     loop_var: resource_patch
 
@@ -13,9 +44,9 @@
   poll: 0
   register: rollout_status
   with_items:
-    "{{ resources }}"
-  when: resource_limits_wait_for_rollouts_per_ns | default(true) | bool
-
+    '{{ valid_resource_patches }}'
+  when:
+    - resource_limits_wait_for_rollouts_per_ns | default(true) | bool
 
 - name: Wait for all rollouts to complete for ns={{ ns }}
   async_status: jid={{ item.ansible_job_id }}

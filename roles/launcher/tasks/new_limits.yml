@@ -5,7 +5,4 @@
   vars:
     ns: "{{ launcher_namespace }}"
     resources: "{{ launcher_resources }}"
-  when:
-    - launcher_resources
-    - not launcher_resources is none
-    - (launcher_resources | length) > 0
+  when: (launcher_resources | d([], true) | length) > 0

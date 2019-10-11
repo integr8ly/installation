@@ -5,8 +5,4 @@
   vars:
     ns: "{{ rhsso_namespace }}"
     resources: "{{ rhsso_resources }}"
-  when:
-    - rhsso_resources
-    - not rhsso_resources is none
-    - (rhsso_resources | length) > 0
-
+  when: (rhsso_resources | d([], true) | length) > 0

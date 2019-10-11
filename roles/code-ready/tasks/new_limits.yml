@@ -5,7 +5,4 @@
   vars:
     ns: "{{ che_namespace }}"
     resources: "{{ codeready_resources }}"
-  when:
-    - codeready_resources
-    - not codeready_resources is none
-    - (codeready_resources | length) > 0
+  when: (codeready_resources | d([], true) | length) > 0

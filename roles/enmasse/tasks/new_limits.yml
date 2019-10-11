@@ -5,7 +5,4 @@
   vars:
     ns: "{{ enmasse_namespace }}"
     resources: "{{ enmasse_resources }}"
-  when:
-    - enmasse_resources
-    - not enmasse_resources is none
-    - (enmasse_resources | length) > 0
+  when: (enmasse_resources | d([], true) | length) > 0

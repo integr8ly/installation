@@ -11,7 +11,4 @@
   vars:
     ns: "{{ threescale_namespace }}"
     resources: "{{ threescale_resources }}"
-  when:
-    - threescale_resources
-    - not threescale_resources is none
-    - (threescale_resources | length) > 0
+  when: (threescale_resources | d([], true) | length) > 0

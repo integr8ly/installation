@@ -5,7 +5,4 @@
   vars:
     ns: "{{ mdc_namespace }}"
     resources: "{{ mdc_resources }}"
-  when:
-    - mdc_resources
-    - not mdc_resources is none
-    - (mdc_resources | length) > 0
+  when: (mdc_resources | d([], true) | length) > 0

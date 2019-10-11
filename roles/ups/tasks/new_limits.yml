@@ -5,7 +5,4 @@
   vars:
     ns: "{{ ups_namespace }}"
     resources: "{{ ups_resources }}"
-  when:
-    - ups_resources
-    - not ups_resources is none
-    - (ups_resources | length) > 0
+  when: (ups_resources | d([], true) | length) > 0
