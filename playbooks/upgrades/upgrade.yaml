@@ -125,12 +125,6 @@
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
 
-    # Webconsole customizations
-    - name: Customise Openshift Console
-      include_role:
-        name: customise-web-console
-        tasks_from: install
-
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
 - import_playbook: "../mobile_generate_manifest.yml"
