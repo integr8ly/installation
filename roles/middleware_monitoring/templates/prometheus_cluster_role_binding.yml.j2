@@ -8,7 +8,7 @@ roleRef:
   name: prometheus-application-monitoring
 subjects:
 - kind: ServiceAccount
-  name: prometheus-application-monitoring
+  name: prometheus-service-account
   namespace: "{{ monitoring_namespace }}"
 userNames:
-- system:serviceaccount:{{ monitoring_namespace }}:prometheus-application-monitoring
+- system:serviceaccount:{{ monitoring_namespace }}:prometheus-service-account
