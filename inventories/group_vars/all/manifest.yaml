@@ -131,7 +131,7 @@ mobile_walkthrough_location: 'https://github.com/aerogear/mobile-walkthrough#{{ 
 
 monitoring_label_name: 'monitoring-key'
 monitoring_label_value: 'middleware'
-middleware_monitoring_operator_release_tag: '0.0.25'
+middleware_monitoring_operator_release_tag: '0.0.27'
 middleware_monitoring_operator_resources: 'https://raw.githubusercontent.com/integr8ly/application-monitoring-operator/{{ middleware_monitoring_operator_release_tag }}/deploy'
 
 msbroker_release_tag: 'v0.0.10'
