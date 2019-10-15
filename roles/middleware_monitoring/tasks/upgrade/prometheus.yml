@@ -33,6 +33,12 @@
   retries: 10
   delay: 5
 
+- name: Delete prometheus operator
+  shell: "oc delete deployment prometheus-operator -n {{ monitoring_namespace }}"
+  register: delete_prometheus_operator_cmd
+  failed_when: delete_prometheus_operator_cmd.stderr != '' and 'NotFound' not in delete_prometheus_operator_cmd.stderr
+  changed_when: delete_prometheus_operator_cmd.rc == 0
+
 - name: Delete serviceaccounts
   shell: "oc delete serviceaccount {{ item }} -n {{ monitoring_namespace }}"
   register: delete_cmd

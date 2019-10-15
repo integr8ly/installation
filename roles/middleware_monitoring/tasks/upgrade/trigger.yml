@@ -41,12 +41,3 @@
   register: rollout_cmd
   failed_when: rollout_cmd.rc != 0
   changed_when: rollout_cmd.rc == 0
-
-- name: Wait for Grafana to become available
-  shell: "oc get grafanas grafana -n {{ monitoring_namespace }}"
-  register: get_grafana_cmd
-  failed_when: get_grafana_cmd.rc != 0
-  changed_when: get_grafana_cmd.rc == 0
-  until: "'not found' not in get_grafana_cmd.stdout"
-  retries: 10
-  delay: 5
