@@ -1,0 +1,8 @@
+---
+- name: "include rhsso vars"
+  include_vars: ../../rhsso/defaults/main.yml
+
+- name: patch new operator version
+  shell: "oc patch deployment keycloak-operator -n {{ rhsso_user_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_sso_operator_image }}\"}]'"
+  register: patch
+  failed_when: patch.stderr != ''

@@ -39,6 +39,16 @@
         mobile_security_service: false
         ups: false
 
+    - name: Upgrade keycloak-operator
+      include_role:
+        name: rhsso
+        tasks_from: upgrade.yaml
+
+    - name: Upgrade keycloak-operator for user-sso
+      include_role:
+        name: rhsso-user
+        tasks_from: upgrade.yaml
+
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
 - import_playbook: "../mobile_generate_manifest.yml"
