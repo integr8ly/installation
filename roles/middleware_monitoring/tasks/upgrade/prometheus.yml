@@ -15,7 +15,7 @@
   shell: "oc get statefulset prometheus-application-monitoring -n {{ monitoring_namespace }}"
   register: get_statefulset_cmd
   failed_when: get_statefulset_cmd.rc == 0
-  changed_when: "'NotFound' in get_deployment_cmd.stderr"
+  changed_when: "'NotFound' in get_statefulset_cmd.stderr"
   retries: 10
   delay: 5
 
@@ -29,7 +29,7 @@
   shell: "oc get statefulset alertmanager-application-monitoring -n {{ monitoring_namespace }}"
   register: get_statefulset_cmd
   failed_when: get_statefulset_cmd.rc == 0
-  changed_when: "'NotFound' in get_deployment_cmd.stderr"
+  changed_when: "'NotFound' in get_statefulset_cmd.stderr"
   retries: 10
   delay: 5
 
