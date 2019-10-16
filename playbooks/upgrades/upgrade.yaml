@@ -30,6 +30,25 @@
     - name: Expose 3scale vars
       include_vars: "../../roles/3scale/defaults/main.yml"
 
+    # Grafana
+    - include_role:
+        name: middleware_monitoring
+        tasks_from: upgrade/grafana
+      when: target_version.stdout == "release-1.5.1"
+
+    # Prometheus & Alertmanager
+    - include_role:
+        name: middleware_monitoring
+        tasks_from: upgrade/prometheus
+      when: target_version.stdout == "release-1.5.1"
+
+    # Pull the trigger on the monitoring upgrade
+    - include_role:
+        name: middleware_monitoring
+        tasks_from: upgrade/trigger
+      when: target_version.stdout == "release-1.5.1"
+    # End monitoring upgrade
+
     - name: Recreate any CRs for alerts to ensure we have the latest
       include_role:
         name: middleware_monitoring_config

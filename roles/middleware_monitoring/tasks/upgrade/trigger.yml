@@ -12,14 +12,6 @@
   changed_when: aom_role_apply_cmd.rc == 0
   with_items: "{{ monitoring_resources }}"
 
-- name: Upgrade the prometheus operator roles
-  include: ./apply_resource_from_template.yml
-  with_items:
-    - "prometheus_operator_cluster_role.yml"
-
-- name: Label additional scrape config secret
-  shell: "oc label secret {{ additional_scrape_config_name }} monitoring-key={{ monitoring_label_value }} -n {{ monitoring_namespace }} --overwrite"
-
 - name: Delete the lockfile
   shell: "oc delete configmap application-monitoring-operator-lock -n {{ monitoring_namespace }}"
   register: delete_lockfile_cmd
@@ -32,11 +24,6 @@
 
 - set_fact:
     aom_cr_name: "{{ get_amo_cr_name_cmd.stdout | trim }}"
-
-- name: Apply latest application monitoring CR changes
-  include: ./apply_resource_from_template.yml
-  with_items:
-    - "application_monitoring_cr_upgrade.yml"
 
 - name: Remove the status from the CR to trigger a reconcile
   shell: oc patch applicationmonitoring {{ aom_cr_name }} -n {{ monitoring_namespace }} --type json -p '[{"op":"replace", "path":"/status/phase", "value":0}]'
@@ -54,38 +41,3 @@
   register: rollout_cmd
   failed_when: rollout_cmd.rc != 0
   changed_when: rollout_cmd.rc == 0
-
-- name: Wait for Grafana to become available
-  shell: "oc get grafanas grafana -n {{ monitoring_namespace }}"
-  register: get_grafana_cmd
-  failed_when: get_grafana_cmd.rc != 0
-  changed_when: get_grafana_cmd.rc == 0
-  until: "'not found' not in get_grafana_cmd.stdout"
-  retries: 10
-  delay: 5
-
-- name: Patch grafana dashboard selector
-  register: grafana_patch
-  failed_when: grafana_patch.stderr != '' and 'not patched' not in grafana_patch.stderr
-  changed_when: grafana_patch.rc == 0
-  shell: |
-    oc patch -n {{ monitoring_namespace }} grafanas grafana --type=json -p '[
-      {
-        "op": "replace",
-        "path": "/spec/dashboardLabelSelector",
-        "value": [
-                {
-                    "matchExpressions": [
-                        {
-                            "key": "monitoring-key",
-                            "operator": "In",
-                            "values": ["middleware"]
-                        }
-                    ]
-                },
-                {
-                    "matchLabels": {
-                        "app": "syndesis"
-                    }
-                }
-            ]}]'

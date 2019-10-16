@@ -15,7 +15,7 @@
   shell: "oc get statefulset prometheus-application-monitoring -n {{ monitoring_namespace }}"
   register: get_statefulset_cmd
   failed_when: get_statefulset_cmd.rc == 0
-  changed_when: "'NotFound' in get_deployment_cmd.stderr"
+  changed_when: "'NotFound' in get_statefulset_cmd.stderr"
   retries: 10
   delay: 5
 
@@ -29,9 +29,15 @@
   shell: "oc get statefulset alertmanager-application-monitoring -n {{ monitoring_namespace }}"
   register: get_statefulset_cmd
   failed_when: get_statefulset_cmd.rc == 0
-  changed_when: "'NotFound' in get_deployment_cmd.stderr"
+  changed_when: "'NotFound' in get_statefulset_cmd.stderr"
   retries: 10
   delay: 5
+
+- name: Delete prometheus operator
+  shell: "oc delete deployment prometheus-operator -n {{ monitoring_namespace }}"
+  register: delete_prometheus_operator_cmd
+  failed_when: delete_prometheus_operator_cmd.stderr != '' and 'NotFound' not in delete_prometheus_operator_cmd.stderr
+  changed_when: delete_prometheus_operator_cmd.rc == 0
 
 - name: Delete serviceaccounts
   shell: "oc delete serviceaccount {{ item }} -n {{ monitoring_namespace }}"
