@@ -5,3 +5,7 @@
   tasks:
     - include_role:
         name: prerequisites
+
+    - name: Debug Variables
+      debug:
+          var: pull_secret_name
