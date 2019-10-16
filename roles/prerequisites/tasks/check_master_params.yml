@@ -4,6 +4,8 @@
       msg: "eval_app_host is required when run_master_tasks=false"
     failed_when: eval_app_host is not defined
   - debug:
+      msg: "PULL SECRET NAME: {{ pull_secret_name }}"
+  - debug:
       msg: "openshift_master_url is required when run_master_tasks=false"
     failed_when: openshift_master_url is not defined
   - name: Set EVAL_VARS from vars as not running master tasks

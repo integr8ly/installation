@@ -1,9 +1,5 @@
 ---
 
-- name: Debug Variables
-  debug:
-    msg: "PULL SECRET NAME: {{ pull_secret_name }}"
-
 - name: "Verify oc version"
   include_tasks: oc_version.yml
 
