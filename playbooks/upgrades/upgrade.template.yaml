@@ -1,0 +1,27 @@
+---
+- hosts: master
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: openshift
+        tasks_from: set_master_vars
+      when: run_master_tasks | default(true) | bool
+
+# Required for Ansible Tower installs that need to login via oc as a prerequisite      
+- import_playbook: "../openshift.yml"
+
+- hosts: localhost
+  gather_facts: yes
+  tasks:
+    - include_role:
+        name: prerequisites
+        tasks_from: upgrade
+      vars:
+        from_versions:
+          - "PREVIOUS_VERSION"
+
+# Individual product upgrade tasks get added here
+
+#Update product version (should always be last)
+- import_playbook: "../generate-customisation-inventory.yml"
+- import_playbook: "../mobile_generate_manifest.yml"
