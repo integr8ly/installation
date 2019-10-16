@@ -1,11 +1,11 @@
 ---
 
-- name: "Verify oc version"
-  include_tasks: oc_version.yml
-
 - name: Debug Variables
   debug:
-    var: pull_secret_name
+    msg: "PULL SECRET NAME: {{ pull_secret_name }}"
+
+- name: "Verify oc version"
+  include_tasks: oc_version.yml
 
 - name: "Ensure master params are present"
   include_tasks: check_master_params.yml
