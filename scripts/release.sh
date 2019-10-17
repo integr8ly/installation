@@ -60,8 +60,11 @@ else
     exit 1
 fi
 
+upgradeTasksFrom = "upgrade"
+
 if [[ $PATCH_VERSION -gt 0 ]]; then
     RELEASE_TYPE="patch"
+    upgradeTasksFrom = "upgrade_patch"
 else
     if [[ $MINOR_VERSION -gt 0 ]]; then
         RELEASE_TYPE="minor"
@@ -114,9 +117,10 @@ git tag ${releaseTag}
 
 #reset upgrade playbook if this is the final release
 if [[ -z $LABEL_VERSION ]]; then
-    echo "resetting upgrade playbook after final release $releaseTag"
-    sed "s,PREVIOUS_VERSION,$releaseTag,g" playbooks/upgrades/upgrade.template.yaml > playbooks/upgrades/upgrade.yaml
-    git commit -am "Reset upgrade playbook after final release ${releaseTag}"
+    echo "resetting upgrade variables after final release $releaseTag"
+    sed "s,UPGRADE_VERSION_FROM,$releaseTag,g" scripts/upgrade.template.yml | \
+    sed "s,UPGRADE_TASKS_FROM,$upgradeTasksFrom,g" > playbooks/group_vars/all/upgrade.yml
+    git commit -am "Reset upgrade variables after final release ${releaseTag}"
 fi
 
 #push branch
