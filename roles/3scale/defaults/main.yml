@@ -23,7 +23,6 @@ threescale_limit_range_pod_min_memory: 6Mi
 #Users
 rhsso_evals_admin_email: customer-admin@example.com
 rhsso_evals_admin_username: customer-admin
-rhsso_evals_admin_password: Password1
 
 rhsso_seed_users_email_format: evals%02d@example.com
 rhsso_seed_users_name_format: evals%02d
@@ -35,12 +34,6 @@ threescale_cluster_admin_old_username: admin
 
 #Template Params
 threescale_pvc_rwx_storageclassname: efs
-
-threescale_file_upload_storage: "{{ eval_threescale_file_upload_storage | default('filesystem') }}"
-threescale_storage_s3_aws_access_key: "{{ eval_threescale_storage_s3_aws_access_key | default('null') }}"
-threescale_storage_s3_aws_secret_key: "{{ eval_threescale_storage_s3_aws_secret_key | default('null') }}"
-threescale_storage_s3_aws_region: "{{ eval_threescale_storage_s3_aws_region | default('null') }}"
-threescale_storage_s3_aws_bucket: "{{ eval_threescale_storage_s3_aws_bucket | default('null') }}"
 
 threescale_master_access_token_secret_name: 3scale-master-access-token
 

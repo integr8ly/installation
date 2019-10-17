@@ -52,6 +52,9 @@ openshift_login: True
 openshift_master_public_url: "https://console.{{ cluster_name }}.openshift.com"
 openshift_master_url: "https://api.{{ cluster_name }}.openshift.com"
 
+# Required for Solution Explorer Support
+openshift_asset_url: "https://console.{{ cluster_name }}.openshift.com"
+
 # Auth token set via ansible tower survey
 openshift_token: "{{ openshift_token }}"
 
@@ -76,12 +79,5 @@ eval_threescale_storage_s3_aws_bucket: "{{ threescale_s3_bucket_name }}"
 eval_threescale_storage_s3_aws_region: "{{ threescale_s3_bucket_region }}"
 eval_threescale_file_upload_storage: s3
 
-# Setup the rh-sso instance for user applications
-# See group_vars/all/common.yml & relevant SOP for more info when 
-# setting this to False.
-user_rhsso: True
-
-# Mobile Developer Services configuration
-mobile_security_service: False
-ups: False
-mdc: False
+# Use Integreatly Operator for Installation
+integreatly_operator: False

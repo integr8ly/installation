@@ -47,3 +47,6 @@ eval_threescale_storage_s3_aws_bucket: "{{ openshift_aws_clusterid }}-3scale"
 mobile_security_service: True
 ups: True
 mdc: True
+
+# Use Integreatly Operator for Installation
+integreatly_operator: False

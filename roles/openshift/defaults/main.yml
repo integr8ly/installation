@@ -1,6 +1,1 @@
 ---
-openshift_login: false
-openshift_username: ''
-openshift_password: ''
-openshift_token: ''
-openshift_master_public_url: ''
