@@ -1,10 +1,5 @@
 ---
 backup_namespace: "openshift-integreatly-backups"
-aws_s3_backup_secret_name: 's3-credentials'
-
-backup_s3_aws_access_key: ""
-backup_s3_aws_secret_key: ""
-backup_s3_aws_bucket: ""
 
 component_backup_secret_namespace: '{{ backup_namespace }}'
 backup_resources_cluster:
