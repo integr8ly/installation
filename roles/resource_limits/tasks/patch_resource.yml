@@ -2,7 +2,7 @@
 
 - name: Check resources patch inputs are valid/complete
   set_fact:
-    needs_horizontal_scaling: "{{ (resource_patch.replicas | d(false, true) is number) and (resource_limits_horizontal_scaling | default(false) | bool) }}"
+    needs_horizontal_scaling: "{{ ((resource_patch.replicas | d(-1, true)) > 0) and (resource_limits_horizontal_scaling | default(false) | bool) }}"
     needs_vertical_scaling: "{{ (resource_patch.resources | d({}) | length > 0) and (resource_limits_vertical_scaling | default(true) | bool) }}"
 
 - name: Check if resource exists
@@ -25,14 +25,14 @@
       failed_when:
         - rollout_pause_cmd.rc != 0
         - rollout_pause_cmd.stderr is not regex("is already paused|is not supported")
-      
+
     # set resources does not properly handle disabling a limit by setting it to 0 when directly
     # modifying the config.  We can bypass the incorrect validation by outputting the new config
     # with dry-run and applying it with replace instead.
-    # 
+    #
     # A request/limit with a value of 0 has the same behavior as if the setting wasn't there in
     # the first place; however, people aren't used to seeing this.  Since we are already piping the
-    # output anyway, we go ahead and remove the confusing values=0 with a simple pass thru jq 
+    # output anyway, we go ahead and remove the confusing values=0 with a simple pass thru jq
     - name: Update resource requests/limits for {{ resource_patch.kind }}/{{ resource_patch.name }}
       vars:
         containerResources: |
