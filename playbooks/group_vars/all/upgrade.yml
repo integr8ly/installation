@@ -1,0 +1,22 @@
+# Upgrade Products
+upgrade_products:
+- 3scale
+- amq_streams #Not in DeLorean
+- apicurito #Not in DeLorean
+- backup #backup-container in DeLorean
+#- code-ready #codeready in DeLorean
+- enmasse #amq-online in DeLorean
+- fuse
+- fuse_managed #fuse-online in DeLorean
+- gitea
+- launcher # Not in DeLorean
+- mdc #mdc-operator in DeLorean
+- middleware_monitoring #middleware-monitoring in DeLorean
+- mobile_security_service #Not in DeLorean
+- msbroker
+- rhsso
+- ups #Not in DeLorean
+- webapp
+
+#upgrade_tasks_from: upgrade
+upgrade_tasks_from: upgrade_patch
