@@ -112,11 +112,12 @@ sed -i.bak -E "s/^integreatly_version: .*$/integreatly_version: ${releaseTag}/g"
 git commit -am "release manifest version  update for ${releaseTag}"
 git tag ${releaseTag}
 
-#reset upgrade playbook if this is the final release
+#reset upgrade playbook and variables if this is the final release
 if [[ -z $LABEL_VERSION ]]; then
-    echo "resetting upgrade playbook after final release $releaseTag"
-    sed "s,PREVIOUS_VERSION,$releaseTag,g" playbooks/upgrades/upgrade.template.yaml > playbooks/upgrades/upgrade.yaml
-    git commit -am "Reset upgrade playbook after final release ${releaseTag}"
+    echo "resetting upgrade playbook and variables after final release $releaseTag"
+    cp scripts/upgrade.template.yml playbooks/upgrade.yml
+    sed "s,UPGRADE_FROM_VERSION,$releaseTag,g" scripts/upgrade_vars.template.yml > playbooks/group_vars/all/upgrade.yml
+    git commit -am "Reset upgrade variables after final release ${releaseTag}"
 fi
 
 #push branch
