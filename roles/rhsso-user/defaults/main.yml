@@ -11,12 +11,8 @@ rhsso_user_resources:
     resources:
       requests:
         memory: 500Mi
-#      limits: 
-#        memory: 1Gi
   - name: sso-postgresql
     kind: dc
     resources:
       requests:
         memory: 25Mi
-#  - name: keycloak-operator
-#    kind: deploy

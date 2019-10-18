@@ -32,32 +32,4 @@ ups_svc_monitor_templates:
 ups_message_broker: false
 
 #scaling
-ups_resources:
-  # - name: unifiedpush
-  #   kind: dc
-  #   resources: 
-  #     - container: ups
-  #       limits: 
-  #         cpu: 1
-  #         memory: 2Gi
-  #       requests: 
-  #         cpu: 500m
-  #         memory: 512Mi
-  #     - container: ups-oauth-proxy
-  #       limits: 
-  #         cpu: 20m
-  #         memory: 64Mi
-  #       requests: 
-  #         cpu: 10m
-  #         memory: 32Mi
-  # - name: unifiedpush-postgresql
-  #   kind: dc
-  #   resources: 
-  #     limits: 
-  #       cpu: 1
-  #       memory: 512Mi
-  #     requests: 
-  #       cpu: 250m
-  #       memory: 256Mi
-  # - name: unifiedpush-operator
-  #   kind: deploy
+ups_resources: []

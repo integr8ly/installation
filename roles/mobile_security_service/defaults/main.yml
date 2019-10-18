@@ -22,22 +22,4 @@ mobile_security_service_monitoring_resource_templates:
 
 mdc_namespace: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"
 
-mobile_security_service_resources:
-  # - name: mobile-security-service
-  #   kind: deploy
-  #   resources: 
-  #     - container: oauth-proxy
-  #     - container: application
-  #       limits: 
-  #         memory: 512Mi
-  #       requests: 
-  #         memory: 512Mi
-  # - name: mobile-security-service-db
-  #   kind: deploy
-  #   resources: 
-  #     limits: 
-  #       memory: 512Mi
-  #     requests: 
-  #       memory: 512Mi
-  # - name: mobile-security-service-operator
-  #   kind: deploy
+mobile_security_service_resources: []

@@ -43,6 +43,7 @@
   async: 7200
   poll: 0
   register: rollout_status
+  changed_when: rollout_status.stderr is defined and rollout_status.stderr != "" and (rollout_status.stderr is regex("not found|server doesn't have a resource type"))
   with_items:
     '{{ valid_resource_patches }}'
   when:

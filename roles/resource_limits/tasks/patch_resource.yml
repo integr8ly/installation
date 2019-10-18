@@ -7,8 +7,8 @@
 
 - name: Check if resource exists
   shell: oc get {{ resource_patch.kind }} {{ resource_patch.name }} -n {{ ns }}
-  register: target_resource_exists
   changed_when: false
+  register: target_resource_exists
   failed_when:
     - target_resource_exists.rc != 0
     - not (target_resource_exists.stderr is regex("not found|server doesn't have a resource type") and not (resource_limits_fail_on_missing_resource | default(false) | bool))

@@ -7,22 +7,4 @@ apicurito_template_file_format: yaml
 apicurito_route_hostname: apicurito-app
 
 
-apicurito_resources:
-  # - name: apicurito-ui
-  #   kind: dc
-  #   resources: 
-  #     limits: 
-  #       cpu: 1
-  #       memory: 256Mi
-  #     requests: 
-  #       cpu: 200m
-  #       memory: 64Mi
-  # - name: fuse-apicurito-generator
-  #   kind: dc
-  #   resources: 
-  #     limits: 
-  #       cpu: 1
-  #       memory: 256Mi
-  #     requests: 
-  #       cpu: 200m
-  #       memory: 64Mi
+apicurito_resources: []

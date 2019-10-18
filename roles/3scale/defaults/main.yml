@@ -103,42 +103,15 @@ threescale_resources:
     requests:
       cpu: 5m
       memory: 600Mi
-  # resources: 
-  # - container: system-master
-  #   limits: 
-  #     cpu: 1
-  #     memory: 800Mi
-  #   requests: 
-  #     cpu: 50m
-  #     memory: 600Mi
-  # - container: system-provider
-  #   limits: 
-  #     cpu: 1
-  #     memory: 800Mi
-  #   requests: 
-  #     cpu: 50m
-  #     memory: 600Mi
-  # - container: system-developer
-  #   limits: 
-  #     cpu: 1
-  #     memory: 800Mi
-  #   requests: 
-  #     cpu: 50m
-  #     memory: 600Mi
 - name: system-memcache
   kind: dc
   resources:
-    # limits: 
-    #   cpu: 250m
-    #   memory: 96Mi
     requests:
       cpu: 5m
       memory: 10Mi
 - name: system-mysql
   kind: dc
   resources:
-    # limits: 
-    #   memory: 2Gi
     requests:
       cpu: 25m
       memory: 512Mi
@@ -149,14 +122,10 @@ threescale_resources:
       cpu: 15m
       memory: 30Mi
     limits:
-      #   cpu: 500m
       memory: 0
 - name: system-sidekiq
   kind: dc
   resources:
-    # limits: 
-    #   cpu: 1
-    #   memory: 2Gi
     requests:
       cpu: 10m
       memory: 50Mi
@@ -164,7 +133,7 @@ threescale_resources:
 - name: system-sphinx
   kind: dc
   resources:
-    limits: 
+    limits:
       cpu: 1
       memory: 512Mi
     requests:
@@ -173,9 +142,6 @@ threescale_resources:
 - name: zync
   kind: dc
   resources:
-    # limits: 
-    #   cpu: 1
-    #   memory: 512Mi
     requests:
       cpu: 15m
       memory: 120M
@@ -186,17 +152,11 @@ threescale_resources:
     requests:
       cpu: 5m
       memory: 60M
-    # limits: 
-    #   cpu: 250m
-    #   memory: 2G
-# - name: zync-que
-#   resources:
-#     limits:
-#       cpu: 1
-#       memory: 512Mi
-#     requests:
-#       cpu: 250m
-#       memory: 250M
+- name: zync-que
+  kind: dc
+  resources:
+    requests:
+      cpu: 25m
 
 # Routes
 threescale_route_system_developer: system-developer
