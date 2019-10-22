@@ -13,4 +13,4 @@
 - name: Create CronJob Alerts
   shell: oc apply -f /tmp/backup-monitoring-alerts.yml -n {{ monitoring_namespace }}
   register: create_alerts
-  failed_when: create_alerts.stderr != '' and 'AlreadyExists' not in create_alerts.stderr
+  failed_when: create_alerts.rc != 0
