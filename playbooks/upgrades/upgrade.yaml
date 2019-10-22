@@ -58,6 +58,11 @@
         mobile_security_service: false
         ups: false
 
+    - name: Apply latest backup monitoring alerts
+      include_role:
+        name: backup
+        tasks_from: monitoring
+
     - name: Upgrade keycloak-operator
       include_role:
         name: rhsso
