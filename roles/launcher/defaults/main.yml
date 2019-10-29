@@ -37,3 +37,5 @@ launcher_backup_postgres_secret_name: "launcher-postgres-auth"
 
 launcher_frontend_route_name: "launcher"
 launcher_frontend_protocol: "https"
+
+launcher_resources: []

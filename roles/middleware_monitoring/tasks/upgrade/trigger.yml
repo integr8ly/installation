@@ -10,7 +10,7 @@
   register: aom_role_apply_cmd
   failed_when: aom_role_apply_cmd.stderr != '' and 'Warning' not in aom_role_apply_cmd.stderr
   changed_when: aom_role_apply_cmd.rc == 0
-  with_items: "{{ monitoring_resources }}"
+  with_items: "{{ monitoring_resource_items }}"
 
 - name: Upgrade the prometheus operator roles
   include: ./apply_resource_from_template.yml

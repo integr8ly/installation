@@ -21,3 +21,5 @@ mobile_security_service_monitoring_resource_templates:
   - mss_prometheus_rule
 
 mdc_namespace: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"
+
+mobile_security_service_resources: []

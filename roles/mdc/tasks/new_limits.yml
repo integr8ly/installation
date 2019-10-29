@@ -1,0 +1,8 @@
+---
+- name: Apply resource overrides for mdc
+  include_role:
+    name: resource_limits
+  vars:
+    ns: "{{ mdc_namespace }}"
+    resources: "{{ mdc_resources }}"
+  when: (mdc_resources | d([], true) | length) > 0

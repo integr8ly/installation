@@ -9,7 +9,7 @@
   shell: "oc delete -f {{ item }} -n {{ monitoring_namespace }}"
   register: monitoring_resource_delete
   failed_when: monitoring_resource_delete.stderr != '' and 'NotFound' not in monitoring_resource_delete.stderr and "no matches for kind" not in monitoring_resource_delete.stderr
-  with_items: "{{ monitoring_resources }}"
+  with_items: "{{ monitoring_resource_items }}"
 
 - name: Delete monitoring namespace
   shell: "oc delete project {{ monitoring_namespace }}"

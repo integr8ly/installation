@@ -1,7 +1,7 @@
 ---
 - name: Create Service Monitor resource
   shell: "oc apply -f {{ item }} -n {{ mdc_namespace }}"
-  with_items: "{{ mdc_monitor_resources }}"
+  with_items: "{{ mdc_monitor_resource_items }}"
   register: output
   failed_when: output.stderr != '' and 'already exists' not in output.stderr
 

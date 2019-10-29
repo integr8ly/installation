@@ -1,19 +1,53 @@
 ---
 
+- set_fact:
+    valid_resource_patches: '{{ resources | selectattr("kind","defined") | selectattr("name","defined") | list }}'
+
+- name: Warn about invalid patches that will be skipped
+  pause:
+    prompt: |
+
+      ***************************************************************************
+
+      WARNING: one or more patch items are invalid for namespace for ns={{ ns }}
+
+      ***************************************************************************
+
+      The following resource patches will be processed:
+      
+      {% for i in (resources | intersect(valid_resource_patches)) %}
+        {{ i }}
+      {% endfor %}
+      
+      The following resource patches will NOT be processed:
+
+      {% for i in (resources | difference(valid_resource_patches)) %}
+        {{ i }}
+      {% endfor %}
+      
+      {{  (resources | difference(valid_resource_patches)) }}
+      {{  (resources | difference(valid_resource_patches)) | length }}
+
+      Press enter to continue or Ctrl+C to abort?
+  when: (resources | difference(valid_resource_patches)) | length > 0
+
 -
   include_tasks: patch_resource.yml
   with_items:
-    "{{ resources }}"
+    "{{ valid_resource_patches }}"
   loop_control:
     loop_var: resource_patch
 
 - name: Set up watch for rollout status of resources with overrides
-  shell: oc rollout status {{ item.kind }}/{{ item.name }} -n {{ ns }} -w
+  shell: oc rollout status {{ item.kind }}/{{ item.name }} -n {{ ns }} -w 
   async: 7200
   poll: 0
   register: rollout_status
+  changed_when: rollout_status.stderr is defined and rollout_status.stderr != "" and (rollout_status.stderr is regex("not found|server doesn't have a resource type"))
   with_items:
-    "{{ resources }}"
+    '{{ valid_resource_patches }}'
+  when:
+    - resource_limits_wait_for_rollouts_per_ns | default(true) | bool
 
 - name: Wait for all rollouts to complete for ns={{ ns }}
   async_status: jid={{ item.ansible_job_id }}
@@ -22,3 +56,9 @@
   retries: 300
   with_items:
     "{{ rollout_status.results }}"
+  when: resource_limits_wait_for_rollouts_per_ns | default(true) | bool
+  changed_when: patch_jobs.stderr is defined and patch_jobs.stderr != "" and (patch_jobs.stderr is regex("not found|server doesn't have a resource type"))
+  failed_when:
+    - patch_jobs.rc is defined
+    - patch_jobs.rc != 0
+    - not (patch_jobs.stderr is regex("not found|server doesn't have a resource type") and not (resource_limits_fail_on_missing_resource | default(false) | bool))

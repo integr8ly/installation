@@ -4,3 +4,5 @@ fuse_cr_name: fuse-managed
 fuse_backup_postgres_secret_name: fuse-postgres-auth
 
 fuse_pull_secret_name: "syndesis-pull-secret"
+
+fuse_resources: []

@@ -7,7 +7,7 @@ monitoring_prometheus_retention: 45d
 monitoring_prometheus_storage_request: 10Gi
 
 # Resources to create via the oc tool.
-monitoring_resources:
+monitoring_resource_items:
 - "{{ middleware_monitoring_operator_resources }}/crds/BlackboxTarget.yaml"
 - "{{ middleware_monitoring_operator_resources }}/crds/ApplicationMonitoring.yaml"
 - "{{ middleware_monitoring_operator_resources }}/operator_roles/service_account.yaml"
@@ -40,3 +40,5 @@ monitoring_resource_templates_pre:
 monitoring_resource_templates_post:
   # Application monitoring resources
   - "application_monitoring_cr.yml"
+
+monitoring_resources: []

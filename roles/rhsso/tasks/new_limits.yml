@@ -5,4 +5,4 @@
   vars:
     ns: "{{ rhsso_namespace }}"
     resources: "{{ rhsso_resources }}"
-
+  when: (rhsso_resources | d([], true) | length) > 0

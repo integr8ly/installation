@@ -6,13 +6,13 @@ rhsso_user_rbac_name: mdc-account-keycloak-operator
 rhsso_user_client_id: user-sso
 
 rhsso_user_resources:
-- name: sso
-  kind: dc
-  resources:
-    requests:
-      memory: 500Mi
-- name: sso-postgresql
-  kind: dc
-  resources:
-    requests:
-      memory: 25Mi
+  - name: sso
+    kind: dc
+    resources:
+      requests:
+        memory: 500Mi
+  - name: sso-postgresql
+    kind: dc
+    resources:
+      requests:
+        memory: 25Mi

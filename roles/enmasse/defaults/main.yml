@@ -13,11 +13,6 @@ enmasse_postgres_cronjob_name: 'enmasse-postgres-backup'
 enmasse_pv_cronjob_name: 'enmasse-pv-backup'
 
 enmasse_resources:
-  - name: postgresql
-    kind: dc
-    resources:
-      requests:
-        memory: 50Mi
   - name: api-server
     kind: deploy
     resources:
@@ -28,14 +23,13 @@ enmasse_resources:
     resources:
       requests:
         memory: 75M
-  # keycloak operator undoes any externally made changes
-  # - name: keycloak
-  #   kind: deploy
-  #   resources:
-  #     requests:
-  #       memory: 750M
+  - name: postgresql
+    kind: dc
+    resources:
+      requests:
+        memory: 50Mi
   - name: service-broker
     kind: deploy
     resources:
       requests:
-        memory: 200M
+        memory: 200Mi

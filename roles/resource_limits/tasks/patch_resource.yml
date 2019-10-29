@@ -1,45 +1,99 @@
 ---
 
-- name: Pause auto-rollout for {{ resource_patch.kind }}/{{ resource_patch.name }}
-  shell: oc rollout pause {{ resource_patch.kind }}/{{ resource_patch.name }} -n {{ ns }}
-  register: rollout_pause_cmd
-  changed_when: rollout_pause_cmd.rc == 0
-  failed_when: rollout_pause_cmd.rc != 0 and ("is already paused" not in rollout_pause_cmd.stderr)
-  when:
-    - resource_limits_vertical_scaling | default(true) | bool
-    - resource_limits_horizontal_scaling | default(false) | bool
+- name: Check resources patch inputs are valid/complete
+  set_fact:
+    needs_horizontal_scaling: "{{ ((resource_patch.replicas | d(-1, true)) > 0) and (resource_limits_horizontal_scaling | default(false) | bool) }}"
+    needs_vertical_scaling: "{{ (resource_patch.resources | d({}) | length > 0) and (resource_limits_vertical_scaling | default(true) | bool) }}"
 
-# set resources does not properly handle disabling a limit by setting it to 0 when directly
-# modifying the config.  We can bypass the incorrect validation by outputting the new config
-# with dry-run and applying it with replace instead.
-# 
-# A request/limit with a value of 0 has the same behavior as if the setting wasn't there in
-# the first place; however, people aren't used to seeing this.  Since we are already piping the
-# output anyway, we go ahead and remove the confusing values=0 with a simple pass thru jq 
-- name: Update resource requests/limits for {{ resource_patch.kind }}/{{ resource_patch.name }}
-  shell: |
-    oc set resources {{ resource_patch.kind }} {{ resource_patch.name }} -n {{ ns }}
-      {%- for k,v in resource_patch.resources.items() %}
-      --{{ k }}={% for k2,v2 in v.items() %}{{ k2 }}={{ v2 }}{% if not loop.last %},{% endif %}{% endfor %}
-      {%- endfor %}
-      --dry-run -o json | jq 'del(.spec.template.spec.containers[].resources[][]|select(.=="0"))' | oc replace -f -
-  register: set_resources_cmd
-  changed_when: ('not changed' not in set_resources_cmd.stderr)
-  failed_when: set_resources_cmd.stderr != '' and ("not changed" not in set_resources_cmd.stderr)
-  when:
-    - resource_limits_vertical_scaling | default(true) | bool
-    - resource_patch.resources is defined
+- name: Check if resource exists
+  shell: oc get {{ resource_patch.kind }} {{ resource_patch.name }} -n {{ ns }}
+  changed_when: false
+  register: target_resource_exists
+  failed_when:
+    - target_resource_exists.rc != 0
+    - not (target_resource_exists.stderr is regex("not found|server doesn't have a resource type") and not (resource_limits_fail_on_missing_resource | default(false) | bool))
 
-- name: Update number of replicas for {{ resource_patch.kind }}/{{ resource_patch.name }}
-  shell: oc scale {{ resource_patch.kind }} {{ resource_patch.name }} --replicas={{ resource_patch.replicas }} -n {{ ns }}
-  register: scale_resources_cmd
+- name: Skip attempting updates that cannot succeed due to invalid target/inputs
   when:
-    - resource_limits_horizontal_scaling | default(false) | bool
-    - resource_patch.replicas is defined
+    - target_resource_exists is succeeded
+    - (needs_horizontal_scaling or needs_vertical_scaling)
+  block:
+    - name: Pause auto-rollout for {{ resource_patch.kind }}/{{ resource_patch.name }}
+      shell: oc rollout pause {{ resource_patch.kind }}/{{ resource_patch.name }} -n {{ ns }}
+      register: rollout_pause_cmd
+      changed_when: rollout_pause_cmd.rc == 0
+      failed_when:
+        - rollout_pause_cmd.rc != 0
+        - rollout_pause_cmd.stderr is not regex("is already paused|is not supported")
 
-- name: Resume auto-rollout for {{ resource_patch.kind }}/{{ resource_patch.name }} if it was paused by this script
-  shell: oc rollout resume {{ resource_patch.kind }}/{{ resource_patch.name }} -n {{ ns }}
-  register: rollout_resume_cmd
-  changed_when: rollout_resume_cmd.rc == 0
-  failed_when: rollout_resume_cmd.rc != 0 and "is not paused" not in rollout_resume_cmd.stderr
-  when: rollout_pause_cmd is changed
+    # set resources does not properly handle disabling a limit by setting it to 0 when directly
+    # modifying the config.  We can bypass the incorrect validation by outputting the new config
+    # with dry-run and applying it with replace instead.
+    #
+    # A request/limit with a value of 0 has the same behavior as if the setting wasn't there in
+    # the first place; however, people aren't used to seeing this.  Since we are already piping the
+    # output anyway, we go ahead and remove the confusing values=0 with a simple pass thru jq
+    - name: Update resource requests/limits for {{ resource_patch.kind }}/{{ resource_patch.name }}
+      vars:
+        containerResources: |
+          {% if resource_patch.resources is not defined -%}
+            []
+          {%- elif (resource_patch.resources | type_debug) == "list" -%}
+            {{ resource_patch.resources }}
+          {%- else -%}
+            {{ [resource_patch.resources] }}
+          {%- endif %}
+      shell: |
+          (set -o pipefail && oc set resources {{ resource_patch.kind }} {{ resource_patch.name }} -n {{ ns }}
+            {%- if item.container | d() | length > 0 %}
+            --containers={{ item.container }} \
+            {%- endif %}
+            {%- if item.requests | d({}) | length > 0 %}
+            --requests={% for k,v in item.requests.items() %}{{ k }}={{ v }}{% if not loop.last %},{% endif %}{% endfor %} \
+            {%- endif %}
+            {%- if item.limits | d({}) | length > 0 %}
+            --limits={% for k,v in item.limits.items() %}{{ k }}={{ v }}{% if not loop.last %},{% endif %}{% endfor %} \
+            {%- endif %}
+            --dry-run -o json | jq 'del(.spec.template.spec.containers[].resources[][]|select(.=="0"))' | oc replace -f -)
+      register: set_resources_cmd
+      changed_when: set_resources_cmd.rc == 0 and ('not changed' not in set_resources_cmd.stderr)
+      failed_when:
+        - set_resources_cmd.rc != 0
+        - set_resources_cmd.stderr != ""
+        - ("not changed" not in set_resources_cmd.stderr)
+        - not (set_resources_cmd.stderr is regex("not found|server doesn't have a resource type") and not (resource_limits_fail_on_missing_resource | default(false) | bool))
+      when:
+        - needs_vertical_scaling
+        - (item.requests is defined or item.limits is defined)
+      loop: "{{ containerResources }}"
+
+    - name: Update number of replicas for {{ resource_patch.kind }}/{{ resource_patch.name }}
+      shell: oc scale {{ resource_patch.kind }} {{ resource_patch.name }} --replicas={{ resource_patch.replicas }} -n {{ ns }}
+      register: scale_resources_cmd
+      when: needs_horizontal_scaling
+
+  rescue:
+    #
+    # In theory, this rescue should be able to use ansible_failed_task to read the task name; however,
+    # this appears to be a bug in ansible that causes another failure about undefined variable
+    # see: https://github.com/ansible/ansible/issues/49942
+    #
+
+    - name: A failure occurred while processing an app resource in ns={{ ns }}
+      pause:
+        prompt: |
+          The patch that failed was (see previous task for details):
+
+          {{ resource_patch | to_yaml }}
+
+          You can continue to process the remaining changes by pressing enter or use Ctrl+C then "a" to abort.
+
+          NOTE: If a rollout was paused by this script, it will be resumed automatically regardless of
+          whether you continue or abort in order to leave the cluster in a consistent state.
+
+  always:
+    - name: Resume auto-rollout for {{ resource_patch.kind }}/{{ resource_patch.name }} if it was paused by this script
+      shell: oc rollout resume {{ resource_patch.kind }}/{{ resource_patch.name }} -n {{ ns }}
+      register: rollout_resume_cmd
+      failed_when: rollout_resume_cmd.rc != 0 and "is not paused" not in rollout_resume_cmd.stderr
+      when: rollout_pause_cmd is changed

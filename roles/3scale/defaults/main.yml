@@ -133,6 +133,9 @@ threescale_resources:
 - name: system-sphinx
   kind: dc
   resources:
+    limits:
+      cpu: 1
+      memory: 512Mi
     requests:
       cpu: 8m
       memory: 250Mi
@@ -149,6 +152,11 @@ threescale_resources:
     requests:
       cpu: 5m
       memory: 60M
+- name: zync-que
+  kind: dc
+  resources:
+    requests:
+      cpu: 25m
 
 # Routes
 threescale_route_system_developer: system-developer

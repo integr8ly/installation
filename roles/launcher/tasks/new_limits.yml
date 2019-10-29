@@ -1,0 +1,8 @@
+---
+- name: Apply resource overrides for launcher
+  include_role:
+    name: resource_limits
+  vars:
+    ns: "{{ launcher_namespace }}"
+    resources: "{{ launcher_resources }}"
+  when: (launcher_resources | d([], true) | length) > 0

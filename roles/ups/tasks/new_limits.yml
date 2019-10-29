@@ -1,0 +1,8 @@
+---
+- name: Apply resource overrides for ups
+  include_role:
+    name: resource_limits
+  vars:
+    ns: "{{ ups_namespace }}"
+    resources: "{{ ups_resources }}"
+  when: (ups_resources | d([], true) | length) > 0

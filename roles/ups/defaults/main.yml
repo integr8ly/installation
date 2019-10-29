@@ -1,6 +1,6 @@
 ups_namespace: "{{ eval_ups_namespace | default('mobile-unifiedpush') }}"
 ups_app_namespaces: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"
-ups_resources:
+ups_resources_list:
   - "{{ ups_operator_resources }}/service_account.yaml"
   - "{{ ups_operator_resources }}/role.yaml"
   - "{{ ups_operator_resources }}/crds/push_v1alpha1_androidvariant_crd.yaml"
@@ -10,6 +10,7 @@ ups_resources:
 ups_operator_deployment: "{{ ups_operator_resources }}/operator.yaml"
 ups_template_dir: /tmp
 ups_server_name: unifiedpush
+
 #backup
 ups_backup: "{{ backup_restore_install | default(false) }}"
 ups_backup_name: ups-daily-at-midnight
@@ -18,8 +19,9 @@ ups_backup_secret: "s3-credentials"
 ups_backup_secret_namespace: "{{ backup_namespace }}"
 ups_encryption_secret: ''
 ups_encryption_secret_namespace: "{{ backup_namespace }}"
+
 #monitor
-ups_svc_monitor_resources:
+ups_svc_monitor_resource_list:
   - "{{ ups_operator_resources }}/monitor/service_monitor.yaml"
   - "{{ ups_operator_resources }}/monitor/push_service_monitor.yaml"
 ups_svc_monitor_templates:
@@ -28,3 +30,6 @@ ups_svc_monitor_templates:
   - operator_grafana_dashboard
   - operator_prometheus_rule
 ups_message_broker: false
+
+#scaling
+ups_resources: []

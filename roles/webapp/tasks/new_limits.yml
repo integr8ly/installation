@@ -1,0 +1,8 @@
+---
+- name: Apply resource overrides for webapp
+  include_role:
+    name: resource_limits
+  vars:
+    ns: "{{ webapp_namespace }}"
+    resources: "{{ webapp_resources }}"
+  when: (webapp_resources | d([], true) | length) > 0

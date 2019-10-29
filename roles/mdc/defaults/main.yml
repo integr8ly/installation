@@ -3,7 +3,7 @@ mdc_template_dir: /tmp
 mdc_namespace: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"
 mdc_name: mdc
 mdc_oauth_client_id: mobile-developer-console
-mdc_resources:
+mdc_resource_items:
   - "{{ mdc_operator_resources }}/service_account.yaml"
   - "{{ mdc_operator_resources }}/role.yaml"
   - "{{ mdc_operator_resources }}/role_binding.yaml"
@@ -22,7 +22,7 @@ sync_documentation_url: "{{ documentation_url }}/sync.html"
 mss_documentation_url: "{{ documentation_url }}/mss.html"
 
 #monitor
-mdc_monitor_resources:
+mdc_monitor_resource_items:
   - "{{ mdc_operator_resources }}/monitor/service_monitor.yaml"
   - "{{ mdc_operator_resources }}/monitor/mdc_service_monitor.yaml"
 mdc_monitor_templates:
@@ -30,3 +30,6 @@ mdc_monitor_templates:
   - operator_prometheus_rules
   - mdc_prometheus_rules
   - mdc_grafana_dashboard
+
+#scaling
+mdc_resources: []
