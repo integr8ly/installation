@@ -4,17 +4,62 @@ The following document will cover different aspects of Integreatly monitoring in
 
 :toc:
 
-== How to access the montoring stack?
+PICTURE GOES HERE
 
-== Who can access the monitoring stack?
+== Middleware Monitoring Architecture
+In the middleware monitoring architecture there are two monitoring stacks available
+
+=== OpenShift Monitoring Stack
+This stack gathers metrics from kube-state-metrics & node_exporter. These metrics give state information about kubernetes resources, and container metrics like cpu, memory & volumes across all nodes in the kubernetes cluster.
+
+=== Middleware Monitoring Stack
+The middleware monitoring stack comprises of Prometheus, Alertmanager & Grafana, all managed by the application-monitoring-operator.
+
+==== Prometheus
+Prometheus is configured to scrape metrics from various services across the middleware namespaces. It is also configured with Alerts, based on these metrics.
+
+==== AlertManager
+AlertManager receives any active alerts from Prometheus, and sends them to configured receivers based on the severity. Only currently active alerts will appear in AlertManger's web console.
+
+==== Grafana
+Grafana is configured via the Grafana Operator with dashboards from middleware namespaces. It leverages the GrafanaDashboard custom resource.
+
+Middleware Services need to satisfy some criteria for metrics to be scraped:
+
+* The namespace has a specific label with a specific value i.e. monitoring-key=middleware. This is to ensure we only monitor the namespaces we care about.
+* The namespace has a ServiceMonitor resource that defines the Services or Pods to scrape metrics from. This ServiceMonitor must also have a label of monitoring-key=middleware on it.
+
+== How to acces the middleware monitoring stack?
+To access the monitoring stack login into your clusters Openshift master console.
+
+HOW TO ACCESS VIA UI 
+
 
 == What metrics are available in the montioring stack?
+
+=== Kube stat metrics
+kube-state-metrics is a simple service that listens to the Kubernetes API server and generates metrics about the state of the objects. It is not focused on the health of the individual Kubernetes components, but rather on the health of the various objects inside, such as deployments, nodes and pods.
+
+kube-state-metrics is about generating metrics from Kubernetes API objects without modification. This ensures that features provided by kube-state-metrics have the same grade of stability as the Kubernetes API objects themselves. In turn, this means that kube-state-metrics in certain situations may not show the exact same values as kubectl, as kubectl applies certain heuristics to display comprehensible messages. kube-state-metrics exposes raw data unmodified from the Kubernetes API, this way users have all the data they require and perform heuristics as they see fit.
+
+The metrics are exported on the HTTP endpoint /metrics on the listening port (default 80). They are served as plaintext. They are designed to be consumed either by Prometheus itself or by a scraper that is compatible with scraping a Prometheus client endpoint. You can also open /metrics in a browser to see the raw metrics.
+
+Exposed metrics:
+Per group of metrics there is one file for each metrics. See each file for specific documentation about the exposed metrics:
+https://github.com/kubernetes/kube-state-metrics/tree/master/docs
+
+
+
+
 
 == How are metrics calculated?
 
 == What alerting is available?
 
 == How is alerting setup?
+
+== Who can access the monitoring stack?
+
 
 
 
