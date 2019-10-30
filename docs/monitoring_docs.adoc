@@ -1,0 +1,21 @@
+### Integreatly monitoring 
+The following document will cover different aspects of Integreatly monitoring including:
+
+
+:toc:
+
+== How to access the montoring stack?
+
+== Who can access the monitoring stack?
+
+== What metrics are available in the montioring stack?
+
+== How are metrics calculated?
+
+== What alerting is available?
+
+== How is alerting setup?
+
+
+
+
