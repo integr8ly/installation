@@ -29,15 +29,52 @@ Middleware Services need to satisfy some criteria for metrics to be scraped:
 * The namespace has a specific label with a specific value i.e. monitoring-key=middleware. This is to ensure we only monitor the namespaces we care about.
 * The namespace has a ServiceMonitor resource that defines the Services or Pods to scrape metrics from. This ServiceMonitor must also have a label of monitoring-key=middleware on it.
 
-== How to acces the middleware monitoring stack?
-To access the monitoring stack login into your clusters Openshift master console.
+== How to access the middleware monitoring stack?
+To access the monitoring stack via UI and who has permissions:
 
-HOW TO ACCESS VIA UI 
+1. To access the openshift master console follow the link provided in the provisioning email.
+2. Input your given username and password
+
+The following users have permission to use:
+???
+
+== Navigating to the monitoring stack resources through the UI
+1. Login into your clusters Openshift master console.
+2. Navigate to my projects and click view all.
+3. From there navigate to Managed service monitoring
+4. This will provide information on other resources in the monitoring stack including pods memory, CPU and network.
+5. From here you will be able to access the following:
+* Grafana dashboard
+* Alertmanager dashboard
+* Prometheus dashboard.
+6. You will also be able to access the operators:
+* Grafana operator
+* Prometheus operator
+* Alertmanager application-monitoring
+
+== Navigating to the monitoring stack through the CLI
+=== Prometheus
+To navigate to the Prometheus web console using the exposed route use the following
+```
+oc get route prometheus-route -n openshift-middleware-monitoring -o template --template "https://{{.spec.host}}"
+
+```
+=== Grafana
+To navigate to the grafana web console using the exposed route use the following
+```
+oc get route grafana-route -n openshift-middleware-monitoring -o template --template "https://{{.spec.host}}"
+```
+
+=== AlertManager
+To navigate to the AlertManager web console using the exposed route use the following
+```
+oc get route alertmanager-route -n openshift-middleware-monitoring -o template --template "https://{{.spec.host}}"
+```
 
 
 == What metrics are available in the montioring stack?
 
-=== Kube stat metrics
+=== Kube state metrics
 kube-state-metrics is a simple service that listens to the Kubernetes API server and generates metrics about the state of the objects. It is not focused on the health of the individual Kubernetes components, but rather on the health of the various objects inside, such as deployments, nodes and pods.
 
 kube-state-metrics is about generating metrics from Kubernetes API objects without modification. This ensures that features provided by kube-state-metrics have the same grade of stability as the Kubernetes API objects themselves. In turn, this means that kube-state-metrics in certain situations may not show the exact same values as kubectl, as kubectl applies certain heuristics to display comprehensible messages. kube-state-metrics exposes raw data unmodified from the Kubernetes API, this way users have all the data they require and perform heuristics as they see fit.
@@ -47,6 +84,15 @@ The metrics are exported on the HTTP endpoint /metrics on the listening port (de
 Exposed metrics:
 Per group of metrics there is one file for each metrics. See each file for specific documentation about the exposed metrics:
 https://github.com/kubernetes/kube-state-metrics/tree/master/docs
+
+=== Node-exporter metrics
+The node exporter runs on every node in the openshift cluster gathering metrics about everything on that node and then sending the information back to prometheus.The metrics have a node="whatever-ip" label on them so you know which node the information came from. The node exporter for hardware and OS metrics exposed by *NIX kernels, written in Go with pluggable metric collectors.
+
+Enabled and disabled by default:
+To see the list of what is exposed or not exposed by default follow the following link:
+https://github.com/prometheus/node_exporter#collectors
+
+
 
 
 
