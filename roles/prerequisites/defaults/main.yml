@@ -1,6 +1,5 @@
 ---
 
-prerequisites_install: true
 prerequisites_install_packages: true
 
 prerequisite_binaries:
