@@ -28,6 +28,10 @@
       include_role:
         name: fuse_managed
         tasks_from: upgrade
+    - name: AMQ Online upgrade
+      include_role:
+        name: enmasse
+        tasks_from: upgrade
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
