@@ -70,11 +70,11 @@
       when: launcher
 
     - name: Expose vars
-      include_vars: "../roles/code-ready/defaults/main.yml"
+      include_vars: "../roles/codeready/defaults/main.yml"
     -
       name: Install che
       include_role:
-        name: code-ready
+        name: codeready
       vars:
         che_keycloak_user: "{{ eval_launcher_sso_admin_username }}"
         che_keycloak_password: "{{ eval_launcher_sso_admin_password }}"

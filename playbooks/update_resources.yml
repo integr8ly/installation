@@ -9,7 +9,7 @@
         name: apicurito
         tasks_from: new_limits.yml
     - include_role:
-        name: code-ready
+        name: codeready
         tasks_from: new_limits.yml
     - include_role:
         name: enmasse

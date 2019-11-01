@@ -124,7 +124,7 @@
     -
       name: Uninstall che
       include_role:
-        name: code-ready
+        name: codeready
         tasks_from: uninstall
       tags: ['che']
       when: che | default(true) | bool

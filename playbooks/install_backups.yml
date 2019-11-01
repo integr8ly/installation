@@ -7,13 +7,13 @@
     - include_vars: ../roles/3scale/defaults/main.yml
     - include_vars: ../roles/resources_backup/defaults/main.yml
     - include_vars: ../roles/enmasse/defaults/main.yml
-    - include_vars: ../roles/code-ready/defaults/main.yml
+    - include_vars: ../roles/codeready/defaults/main.yml
     - include_vars: ../roles/fuse_managed/defaults/main.yml
     - include_vars: ../roles/launcher/defaults/main.yml
     - import_tasks: ../roles/3scale/tasks/backup.yml
     - import_tasks: ../roles/resources_backup/tasks/main.yml
     - import_tasks: ../roles/enmasse/tasks/backup.yml
-    - import_tasks: ../roles/code-ready/tasks/backup.yml
+    - import_tasks: ../roles/codeready/tasks/backup.yml
     - import_tasks: ../roles/fuse_managed/tasks/backup.yml
     - import_tasks: ../roles/launcher/tasks/backup.yml
     -
