@@ -77,8 +77,8 @@ gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-ope
 #controls whether webapp is installed or not
 webapp: True
 #below vars are not currently used but reflect the current state. In the future they will be used when we source resources from outside of the installer
-webapp_version: '2.18.7'
-webapp_operator_release_tag: 'v0.0.30'
+webapp_version: '2.18.9'
+webapp_operator_release_tag: 'v0.0.31'
 webapp_operator_resources: 'https://raw.githubusercontent.com/integr8ly/tutorial-web-app-operator/{{webapp_operator_release_tag}}/deploy'
 
 #controls whether apicurito is installed or not
