@@ -5,20 +5,6 @@
     - "prometheus_cluster_role.yml"
     - "alert_manager_cluster_role.yml"
 
-- name: Delete existing prometheus
-  shell: "oc delete prometheus application-monitoring -n {{ monitoring_namespace }}"
-  register: delete_cmd
-  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
-  changed_when: delete_cmd.rc == 0
-
-- name: Wait for operator to remove prometheus
-  shell: "oc get statefulset prometheus-application-monitoring -n {{ monitoring_namespace }}"
-  register: get_statefulset_cmd
-  failed_when: get_statefulset_cmd.rc == 0
-  changed_when: "'NotFound' in get_deployment_cmd.stderr"
-  retries: 10
-  delay: 5
-
 - name: Delete existing alertmanager
   shell: "oc delete alertmanager application-monitoring -n {{ monitoring_namespace }}"
   register: delete_cmd
@@ -33,6 +19,37 @@
   retries: 10
   delay: 5
 
+- name: Scale down the prometheus operator
+  shell: "oc scale deployment/prometheus-operator --replicas 0 -n {{ monitoring_namespace }}"
+  register: po_scale_down_cmd
+  failed_when: po_scale_down_cmd.rc != 0
+  changed_when: po_scale_down_cmd.rc == 0
+
+- name: bump the prometheus-operator to 0.33.0
+  shell: "oc patch deployment/prometheus-operator -n {{ monitoring_namespace }} --patch '{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"prometheus-application-operator\", \"image\":\"quay.io/coreos/prometheus-operator:v0.33.0\"}]}}}}'"
+
+- name: Get the prometheus-operator deployment
+  shell: oc get deployment/prometheus-operator -o yaml --export -n middleware-monitoring > /tmp/prometheus-operator.yml
+
+- name: Remove namespaces argument
+  lineinfile:
+    path: /tmp/prometheus-operator.yml
+    state: absent
+    regexp: "--namespaces="
+
+- name: Add the deny-namespaces argument
+  lineinfile:
+    path: /tmp/prometheus-operator.yml
+    insertafter: "- --prometheus-config-reloader="
+    line: "        - --deny-namespaces=openshift-monitoring"
+
+- name: Upgrade the prometheus operator
+  shell: "oc apply -f /tmp/prometheus-operator.yml -n {{ monitoring_namespace }}"
+  register: po_role_apply_cmd
+  failed_when: po_role_apply_cmd.stderr != '' and 'Warning' not in po_role_apply_cmd.stderr
+  changed_when: po_role_apply_cmd.rc == 0
+
+>>>>>>> d507e7d... fix grafana clusterroles on upgrade and make prometheus upgrade less destructive
 - name: Delete serviceaccounts
   shell: "oc delete serviceaccount {{ item }} -n {{ monitoring_namespace }}"
   register: delete_cmd
@@ -59,3 +76,10 @@
   with_items:
     - alertmanager-service
     - prometheus-service
+
+- name: Scale up the prometheus operator
+  shell: "oc scale deployment/prometheus-operator --replicas 1 -n {{ monitoring_namespace }}"
+  register: po_scale_up_cmd
+  failed_when: po_scale_up_cmd.rc != 0
+  changed_when: po_scale_up_cmd.rc == 0
+

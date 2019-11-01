@@ -20,18 +20,6 @@
   failed_when: delete_grafana_operator_cmd.stderr != '' and 'NotFound' not in delete_grafana_operator_cmd.stderr
   changed_when: delete_grafana_operator_cmd.rc == 0
 
-- name: Delete existing grafana operator cluster role binding
-  shell: "oc delete clusterrolebinding grafana-operator"
-  register: delete_cmd
-  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
-  changed_when: delete_cmd.rc == 0
-
-- name: Delete existing grafana operator cluster role
-  shell: "oc delete clusterrole grafana-operator-cluster-role"
-  register: delete_cmd
-  failed_when: delete_cmd.stderr != '' and 'NotFound' not in delete_cmd.stderr
-  changed_when: delete_cmd.rc == 0
-
 - name: Delete the existing grafana operator role
   shell: "oc delete role grafana-operator-role -n {{ monitoring_namespace }}"
   register: delete_cmd
