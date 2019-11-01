@@ -7,7 +7,7 @@ cluster_type: rhpds
 # threescale version is controlled by the operator. Changing the operator version will change the 3scale version
 
 # controls whether threescale is installed or not.
-threescale: true
+threescale: True
 # below threescale variables below are not currently used. They define where and what to pull in from github. These will be important as we look to break out and decouple the resources from the installer ###############
 # not currently used but records the version installed by the operator, this should come from the status block
 threescale_version: '2.6.0.GA'
@@ -19,24 +19,24 @@ threescale_template_s3: '{{threescale_resources_base}}/amp-s3.yml'
 
 #controls whether che is installed or not
 #note che cannot be installed without launcher being present currently
-che: true
+che: True
 che_version: '1.2.0.GA'
 che_git_url: https://github.com/redhat-developer/codeready-workspaces-deprecated.git
 
 #controls whether enmasse is installed or not
-enmasse: true
+enmasse: True
 enmasse_version: '1.2.2.GA'
 enmasse_git_url: https://github.com/jboss-container-images/amq-online-images.git
 
 #controls whether fuse is installed or not
-fuse: true
+fuse: True
 #This is the release tag for fuse on openshift in github currently used to pull in the templates and image streams
 fuse_release_tag: 'application-templates-2.1.fuse-740025-redhat-00004'
 #not currently used as the operator decides what to install
 fuse_version: '7.4'
 
 #controls whether Fuse Online is installed or not
-fuse_online: true
+fuse_online: True
 # Below Fuse vars are not currently used but will be used to source the resources needed to do the install.
 fuse_online_release_tag: '1.7.25'
 fuse_online_resources_base: 'https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources'
@@ -45,7 +45,7 @@ fuse_online_imagestream_resources: '{{fuse_online_resources_base}}/fuse-online-i
 fuse_online_crd_resources: '{{fuse_online_resources_base}}/syndesis-crd.yml'
 
 #controls whether Launcher is installed or not.
-launcher: true
+launcher: True
 # https://github.com/fabric8-launcher/launcher-openshift-templates/issues/46
 # we will need to set this during a release to the latest commit hash on master to ensure it doesn't change under us example: c1efdf1
 launcher_backend_image_tag: '7a7fd07'
@@ -68,33 +68,33 @@ rhsso_operator_release_tag: 'v1.9.4'
 rhsso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
 
 #controls whether gitea is installed or not
-gitea: true
+gitea: True
 gitea_version: '1.6.0'
 #below vars are not currently used but will be used once we source resources from outside of the installer
 gitea_operator_release_tag: 'v0.0.3'
 gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-operator/{{gitea_operator_release_tag}}/deploy/'
 
 #controls whether webapp is installed or not
-webapp: true
+webapp: True
 #below vars are not currently used but reflect the current state. In the future they will be used when we source resources from outside of the installer
 webapp_version: '2.18.7'
 webapp_operator_release_tag: 'v0.0.30'
 webapp_operator_resources: 'https://raw.githubusercontent.com/integr8ly/tutorial-web-app-operator/{{webapp_operator_release_tag}}/deploy'
 
 #controls whether apicurito is installed or not
-apicurito: true
+apicurito: True
 apicurito_version: '0.2.18.Final'
 
 #controls whether nexus is installed or not
-nexus: "{{ 'true' if cluster_type == 'rhpds' else 'false' }}"
+nexus: "{{ 'True' if cluster_type == 'rhpds' else 'False' }}"
 nexus_version: '2.14.11-01'
 
 ## Enables datasync templates (enabled by default)
-datasync: true
+datasync: True
 datasync_template_tag: '0.8.1'
 
 #controls whether the mobile security service is installed or not
-mobile_security_service: true
+mobile_security_service: True
 mobile_security_service_operator_release_tag: '0.4.0'
 mobile_security_service_operator_resources: 'https://raw.githubusercontent.com/aerogear/mobile-security-service-operator/{{mobile_security_service_operator_release_tag}}/deploy'
 mobile_security_service_operator_image: 'quay.io/aerogear/mobile-security-service-operator:{{ mobile_security_service_operator_release_tag }}'
@@ -103,7 +103,7 @@ mss_version: '0.2.2'
 rhsso_user_operator_resources: "{{ rhsso_operator_resources }}"
 
 #unifiedpush
-ups: true
+ups: True
 ups_operator_release_tag: '0.2.0'
 ups_operator_resources: 'https://raw.githubusercontent.com/aerogear/unifiedpush-operator/{{ups_operator_release_tag}}/deploy'
 ups_operator_image: 'quay.io/aerogear/unifiedpush-operator:{{ ups_operator_release_tag }}'
@@ -113,10 +113,10 @@ ups_proxy_release_tag: 'v1.1.0'
 ups_proxy_image: 'docker.io/openshift/oauth-proxy:{{ ups_proxy_release_tag }}'
 
 #application metrics
-application_metrics: false
+application_metrics: False
 
 #mobile developer console
-mdc: true
+mdc: True
 mdc_operator_release_tag: '0.2.6'
 mdc_operator_resources: 'https://raw.githubusercontent.com/aerogear/mobile-developer-console-operator/{{ mdc_operator_release_tag }}/deploy'
 mdc_operator_image: 'quay.io/aerogear/mobile-developer-console-operator:{{ mdc_operator_release_tag }}'
@@ -138,7 +138,7 @@ msbroker_release_tag: 'v0.0.10'
 msbroker_template: 'https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_release_tag }}/templates/broker.template.yaml'
 
 #AMQ Streams
-amq_streams: false
+amq_streams: False
 amq_streams_repo_url: https://github.com/jboss-container-images/amqstreams-1-openshift-image
 amq_version: 1.1.0
 

@@ -3,8 +3,8 @@ ns_prefix: ''
 eval_action: install
 eval_namespace: eval
 eval_openshift_master_config_path: /etc/origin/master/master-config.yaml
-eval_self_signed_certs: false
-eval_sso_validate_certs: false
+eval_self_signed_certs: False
+eval_sso_validate_certs: False
 eval_launcher_sso_realm: launcher_realm
 
 eval_apicurito_namespace: "{{ns_prefix | default('')}}apicurito"
@@ -26,7 +26,7 @@ eval_user_rhsso_namespace:  "{{ns_prefix | default('')}}user-sso"
 eval_seed_users_count: 50
 eval_webapp_url_prefix: tutorial-web-app-{{ eval_webapp_namespace }}
 
-eval_threescale_enable_wildcard_route: false
+eval_threescale_enable_wildcard_route: False
 # To use S3 storage instead of filesystem (PVC-based requiring ReadWriteMany)
 #eval_threescale_file_upload_storage: s3
 #eval_threescale_storage_s3_aws_access_key: <aws_access_key>
@@ -34,27 +34,25 @@ eval_threescale_enable_wildcard_route: false
 #eval_threescale_storage_s3_aws_region: <aws_region>
 #eval_threescale_storage_s3_aws_bucket: <s3_bucket_name>
 
-
 # openshift login as some product installs wont work with system:admin
-# NOTE: When run_master_tasks is false, this var will also be set to false, with the
+# NOTE: When run_master_tasks is False, this var will also be set to False, with the
 #       expectation that `oc` is already logged in as a cluster-admin user
-create_cluster_admin: true
+create_cluster_admin: True
 # override to set a namespace prefix.
-
 
 #run_master_tasks: (boolean)
 #
-# Default is set to true inline in various places.
+# Default is set to True inline in various places.
 # No default is set here, as it wouldn't be overwriteable in an inventory file
 #
-# If true, any tasks that need to happen on the master will be run.
+# If True, any tasks that need to happen on the master will be run.
 # For example:
 # - adding an identity provider to the master-config.yaml
 # - adding a cors rule to the master-config.yaml
 # - retrieving master url & routing subdomain values from the master-config.yaml
 # - adding/removing a htpasswd user (integreatly-admin)
 #
-# If false, the master host will *not* be accessed at all.
+# If False, the master host will *not* be accessed at all.
 # In this case, the following should be done:
 # - run the install.yml playbook,
 #   - on a machine that is logged in (oc) with cluster-admin access (*not* system:admin user)
@@ -65,9 +63,46 @@ create_cluster_admin: true
 # - add the cluster SSO identity provider to the master-config.yaml
 # - restart the master(s)
 
-#user_rhsso: (boolean)
-#
-# Default is set to true inline in various places.
-# No default is set here, as it wouldn't be overwriteable in an inventory file
-# If true, a separate RH-SSO instance will be provisioned to a separate namespace.
+# If True, a separate RH-SSO instance will be provisioned to a separate namespace.
 # This instance can be used by user applications to provide identity management services.
+
+# As we use include_vars in various places in our roles, this means that default role values can often override variables set in group_vars
+# The result of this is that the below variables must be set in this file and removed from their respective role defaults
+# For further information regarding variable precedence, see https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable
+# NOTE: Any overrides set in environment specific group_vars will take precedence over the ones listed in this file
+user_rhsso: True
+
+aws_s3_backup_secret_name: 's3-credentials'
+
+backup_s3_aws_access_key: ""
+backup_s3_aws_secret_key: ""
+backup_s3_aws_bucket: ""
+
+github_client_id: "set_to_client_id_of_github_oauth_app"
+github_client_secret: "set_to_client_secret_of_github_oauth_app"
+
+openshift_login: False
+openshift_master_public_url: ''
+openshift_username: ''
+openshift_password: ''
+openshift_token: ''
+
+prerequisites_install: True
+
+# Used to manage images that reference registry.redhat.io which requires authentication
+# Pull secret is retrieved from the openshift namespace on a given cluster and can be set in each product namespace to pull images
+# Must be overriden for OSD where the pull_secret_name should be set to registry-redhat-io-dockercfg
+pull_secret_name: imagestreamsecret
+
+# The name of the image pull secret which will be created in the product namespace
+# This will be overriden depending on the product using this role
+product_ns_pull_secret_name: imagestreamsecret
+
+rhsso_evals_admin_password: Password1
+rhsso_cluster_admin_password: Password1
+
+threescale_file_upload_storage: "{{ eval_threescale_file_upload_storage | default('filesystem') }}"
+threescale_storage_s3_aws_access_key: "{{ eval_threescale_storage_s3_aws_access_key | default('null') }}"
+threescale_storage_s3_aws_secret_key: "{{ eval_threescale_storage_s3_aws_secret_key | default('null') }}"
+threescale_storage_s3_aws_region: "{{ eval_threescale_storage_s3_aws_region | default('null') }}"
+threescale_storage_s3_aws_bucket: "{{ eval_threescale_storage_s3_aws_bucket | default('null') }}"
