@@ -69,3 +69,8 @@
   failed_when: po_scale_up_cmd.rc != 0
   changed_when: po_scale_up_cmd.rc == 0
 
+- name: Clean up temp file
+  file:
+    path: /tmp/prometheus-operator.yml
+    state: absent
+
