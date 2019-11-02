@@ -20,7 +20,7 @@ threescale_template_s3: '{{threescale_resources_base}}/amp-s3.yml'
 #controls whether che is installed or not
 #note che cannot be installed without launcher being present currently
 che: True
-che_version: '1.2.0.GA'
+che_version: '1.2.2.GA'
 che_git_url: https://github.com/redhat-developer/codeready-workspaces-deprecated.git
 
 #controls whether enmasse is installed or not
