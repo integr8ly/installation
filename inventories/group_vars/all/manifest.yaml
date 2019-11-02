@@ -107,7 +107,7 @@ ups: True
 ups_operator_release_tag: '0.2.0'
 ups_operator_resources: 'https://raw.githubusercontent.com/aerogear/unifiedpush-operator/{{ups_operator_release_tag}}/deploy'
 ups_operator_image: 'quay.io/aerogear/unifiedpush-operator:{{ ups_operator_release_tag }}'
-ups_release_tag: '2.4.0'
+ups_release_tag: '2.5.0'
 ups_image: 'quay.io/aerogear/unifiedpush-configurable-container:{{ ups_release_tag }}'
 ups_proxy_release_tag: 'v1.1.0'
 ups_proxy_image: 'docker.io/openshift/oauth-proxy:{{ ups_proxy_release_tag }}'
