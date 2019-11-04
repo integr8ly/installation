@@ -155,3 +155,14 @@ threescale_resources:
 threescale_route_system_developer: system-developer
 threescale_route_system_master: system-master
 threescale_route_system_provider: system-provider
+
+threescale_image_streams:
+  - amp-apicast:latest
+  - amp-backend:latest
+  - amp-system:latest
+  - amp-zync:latest
+  - zync-database-postgresql:latest
+  - system-mysql:latest
+  - system-memcached:latest
+  - system-redis:latest
+  - backend-redis:latest
