@@ -1,19 +1,34 @@
-### Integreatly monitoring 
-The following document will cover different aspects of Integreatly monitoring including:
+== Integreatly monitoring 
+The following document will cover different aspects of Integreatly monitoring.
+
+== Intended audience and prerequisites
+The document is intended for the following users:
+
+* SRE managing integreatly cluster
+* Integreatly users:
+** Workshop user
+** RHMI customer
+* Developers or users of individual components of Integreatly e.g Fuse/Syndesis
+* Developers of integreatly:
+** RH engineering
+** Upstream contributor
+
+Its assumed that the reader knows about Integreatly, what it is and what Integreatly consists of.
+
+NOTE: Certain dashboards and alerts may not be visible if users don't have appropriate permissions.
 
 
 :toc:
 
-PICTURE GOES HERE
 
 == Middleware Monitoring Architecture
-In the middleware monitoring architecture there are two monitoring stacks available
+In the middleware monitoring architecture there are two monitoring stacks available.
 
 === OpenShift Monitoring Stack
 This stack gathers metrics from kube-state-metrics & node_exporter. These metrics give state information about kubernetes resources, and container metrics like cpu, memory & volumes across all nodes in the kubernetes cluster.
 
 === Middleware Monitoring Stack
-The middleware monitoring stack comprises of Prometheus, Alertmanager & Grafana, all managed by the application-monitoring-operator.
+The middleware monitoring stack comprises of Prometheus, Alertmanager & Grafana. All managed by the application-monitoring-operator.
 
 ==== Prometheus
 Prometheus is configured to scrape metrics from various services across the middleware namespaces. It is also configured with Alerts, based on these metrics.
@@ -26,17 +41,8 @@ Grafana is configured via the Grafana Operator with dashboards from middleware n
 
 Middleware Services need to satisfy some criteria for metrics to be scraped:
 
-* The namespace has a specific label with a specific value i.e. monitoring-key=middleware. This is to ensure we only monitor the namespaces we care about.
-* The namespace has a ServiceMonitor resource that defines the Services or Pods to scrape metrics from. This ServiceMonitor must also have a label of monitoring-key=middleware on it.
-
-== How to access the middleware monitoring stack?
-To access the monitoring stack via UI and who has permissions:
-
-1. To access the openshift master console follow the link provided in the provisioning email.
-2. Input your given username and password
-
-The following users have permission to use:
-???
+* The namespace has a specific label with a specific value i.e. `monitoring-key=middleware`. This is to ensure we only monitor the namespaces we care about.
+* The namespace has a ServiceMonitor resource that defines the Services or Pods to scrape metrics from. This ServiceMonitor must also have a label of `monitoring-key=middleware` on it.
 
 == Navigating to the monitoring stack resources through the UI
 1. Login into your clusters Openshift master console.
@@ -51,6 +57,14 @@ The following users have permission to use:
 * Grafana operator
 * Prometheus operator
 * Alertmanager application-monitoring
+
+=== Permissions:
+A users permissions are checked to see if the have access to the monitoring stack. How the users are checked is the following:
+
+* A users permissions are checked using SAR which stands for ~Subject Access Review". SAR is a request sent to the Openshift server checking the access for said user. The SAR expects a single SAR JSON object or array which for the user to be allowed access the backend server must be satisfied. If the user can get namespaces then the pass the review and have permission to the monitoring stack. This can be checked via the UI or by this command `oc get namespaces`
+
+* Authentication is skipped if the users has access to urls that start with /metrics
+
 
 == Navigating to the monitoring stack through the CLI
 === Prometheus
@@ -72,12 +86,12 @@ oc get route alertmanager-route -n openshift-middleware-monitoring -o template -
 ```
 
 
-== What metrics are available in the montioring stack?
+== What metrics are available in the monitoring stack?
 
 === Kube state metrics
-kube-state-metrics is a simple service that listens to the Kubernetes API server and generates metrics about the state of the objects. It is not focused on the health of the individual Kubernetes components, but rather on the health of the various objects inside, such as deployments, nodes and pods.
+Kube-state-metrics is a simple service that listens to the Kubernetes API server and generates metrics about the state of the objects. It is not focused on the health of the individual Kubernetes components, but rather on the health of the various objects inside, such as deployments, nodes and pods.
 
-kube-state-metrics is about generating metrics from Kubernetes API objects without modification. This ensures that features provided by kube-state-metrics have the same grade of stability as the Kubernetes API objects themselves. In turn, this means that kube-state-metrics in certain situations may not show the exact same values as kubectl, as kubectl applies certain heuristics to display comprehensible messages. kube-state-metrics exposes raw data unmodified from the Kubernetes API, this way users have all the data they require and perform heuristics as they see fit.
+Kube-state-metrics is about generating metrics from Kubernetes API objects without modification. This ensures that features provided by kube-state-metrics have the same grade of stability as the Kubernetes API objects themselves. In turn, this means that kube-state-metrics in certain situations may not show the exact same values as kubectl, as kubectl applies certain heuristics to display comprehensible messages. Kube-state-metrics exposes raw data unmodified from the Kubernetes API, this way users have all the data they require and perform heuristics as they see fit.
 
 The metrics are exported on the HTTP endpoint /metrics on the listening port (default 80). They are served as plaintext. They are designed to be consumed either by Prometheus itself or by a scraper that is compatible with scraping a Prometheus client endpoint. You can also open /metrics in a browser to see the raw metrics.
 
@@ -93,11 +107,6 @@ To see the list of what is exposed or not exposed by default follow the followin
 https://github.com/prometheus/node_exporter#collectors
 
 
-
-
-
-
-
 == How are metrics calculated?
 
 == What alerting is available?
@@ -105,6 +114,7 @@ https://github.com/prometheus/node_exporter#collectors
 == How is alerting setup?
 
 == Who can access the monitoring stack?
+
 
 
 
