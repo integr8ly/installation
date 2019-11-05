@@ -5,7 +5,7 @@
   failed_when: false
 
 - name: Construct openshift host string
-  shell: echo {{ openshift_master_public_url | default(openshift_asset_url) }} | cut -d '/' -f3
+  shell: echo {{ openshift_master_public_url | default(openshift_asset_url, true) }} | cut -d '/' -f3
   register: openshift_host
 
 - name: Construct openshift oauth string
