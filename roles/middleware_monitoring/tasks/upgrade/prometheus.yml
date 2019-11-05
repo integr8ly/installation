@@ -15,7 +15,7 @@
   shell: "oc patch deployment/prometheus-operator -n {{ monitoring_namespace }} --patch '{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"prometheus-application-operator\", \"image\":\"quay.io/coreos/prometheus-operator:v0.33.0\"}]}}}}'"
 
 - name: Get the prometheus-operator deployment
-  shell: oc get deployment/prometheus-operator -o yaml --export -n middleware-monitoring > /tmp/prometheus-operator.yml
+  shell: "oc get deployment/prometheus-operator -o yaml --export -n {{ monitoring_namespace }} > /tmp/prometheus-operator.yml"
 
 - name: Remove namespaces argument
   lineinfile:
