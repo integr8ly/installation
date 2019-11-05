@@ -15,7 +15,7 @@
   shell: "oc patch deployment/prometheus-operator -n {{ monitoring_namespace }} --patch '{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"prometheus-application-operator\", \"image\":\"quay.io/coreos/prometheus-operator:v0.33.0\"}]}}}}'"
 
 - name: Get the prometheus-operator deployment
-  shell: oc get deployment/prometheus-operator -o yaml --export -n middleware-monitoring > /tmp/prometheus-operator.yml
+  shell: "oc get deployment/prometheus-operator -o yaml --export -n {{ monitoring_namespace }} > /tmp/prometheus-operator.yml"
 
 - name: Remove namespaces argument
   lineinfile:
@@ -35,7 +35,6 @@
   failed_when: po_role_apply_cmd.stderr != '' and 'Warning' not in po_role_apply_cmd.stderr
   changed_when: po_role_apply_cmd.rc == 0
 
->>>>>>> d507e7d... fix grafana clusterroles on upgrade and make prometheus upgrade less destructive
 - name: Delete serviceaccounts
   shell: "oc delete serviceaccount {{ item }} -n {{ monitoring_namespace }}"
   register: delete_cmd
