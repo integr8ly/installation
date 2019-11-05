@@ -1,11 +1,11 @@
-= Integreatly monitoring 
-The following document will cover different aspects of Integreatly monitoring.
+= Integreatly Monitoring 
+The following document will cover different aspects of monitoring an Integreatly cluster.
 
 :toc:
 == Intended audience and prerequisites
 The document is intended for the following users:
 
-* SRE managing integreatly cluster
+* SRE managing an Integreatly/RHMI cluster
 * Integreatly users:
 ** Workshop user
 ** RHMI customer
@@ -14,13 +14,12 @@ The document is intended for the following users:
 ** RH engineering
 ** Upstream contributor
 
-Its assumed that the reader knows about Integreatly, what it is and what Integreatly consists of.
+It is assumed that the reader knows what Integreatly is, and the features of Integreatly.
 
 NOTE: Certain dashboards and alerts may not be visible if users don't have appropriate permissions.
 
-
 == Middleware Monitoring Architecture
-In the middleware monitoring architecture there are two monitoring stacks available.
+In the middleware monitoring architecture there are two monitoring stacks running.
 
 image::arch.png[]
 
@@ -28,65 +27,74 @@ image::arch.png[]
 This stack gathers metrics from kube-state-metrics & node_exporter. These metrics give state information about kubernetes resources, and container metrics like cpu, memory & volumes across all nodes in the kubernetes cluster.
 
 === Middleware Monitoring Stack
-The middleware monitoring stack comprises of Prometheus, Alertmanager & Grafana. All managed by the application-monitoring-operator.
+The middleware monitoring stack comprises of Prometheus, Alertmanager & Grafana, all managed by the application-monitoring-operator.
 
 ==== Prometheus
-Prometheus is configured to scrape metrics from various services across the middleware namespaces. It is also configured with Alerts, based on these metrics.
+Prometheus is configured to scrape metrics from various services across the managed component namespaces. 
+Components in managed namespaces need to satisfy some criteria for metrics to be scraped:
+
+* The namespace has a specific label with a specific value i.e. `monitoring-key=middleware`. This is to ensure we only monitor the namespaces we care about.
+* The namespace has a ServiceMonitor resource that defines the Services or Pods to scrape metrics from. This ServiceMonitor must also have a label of `monitoring-key=middleware` on it.
+
+Prometheus is also configured with Alerts via PrometheusRules resources. These alerts can make use of custom scraped metrics (as defined in a ServiceMonitor) or already scraped metrics like kube-state-metrics.
 
 ==== AlertManager
 AlertManager receives any active alerts from Prometheus, and sends them to configured receivers based on the severity. Only currently active alerts will appear in AlertManger's web console.
 
 ==== Grafana
-Grafana is configured via the Grafana Operator with dashboards from middleware namespaces. It leverages the GrafanaDashboard custom resource.
-
-Middleware Services need to satisfy some criteria for metrics to be scraped:
-
-* The namespace has a specific label with a specific value i.e. `monitoring-key=middleware`. This is to ensure we only monitor the namespaces we care about.
-* The namespace has a ServiceMonitor resource that defines the Services or Pods to scrape metrics from. This ServiceMonitor must also have a label of `monitoring-key=middleware` on it.
+Grafana is configured via the Grafana Operator with dashboards from managed component namespaces. It leverages the GrafanaDashboard custom resource definition.
 
 == Navigating to the monitoring stack resources through the UI
-1. Login into your clusters Openshift master console.
-2. Navigate to my projects and click view all.
-3. From there navigate to Managed service monitoring
-4. This will provide information on other resources in the monitoring stack including pods memory, CPU and network.
-5. From here you will be able to access the following:
-* Grafana dashboard
-* Alertmanager dashboard
-* Prometheus dashboard.
-6. You will also be able to access the operators:
-* Grafana operator
-* Prometheus operator
-* Alertmanager application-monitoring
+1. Login in to the OpenShift web console.
+2. Navigate to Managed service monitoring
+3. Navigate to Applications > Routes on the left-nav
+4. Open the relevant route to access that service e.g. grafana, alertmanager, prometheus
+5. Authenticate with your OpenShift credentials and 'Allow' your account to be linked (one time process per service)
 
 === Permissions:
-A users permissions are checked to see if they have access to the monitoring stack. How the users are checked is the following:
+Permissions are checked via `SubjectAccessReview` (SAR) to see if the logged in user has access to the various monitoring services. In the case of the monitoring services, if a user can `get namespaces`,  then they pass the review and have permission. To confirm if you have the appropriate permission, try the following command `oc get namespaces`
 
-* A users permissions are checked using SAR which stands for ~Subject Access Review". SAR is a request sent to the Openshift server checking the access for said user. The SAR expects a single SAR JSON object or array which for the user to be allowed access the backend server must be satisfied. If the user can get namespaces then the pass the review and have permission to the monitoring stack. This can be checked via the UI or by this command `oc get namespaces`
-
-* Authentication is skipped if the users has access to urls that start with /metrics
-
+*NOTE* Some urls may skip authentication, e.g. /metrics
 
 == Navigating to the monitoring stack through the CLI
+
 === Prometheus
-To navigate to the Prometheus web console using the exposed route use the following
+To get the Prometheus web console url:
 ```
 oc get route prometheus-route -n openshift-middleware-monitoring -o template --template "https://{{.spec.host}}"
 
 ```
 === Grafana
-To navigate to the grafana web console using the exposed route use the following
+To get the Grafana web console url:
 ```
 oc get route grafana-route -n openshift-middleware-monitoring -o template --template "https://{{.spec.host}}"
 ```
 
 === AlertManager
-To navigate to the AlertManager web console using the exposed route use the following
+To get the AlertManager web console url:
 ```
 oc get route alertmanager-route -n openshift-middleware-monitoring -o template --template "https://{{.spec.host}}"
 ```
 
 
-== What metrics are available in the monitoring stack?
+== What metrics are available in the Integreatly monitoring stack?
+
+The Prometheus instance in the `openshift-middleware-monitoring` namespace federates the below metrics from the prometheus instance in the `openshift-monitoring` namespace. To get the current federation configuration use the following command: `oc get secret additional-scrape-configs -n middleware-monitoring --template '{{index .data "integreatly.yaml"}}' | base64 --decode | grep -A 10 "params:"`
+
+For example: 
+```
+  params:
+    match[]:
+    - '{ endpoint="https-metrics" }'
+    - '{ service="kube-state-metrics" }'
+    - '{ service="node-exporter" }'
+    - '{ __name__=~"namespace_pod_name_container_name:.*" }'
+    - '{ __name__=~"node:.*" }'
+    - '{ __name__=~"container_memory_.*" }'
+    - '{ __name__=~":node_memory_.*" }'
+  scheme: https
+  tls_config:
+```
 
 === Kube state metrics
 Kube-state-metrics is a simple service that listens to the Kubernetes API server and generates metrics about the state of the objects. It is not focused on the health of the individual Kubernetes components, but rather on the health of the various objects inside, such as deployments, nodes and pods.
@@ -106,10 +114,9 @@ Enabled and disabled by default:
 To see the list of what is exposed or not exposed by default follow the following link:
 https://github.com/prometheus/node_exporter#collectors
 
-To get the current federation configuration file use the following command: `oc get secret additional-scrape-configs -n middleware-monitoring --template '{{index .data "integreatly.yaml"}}' | base64 --decode | grep -A 10 "params:``
 
+== What Alerts are in the Integreatly monitoring stack?
 
-== Integreatly Monitoring alerts
 === What alerting is available?
 The monitoring stack has many different alerts depending on the metrics being monitored these alerts include:
 
@@ -130,7 +137,7 @@ The monitoring stack has many different alerts depending on the metrics being mo
 
 == How is alerting setup?
 
-Alerting is setup in a few ways. These being Email as a default receiver, Pager duty with email and DeadMansSwitch for absence of alerts.
+Alerting can be setup in a few ways. Fro example, email as a default receiver, Pager duty with email and DeadMansSwitch for absence of alerts.
 
 1. Email as a default receiver
 Email server settings are defined at the global config level in the various smtp_ keys. This global config sets defaults for any receivers. The default receiver is configured to send alert & resolve emails to the configure recipients (comma separated).
@@ -141,8 +148,7 @@ Any Prometheus Alerts with a label of `severity=critical` will be routed to the 
 3. If an alert has a label of `alertname=DeadMansSwitch` it will be routed to the deadmansswitch alert. In this case, it will result in a mail being sent to the configured recipient. This is useful if you want to use the Dead Man's Snitch Integration with Pager Duty. For example, Prometheus will periodically send out a mail to alert that the monitoring stack is running. If the mail is not sent within a time period, a Pager Duty Incident will be triggered.
 
 == Configuring alerts
-To see the current alerts config use the following command `oc get secret alertmanager-application-monitoring -n openshift-middleware-monitoring --template='{{index .data "alertmanager.yaml"}}' | base64 --decode > alertmanager.yaml
-cat alertmanager.yaml`. The configuration is stored in the `alertmanager-application-monitoring` secret in the `openshift-middleware-monitoring` namespace. The configuration file is written in YAML format and usually follows the following:
+To see the current alerts config use the following command `oc get secret alertmanager-application-monitoring -n openshift-middleware-monitoring --template='{{index .data "alertmanager.yaml"}}' | base64 --decode`. The configuration file is written in YAML format and usually follows the following:
 ```
 global:
   resolve_timeout: 5m
@@ -185,10 +191,6 @@ inhibit_rules:
   equal: ['alertname', 'job', 'label_cronjob_name']
 ```
 
-=== Updating the AlertManager configuration
-To update or edit the AlertManager configuration make the relevant changes to the alertmanager.yaml. Once the changes are made apply a new secret which overrides the previous secret:
-
-`oc create secret generic alertmanager-application-monitoring --from-file=./alertmanager.yaml --dry-run -o yaml | oc apply -n openshift-middleware-monitoring -f` 
 
 toc::[]
 
