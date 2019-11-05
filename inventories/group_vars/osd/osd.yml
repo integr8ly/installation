@@ -81,3 +81,6 @@ eval_threescale_file_upload_storage: s3
 
 # Use Integreatly Operator for Installation
 integreatly_operator: False
+
+# Increasing prometheus volume size for prod environments to 50gb
+monitoring_prometheus_storage_request: 50Gi
