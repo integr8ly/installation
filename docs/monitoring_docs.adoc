@@ -1,6 +1,7 @@
-== Integreatly monitoring 
+= Integreatly monitoring 
 The following document will cover different aspects of Integreatly monitoring.
 
+:toc:
 == Intended audience and prerequisites
 The document is intended for the following users:
 
@@ -8,7 +9,7 @@ The document is intended for the following users:
 * Integreatly users:
 ** Workshop user
 ** RHMI customer
-* Developers or users of individual components of Integreatly e.g Fuse/Syndesis
+* Developers or users of individual Integreatly components e.g Fuse/Syndesis
 * Developers of integreatly:
 ** RH engineering
 ** Upstream contributor
@@ -18,11 +19,10 @@ Its assumed that the reader knows about Integreatly, what it is and what Integre
 NOTE: Certain dashboards and alerts may not be visible if users don't have appropriate permissions.
 
 
-:toc:
-
-
 == Middleware Monitoring Architecture
 In the middleware monitoring architecture there are two monitoring stacks available.
+
+image::arch.png[]
 
 === OpenShift Monitoring Stack
 This stack gathers metrics from kube-state-metrics & node_exporter. These metrics give state information about kubernetes resources, and container metrics like cpu, memory & volumes across all nodes in the kubernetes cluster.
@@ -59,7 +59,7 @@ Middleware Services need to satisfy some criteria for metrics to be scraped:
 * Alertmanager application-monitoring
 
 === Permissions:
-A users permissions are checked to see if the have access to the monitoring stack. How the users are checked is the following:
+A users permissions are checked to see if they have access to the monitoring stack. How the users are checked is the following:
 
 * A users permissions are checked using SAR which stands for ~Subject Access Review". SAR is a request sent to the Openshift server checking the access for said user. The SAR expects a single SAR JSON object or array which for the user to be allowed access the backend server must be satisfied. If the user can get namespaces then the pass the review and have permission to the monitoring stack. This can be checked via the UI or by this command `oc get namespaces`
 
@@ -106,14 +106,92 @@ Enabled and disabled by default:
 To see the list of what is exposed or not exposed by default follow the following link:
 https://github.com/prometheus/node_exporter#collectors
 
+To get the current federation configuration file use the following command: `oc get secret additional-scrape-configs -n middleware-monitoring --template '{{index .data "integreatly.yaml"}}' | base64 --decode | grep -A 10 "params:``
 
-== How are metrics calculated?
 
-== What alerting is available?
+== Integreatly Monitoring alerts
+=== What alerting is available?
+The monitoring stack has many different alerts depending on the metrics being monitored these alerts include:
+
+* 3Scale 
+* Apicurito
+* Backups
+* CodeReady
+* ElasticSearch
+* Enmasse
+* Fuse Online
+* Keycloak/SSO
+* Kube State across RHMI namespaces
+* Launcher
+* Middleware Monitoring stack
+* Managed Service Broker
+* Nexus
+* Solution Explorer
 
 == How is alerting setup?
 
-== Who can access the monitoring stack?
+Alerting is setup in a few ways. These being Email as a default receiver, Pager duty with email and DeadMansSwitch for absence of alerts.
+
+1. Email as a default receiver
+Email server settings are defined at the global config level in the various smtp_ keys. This global config sets defaults for any receivers. The default receiver is configured to send alert & resolve emails to the configure recipients (comma separated).
+
+2. Pager duty with email for critical 
+Any Prometheus Alerts with a label of `severity=critical` will be routed to the critical receiver. This receiver has the pagerduty_configs & email_configs sections defined. This will cause an alert email to be send to the configured recipients (comma separated) and a Pager Duty incident to be triggered.
+
+3. If an alert has a label of `alertname=DeadMansSwitch` it will be routed to the deadmansswitch alert. In this case, it will result in a mail being sent to the configured recipient. This is useful if you want to use the Dead Man's Snitch Integration with Pager Duty. For example, Prometheus will periodically send out a mail to alert that the monitoring stack is running. If the mail is not sent within a time period, a Pager Duty Incident will be triggered.
+
+== Configuring alerts
+To see the current alerts config use the following command `oc get secret alertmanager-application-monitoring -n openshift-middleware-monitoring --template='{{index .data "alertmanager.yaml"}}' | base64 --decode > alertmanager.yaml
+cat alertmanager.yaml`. The configuration is stored in the `alertmanager-application-monitoring` secret in the `openshift-middleware-monitoring` namespace. The configuration file is written in YAML format and usually follows the following:
+```
+global:
+  resolve_timeout: 5m
+  smtp_smarthost: smtp.sendgrid.net:587
+  smtp_from: noreply@<alertmanager_route>
+  smtp_auth_username: apikey
+  smtp_auth_password: <apikey_secret>
+route:
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+  receiver: default
+  routes:
+  - match:
+      severity: critical
+    receiver: critical
+  - match:
+      alertname: DeadMansSwitch
+    repeat_interval: 5m
+    receiver: deadmansswitch
+receivers:
+- name: default
+  email_configs:
+  - send_resolved: true
+    to: cssre-alerts@redhat.com
+- name: critical
+  pagerduty_configs:
+  - service_key: <pagerduty_service_integration_key>
+  email_configs:
+  - send_resolved: true
+    to: cssre-alerts@redhat.com
+- name: deadmansswitch
+inhibit_rules:
+- source_match:
+    alertname: 'JobRunningTimeExceeded'
+    severity: 'critical'
+  target_match:
+    alertname: 'JobRunningTimeExceeded'
+    severity: 'warning'
+  equal: ['alertname', 'job', 'label_cronjob_name']
+```
+
+=== Updating the AlertManager configuration
+To update or edit the AlertManager configuration make the relevant changes to the alertmanager.yaml. Once the changes are made apply a new secret which overrides the previous secret:
+
+`oc create secret generic alertmanager-application-monitoring --from-file=./alertmanager.yaml --dry-run -o yaml | oc apply -n openshift-middleware-monitoring -f` 
+
+toc::[]
+
 
 
 
