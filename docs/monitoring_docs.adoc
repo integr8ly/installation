@@ -1,0 +1,202 @@
+= Integreatly Monitoring 
+The following document will cover different aspects of monitoring an Integreatly cluster.
+
+:toc:
+== Intended audience and prerequisites
+The document is intended for the following users:
+
+* SRE managing an Integreatly/RHMI cluster
+* Integreatly users:
+** Workshop user
+** RHMI customer
+* Developers or users of individual Integreatly components e.g Fuse/Syndesis
+* Developers of integreatly:
+** RH engineering
+** Upstream contributor
+
+It is assumed that the reader knows what Integreatly is, and the features of Integreatly.
+
+NOTE: Certain dashboards and alerts may not be visible if users don't have appropriate permissions.
+
+== Middleware Monitoring Architecture
+In the middleware monitoring architecture there are two monitoring stacks running.
+
+image::arch.png[]
+
+=== OpenShift Monitoring Stack
+This stack gathers metrics from kube-state-metrics & node_exporter. These metrics give state information about kubernetes resources, and container metrics like cpu, memory & volumes across all nodes in the kubernetes cluster.
+
+=== Middleware Monitoring Stack
+The middleware monitoring stack comprises of Prometheus, Alertmanager & Grafana, all managed by the application-monitoring-operator.
+
+==== Prometheus
+Prometheus is configured to scrape metrics from various services across the managed component namespaces. 
+Components in managed namespaces need to satisfy some criteria for metrics to be scraped:
+
+* The namespace has a specific label with a specific value i.e. `monitoring-key=middleware`. This is to ensure we only monitor the namespaces we care about.
+* The namespace has a ServiceMonitor resource that defines the Services or Pods to scrape metrics from. This ServiceMonitor must also have a label of `monitoring-key=middleware` on it.
+
+Prometheus is also configured with Alerts via PrometheusRules resources. These alerts can make use of custom scraped metrics (as defined in a ServiceMonitor) or already scraped metrics like kube-state-metrics.
+
+==== AlertManager
+AlertManager receives any active alerts from Prometheus, and sends them to configured receivers based on the severity. Only currently active alerts will appear in AlertManger's web console.
+
+==== Grafana
+Grafana is configured via the Grafana Operator with dashboards from managed component namespaces. It leverages the GrafanaDashboard custom resource definition.
+
+== Navigating to the monitoring stack resources through the UI
+1. Login in to the OpenShift web console.
+2. Navigate to Managed service monitoring
+3. Navigate to Applications > Routes on the left-nav
+4. Open the relevant route to access that service e.g. grafana, alertmanager, prometheus
+5. Authenticate with your OpenShift credentials and 'Allow' your account to be linked (one time process per service)
+
+=== Permissions:
+Permissions are checked via `SubjectAccessReview` (SAR) to see if the logged in user has access to the various monitoring services. In the case of the monitoring services, if a user can `get namespaces`,  then they pass the review and have permission. To confirm if you have the appropriate permission, try the following command `oc get namespaces`
+
+*NOTE* Some urls may skip authentication, e.g. /metrics
+
+== Navigating to the monitoring stack through the CLI
+
+=== Prometheus
+To get the Prometheus web console url:
+```
+oc get route prometheus-route -n openshift-middleware-monitoring -o template --template "https://{{.spec.host}}"
+
+```
+=== Grafana
+To get the Grafana web console url:
+```
+oc get route grafana-route -n openshift-middleware-monitoring -o template --template "https://{{.spec.host}}"
+```
+
+=== AlertManager
+To get the AlertManager web console url:
+```
+oc get route alertmanager-route -n openshift-middleware-monitoring -o template --template "https://{{.spec.host}}"
+```
+
+
+== What metrics are available in the Integreatly monitoring stack?
+
+The Prometheus instance in the `openshift-middleware-monitoring` namespace federates the below metrics from the prometheus instance in the `openshift-monitoring` namespace. To get the current federation configuration use the following command: `oc get secret additional-scrape-configs -n middleware-monitoring --template '{{index .data "integreatly.yaml"}}' | base64 --decode | grep -A 10 "params:"`
+
+For example: 
+```
+  params:
+    match[]:
+    - '{ endpoint="https-metrics" }'
+    - '{ service="kube-state-metrics" }'
+    - '{ service="node-exporter" }'
+    - '{ __name__=~"namespace_pod_name_container_name:.*" }'
+    - '{ __name__=~"node:.*" }'
+    - '{ __name__=~"container_memory_.*" }'
+    - '{ __name__=~":node_memory_.*" }'
+  scheme: https
+  tls_config:
+```
+
+=== Kube state metrics
+Kube-state-metrics is a simple service that listens to the Kubernetes API server and generates metrics about the state of the objects. It is not focused on the health of the individual Kubernetes components, but rather on the health of the various objects inside, such as deployments, nodes and pods.
+
+Kube-state-metrics is about generating metrics from Kubernetes API objects without modification. This ensures that features provided by kube-state-metrics have the same grade of stability as the Kubernetes API objects themselves. In turn, this means that kube-state-metrics in certain situations may not show the exact same values as kubectl, as kubectl applies certain heuristics to display comprehensible messages. Kube-state-metrics exposes raw data unmodified from the Kubernetes API, this way users have all the data they require and perform heuristics as they see fit.
+
+The metrics are exported on the HTTP endpoint /metrics on the listening port (default 80). They are served as plaintext. They are designed to be consumed either by Prometheus itself or by a scraper that is compatible with scraping a Prometheus client endpoint. You can also open /metrics in a browser to see the raw metrics.
+
+Exposed metrics:
+Per group of metrics there is one file for each metrics. See each file for specific documentation about the exposed metrics:
+https://github.com/kubernetes/kube-state-metrics/tree/master/docs
+
+=== Node-exporter metrics
+The node exporter runs on every node in the openshift cluster gathering metrics about everything on that node and then sending the information back to prometheus.The metrics have a node="whatever-ip" label on them so you know which node the information came from. The node exporter for hardware and OS metrics exposed by *NIX kernels, written in Go with pluggable metric collectors.
+
+Enabled and disabled by default:
+To see the list of what is exposed or not exposed by default follow the following link:
+https://github.com/prometheus/node_exporter#collectors
+
+
+== What Alerts are in the Integreatly monitoring stack?
+
+=== What alerting is available?
+The monitoring stack has many different alerts depending on the metrics being monitored these alerts include:
+
+* 3Scale 
+* Apicurito
+* Backups
+* CodeReady
+* ElasticSearch
+* Enmasse
+* Fuse Online
+* Keycloak/SSO
+* Kube State across RHMI namespaces
+* Launcher
+* Middleware Monitoring stack
+* Managed Service Broker
+* Nexus
+* Solution Explorer
+
+== How is alerting setup?
+
+Alerting can be setup in a few ways. Fro example, email as a default receiver, Pager duty with email and DeadMansSwitch for absence of alerts.
+
+1. Email as a default receiver
+Email server settings are defined at the global config level in the various smtp_ keys. This global config sets defaults for any receivers. The default receiver is configured to send alert & resolve emails to the configure recipients (comma separated).
+
+2. Pager duty with email for critical 
+Any Prometheus Alerts with a label of `severity=critical` will be routed to the critical receiver. This receiver has the pagerduty_configs & email_configs sections defined. This will cause an alert email to be send to the configured recipients (comma separated) and a Pager Duty incident to be triggered.
+
+3. If an alert has a label of `alertname=DeadMansSwitch` it will be routed to the deadmansswitch alert. In this case, it will result in a mail being sent to the configured recipient. This is useful if you want to use the Dead Man's Snitch Integration with Pager Duty. For example, Prometheus will periodically send out a mail to alert that the monitoring stack is running. If the mail is not sent within a time period, a Pager Duty Incident will be triggered.
+
+== Configuring alerts
+To see the current alerts config use the following command `oc get secret alertmanager-application-monitoring -n openshift-middleware-monitoring --template='{{index .data "alertmanager.yaml"}}' | base64 --decode`. The configuration file is written in YAML format and usually follows the following:
+```
+global:
+  resolve_timeout: 5m
+  smtp_smarthost: smtp.sendgrid.net:587
+  smtp_from: noreply@<alertmanager_route>
+  smtp_auth_username: apikey
+  smtp_auth_password: <apikey_secret>
+route:
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+  receiver: default
+  routes:
+  - match:
+      severity: critical
+    receiver: critical
+  - match:
+      alertname: DeadMansSwitch
+    repeat_interval: 5m
+    receiver: deadmansswitch
+receivers:
+- name: default
+  email_configs:
+  - send_resolved: true
+    to: cssre-alerts@redhat.com
+- name: critical
+  pagerduty_configs:
+  - service_key: <pagerduty_service_integration_key>
+  email_configs:
+  - send_resolved: true
+    to: cssre-alerts@redhat.com
+- name: deadmansswitch
+inhibit_rules:
+- source_match:
+    alertname: 'JobRunningTimeExceeded'
+    severity: 'critical'
+  target_match:
+    alertname: 'JobRunningTimeExceeded'
+    severity: 'warning'
+  equal: ['alertname', 'job', 'label_cronjob_name']
+```
+
+
+toc::[]
+
+
+
+
+
+
+
