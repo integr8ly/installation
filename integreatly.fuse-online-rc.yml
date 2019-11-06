@@ -1,0 +1,3 @@
+imageSync:
+  sourceRepo: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888
+  projects: {}
