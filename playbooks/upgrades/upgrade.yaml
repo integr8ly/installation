@@ -125,6 +125,11 @@
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
 
+    - include_role:
+        name: ups
+        tasks_from: upgrade_images
+
+
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
 - import_playbook: "../mobile_generate_manifest.yml"
