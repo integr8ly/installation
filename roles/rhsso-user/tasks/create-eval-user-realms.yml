@@ -12,11 +12,11 @@
   delay: 30
 
 - name: Get SSO Admin Username
-  shell: oc get dc/{{rhsso_user_namespace}} -n launcher -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="SSO_ADMIN_USERNAME")].value}'
+  shell: oc get dc/sso -n {{rhsso_user_namespace}} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="SSO_ADMIN_USERNAME")].value}'
   register: sso_login_username
 
 - name: Get SSO Admin Password
-  shell: oc get dc/{{rhsso_user_namespace}} -n launcher -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="SSO_ADMIN_PASSWORD")].value}'
+  shell: oc get dc/sso -n {{rhsso_user_namespace}} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="SSO_ADMIN_PASSWORD")].value}'
   register: sso_login_password
 
 - name: Get SSO Token

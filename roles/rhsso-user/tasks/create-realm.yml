@@ -5,7 +5,7 @@
 
 - name: Create {{ item }} Realm
   uri: 
-    url: 'https://{{rhsso_user_namespace}}.{{eval_app_host}}/auth/admin/realms'
+    url: 'https://{{user_sso_route}}/auth/admin/realms'
     method: POST
     body: "{{ lookup('file','/tmp/evals-user-realm.json') }}"
     body_format: json
