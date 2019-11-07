@@ -26,6 +26,12 @@
 - name: Add new tag {{ fuse_upgrade_image_tag }} to fuse-ignite-ui image
   shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-ui:1.4-9 fuse-ignite-ui:{{ fuse_upgrade_image_tag }} -n openshift"
 
+- name: Add new tag {{ fuse_upgrade_image_tag }} to Fuse online meta image
+  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-meta:1.4-16 fuse-ignite-meta:{{ fuse_upgrade_image_tag }} -n openshift"
+
+- name: Add new tag {{ fuse_upgrade_image_tag }} to fuse-ignite-s2i image
+  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-s2i:1.4-16 fuse-ignite-s2i:{{ fuse_upgrade_image_tag }} -n openshift"
+
 - name: Import new fuse-ignite-server image
   shell: "oc import-image fuse-ignite-server:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-server:1.4-17 -n openshift"
   register: import_image_result
