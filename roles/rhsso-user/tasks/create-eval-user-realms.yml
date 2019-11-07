@@ -52,5 +52,5 @@
 - debug: var=user_sso_token
 
 - name: Create evals user realms
-  include_tasks: ./create-eval-user-realm.yml
+  include_tasks: ./create-realm.yml
   with_sequence: start=1 end={{ eval_seed_users_count }} format=evals%02d
