@@ -1,6 +1,6 @@
 ---
 - set_fact:
-    codeready_install_dir: /tmp/code-ready-{{ che_version }}
+    codeready_install_dir: /tmp/codeready-{{ che_version }}
 
 - set_fact:
     codeready_install_scripts_dir: "{{ codeready_install_dir }}/operator-installer"
