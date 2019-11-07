@@ -53,4 +53,4 @@
 
 - name: Create evals user realms
   include_tasks: ./create-eval-user-realm.yml
-  with_sequence: start=1 end={{ eval_user_count }} format=evals%02d
+  with_sequence: start=1 end={{ eval_seed_users_count }} format=evals%02d
