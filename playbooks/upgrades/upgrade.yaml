@@ -18,60 +18,16 @@
         tasks_from: upgrade
       vars:
         from_versions:
-          - "release-1.5.1"
+          - "release-1.5.2"
 
 - hosts: localhost
   gather_facts: yes
   tasks:
-    # Monitoring upgrade
-    - name: Expose monitoring vars
-      include_vars: "../../roles/middleware_monitoring_config/defaults/main.yml"
-
-    - name: Expose 3scale vars
-      include_vars: "../../roles/3scale/defaults/main.yml"
-
-    # Grafana
-    - include_role:
-        name: middleware_monitoring
-        tasks_from: upgrade/grafana
-      when: target_version.stdout == "release-1.5.1"
-
-    # Prometheus & Alertmanager
-    - include_role:
-        name: middleware_monitoring
-        tasks_from: upgrade/prometheus
-      when: target_version.stdout == "release-1.5.1"
-
-    # Pull the trigger on the monitoring upgrade
-    - include_role:
-        name: middleware_monitoring
-        tasks_from: upgrade/trigger
-      when: target_version.stdout == "release-1.5.1"
-    # End monitoring upgrade
-
-    - name: Recreate any CRs for alerts to ensure we have the latest
+    # Fuse Online upgrade
+    - name: Fuse Online upgrade
       include_role:
-        name: middleware_monitoring_config
-        tasks_from: upgrade.yml
-      vars:
-        mdc: false
-        mobile_security_service: false
-        ups: false
-
-    - name: Apply latest backup monitoring alerts
-      include_role:
-        name: backup
-        tasks_from: monitoring
-
-    - name: Upgrade keycloak-operator
-      include_role:
-        name: rhsso
-        tasks_from: upgrade.yaml
-
-    - name: Upgrade keycloak-operator for user-sso
-      include_role:
-        name: rhsso-user
-        tasks_from: upgrade.yaml
+        name: fuse_managed
+        tasks_from: upgrade
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
