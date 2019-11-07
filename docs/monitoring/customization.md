@@ -25,11 +25,11 @@ where `service` will be added as a label to the metric, `url` is the URL of the 
 * *http_post_2xx*: Probe http or https targets via POST using the cluster certificates
 * *http_extern_2xx*: Probe http or https targets via GET relying on a valid external certificate
 
-Follow up on the example here - [https://github.com/integr8ly/application-monitoring-operator/blob/master/deploy/examples/BlackboxTarget.yaml]
+Follow up on the example here - https://github.com/integr8ly/application-monitoring-operator/blob/master/deploy/examples/BlackboxTarget.yaml
 
 The process of adding your own alert is this:
 
-1) Create yaml file with the BlackboxTarget CR (by modifying `BlackboxTarget.yaml` example above):
+1) Create yaml file with the `BlackboxTarget` CR (by modifying `BlackboxTarget.yaml` example above):
 
 ```yaml
 apiVersion: applicationmonitoring.integreatly.org/v1alpha1
@@ -46,8 +46,7 @@ spec:
 and import CR to your cluster:
 
 ```bash
-$ oc project middleware-monitoring
-$ oc create -f BlackboxTarget.yaml 
+$ oc create -f BlackboxTarget.yaml -n middleware-monitoring
 blackboxtarget.applicationmonitoring.integreatly.org/example-blackboxtarget created
 ```
 
@@ -81,16 +80,60 @@ spec:
 and import it same as in previous case
 
 ```bash
-$ oc project middleware-monitoring
-$ oc create -f CustomMonitoringRule.yaml 
+$ oc create -f CustomMonitoringRule.yaml -n middleware-monitoring
 prometheusrule.monitoring.coreos.com/custom-alerts created
 ```
-3) 
+
+3) In *Prometheus* UI you should see the new alert. Check if it's working by killing the monitored service (decreasing pod count to 0).
 
 ![Prometheus alert](prometheus-alert-working.png).
 
-In *Prometheus* UI you should see the new alert. Check if it's working by killing the monitored service (decreasing pod count to 0).
 
 ### Kubernetes monitoring
 
-TBD
+Other way to monitor your custom services is to use Kubernetes monitoring itself. Integr8ly itself contains *kube-state-metrics* statistics.
+
+Check out the documentation on that there - https://github.com/kubernetes/kube-state-metrics/tree/master/docs
+
+1) Create custom `PrometheusRule` CR 
+
+_Note: (Example Node.js project has `mycustomservice` container and is running in namespace `my-nodejsproject`) _
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata: 
+  labels:
+    monitoring-key: middleware
+    prometheus: application-monitoring
+    role: alert-rules
+  name: custom-kubernetes-alerts
+spec:   
+  groups: 
+    - name: mycustomservice.rules
+      rules: 
+      - alert: ExampleCustomServicePodsAlert
+        annotations:
+          message: >-
+            Custom Service pod: No pods ready.
+        expr: >
+          (1-absent(kube_pod_labels{namespace="my-nodejsproject",label_deploymentconfig="mycustomservice"} * 
+          on(pod,pod) kube_pod_status_ready{namespace="my-nodejsproject", condition="true"}))
+        for: 5m
+        labels:
+          severity: critical   
+```
+2) Save it into file and import
+
+```bash
+$ oc create -f CustomMonitoringKubernetesRules.yaml -n middleware-monitoring
+prometheusrule.monitoring.coreos.com/custom-kubernetes-alerts created
+```
+
+3) Check it in *Prometheus* UI
+
+## Items created in the built-in Grafana dashboards
+
+If you add `BlackboxTarget` it makes service automatically visible on the *Endpoints Summary*, *Endpoints Report* and *Endpoints Detailed* dashboards.
+
+![Endpoints Detailed Graphana Dashboard](grafana-endpoints-detailed.png)
