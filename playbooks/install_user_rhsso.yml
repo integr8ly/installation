@@ -24,7 +24,7 @@
           openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
       - name: Setup evals user realms
         include_role:
-          name: rhsso-evals-user-realms
+          name: rhsso-user
           tasks_from: create-eval-user-realms.yml
 
       tags: ['user_rhsso']
