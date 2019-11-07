@@ -7,7 +7,7 @@ ansible_user: root
 amq_streams: False
 
 # backup_restore_install decides whether to run and install the backup and restore features
-backup_restore_install: True
+backup_restore_install: False
 
 # Managed instances always have cluster type osd
 cluster_type: poc
