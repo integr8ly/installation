@@ -4,4 +4,5 @@ upgrade_product_images:
   - apicurito
   - codeready
   - enmasse
+  - fuse_managed
   - rhsso
