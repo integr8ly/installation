@@ -1,4 +1,60 @@
 ---
-#ToDo Implement CVE image update steps as described https://github.com/RHCloudServices/integreatly-help/blob/master/sops/cves/applying-cve-updates.md
-- debug:
-    msg: "TODO Implement me!!"
+- name: Get Fuse Image Tag
+  shell: "echo {{ fuse_online_release_tag }} | cut -d '.' -f1-2"
+  register: get_fuse_image_tag
+
+- set_fact:
+    fuse_registry: "registry.redhat.io"
+    fuse_upgrade_image_tag: "{{ get_fuse_image_tag.stdout }}"
+
+- name: Add new tag {{ fuse_upgrade_image_tag }} to Fuse online images
+  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/{{ tag_image_item }} {{ tag_image_item.split(\":\")[0] }}:{{ fuse_upgrade_image_tag }} -n openshift"
+  with_items: "{{ fuse7_managed_upgrade_images }}"
+  loop_control:
+    loop_var: tag_image_item 
+
+- name: Import new Fuse 7 images
+  shell: "oc import-image {{ import_image_stream_item.split(\":\")[0] }}:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/{{ import_image_stream_item }} -n openshift"
+  with_items: "{{ fuse7_managed_upgrade_images }}"
+  loop_control:
+    loop_var: import_image_stream_item 
+  register: import_image_result
+  until: import_image_result.rc == 0
+  retries: 5
+  delay: 5
+
+- name: Patch new Fuse Postgres Exporter 7 imagestream
+  shell: "oc patch imagestream/postgres_exporter -n openshift --type json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/0/from/name\", \"value\": \"{{ fuse_registry }}/fuse7-tech-preview/{{ patch_image_stream_item }}\"}]'"
+  with_items: "{{ fuse7_postgres_exporter_upgrade_image }}"
+  loop_control:
+    loop_var: patch_image_stream_item 
+
+- name: Patch new Fuse OAuth 7 imagestream
+  shell: "oc patch imagestream/oauth-proxy -n openshift --type json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/0/from/name\", \"value\": \"{{ fuse_registry }}/openshift4/{{ patch_image_stream_item }}\"}]'"
+  with_items: "{{ fuse7_oauth_upgrade_image }}"
+  loop_control:
+    loop_var: patch_image_stream_item 
+
+- name: Patch new Fuse Prometheus 7 imagestream
+  shell: "oc patch imagestream/prometheus -n openshift --type json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/0/from/name\", \"value\": \"{{ fuse_registry }}/openshift3/{{ patch_image_stream_item }}\"}]'"
+  with_items: "{{ fuse7_prometheus_upgrade_image }}"
+  loop_control:
+    loop_var: patch_image_stream_item 
+
+### do the same for syndesis-operator in shared fuse namespace 
+
+- name: Add new tag {{ fuse_upgrade_image_tag }} to Fuse 7 Syndesis Operator image
+  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/{{ tag_image_item }} {{ tag_image_item.split(\":\")[0] }}:{{ fuse_upgrade_image_tag }} -n {{ fuse_namespace }}"
+  with_items: "{{ fuse7_syndesis_operator_upgrade_image }}"
+  loop_control:
+    loop_var: tag_image_item 
+
+- name: Import new Fuse 7 Syndesis Operator
+  shell: "oc import-image {{ import_image_stream_item.split(\":\")[0] }}:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/{{ import_image_stream_item }} -n {{ fuse_namespace }}"
+  with_items: "{{ fuse7_syndesis_operator_upgrade_image }}"
+  loop_control:
+    loop_var: import_image_stream_item 
+  register: import_image_result
+  until: import_image_result.rc == 0
+  retries: 5
+  delay: 5
