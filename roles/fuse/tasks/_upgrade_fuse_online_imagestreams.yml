@@ -21,34 +21,40 @@
     - "s2i"
 
 - name: Add new tag {{ fuse_upgrade_image_tag }} to Fuse online server image
-  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-server:1.4-14 fuse-ignite-server:{{ fuse_upgrade_image_tag }} -n openshift"
+  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-server:1.4-17 fuse-ignite-server:{{ fuse_upgrade_image_tag }} -n openshift"
 
 - name: Add new tag {{ fuse_upgrade_image_tag }} to fuse-ignite-ui image
-  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-ui:1.4-6 fuse-ignite-ui:{{ fuse_upgrade_image_tag }} -n openshift"
+  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-ui:1.4-9 fuse-ignite-ui:{{ fuse_upgrade_image_tag }} -n openshift"
+
+- name: Add new tag {{ fuse_upgrade_image_tag }} to Fuse online meta image
+  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-meta:1.4-16 fuse-ignite-meta:{{ fuse_upgrade_image_tag }} -n openshift"
+
+- name: Add new tag {{ fuse_upgrade_image_tag }} to fuse-ignite-s2i image
+  shell: "oc tag --source docker {{ fuse_registry }}/fuse7/fuse-ignite-s2i:1.4-16 fuse-ignite-s2i:{{ fuse_upgrade_image_tag }} -n openshift"
 
 - name: Import new fuse-ignite-server image
-  shell: "oc import-image fuse-ignite-server:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-server:1.4-14 -n openshift"
+  shell: "oc import-image fuse-ignite-server:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-server:1.4-17 -n openshift"
   register: import_image_result
   until: import_image_result.rc == 0
   retries: 5
   delay: 5
 
 - name: Import new fuse-ignite-meta image
-  shell: "oc import-image fuse-ignite-meta:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-meta:1.4-13 -n openshift"
+  shell: "oc import-image fuse-ignite-meta:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-meta:1.4-16 -n openshift"
   register: import_image_result
   until: import_image_result.rc == 0
   retries: 5
   delay: 5
 
 - name: Import new fuse-ignite-s2i image
-  shell: "oc import-image fuse-ignite-s2i:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-s2i:1.4-13 -n openshift"
+  shell: "oc import-image fuse-ignite-s2i:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-s2i:1.4-16 -n openshift"
   register: import_image_result
   until: import_image_result.rc == 0
   retries: 5
   delay: 5
 
 - name: Import new fuse-ignite-ui image
-  shell: "oc import-image fuse-ignite-ui:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-ui:1.4-6 -n openshift"
+  shell: "oc import-image fuse-ignite-ui:{{ fuse_upgrade_image_tag }} --confirm='true' {{ fuse_registry }}/fuse7/fuse-ignite-ui:1.4-9 -n openshift"
   register: import_image_result
   until: import_image_result.rc == 0
   retries: 5
