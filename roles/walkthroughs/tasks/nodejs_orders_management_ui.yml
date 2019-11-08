@@ -1,6 +1,6 @@
 ---
 # ADDS CRUD SPRING BOOT EXAMPLE APP TO THE CATALOG
-- name: template Camel/Fuse orders API
+- name: template Node.js Orders Management UI
   template:
     src: nodejs_orders_management_ui.yml
     dest: /tmp/nodejs_orders_management_ui.yml
