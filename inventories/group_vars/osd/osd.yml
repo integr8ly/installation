@@ -26,7 +26,7 @@ cluster_type: osd
 create_cluster_admin: False
 
 # Don't setup the datasync (yet) on managed instance
-datasync: False
+datasync: True
 
 # Set based on OSD cluster router shard and name
 eval_app_host: "{{ router_shard }}.{{ cluster_name }}.openshiftapps.com"
