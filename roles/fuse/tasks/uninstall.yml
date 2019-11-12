@@ -1,13 +1,13 @@
 ---
 # CLEANUP FUSE OPERATOR AND FUSE ON OPENSHIFT IMAGE STREAMS
-- name: Delete Fuse image streams
-  shell: "oc delete -f {{ item }} -n openshift"
-  register: delete_fuse_imagestream_cmd
-  failed_when: delete_fuse_imagestream_cmd.stderr != '' and 'NotFound' not in delete_fuse_imagestream_cmd.stderr
-  changed_when: delete_fuse_imagestream_cmd.rc == 0
-  with_items:
-    - "{{ fuse_online_imagestream_resources }}"
-    - "{{ fuse_on_openshift_imagestreams_url }}"
+#- name: Delete Fuse image streams
+#  shell: "oc delete -f {{ item }} -n openshift"
+#  register: delete_fuse_imagestream_cmd
+#  failed_when: delete_fuse_imagestream_cmd.stderr != '' and 'NotFound' not in delete_fuse_imagestream_cmd.stderr
+#  changed_when: delete_fuse_imagestream_cmd.rc == 0
+#  with_items:
+#    - "{{ fuse_online_imagestream_resources }}"
+#    - "{{ fuse_on_openshift_imagestreams_url }}"
 
 
 # CLEANUP FUSE ON OPENSHIFT TEMPLATES
@@ -37,11 +37,11 @@
   register: delete_fuse_quickstart_template_cmd
   failed_when: delete_fuse_quickstart_template_cmd.stderr != '' and 'NotFound' not in delete_fuse_quickstart_template_cmd.stderr
 
-- name: Delete Fuse Console templates
-  shell: oc delete -f {{ fuse_resource_base }}/{{ item }} -n openshift
-  with_items:
-    - "fis-console-cluster-template.json"
-    - "fis-console-namespace-template.json"
-    - "fuse-apicurito.yml"
-  register: delete_fuse_console_template_cmd
-  failed_when: delete_fuse_console_template_cmd.stderr != '' and 'NotFound' not in delete_fuse_console_template_cmd.stderr
+#- name: Delete Fuse Console templates
+#  shell: oc delete -f {{ fuse_resource_base }}/{{ item }} -n openshift
+#  with_items:
+#    - "fis-console-cluster-template.json"
+#    - "fis-console-namespace-template.json"
+#    - "fuse-apicurito.yml"
+#  register: delete_fuse_console_template_cmd
+#  failed_when: delete_fuse_console_template_cmd.stderr != '' and 'NotFound' not in delete_fuse_console_template_cmd.stderr

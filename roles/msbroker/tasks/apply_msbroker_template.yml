@@ -73,10 +73,6 @@
     product_ns_pull_secret_name: "{{ fuse_pull_secret_name }}"
   when: fuse_online
 
-- name: Create CRDs
-  shell: "oc apply -f {{ item }}"
-  with_items: "{{ msbroker_required_crds }}"
-
 - set_fact:
     fuse_online_enabled: "true"
   when: fuse_online

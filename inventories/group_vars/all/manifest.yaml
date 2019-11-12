@@ -31,15 +31,15 @@ enmasse_git_url: https://github.com/jboss-container-images/amq-online-images.git
 #controls whether fuse is installed or not
 fuse: True
 #This is the release tag for fuse on openshift in github currently used to pull in the templates and image streams
-fuse_release_tag: 'application-templates-2.1.fuse-740025-redhat-00004'
+fuse_release_tag: 'application-templates-2.1.fuse-750031-redhat-00001'
 #not currently used as the operator decides what to install
 fuse_version: '7.4.1'
 
 #controls whether Fuse Online is installed or not
 fuse_online: True
 # Below Fuse vars are not currently used but will be used to source the resources needed to do the install.
-fuse_online_release_tag: '1.8.9-intly'
-fuse_online_resources_base: 'https://raw.githubusercontent.com/integr8ly/fuse-online-install/1.8.9-intly/resources'
+fuse_online_release_tag: '1.8.9'
+fuse_online_resources_base: 'https://raw.githubusercontent.com/integr8ly/fuse-online-install/1.8.9/resources'
 fuse_online_operator_resources: '{{fuse_online_resources_base}}/fuse-online-operator.yml'
 fuse_online_imagestream_resources: '{{fuse_online_resources_base}}/fuse-online-image-streams.yml'
 fuse_online_crd_resources: '{{fuse_online_resources_base}}/syndesis-crd.yml'

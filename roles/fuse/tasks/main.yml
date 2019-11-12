@@ -1,47 +1,45 @@
----
-# SETUP FUSE OPERATOR AND FUSE ON OPENSHIFT IMAGES
-- name: Create Fuse image streams
-  shell: "oc replace --force -f {{ item }} -n openshift"
-  register: create_fuse_imagestream_cmd
-  failed_when: create_fuse_imagestream_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_imagestream_cmd.stderr
-  changed_when: create_fuse_imagestream_cmd.rc == 0
-  with_items:
-    - "{{ fuse_online_imagestream_resources }}"
-    - "{{ fuse_on_openshift_imagestreams_url }}"
-
-# SETUP FUSE ON OPENSHIFT TEMPLATES
-- name: Create Fuse quickstart templates
-  shell: oc replace --force -f {{ fuse_templates_url }}/{{ item }} -n openshift
-  with_items:
-    - "eap-camel-amq-template.json"
-    - "eap-camel-cdi-template.json"
-    - "eap-camel-cxf-jaxrs-template.json"
-    - "eap-camel-cxf-jaxws-template.json"
-    - "eap-camel-jpa-template.json"
-    - "karaf-camel-amq-template.json"
-    - "karaf-camel-log-template.json"
-    - "karaf-camel-rest-sql-template.json"
-    - "karaf-cxf-rest-template.json"
-    - "spring-boot-camel-amq-template.json"
-    - "spring-boot-camel-config-template.json"
-    - "spring-boot-camel-drools-template.json"
-    - "spring-boot-camel-infinispan-template.json"
-    - "spring-boot-camel-rest-3scale-template.json"
-    - "spring-boot-camel-rest-sql-template.json"
-    - "spring-boot-camel-template.json"
-    - "spring-boot-camel-xa-template.json"
-    - "spring-boot-camel-xml-template.json"
-    - "spring-boot-cxf-jaxrs-template.json"
-    - "spring-boot-cxf-jaxws-template.json"
-  register: create_fuse_quickstart_template_cmd
-  failed_when: create_fuse_quickstart_template_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_quickstart_template_cmd.stderr
-  changed_when: create_fuse_quickstart_template_cmd.rc == 0
-
+#---
+## SETUP FUSE OPERATOR AND FUSE ON OPENSHIFT IMAGES
+##- name: Create Fuse image streams
+##  shell: "oc replace --force -f {{ item }} -n openshift"
+##  register: create_fuse_imagestream_cmd
+##  failed_when: create_fuse_imagestream_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_imagestream_cmd.stderr
+##  changed_when: create_fuse_imagestream_cmd.rc == 0
+##  with_items:
+##    - "{{ fuse_online_imagestream_resources }}"
+##    - "{{ fuse_on_openshift_imagestreams_url }}"
+#
+## SETUP FUSE ON OPENSHIFT TEMPLATES
+#- name: Create Fuse quickstart templates
+#  shell: oc replace --force -f {{ fuse_templates_url }}/{{ item }} -n openshift
+#  with_items:
+#    - "eap-camel-amq-template.json"
+#    - "eap-camel-cdi-template.json"
+#    - "eap-camel-cxf-jaxrs-template.json"
+#    - "eap-camel-cxf-jaxws-template.json"
+#    - "eap-camel-jpa-template.json"
+#    - "karaf-camel-amq-template.json"
+#    - "karaf-camel-log-template.json"
+#    - "karaf-camel-rest-sql-template.json"
+#    - "karaf-cxf-rest-template.json"
+#    - "spring-boot-camel-amq-template.json"
+#    - "spring-boot-camel-config-template.json"
+#    - "spring-boot-camel-drools-template.json"
+#    - "spring-boot-camel-infinispan-template.json"
+#    - "spring-boot-camel-rest-3scale-template.json"
+#    - "spring-boot-camel-rest-sql-template.json"
+#    - "spring-boot-camel-template.json"
+#    - "spring-boot-camel-xa-template.json"
+#    - "spring-boot-camel-xml-template.json"
+#    - "spring-boot-cxf-jaxrs-template.json"
+#    - "spring-boot-cxf-jaxws-template.json"
+#  register: create_fuse_quickstart_template_cmd
+#  failed_when: create_fuse_quickstart_template_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_quickstart_template_cmd.stderr
+#  changed_when: create_fuse_quickstart_template_cmd.rc == 0
+#
 - name: Create Fuse Console templates
   shell: oc create -f {{ fuse_resource_base }}/{{ item }} -n openshift
   with_items:
-    - "fis-console-cluster-template.json"
-    - "fis-console-namespace-template.json"
     - "fuse-apicurito.yml"
   register: create_fuse_console_template_cmd
   failed_when: create_fuse_console_template_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_console_template_cmd.stderr

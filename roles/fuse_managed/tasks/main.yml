@@ -35,20 +35,29 @@
     namespace: "{{ fuse_namespace }}"
     product_ns_pull_secret_name: "{{ fuse_pull_secret_name }}"
 
-- name: Create Syndesis CRD
-  shell: oc apply -f {{ fuse_online_crd_resources }}
+- name: Download fuse binary
+  get_url:
+    url: https://github.com/jboss-fuse/fuse-clients/releases/download/{{ fuse_online_release_tag }}/syndesis-{{ fuse_online_release_tag }}-linux-64bit.tar.gz
+    dest: /tmp/fuse-binary-archive
 
-- name: Create Fuse image streams
-  shell: "oc replace --force -f {{ fuse_online_imagestream_resources }} -n openshift"
-  register: fuse_create_imagestream
-  failed_when: fuse_create_imagestream.stderr != '' and 'AlreadyExists' not in fuse_create_imagestream.stderr
-  changed_when: fuse_create_imagestream.rc == 0
+- name: Create directory for extraction
+  file:
+    path: /tmp/fuse-binary
+    state: directory
 
-- name: Create fuse Operator resources in {{ fuse_namespace }}
-  shell: oc apply -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
+- name: Extract fuse binary
+  unarchive:
+    src: /tmp/fuse-binary-archive
+    dest: /tmp/fuse-binary
 
-- name: TODO-REMOVE-THIS-AFTER-FUSE-ONLINE-INCLUDES-THESE-ARGS Patch args on operator to include monitoring resources addon
-  shell: oc patch dc/syndesis-operator -p='{"spec":{"template":{"spec":{"containers":[{"name":"syndesis-operator","args":["-a","/conf/addons"]}]}}}}}' -n {{ fuse_namespace }}
+- name: Run operator cluster install
+  shell: "/tmp/fuse-binary/syndesis-operator install cluster --namespace {{ fuse_namespace }}"
+
+- name: Run operator install
+  shell: "/tmp/fuse-binary/syndesis-operator install operator --namespace {{ fuse_namespace }}"
+
+#- name: TODO-REMOVE-THIS-AFTER-FUSE-ONLINE-INCLUDES-THESE-ARGS Patch args on operator to include monitoring resources addon
+#  shell: oc patch dc/syndesis-operator -p='{"spec":{"template":{"spec":{"containers":[{"name":"syndesis-operator","args":["-a","/conf/addons"]}]}}}}}' -n {{ fuse_namespace }}
 
 - template:
     src: syndesis-customresource.yml.j2
