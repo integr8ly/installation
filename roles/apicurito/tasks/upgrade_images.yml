@@ -1,4 +1,7 @@
 ---
-#ToDo Implement CVE image update steps as described https://github.com/RHCloudServices/integreatly-help/blob/master/sops/cves/applying-cve-updates.md
-- debug:
-    msg: "TODO Implement me!!"
+
+- name: Import Image Streams
+  shell: oc import-image {{ patch_image_stream_item }} -n openshift
+  with_items: "{{ apicurito_image_streams }}"
+  loop_control:
+    loop_var: patch_image_stream_item
