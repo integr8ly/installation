@@ -117,7 +117,7 @@ application_metrics: False
 
 #mobile developer console
 mdc: True
-mdc_operator_release_tag: '0.2.6'
+mdc_operator_release_tag: '0.3.0'
 mdc_operator_resources: 'https://raw.githubusercontent.com/aerogear/mobile-developer-console-operator/{{ mdc_operator_release_tag }}/deploy'
 mdc_operator_image: 'quay.io/aerogear/mobile-developer-console-operator:{{ mdc_operator_release_tag }}'
 mdc_release_tag: '1.1.11'
