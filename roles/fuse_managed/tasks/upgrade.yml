@@ -1,104 +1,22 @@
 
 ---
-- set_fact:
-    fuse_online_template: https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{ fuse_online_release_tag }}/resources/fuse-online-template.yml
-
-# Used to pull images from registry.redhat.io
-- name: Expose vars
-  include_vars: "{{ role_path }}/../imagestream_pull_secret/defaults/main.yml"
-- include_role:
-    name: imagestream_pull_secret
-  vars:
-    namespace: "{{ fuse_namespace }}"
-    product_ns_pull_secret_name: "{{ fuse_pull_secret_name }}"
-
-- include_role:
-    name: fuse
-    tasks_from: _upgrade_fuse_online_imagestreams
-
-- name: Update fuse operator resources in {{ fuse_namespace }}
-  shell: oc replace --force -f {{ fuse_online_operator_resources }} -n {{ fuse_namespace }}
-
-- name: TODO-REMOVE-THIS-AFTER-FUSE-ONLINE-INCLUDES-THESE-ARGS Patch args on operator to include monitoring resources addon
-  shell: oc patch dc/syndesis-operator -p='{"spec":{"template":{"spec":{"containers":[{"name":"syndesis-operator","args":["-a","/conf/addons"]}]}}}}}' -n {{ fuse_namespace }}
-
-# Upgrade syndesis resources. This should bypass the upgrade phase of the operator
-- name: Update and create new resources added to the fuse online template
-  block:
-    - name: Get syndesis global config secret params
-      shell: oc get secret syndesis-global-config -o template --template \{\{.data.params\}\} -n {{ fuse_namespace }} | base64 --decode > /tmp/syndesis-params.yaml
-    - name: Format syndesis parameter file
-      shell: "sed -i 's/^/-p /' /tmp/syndesis-params.yaml"
-    - shell: sed -i -z "s/\\n/ /g" /tmp/syndesis-params.yaml
-    - name: Get syndesis parameters
-      shell: "cat /tmp/syndesis-params.yaml"
-      register: syndesis_parameters
-    - name: Create new resources added to the fuse online template
-      shell: "oc process -n {{ fuse_namespace }} -f {{ fuse_online_template }} -p SAR_PROJECT={{ fuse_namespace }} -p MAX_INTEGRATIONS_PER_USER=0 {{ syndesis_parameters.stdout }} | oc apply -n {{ fuse_namespace }} -f -"
-      register: update_fuse_online_template_resources
-      failed_when: update_fuse_online_template_resources.stderr != '' and 'Warning' not in update_fuse_online_template_resources.stderr and 'metadata.resourceVersion' not in update_fuse_online_template_resources.stderr
-
-- name: Verify Fuse upgrade succeeded
-  shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
-  register: fuse_verify_result
-  until: fuse_verify_result.stdout.find("8") != -1
-  retries: 50
-  delay: 10
-  changed_when: False
-
-# Link Syndesis pull secret to service accounts
-- name: Get Syndesis service accounts
-  shell: oc get serviceaccounts -n {{ fuse_namespace }} | grep syndesis | awk '{print $1}'
-  register: fuse_serviceaccounts
-
-- name: Link syndesis-pull-secret to fuse service accounts for image pull
-  shell: "oc secrets link {{ item }} {{ fuse_pull_secret_name }} --for=pull -n {{ fuse_namespace }}"
-  with_items: "{{ fuse_serviceaccounts.stdout_lines }}"
-
-- name: Link syndesis-pull-secret to builder service account
-  shell: "oc secrets link builder {{ fuse_pull_secret_name }} --for=pull,mount -n {{ fuse_namespace }}"
-
-- name: Expose controllers via 3Scale
-  shell: "oc set env dc syndesis-server CONTROLLERS_EXPOSE_VIA3SCALE=true -n {{ fuse_namespace }}"
-
-# Update Syndesis CR to 1.4
-- name: Update version of Fuse custom resource to 1.4
-  shell: "oc patch syndesis/fuse-managed --type=json --patch='[{\"op\": \"replace\", \"path\": \"/status/version\", \"value\": \"1.4\"}]' -n {{ fuse_namespace }}"
-
-- name: Get fuse monitoring resources
+- name: Download fuse binary
   get_url:
-    url: "https://raw.githubusercontent.com/syndesisio/syndesis/1.7.x/install/addons/{{ item }}"
-    dest: "/tmp/{{ item }}"
-  with_items:
-    - syndesis-db-dashboard.yml
-    - syndesis-db-prometheus-rule.yml
-    - syndesis-db-servicemonitor.yml
-    - syndesis-integration-dashboard.yml
-    - syndesis-integrations-service.yml
-    - syndesis-integrations-servicemonitor.yml
-    - syndesis-jvm-dashboard.yml
-    - syndesis-legacy-ui-serviceaccount.yml
-    - syndesis-legacy-ui.yml
-    - syndesis-meta-servicemonitor.yml
-    - syndesis-rest-api-dashboard.yml
-    - syndesis-rest-api-prometheus-rule.yml
-    - syndesis-server-servicemonitor.yml
+    url: https://github.com/jboss-fuse/fuse-clients/releases/download/{{ fuse_online_release_tag }}/syndesis-{{ fuse_online_release_tag }}-linux-64bit.tar.gz
+    dest: /tmp/fuse-binary-archive
 
-- name: Create fuse monitoring resources
-  shell: "oc create -f /tmp/{{ item }} -n {{ fuse_namespace }}"
-  register: fuse_monitoring_resource
-  failed_when: fuse_monitoring_resource.stderr != '' and 'already exists' not in fuse_monitoring_resource.stderr
-  with_items:
-    - syndesis-db-dashboard.yml
-    - syndesis-db-prometheus-rule.yml
-    - syndesis-db-servicemonitor.yml
-    - syndesis-integration-dashboard.yml
-    - syndesis-integrations-service.yml
-    - syndesis-integrations-servicemonitor.yml
-    - syndesis-jvm-dashboard.yml
-    - syndesis-legacy-ui-serviceaccount.yml
-    - syndesis-legacy-ui.yml
-    - syndesis-meta-servicemonitor.yml
-    - syndesis-rest-api-dashboard.yml
-    - syndesis-rest-api-prometheus-rule.yml
-    - syndesis-server-servicemonitor.yml
+- name: Create directory for extraction
+  file:
+    path: /tmp/fuse-binary
+    state: directory
+
+- name: Extract fuse binary
+  unarchive:
+    src: /tmp/fuse-binary-archive
+    dest: /tmp/fuse-binary
+
+- name: Run operator cluster install
+  shell: "/tmp/fuse-binary/syndesis-operator install cluster --namespace {{ fuse_namespace }}"
+
+- name: Run operator install
+  shell: "/tmp/fuse-binary/syndesis-operator install operator --namespace {{ fuse_namespace }}"
