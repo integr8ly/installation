@@ -1,11 +1,4 @@
 ---
-#- name: Delete Fuse image streams
-#  shell: "oc delete -f {{ fuse_online_imagestream_resources }} -n openshift"
-#  register: fuse_delete_imagestream
-#  failed_when: fuse_delete_imagestream.stderr != '' and 'NotFound' not in fuse_delete_imagestream.stderr
-#  changed_when: fuse_delete_imagestream.rc == 0
-#  when: fuse_delete_imagestreams | default(true) | bool
-
 - name: Remove the Fuse Managed namespace
   shell: oc delete project {{ fuse_namespace }}
   failed_when: false
