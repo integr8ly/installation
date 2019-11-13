@@ -224,7 +224,7 @@ spec:
         annotations:
            message: The PVC {{ '{{' }} $labels.persistentvolumeclaim {{ '}}' }} is in status {{ '{{' }} $labels.phase {{ '}}' }} in namespace {{ '{{' }} $labels.namespace {{ '}}' }}
         expr: |
-          (sum by(persistentvolumeclaim, namespace, phase) (kube_persistentvolumeclaim_status_phase{phase=~"Failed|Pending"}) * on ( namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
+          (sum by(persistentvolumeclaim, namespace, phase) (kube_persistentvolumeclaim_status_phase{phase=~"Failed|Pending|Lost"}) * on ( namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
         for: 15m
         labels:
           severity: critical
