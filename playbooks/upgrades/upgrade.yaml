@@ -23,7 +23,10 @@
 - hosts: localhost
   gather_facts: yes
   tasks:
-    # Fuse Online upgrade
+    - name: AMQ Online upgrade
+      include_role:
+        name: enmasse
+        tasks_from: upgrade
     - name: Fuse Online upgrade
       include_role:
         name: fuse_managed
