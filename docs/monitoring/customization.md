@@ -121,7 +121,7 @@ spec:
           on(pod,pod) kube_pod_status_ready{namespace="my-nodejsproject", condition="true"}))
         for: 5m
         labels:
-          severity: critical   
+          severity: critical
 ```
 2) Save it into file and import
 
@@ -132,8 +132,58 @@ prometheusrule.monitoring.coreos.com/custom-kubernetes-alerts created
 
 3) Check it in *Prometheus* UI
 
+### CPU and memory monitoring
+Another useful metric is usually to check CPU and memory utilization and how it goes with set up pod limits on Kubernetes cluster.
+
+_Note: Some service is running in `my-customservice` container_
+
+1) Create custom `PrometheusRule` CR 
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata: 
+  labels:
+    monitoring-key: middleware
+    prometheus: application-monitoring
+    role: alert-rules
+  name: custom-limits-alerts
+spec:   
+  groups: 
+    - name: mycustomservice.rules
+      rules: 
+      - alert: MyServicePodCPUHigh
+        expr: "(sum(label_replace(sum by(namespace, pod_name, container_name) (rate(container_cpu_usage_seconds_total{namespace='my-customservice'}[5m])), 'container', '$1', 'container_name', '(.*)')) by (container) / sum(kube_pod_container_resource_limits_cpu_cores{namespace='my-customservice'}) by (container) * 100) > 90"
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: "The MyService pod has been at 90% CPU usage for more than 5 minutes."
+          summary: "The MyService is reporting high cpu usage for more that 5 minutes."        
+      - alert: MyServicePodMemoryHigh
+        expr: "(sum by(container) (label_replace(container_memory_usage_bytes{container_name!='',namespace='my-customservice'}, 'container', '$1', 'container_name', '(.*)')) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace='my-customservice'}) * 100) > 90"
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: "The MyService pod has been at 90% memory usage for more than 5 minutes."
+          summary: "The MyService is reporting high memory usage for more that 5 minutes."
+```
+
+2) Save it into file and import
+
+```bash
+$ oc create -f CustomMonitoringLimitsRules.yaml -n middleware-monitoring
+prometheusrule.monitoring.coreos.com/custom-limits-alerts created
+```
+
+3) Check it in *Prometheus* UI
+
+
 ## Items created in the built-in Grafana dashboards
 
 If you add `BlackboxTarget` it makes service automatically visible on the *Endpoints Summary*, *Endpoints Report* and *Endpoints Detailed* dashboards.
 
 ![Endpoints Detailed Graphana Dashboard](grafana-endpoints-detailed.png)
+
+
