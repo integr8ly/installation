@@ -9,6 +9,8 @@ approvers:
 - pb82
 - jessesarn
 - davidffrench
+- aidenkeating
+- ciaranRoche
 
 reviewers:
 - pmccarthy
@@ -27,3 +29,5 @@ reviewers:
 - StevenTobin
 - obrienrobert
 - damienomurchu
+- aidenkeating
+- ciaranRoche
