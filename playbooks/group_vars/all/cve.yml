@@ -1,0 +1,7 @@
+---
+upgrade_product_images:
+  - 3scale
+  - apicurito
+  - codeready
+  - enmasse
+  - rhsso

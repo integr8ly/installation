@@ -1,0 +1,21 @@
+# Generic playbook for CVE rollouts
+---      
+- hosts: localhost
+  gather_facts: yes
+  # Ensure task is always run regardless of whether tags are specified
+  tags: ['always']
+  tasks:
+  # Required for Ansible Tower installs that need to login via oc as a prerequisite
+  - name: Openshift Login
+    include_role:
+      name: openshift
+      tasks_from: login.yml
+
+  - name: Update product images
+    include_role:
+      name: "{{ item }}"
+      tasks_from: "upgrade_images"
+    with_items: "{{ upgrade_product_images }}"
+    # ansible_run_tags var defaults to 'all' when no tags are specified
+    when: item in ansible_run_tags or 'all' in ansible_run_tags
+    
