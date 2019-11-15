@@ -9,6 +9,7 @@
   shell: "oc get deployment grafana-deployment -n {{ monitoring_namespace }}"
   register: get_deployment_cmd
   failed_when: get_deployment_cmd.rc == 0
+  until: get_deployment_cmd.rc != 0
   changed_when: "'NotFound' in get_deployment_cmd.stderr"
   retries: 10
   delay: 5

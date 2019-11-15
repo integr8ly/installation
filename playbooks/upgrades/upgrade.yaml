@@ -18,7 +18,7 @@
         tasks_from: upgrade
       vars:
         from_versions:
-          - "release-1.5.0"
+          - "release-1.5.2"
     - set_fact:
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
@@ -52,6 +52,11 @@
     - name: SSO upgrade
       include_role:
         name: rhsso
+        tasks_from: upgrade
+
+    - name: Fuse Online upgrade
+      include_role:
+        name: fuse_managed
         tasks_from: upgrade
 
     - name: AMQ Online upgrade
