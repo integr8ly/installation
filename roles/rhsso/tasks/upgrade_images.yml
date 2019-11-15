@@ -5,3 +5,8 @@
   with_items: "{{ rhsso_image_streams }}"
   loop_control:
     loop_var: patch_image_stream_item
+
+- name: Patch Keycloak Operator Deployment
+  shell: oc patch deployment keycloak-operator --patch='{"spec":{"template":{"spec":{"containers":[{"name":"keycloak-operator","image":"{{ rhsso_operator_image }}"}]}}}}' --namespace {{ rhsso_namespace }}
+  register: keycloak_operator_image_patch
+  failed_when: keycloak_operator_image_patch.stderr

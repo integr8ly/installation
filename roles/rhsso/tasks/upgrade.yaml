@@ -5,7 +5,7 @@
     sso_namespace: "{{ rhsso_namespace }}"
 
 - name: patch new keycloak operator version
-  shell: "oc patch deployment keycloak-operator -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"{{ upgrade_sso_operator_image }}\"}]'"
+  shell: "oc patch deployment keycloak-operator -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"{{ rhsso_operator_image }}\"}]'"
   register: patch
   failed_when: patch.stderr != ''
 
