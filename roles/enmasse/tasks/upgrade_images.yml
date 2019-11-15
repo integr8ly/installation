@@ -14,7 +14,7 @@
   with_items: "{{ deployments }}"
 
 - name: "Postgresql update the imagestreams"
-  shell: oc import-image postgresql:9.6 -n openshift
+  shell: oc import-image {{ enmasse_postgresql_image }} -n openshift
   register: result
   until: result.stdout
   retries: 50
