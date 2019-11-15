@@ -4,9 +4,26 @@ It's possible to add your own monitoring and alerting to the cluster after it's 
 
 ## Adding your own monitoring rule
 
-### HTTP(s) service monitoring
+To allow monitoring for a middleware service, it's needed that the service is running in the namespace that has `monitoring-key=middleware` in it.
 
-The easiest way to add your rule is by using *BlackboxTarget*. The Blackbox Target CR accepts the following properties in the spec:
+To add such label, you can use `oc` command:
+
+```bash
+oc label namespace my-customservice monitoring-key=middleware
+```
+
+There are 3 different examples for adding monitoring on the middleware service. 
+
+* HTTP(s) endpoint monitoring - simply alert if service is not returning proper HTTP status code
+
+* Kubernetes monitoring - use various stats provided by [https://github.com/kubernetes/kube-state-metrics](kube-state-metrics), such as count of pods in Ready state
+
+* CPU/Memory per pod limits monitoring - check if CPU utilization or used memory doesn't go above certain threshold
+
+
+### HTTP(s) endpoint monitoring
+
+Your service usually has a HTTP/HTTPs endpoint and we want to monitor if it returns HTTP 2xx status code. The easiest way to monitor that is by addding your rule using *BlackboxTarget*. The Blackbox Target CR accepts the following properties in the spec:
 
 * *blackboxTargets*: A list of targets for the blackbox exporter to probe.
 
@@ -29,7 +46,7 @@ Follow up on the example here - https://github.com/integr8ly/application-monitor
 
 The process of adding your own alert is this:
 
-1) Create yaml file with the `BlackboxTarget` CR (by modifying `BlackboxTarget.yaml` example above):
+1) Create yaml file locally with the `BlackboxTarget` CR (by modifying `BlackboxTarget.yaml` example above):
 
 ```yaml
 apiVersion: applicationmonitoring.integreatly.org/v1alpha1
@@ -50,7 +67,7 @@ $ oc create -f BlackboxTarget.yaml -n middleware-monitoring
 blackboxtarget.applicationmonitoring.integreatly.org/example-blackboxtarget created
 ```
 
-2) Create yaml file with the alerting CR `PrometheusRule`. 
+2) Create yaml file `CustomMonitoringRule.yaml` locally with the alerting CR `PrometheusRule`. 
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -123,7 +140,7 @@ spec:
         labels:
           severity: critical
 ```
-2) Save it into file and import
+2) Save it into local file `CustomMonitoringKubernetesRules.yaml` and import
 
 ```bash
 $ oc create -f CustomMonitoringKubernetesRules.yaml -n middleware-monitoring
@@ -133,7 +150,8 @@ prometheusrule.monitoring.coreos.com/custom-kubernetes-alerts created
 3) Check it in *Prometheus* UI
 
 ### CPU and memory monitoring
-Another useful metric is usually to check CPU and memory utilization and how it goes with set up pod limits on Kubernetes cluster.
+
+Another useful metric is usually to check CPU and memory utilization and how it goes with set up pod limits on Kubernetes cluster. This requires CPU and memory limits for the pod to be set in the deployment config.
 
 _Note: Some service is running in `my-customservice` container_
 
@@ -170,7 +188,7 @@ spec:
           summary: "The MyService is reporting high memory usage for more that 5 minutes."
 ```
 
-2) Save it into file and import
+2) Save it into local file `CustomMonitoringLimitsRules.yaml` and import
 
 ```bash
 $ oc create -f CustomMonitoringLimitsRules.yaml -n middleware-monitoring
