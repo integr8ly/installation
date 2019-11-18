@@ -89,3 +89,15 @@
                     }
                 }
             ]}]'
+
+- name: remove prometheus rolebinding
+  include: ./delete_resource_from_template.yml
+  with_items:
+    - "prometheus_cluster_role.yml"
+    - "prometheus_cluster_role_binding.yml"
+
+- name: recreate prometheus rolebinding
+  include: ./create_resource_from_template.yml
+  with_items:
+    - "prometheus_cluster_role.yml"
+    - "prometheus_cluster_role_binding.yml"
