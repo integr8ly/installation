@@ -1,1 +1,4 @@
 namespace_file: namespace.yml
+
+rhmi_label: rhmi
+rhmi_label_value: "true"
