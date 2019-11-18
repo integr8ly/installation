@@ -54,9 +54,6 @@
 
 - import_tasks: resources.yml
 
-- import_tasks: routes.yml
-  when: not enable_wildcard_route
-
 - name: "Setup pv-based storage"
   block:
     - name: "Check for storage class: {{ threescale_pvc_rwx_storageclassname }}"
