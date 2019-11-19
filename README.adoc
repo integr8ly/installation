@@ -188,6 +188,8 @@ Before running the installer, please consider the following variables:
 | github_client_id | GitHub OAuth client ID to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
 | github_client_secret | GitHub OAuth client secret to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
 | prerequisites_install | Boolean var that skips the installation of system wide tools/packages that are required by the installer if set to false (needs to be set to false when running the installer in a linux container). Defaults to `true`. 
+| heimdall_pull_secret_name | Heimdall pull secret name
+| heimdall_pull_secret_token | Heimdall pull secret token
 |===
 
 Some products can be excluded from the install by setting a var. For example, setting `gitea=false` will not install gitea. Installation of individual products will not be a supported installation method with this repo. You can however write your own playbook to execute specific roles & tasks as needed.
@@ -218,6 +220,15 @@ The following flag can be used if self signed certs are used.
 ----
 -e eval_self_signed_certs=true
 ----
+
+====
+To enable Heimdall you will need a valid pull secret token to access the registry, you can retrieve these from https://access.redhat.com/terms-based-registry/#/token/-heimdall/openshift-secret
+
+[source,shell]
+----
+-e heimdall_pull_secret_name=<your_secret-name> -e heimdall_pull_secret_token=<your_secret-token>
+----
+
 ====
 
 [TIP]

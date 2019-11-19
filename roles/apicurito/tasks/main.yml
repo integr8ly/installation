@@ -18,3 +18,5 @@
   --param=ROUTE_HOSTNAME={{ apicurito_route_hostname }}.{{ apicurito_route_suffix }} | oc create -f - -n {{ apicurito_namespace }}"
   register: create_apicurito_cmd
   failed_when: create_apicurito_cmd.stderr != '' and 'AlreadyExists' not in create_apicurito_cmd.stderr
+
+- import_tasks: heimdall.yml

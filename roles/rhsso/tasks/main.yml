@@ -86,3 +86,5 @@
 
 - name: Run Postinstall checks
   import_tasks: check_readiness.yml
+
+- import_tasks: heimdall.yml

@@ -30,3 +30,5 @@
 - name: install code ready valid certs
   shell: "cd {{ codeready_install_scripts_dir }} && OPENSHIFT_PROJECT={{ che_namespace }} ./deploy.sh --deploy --public-certs --secure"
   when: not eval_self_signed_certs|bool
+
+- import_tasks: heimdall.yml

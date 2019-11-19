@@ -143,6 +143,13 @@
       vars:
         sso_namespace: "{{ eval_user_rhsso_namespace | default('user-sso') }}"
       tags: ['rhsso-user']
+    -
+      name: Uninstall heimdall
+      include_role:
+        name: heimdall
+        tasks_from: uninstall
+      tags: ['heimdall']
+      when: heimdall | default(true) | bool
 
     -
       name: Reboot template broker

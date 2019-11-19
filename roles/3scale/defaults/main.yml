@@ -166,3 +166,5 @@ threescale_image_streams:
   - system-memcached:latest
   - system-redis:latest
   - backend-redis:latest
+
+threescale_heimdall_exclude_pattern: ""
