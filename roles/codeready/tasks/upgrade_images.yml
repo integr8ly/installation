@@ -1,22 +1,30 @@
 ---
-- name: "patch codeready deployment"
-  shell: 'oc patch deployment codeready --patch=''{"spec":{"template":{"spec":{"containers":[{"name":"codeready","imagePullPolicy":"Always" }]}}}}'' -n {{ che_namespace }}'
+- name: "patch {{ che_deployment_name }} deployment"
+  shell: 'oc patch deployment {{ che_deployment_name }} --patch=''{"spec":{"template":{"spec":{"containers":[{"name":"{{ che_deployment_name }}","imagePullPolicy":"Always" }]}}}}'' -n {{ che_namespace }}'
   register: patch_codeready_result
   failed_when: patch_codeready_result.stderr != ""
 
-- name: "patch postgres deployment"
-  shell: 'oc patch deployment postgres --patch=''{"spec":{"template":{"spec":{"containers":[{"name":"postgres", "image":"registry.access.redhat.com/rhscl/postgresql-96-rhel7:latest", "imagePullPolicy":"Always"}]}}}}'' -n {{ che_namespace }}'
+- name: "patch {{ che_postgres_deployment_name }} deployment"
+  shell: 'oc patch deployment {{ che_postgres_deployment_name }} --patch=''{"spec":{"template":{"spec":{"containers":[{"name":"{{ che_postgres_deployment_name }}", "image":"{{ che_postgre_image_name }}", "imagePullPolicy":"Always"}]}}}}'' -n {{ che_namespace }}'
   register: patch_postgres_result
   failed_when: patch_postgres_result.stderr != ""
 
-- name: "redeploy codeready"
-  shell: 'oc patch deployment codeready --patch ''{"spec":{"template":{"metadata":{"annotations":{"last-restart":"`date +''%s''`"}}}}}'' -n {{ che_namespace }}'
+- name: Patch {{ che_operator_deployment_name }} Deployment
+  shell: oc patch deployment {{ che_operator_deployment_name }} --patch='{"spec":{"template":{"spec":{"containers":[{"name":"{{ che_operator_deployment_name }}","image":"{{ che_operator_image_name }}"}]}}}}' --namespace {{ che_namespace }}
+  register: codeready_operator_image_patch_result
+  failed_when: codeready_operator_image_patch_result.stderr != ""
+
+- name: "redeploy {{ che_deployment_name }}"
+  shell: 'oc patch deployment {{ che_deployment_name }} --patch ''{"spec":{"template":{"metadata":{"annotations":{"last-restart":"`date +''%s''`"}}}}}'' -n {{ che_namespace }}'
   register: redeploy_codeready_result
   failed_when: redeploy_codeready_result.stderr != ""
-  when: '"not patched" in patch_codeready_result.stdout'
 
-- name: "redeploy postgres"
-  shell: 'oc patch deployment postgres --patch ''{"spec":{"template":{"metadata":{"annotations":{"last-restart":"`date +''%s''`"}}}}}'' -n {{ che_namespace }}'
+- name: "redeploy {{ che_postgres_deployment_name }}"
+  shell: 'oc patch deployment {{ che_postgres_deployment_name }} --patch ''{"spec":{"template":{"metadata":{"annotations":{"last-restart":"`date +''%s''`"}}}}}'' -n {{ che_namespace }}'
   register: redeploy_postgres_result
   failed_when: redeploy_postgres_result.stderr != ""
-  when: '"not patched" in patch_postgres_result.stdout'
+
+- name: "redeploy {{ che_operator_deployment_name }}"
+  shell: 'oc patch deployment {{ che_operator_deployment_name }} --patch ''{"spec":{"template":{"metadata":{"annotations":{"last-restart":"`date +''%s''`"}}}}}'' -n {{ che_namespace }}'
+  register: redeploy_codeready_operator_result
+  failed_when: redeploy_codeready_operator_result.stderr != ""

@@ -6,6 +6,9 @@ che_namespace: "{{ eval_che_namespace | default('codeready') }}"
 che_display_name: "Red Hat CodeReady"
 che_template_folder: /tmp/che-templates
 che_validate_certs: "{{ eval_sso_validate_certs | default('true') }}"
+che_deployment_name: "codeready"
+che_postgres_deployment_name: "postgres"
+che_operator_deployment_name: "codeready-operator"
 
 #server template vars
 che_protocol: https
@@ -21,9 +24,9 @@ che_persistent_volume: true
 che_persistent_volume_size: 2Gi
 che_persistent_volume_storageclassname: efs
 
-#postgre
-che_postgre_image_name: 'docker.io/eclipse/che-postgres'
-che_postgre_image_tag: '6.9.0'
+#images
+che_operator_image_name: 'registry.redhat.io/codeready-workspaces/server-operator-rhel8:1.2'
+che_postgre_image_name: 'registry.access.redhat.com/rhscl/postgresql-96-rhel7:latest'
 
 #keycloak
 che_keycloak_user: admin
