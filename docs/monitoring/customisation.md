@@ -1,15 +1,18 @@
-# Monitoring customization
+# Monitoring customisation
 
 It's possible to add your own monitoring and alerting to the cluster after it's installed.
 
-## Adding your own monitoring rule
+## Prerequisties
+
+* we'll need Integre8ly 1.5.x installed on the cluster
+* `oc` commands require user to be logged in already as a cluster admin
 
 To allow monitoring for a middleware service, it's needed that the service is running in the namespace that has `monitoring-key=middleware` in it.
 
 To add such label, you can use `oc` command:
 
 ```bash
-oc label namespace my-customservice monitoring-key=middleware
+oc label namespace my-customservice "monitoring-key=middleware"
 ```
 
 There are 3 different examples for adding monitoring on the middleware service. 
@@ -18,7 +21,7 @@ There are 3 different examples for adding monitoring on the middleware service.
 
 * Kubernetes monitoring - use various stats provided by [https://github.com/kubernetes/kube-state-metrics](kube-state-metrics), such as count of pods in Ready state
 
-* CPU/Memory per pod limits monitoring - check if CPU utilization or used memory doesn't go above certain threshold
+* CPU/Memory per pod limits monitoring - check if CPU utilisation or used memory doesn't go above certain threshold
 
 
 ### HTTP(s) endpoint monitoring
@@ -56,7 +59,7 @@ metadata:
 spec:
   blackboxTargets:
     - service: mycustomservice
-      url: http://mycustomservice-my-nodejsproject.apps.vsazel-a4c3.open.redhat.com/  #replace with your service
+      url: http://mycustomservice-my-nodejsproject.apps.vsazel-a4c3.open.redhat.com/  #this is an URL of the service you want to monitor, replace it with yours
       module: http_extern_2xx
 ```
 
@@ -112,7 +115,7 @@ Other way to monitor your custom services is to use Kubernetes monitoring itself
 
 Check out the documentation on that there - https://github.com/kubernetes/kube-state-metrics/tree/master/docs
 
-1) Create custom `PrometheusRule` CR 
+1) Create yaml file `CustomMonitoringKubernetesRules.yaml` and in there custom `PrometheusRule` CR:
 
 _Note: (Example Node.js project has `mycustomservice` container and is running in namespace `my-nodejsproject`) _
 
@@ -133,14 +136,15 @@ spec:
         annotations:
           message: >-
             Custom Service pod: No pods ready.
-        expr: >
+        expr: > #replace in the following expression namespace, and label_deploymentconfig to fit your service
           (1-absent(kube_pod_labels{namespace="my-nodejsproject",label_deploymentconfig="mycustomservice"} * 
-          on(pod,pod) kube_pod_status_ready{namespace="my-nodejsproject", condition="true"}))
+          on(pod,pod) kube_pod_status_ready{namespace="my-nodejsproject", condition="true"})) 
         for: 5m
         labels:
           severity: critical
 ```
-2) Save it into local file `CustomMonitoringKubernetesRules.yaml` and import
+
+2) Save it and import
 
 ```bash
 $ oc create -f CustomMonitoringKubernetesRules.yaml -n middleware-monitoring
@@ -151,11 +155,11 @@ prometheusrule.monitoring.coreos.com/custom-kubernetes-alerts created
 
 ### CPU and memory monitoring
 
-Another useful metric is usually to check CPU and memory utilization and how it goes with set up pod limits on Kubernetes cluster. This requires CPU and memory limits for the pod to be set in the deployment config.
+Another useful metric is usually to check CPU and memory utilisation and how it goes with set up pod limits on Kubernetes cluster. This requires CPU and memory limits for the pod to be set in the deployment config.
 
 _Note: Some service is running in `my-customservice` container_
 
-1) Create custom `PrometheusRule` CR 
+1) Create yaml file `CustomMonitoringLimitsRules.yaml` and in there custom `PrometheusRule` CR: 
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -171,7 +175,8 @@ spec:
     - name: mycustomservice.rules
       rules: 
       - alert: MyServicePodCPUHigh
-        expr: "(sum(label_replace(sum by(namespace, pod_name, container_name) (rate(container_cpu_usage_seconds_total{namespace='my-customservice'}[5m])), 'container', '$1', 'container_name', '(.*)')) by (container) / sum(kube_pod_container_resource_limits_cpu_cores{namespace='my-customservice'}) by (container) * 100) > 90"
+        expr: > #replace in the following expression namespace to fit your service
+          "(sum(label_replace(sum by(namespace, pod_name, container_name) (rate(container_cpu_usage_seconds_total{namespace='my-customservice'}[5m])), 'container', '$1', 'container_name', '(.*)')) by (container) / sum(kube_pod_container_resource_limits_cpu_cores{namespace='my-customservice'}) by (container) * 100) > 90"
         for: 5m
         labels:
           severity: warning
@@ -179,7 +184,8 @@ spec:
           description: "The MyService pod has been at 90% CPU usage for more than 5 minutes."
           summary: "The MyService is reporting high cpu usage for more that 5 minutes."        
       - alert: MyServicePodMemoryHigh
-        expr: "(sum by(container) (label_replace(container_memory_usage_bytes{container_name!='',namespace='my-customservice'}, 'container', '$1', 'container_name', '(.*)')) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace='my-customservice'}) * 100) > 90"
+        expr: > #replace in the following expression namespace to fit your service
+          "(sum by(container) (label_replace(container_memory_usage_bytes{container_name!='',namespace='my-customservice'}, 'container', '$1', 'container_name', '(.*)')) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace='my-customservice'}) * 100) > 90"
         for: 5m
         labels:
           severity: warning
@@ -188,7 +194,7 @@ spec:
           summary: "The MyService is reporting high memory usage for more that 5 minutes."
 ```
 
-2) Save it into local file `CustomMonitoringLimitsRules.yaml` and import
+2) Save it and import
 
 ```bash
 $ oc create -f CustomMonitoringLimitsRules.yaml -n middleware-monitoring

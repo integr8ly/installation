@@ -48,6 +48,6 @@ See the following repo for some examples of how to do customisations using the i
 
 
 
-## Customizing monitoring
+## Customising monitoring
 
-Creating new monitoring rules and alerts is part of [separate document](monitoring/customization.md).
+Creating new monitoring rules and alerts is part of [separate document](monitoring/customisation.md).
