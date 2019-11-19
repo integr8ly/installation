@@ -5,3 +5,11 @@ apicurito_template_namespace: openshift
 apicurito_template_file: /tmp/apicurito-template.yaml
 apicurito_template_file_format: yaml
 apicurito_route_hostname: apicurito-app
+
+apicurito_resources: []
+
+apicurito_image_streams:
+  - apicurito-ui:1.2
+  - fuse-apicurito-generator:1.2
+
+apicurito_heimdall_exclude_pattern: ""

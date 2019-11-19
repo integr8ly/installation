@@ -1,0 +1,6 @@
+---
+- name: "Delete project namespace: {{ heimdall_namespace }}"
+  shell: oc delete project {{ heimdall_namespace }}
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr
+  changed_when: output.rc == 0

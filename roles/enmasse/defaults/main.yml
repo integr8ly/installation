@@ -39,3 +39,5 @@ enmasse_resources:
     resources:
       requests:
         memory: 200M
+
+enmasse_heimdall_exclude_pattern: ""

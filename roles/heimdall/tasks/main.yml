@@ -1,0 +1,31 @@
+---
+- include_role:
+    name: namespace
+    tasks_from: create
+  vars:
+    name: "{{ heimdall_namespace }}"
+    display_name: "Heimdall"
+
+- block:
+
+  - template:
+      src: heimdall-dockercfg.yml.j2
+      dest: /tmp/heimdall-dockercfg.yml
+
+  - name: Create ImageStream Pull Secret
+    shell: oc apply -f /tmp/heimdall-dockercfg.yml -n {{ heimdall_namespace }}
+
+  when: heimdall_pull_secret_name is defined and heimdall_pull_secret_token is defined
+
+- name: Create Heimdall Operator Resources
+  shell: "oc create -f {{ item }} -n {{ heimdall_namespace }}"
+  with_items: "{{ heimdall_operator_resource_items }}"
+  register: create_heimdall_operator_resource_cmd
+  failed_when: create_heimdall_operator_resource_cmd.stderr != '' and 'AlreadyExists' not in create_heimdall_operator_resource_cmd.stderr
+
+- name: "Wait for heimdall pods to be ready"
+  shell: "oc get pods --namespace={{ heimdall_namespace }} --selector='name=heimdall' -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w"
+  register: heimdall_result
+  until: heimdall_result.stdout.find("1") != -1
+  retries: 90
+  delay: 5

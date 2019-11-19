@@ -59,3 +59,5 @@ rhsso_threescale_route_creator_role: '3scale-route-creator'
 rhsso_threescale_route_creator_role_filepath: '/tmp/3scale-route-creator.yml'
 
 upgrade_sso_operator_image: "quay.io/integreatly/keycloak-operator:{{rhsso_operator_release_tag}}"
+
+rhsso_heimdall_exclude_pattern: ""

@@ -1,0 +1,8 @@
+apiVersion: imagemonitor.integreatly.org/v1alpha1
+kind: ImageMonitor
+metadata:
+  name: heimdall
+spec:
+{% if excludePattern is defined %}
+    excludePattern: {{ excludePattern }}
+{% endif %}

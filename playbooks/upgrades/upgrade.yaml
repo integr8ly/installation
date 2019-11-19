@@ -73,6 +73,23 @@
         name: rhsso-user
         tasks_from: upgrade.yaml
 
+    # Heimdall
+    - name: Update heimdall resources
+      include_role:
+        name: "{{ item }}"
+        tasks_from: heimdall.yml
+      with_items:
+      - 3scale
+      - apicurito
+      - codeready
+      - enmasse
+      - fuse_managed
+      - rhsso
+      when: heimdall | default(true) | bool
+
+- import_playbook: "../install_heimdall.yml"
+
+
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
 - import_playbook: "../mobile_generate_manifest.yml"
