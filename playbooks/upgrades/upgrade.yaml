@@ -129,6 +129,11 @@
         tasks_from: upgrade
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
+    
+    # Namespaces
+    - include_role:
+        name: namespace
+        tasks_from: upgrade
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
