@@ -7,3 +7,7 @@
 - name: Token authentication
   shell: oc login {{ openshift_master_public_url }} --token {{ openshift_token }} --insecure-skip-tls-verify={{ eval_self_signed_certs }}
   when: openshift_token != ''
+
+- name: Debugging Openshift Asset URL
+  debug:
+    var: openshift_asset_url
