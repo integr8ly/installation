@@ -27,11 +27,12 @@
       tags: ['mobile_security_service']
       when: mobile_security_service | default(true) | bool
 
+    # use openshift_master_url set from install_services.yml
     - name: Install mobile developer console (mdc)
       include_role:
         name: mdc
       vars:
-        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
+        openshift_master_url: "{{ openshift_master_url | replace('https://', '') }}"
       tags: ['mdc']
       when: mdc | default(true) | bool
 
