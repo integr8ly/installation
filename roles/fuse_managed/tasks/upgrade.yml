@@ -1,22 +1,23 @@
 
 ---
-- name: Download fuse binary
-  get_url:
-    url: https://github.com/jboss-fuse/fuse-clients/releases/download/{{ fuse_online_release_tag }}/syndesis-{{ fuse_online_release_tag }}-linux-64bit.tar.gz
-    dest: /tmp/fuse-binary-archive
+- debug: msg="Upgrade work to be carried out in INTLY-4092, the process has changed in latest fuse release"
+# - name: Download fuse binary
+#   get_url:
+#     url: https://github.com/jboss-fuse/fuse-clients/releases/download/{{ fuse_online_release_tag }}/syndesis-{{ fuse_online_release_tag }}-linux-64bit.tar.gz
+#     dest: /tmp/fuse-binary-archive
 
-- name: Create directory for extraction
-  file:
-    path: /tmp/fuse-binary
-    state: directory
+# - name: Create directory for extraction
+#   file:
+#     path: /tmp/fuse-binary
+#     state: directory
 
-- name: Extract fuse binary
-  unarchive:
-    src: /tmp/fuse-binary-archive
-    dest: /tmp/fuse-binary
+# - name: Extract fuse binary
+#   unarchive:
+#     src: /tmp/fuse-binary-archive
+#     dest: /tmp/fuse-binary
 
-- name: Run operator cluster install
-  shell: "/tmp/fuse-binary/syndesis-operator install cluster --namespace {{ fuse_namespace }}"
+# - name: Run operator cluster install
+#   shell: "/tmp/fuse-binary/syndesis-operator install cluster --namespace {{ fuse_namespace }}"
 
-- name: Run operator install
-  shell: "/tmp/fuse-binary/syndesis-operator install operator --namespace {{ fuse_namespace }}"
+# - name: Run operator install
+#   shell: "/tmp/fuse-binary/syndesis-operator install operator --namespace {{ fuse_namespace }}"

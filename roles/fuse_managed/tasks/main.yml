@@ -35,6 +35,9 @@
     namespace: "{{ fuse_namespace }}"
     product_ns_pull_secret_name: "{{ fuse_pull_secret_name }}"
 
+- name: Link imagestream pull secret for images
+  shell: oc secrets link default {{ fuse_pull_secret_name }} --for=pull -n {{ fuse_namespace }}
+
 - name: Download fuse binary
   get_url:
     url: https://github.com/jboss-fuse/fuse-clients/releases/download/{{ fuse_online_release_tag }}/syndesis-{{ fuse_online_release_tag }}-linux-64bit.tar.gz
@@ -55,9 +58,6 @@
 
 - name: Run operator install
   shell: "/tmp/fuse-binary/syndesis-operator install operator --namespace {{ fuse_namespace }}"
-
-#- name: TODO-REMOVE-THIS-AFTER-FUSE-ONLINE-INCLUDES-THESE-ARGS Patch args on operator to include monitoring resources addon
-#  shell: oc patch dc/syndesis-operator -p='{"spec":{"template":{"spec":{"containers":[{"name":"syndesis-operator","args":["-a","/conf/addons"]}]}}}}}' -n {{ fuse_namespace }}
 
 - template:
     src: syndesis-customresource.yml.j2
