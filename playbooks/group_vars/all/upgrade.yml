@@ -1,3 +1,3 @@
 upgrade_from_version: release-1.5.1
 upgrade_product_roles:
-- mss-operator
+- fuse_managed
