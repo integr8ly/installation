@@ -7,7 +7,7 @@
         tasks_from: set_master_vars
       when: run_master_tasks | default(true) | bool
 
-# Required for Ansible Tower installs that need to login via oc as a prerequisite      
+# Required for Ansible Tower installs that need to login via oc as a prerequisite
 - import_playbook: "../openshift.yml"
 
 - hosts: localhost
@@ -129,6 +129,14 @@
         tasks_from: upgrade
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
+
+    -
+      name: Uninstall Mobile Security Service
+      include_role:
+        name: mobile_security_service
+        tasks_from: uninstall_mss.yml
+      vars:
+        mss_namespace: "{{ eval_mobile_security_service_namespace }}"
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

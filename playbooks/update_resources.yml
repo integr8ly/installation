@@ -27,9 +27,6 @@
         name: middleware_monitoring
         tasks_from: new_limits.yml
     - include_role:
-        name: mobile_security_service
-        tasks_from: new_limits.yml
-    - include_role:
         name: rhsso
         tasks_from: new_limits.yml
     - include_role:

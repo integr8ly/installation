@@ -65,10 +65,3 @@
     shell: oc get route unifiedpush-unifiedpush-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_ups_namespace }}
     register: ups_ups_route
   when: ups | default(true) | bool
-
-- name: Get Mobile Security Service routes for blackbox targets
-  block:
-  - name: get mss route
-    shell: oc get route route -o template --template \{\{.spec.host\}\} -n {{ eval_mobile_security_service_namespace }}
-    register: mss_mss_route
-  when: mobile_security_service | default(true) | bool

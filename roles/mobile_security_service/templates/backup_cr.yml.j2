@@ -1,9 +1,0 @@
-apiVersion: mobile-security-service.aerogear.org/v1alpha1
-kind: MobileSecurityServiceBackup
-metadata:
-  name: mobile-security-service-backup
-spec:
-  awsCredentialsSecretName: {{ aws_s3_backup_secret_name }}
-  productName: mss
-  awsCredentialsSecretNamespace: {{ backup_namespace  }}
-  schedule: "{{ backup_schedule }}"

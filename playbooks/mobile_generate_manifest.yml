@@ -3,7 +3,6 @@
 
 - hosts: localhost
   tasks:
-    - include_vars: ../roles/mobile_security_service/defaults/main.yml
     - include_vars: ../roles/ups/defaults/main.yml
     - include_vars: ../roles/mdc/defaults/main.yml
 
@@ -17,30 +16,6 @@
 
     - set_fact:
         mobile_components: []
-
-    #mobile security service(mss)
-    - name: Get Mobile Security Service rest route
-      shell: oc get route/route -o template --template \{\{.spec.host\}\} -n {{ eval_mobile_security_service_namespace | default('mobile-security-service') }}
-      register: mss_route_cmd
-      when: mobile_security_service | default(true) | bool
-
-    - set_fact:
-        mss_route: "https://{{mss_route_cmd.stdout}}"
-      when: mobile_security_service
-
-    - name: Set Mobile Security Service component
-      set_fact:
-        mss_manifest:
-          - name: Mobile Security Service
-            version: "{{ mss_version }}"
-            host: "{{ mss_route }}"
-            mobile: true
-            type: "security"
-      when: mobile_security_service | default(true) | bool
-
-    - set_fact:
-        mobile_components: "{{mobile_components}} + {{ mss_manifest }}"
-      when: mobile_security_service | default(true) | bool
 
     #unified push server(ups)
     - name: Unified Push Server
@@ -119,7 +94,7 @@
         - name: Create manifest secret
           shell: oc create secret generic manifest --from-file=generated_manifest=/tmp/mobile-manifest.json --type=application/json -n {{ mdc_namespace }}
       when: mdc | default(true) | bool
-    
+
     - include_role:
         name: mdc
         tasks_from: patch-manifest.yml

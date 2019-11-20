@@ -9,7 +9,7 @@
       tasks_from: set_master_vars
     when: run_master_tasks | default(true) | bool
 
-# Required for Ansible Tower installs that need to login via oc as a prerequisite      
+# Required for Ansible Tower installs that need to login via oc as a prerequisite
 - import_playbook: "./openshift.yml"
 
 - hosts: localhost
