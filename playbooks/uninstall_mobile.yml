@@ -1,16 +1,6 @@
 - hosts: localhost
   tasks:
     -
-      # MDC namespace needs to be deleted first to make sure all the CRs can be removed by their operators
-      name: Uninstall Mobile Developer Console (mdc)
-      include_role:
-        name: mdc
-        tasks_from: uninstall.yml
-      vars:
-        mdc_namespace: "{{ eval_mdc_namespace }}"
-      tags: ['mdc']
-      when: mdc | default(true) | bool
-    -
       name: Uninstall Unified Push Server (ups)
       include_role:
         name: ups

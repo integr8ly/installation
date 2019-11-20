@@ -22,6 +22,14 @@
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr
 
+- name: Process operator template
+  template:
+    src: operator.yaml.j2
+    dest: "{{ mdc_template_dir }}/mdc-operator.yaml"
+
+- name: Delete mdc operator
+  shell: "oc delete -f {{ mdc_template_dir }}/mdc-operator.yaml -n {{ mdc_namespace }}"
+
 - name: "Wait for resources to be removed"
   shell: oc get {{ item }} -n {{ mdc_namespace }}
   register: result
@@ -31,10 +39,3 @@
   failed_when: result.stdout
   changed_when: False
   with_items: "{{ mdc_resource_list }}"
-
-- include_role:
-    name: namespace
-    tasks_from: delete
-  vars:
-    names:
-      - "{{ mdc_namespace }}"

@@ -307,21 +307,6 @@
 - name: Create manifest secret
   shell: oc create secret generic manifest --from-file=/tmp/generated_manifest --type=application/json -n {{webapp_namespace}}
 
-- name: Create manifest file in mdc namespace
-  block:
-    - name: Check if manifest secret exists
-      shell: oc get secret manifest -n {{ mdc_namespace }}
-      register: manifest_secret
-      failed_when: manifest_secret.stderr != '' and 'NotFound' not in manifest_secret.stderr
-
-    - name: Delete secret if it exists
-      shell: oc delete secret manifest -n {{ mdc_namespace }}
-      when: manifest_secret.stderr == ""
-
-    - name: Create manifest secret
-      shell: oc create secret generic manifest --from-file=/tmp/generated_manifest --type=application/json -n {{ mdc_namespace }}
-  when: mdc
-
 - name: Check if inventory secret exists
   shell: oc get secret inventory -n {{webapp_namespace}}
   register: inventory_secret
