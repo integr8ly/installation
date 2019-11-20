@@ -52,13 +52,6 @@
     register: threescale_system_developer_route
   when: threescale | default(true) | bool
 
-- name: Get Mobile Developer Console routes for blackbox targets
-  block:
-  - name: get mdc route
-    shell: oc get route mdc-mdc-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_mdc_namespace }}
-    register: mdc_mdc_route
-  when: mdc | default(true) | bool
-
 - name: Get UnifiedPushServer routes for blackbox targets
   block:
   - name: get ups route

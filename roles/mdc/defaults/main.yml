@@ -1,35 +1,7 @@
----
+mdc_operator_image: 'quay.io/aerogear/mobile-developer-console-operator:{{ mdc_operator_release_tag }}'
 mdc_template_dir: /tmp
 mdc_namespace: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"
-mdc_name: mdc
 mdc_oauth_client_id: mobile-developer-console
+mdc_name: mdc
 mdc_resource_items:
-  - "{{ mdc_operator_resources }}/service_account.yaml"
-  - "{{ mdc_operator_resources }}/role.yaml"
-  - "{{ mdc_operator_resources }}/role_binding.yaml"
   - "{{ mdc_operator_resources }}/crds/mdc_v1alpha1_mobiledeveloperconsole_crd.yaml"
-  - "{{ mdc_operator_resources }}/mobileclient_admin_role.yaml"
-  - "{{ mdc_operator_resources }}/mdc_v1alpha1_mobileclient_crd.yaml"
-  - "{{ mdc_operator_resources }}/mobiledeveloper_role.yaml"
-  - "{{ mdc_operator_resources }}/mobiledeveloper_rolebinding.yaml"
-mdc_openshift_master_config_path: "{{ eval_openshift_master_config_path | default('/etc/origin/master/master-config.yaml') }}"
-
-documentation_url: https://docs.aerogear.org/limited-availability/downstream
-
-ups_documentation_url: "{{ documentation_url }}/ups.html"
-idm_documentation_url: "{{ documentation_url }}/idm.html"
-sync_documentation_url: "{{ documentation_url }}/sync.html"
-mss_documentation_url: "{{ documentation_url }}/mss.html"
-
-#monitor
-mdc_monitor_resource_items:
-  - "{{ mdc_operator_resources }}/monitor/service_monitor.yaml"
-  - "{{ mdc_operator_resources }}/monitor/mdc_service_monitor.yaml"
-mdc_monitor_templates:
-  - operator_grafana
-  - operator_prometheus_rules
-  - mdc_prometheus_rules
-  - mdc_grafana_dashboard
-
-#scaling
-mdc_resources: []

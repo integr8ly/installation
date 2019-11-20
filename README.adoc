@@ -32,7 +32,6 @@ These products include:
 * Nexus
 * Datasync
 * Unified push
-* Mobile developer console
 * AMQ streams
 
 
@@ -198,7 +197,6 @@ By default Mobile Developer Services will not be installed. In order to install 
 .Install Mobile Developer Services
 |===
 | Variable | Description | Default Value
-| mdc | Whether Mobile Developer Console will be installed or not | `true`
 | ups | Whether Mobile Unified Push Server will be installed or not | `true`
 | datasync | Whether DataSync components will be installed or not | `true`
 |===

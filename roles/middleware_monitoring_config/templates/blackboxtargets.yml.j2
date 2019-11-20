@@ -52,12 +52,6 @@ spec:
     url: https://{{ threescale_system_developer_route.stdout }}
     module: http_2xx
 {% endif %}
-{% if mdc | default(true) | bool %}
-  # Mobile Developer Console targets
-  - service: mdc-ui
-    url: https://{{ mdc_mdc_route.stdout }}/about
-    module: http_2xx
-{% endif %}
 {% if ups | default(true) | bool %}
   # Unified Push Server targets
   - service: ups-ui

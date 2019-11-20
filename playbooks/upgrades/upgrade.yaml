@@ -137,6 +137,14 @@
         tasks_from: upgrade
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
+      
+    - 
+      name: Uninstall Mobile Developer Console (mdc)
+      include_role:
+        name: mdc
+        tasks_from: uninstall.yml
+      vars:
+        mdc_namespace: "{{ eval_mdc_namespace }}"
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

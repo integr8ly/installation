@@ -45,7 +45,6 @@ eval_threescale_storage_s3_aws_bucket: "{{ openshift_aws_clusterid }}-3scale"
 
 # Mobile Developer Services configuration
 ups: True
-mdc: True
 
 # Use Integreatly Operator for Installation
 integreatly_operator: False
