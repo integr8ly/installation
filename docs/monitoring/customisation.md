@@ -7,7 +7,7 @@ It's possible to add your own monitoring and alerting to the cluster after it's 
 * we'll need Integre8ly 1.5.x installed on the cluster
 * `oc` commands require user to be logged in already as a cluster admin
 
-To allow monitoring for a middleware service, it's needed that the service is running in the namespace that has `monitoring-key=middleware` in it.
+If there is any service that needs to be added for the monitoring, this service usually runs in its own namespace. Any such namespace needs to have  `monitoring-key=middleware` label set to allow monitoring of the service. There is the namespace `my-customservice` in the following examples.
 
 To add such label, you can use `oc` command:
 
