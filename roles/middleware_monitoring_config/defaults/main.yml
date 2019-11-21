@@ -21,6 +21,7 @@ monitoring_grafanadashboards_resource_templates:
 - resources-by-namespace.yml
 - resources-by-pod.yml
 - cluster-resources.yml
+- images_cves.yml
 
 # PrometheusRules template variables
 monitoring_prometheusrules_resource_templates:
