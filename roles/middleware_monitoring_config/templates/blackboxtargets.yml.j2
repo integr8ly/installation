@@ -64,9 +64,3 @@ spec:
     url: https://{{ ups_ups_route.stdout }}/rest/auth/config/
     module: http_2xx
 {% endif %}
-{% if mobile_security_service | bool %}
-  # Mobile Security Service targets
-  - service: mss-ui
-    url: https://{{ mss_mss_route.stdout }}/api/healthz
-    module: http_2xx
-{% endif %}

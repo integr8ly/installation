@@ -31,7 +31,7 @@ openshift_login: True
 prerequisites_install: False
 
 # Run tasks on master nodes
-# See group_vars/all/common.yml & relevant SOP for more info when 
+# See group_vars/all/common.yml & relevant SOP for more info when
 # setting this to False.
 run_master_tasks: True
 
@@ -44,7 +44,6 @@ eval_threescale_storage_s3_aws_region: "{{ openshift_aws_region }}"
 eval_threescale_storage_s3_aws_bucket: "{{ openshift_aws_clusterid }}-3scale"
 
 # Mobile Developer Services configuration
-mobile_security_service: True
 ups: True
 mdc: True
 
