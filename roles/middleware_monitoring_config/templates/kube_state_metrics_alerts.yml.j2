@@ -212,3 +212,37 @@ spec:
         for: 15m
         labels:
           severity: warning
+      - alert: PVCStorageWillFillIn4Days
+        annotations:
+          message: The {{ '{{' }} $labels.persistentvolumeclaim {{ '}}' }} PVC will run of disk space in the next 4 days.
+        expr: |
+          (sum by(persistentvolumeclaim, namespace) (predict_linear(kubelet_volume_stats_available_bytes{job="kubelet"}[6h], 4 * 24 * 3600)) * on(namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) <= 0
+        for: 15m
+        labels:
+          severity: warning
+      - alert: PVCStorageWillFillIn4Hours
+        annotations:
+          message: The {{ '{{' }} $labels.persistentvolumeclaim {{ '}}' }} PVC will run of disk space in the next 4 hours.
+        expr: |
+          (sum by(persistentvolumeclaim, namespace) (predict_linear(kubelet_volume_stats_available_bytes{job="kubelet"}[1h], 4 * 3600)) * on(namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) <= 0
+        for: 15m
+        labels:
+          severity: critical
+      - alert: PersistentVolumeErrors
+        annotations:
+           message: The PVC {{ '{{' }} $labels.persistentvolumeclaim {{ '}}' }} is in status {{ '{{' }} $labels.phase {{ '}}' }} in namespace {{ '{{' }} $labels.namespace {{ '}}' }}
+        expr: |
+          (sum by(persistentvolumeclaim, namespace, phase) (kube_persistentvolumeclaim_status_phase{phase=~"Failed|Pending|Lost"}) * on ( namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
+        for: 15m
+        labels:
+          severity: critical
+      {% if heimdall | default(false) | bool %}
+      - alert: ResolvableCriticalCVEs
+        annotations:
+           message: There is a following deployment which has some resolvable critical CVEs {{ '{{' }} $labels.label_deployment {{ '}}' }} in {{ '{{' }} $labels.namespace {{ '}}' }} namespace with {{ '{{' }} $labels.label_heimdall_resolvableCriticalCVEs {{ '}}' }} resolvable critical CVEs
+        expr: |
+          sum by (namespace,label_deployment,label_heimdall_resolvableCriticalCVEs) (kube_pod_labels{label_heimdall_resolvableCriticalCVEs="true",label_heimdall_resolvableCriticalCVEs!="",label_heimdall_updatedImageAvailable="true"}) * on(pod) group_left() (count(kube_pod_labels{label_heimdall_resolvableCriticalCVEs="true",label_heimdall_resolvableCriticalCVEs!="",label_heimdall_updatedImageAvailable="true"}) > 0)
+        for: 1m
+        labels:
+          severity: critical
+      {% endif %}

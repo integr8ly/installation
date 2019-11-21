@@ -22,6 +22,9 @@ monitoring_grafanadashboards_resource_templates:
 - resources-by-pod.yml
 - cluster-resources.yml
 
+heimdall_grafanadashboards_template:
+- images_cves.yml
+
 # PrometheusRules template variables
 monitoring_prometheusrules_resource_templates:
 - kube_state_metrics_alerts.yml
