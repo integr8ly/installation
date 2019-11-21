@@ -232,3 +232,13 @@ spec:
         for: 15m
         labels:
           severity: critical
+      {% if heimdall | default(false) | bool %}    
+      - alert: ResolvableCriticalCVEs
+        annotations:
+           message: There is a following deployment which has some resolvable critical CVEs {{ '{{' }} $labels.label_deployment {{ '}}' }} in {{ '{{' }} $labels.namespace {{ '}}' }} namespace with {{ '{{' }} $labels.label_heimdall_resolvableCriticalCVEs {{ '}}' }} resolvable critical CVEs
+        expr: |
+          sum by (namespace,label_deployment,label_heimdall_resolvableCriticalCVEs) (kube_pod_labels{label_heimdall_resolvableCriticalCVEs="true",label_heimdall_resolvableCriticalCVEs!="",label_heimdall_updatedImageAvailable="true"}) * on(pod) group_left() (count(kube_pod_labels{label_heimdall_resolvableCriticalCVEs="true",label_heimdall_resolvableCriticalCVEs!="",label_heimdall_updatedImageAvailable="true"}) > 0)
+        for: 1m
+        labels:
+          severity: critical
+      {% endif %}    

@@ -1,0 +1,240 @@
+apiVersion: integreatly.org/v1alpha1
+kind: GrafanaDashboard
+metadata:
+  name: imagescves
+  labels:
+    monitoring-key: "{{monitoring_label_value}}"
+spec:
+  json: |
+    {
+        "annotations": {
+        "list": [
+            {
+            "builtIn": 1,
+            "datasource": "-- Grafana --",
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+            }
+        ]
+        },
+        "editable": true,
+        "gnetId": null,
+        "graphTooltip": 0,
+        "id": 19,
+        "links": [],
+        "panels": [
+        {
+            "columns": [],
+            "datasource": "Prometheus",
+            "fontSize": "100%",
+            "gridPos": {
+                "h": 10,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 2,
+            "links": [],
+            "options": {},
+            "pageSize": null,
+            "scroll": true,
+            "showHeader": true,
+            "sort": {
+                "col": 0,
+                "desc": true
+            },
+            "styles": [
+                {
+                "alias": "Time",
+                "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                "pattern": "Time",
+                "type": "date"
+                },
+                {
+                "alias": "",
+                "colorMode": null,
+                "colors": [
+                    "rgba(245, 54, 54, 0.9)",
+                    "rgba(237, 129, 40, 0.89)",
+                    "rgba(50, 172, 45, 0.97)"
+                ],
+                "decimals": 2,
+                "pattern": "/.*/",
+                "thresholds": [],
+                "type": "number",
+                "unit": "short"
+                }
+            ],
+            "targets": [
+                {
+                "expr": "sum by (namespace, label_heimdall_currentImage, label_heimdall_latestPatchImage, label_heimdall_updatedImageAvailable, label_deployment, label_deploymentconfig,label_heimdall_resolvableCriticalCVEs) (kube_pod_labels{label_heimdall_resolvableCriticalCVEs=\"true\",label_heimdall_resolvableCriticalCVEs!=\"\"})",
+                "format": "table",
+                "instant": true,
+                "intervalFactor": 1,
+                "refId": "A"
+                }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Deployments with resolvable critical CVEs",
+            "transform": "table",
+            "type": "table"
+            },
+            {
+            "columns": [],
+            "datasource": "Prometheus",
+            "fontSize": "100%",
+            "gridPos": {
+                "h": 10,
+                "w": 24,
+                "x": 0,
+                "y": 10
+            },
+            "id": 4,
+            "links": [],
+            "options": {},
+            "pageSize": null,
+            "scroll": true,
+            "showHeader": true,
+            "sort": {
+                "col": 0,
+                "desc": true
+            },
+            "styles": [
+                {
+                "alias": "Time",
+                "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                "pattern": "Time",
+                "type": "date"
+                },
+                {
+                "alias": "",
+                "colorMode": null,
+                "colors": [
+                    "rgba(245, 54, 54, 0.9)",
+                    "rgba(237, 129, 40, 0.89)",
+                    "rgba(50, 172, 45, 0.97)"
+                ],
+                "decimals": 2,
+                "pattern": "/.*/",
+                "thresholds": [],
+                "type": "number",
+                "unit": "short"
+                }
+            ],
+            "targets": [
+                {
+                "expr": "sum by (namespace, label_heimdall_currentImage, label_heimdall_latestPatchImage, label_heimdall_updatedImageAvailable, label_deployment, label_deploymentconfig,label_heimdall_resolvableImportantCVEs) (kube_pod_labels{label_heimdall_resolvableImportantCVEs=\"true\",label_heimdall_resolvableImportantCVEs!=\"\"})",
+                "format": "table",
+                "instant": true,
+                "intervalFactor": 1,
+                "refId": "A"
+                }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Deployments with resolvable important CVEs",
+            "transform": "table",
+            "type": "table"
+            },
+            {
+            "columns": [],
+            "datasource": "Prometheus",
+            "fontSize": "100%",
+            "gridPos": {
+                "h": 10,
+                "w": 24,
+                "x": 0,
+                "y": 19
+            },
+            "id": 6,
+            "links": [],
+            "options": {},
+            "pageSize": null,
+            "scroll": true,
+            "showHeader": true,
+            "sort": {
+                "col": 0,
+                "desc": true
+            },
+            "styles": [
+                {
+                "alias": "Time",
+                "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                "pattern": "Time",
+                "type": "date"
+                },
+                {
+                "alias": "",
+                "colorMode": null,
+                "colors": [
+                    "rgba(245, 54, 54, 0.9)",
+                    "rgba(237, 129, 40, 0.89)",
+                    "rgba(50, 172, 45, 0.97)"
+                ],
+                "decimals": 2,
+                "pattern": "/.*/",
+                "thresholds": [],
+                "type": "number",
+                "unit": "short"
+                }
+            ],
+            "targets": [
+                {
+                "expr": "sum by (namespace, label_heimdall_currentImage, label_heimdall_latestPatchImage, label_heimdall_updatedImageAvailable, label_deployment, label_deploymentconfig,label_heimdall_resolvableModerateCVEs) (kube_pod_labels{label_heimdall_resolvableModerateCVEs=\"true\",label_heimdall_resolvableModerateCVEs!=\"\"})",
+                "format": "table",
+                "instant": true,
+                "intervalFactor": 1,
+                "refId": "A"
+                }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Deployments with resolvable moderate CVEs",
+            "transform": "table",
+            "type": "table"
+            }
+        ],
+        "schemaVersion": 18,
+        "style": "dark",
+        "tags": [],
+        "templating": {
+            "list": []
+        },
+        "time": {
+            "from": "now-6h",
+            "to": "now"
+        },
+        "timepicker": {
+            "refresh_intervals": [
+            "5s",
+            "10s",
+            "30s",
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h",
+            "2h",
+            "1d"
+            ],
+            "time_options": [
+            "5m",
+            "15m",
+            "1h",
+            "6h",
+            "12h",
+            "24h",
+            "2d",
+            "7d",
+            "30d"
+            ]
+        },
+        "timezone": "",
+        "title": "Images CVEs",
+        "version": 17
+    }
+  name: imagescves.json

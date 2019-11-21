@@ -1,3 +1,8 @@
 ---
 - include: ./create_from_template.yml
   with_items: "{{ monitoring_grafanadashboards_resource_templates }}"
+
+- name: Add Heimdall Grafana Dashboards
+  include: ./create_from_template.yml
+  with_items: "{{ heimdall_grafanadashboards_template }}"
+  when: heimdall
