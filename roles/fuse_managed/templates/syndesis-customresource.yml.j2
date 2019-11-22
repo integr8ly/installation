@@ -4,7 +4,7 @@ metadata:
   name: {{ fuse_cr_name }}
 spec:
   components:
-    db:
+    database:
       resources: {}
     meta:
       resources: {}
@@ -16,5 +16,6 @@ spec:
       resources: {}
     upgrade:
       resources: {}
-  integration:
-    limit: 0
+  addons:
+    ops: 
+      enabled: "true"
