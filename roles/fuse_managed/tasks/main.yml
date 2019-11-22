@@ -37,7 +37,7 @@
 
 - name: Link imagestream pull secret for images
   shell: oc secrets link default {{ fuse_pull_secret_name }} --for=pull -n {{ fuse_namespace }}
-
+  
 - name: Download fuse binary
   get_url:
     url: https://github.com/jboss-fuse/fuse-clients/releases/download/{{ fuse_online_release_tag }}/syndesis-{{ fuse_online_release_tag }}-linux-64bit.tar.gz
