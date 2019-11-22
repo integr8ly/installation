@@ -22,15 +22,6 @@
   failed_when: rollout_cmd.rc != 0
   changed_when: rollout_cmd.rc == 0
 
-- name: Add mobile walkthrough if mdc is installed
-  set_fact:
-    webapp_walkthrough_locations: "{{ webapp_walkthrough_locations + [mobile_walkthrough_location] }}"
-  when:
-    - mdc is defined
-    - mobile_walkthrough_location is defined
-    - mdc|bool == True
-    - mobile_walkthrough_location|length > 0
-
 - name: Generate WebApp custom resource template
   template:
     src: "cr.yaml.j2"
@@ -51,3 +42,26 @@
   shell: oc delete dc tutorial-web-app -n {{ eval_webapp_namespace }}
   register: upgrade_webapp
   failed_when: upgrade_webapp.stderr != ''
+
+- name: Wait for pods
+  shell: sleep 5; oc get pods --namespace {{ webapp_namespace }}  |  grep  "Creating"
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
+
+- name: Add unifiedpush in service list
+  set_fact:
+    webapp_provision_services: "{{ webapp_provision_services + ['unifiedpush'] }}"
+    webapp_watch_services: "{{ webapp_watch_services + ['unifiedpush'] }}"
+  when: ups | bool | default(true)
+
+- name: Set webapp env var
+  shell: "oc set env \
+  dc/tutorial-web-app \
+  'OPTIONAL_PROVISION_SERVICES={{ webapp_provision_services|join(',') }}' \
+  'OPTIONAL_WATCH_SERVICES={{ webapp_watch_services|join(',') }}' \
+  -n {{ webapp_namespace }}"
+  when: webapp_provision_services|length > 0 or webapp_watch_services|length > 0

@@ -46,6 +46,12 @@
   failed_when: result.stdout
   changed_when: False
 
+- name: Add unifiedpush in service list
+  set_fact:
+    webapp_provision_services: "{{ webapp_provision_services + ['unifiedpush'] }}"
+    webapp_watch_services: "{{ webapp_watch_services + ['unifiedpush'] }}"
+  when: ups | bool | default(true)
+
 - name: Set webapp env var
   shell: "oc set env \
   dc/tutorial-web-app \
