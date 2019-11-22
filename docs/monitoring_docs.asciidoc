@@ -21,8 +21,6 @@ NOTE: Certain dashboards and alerts may not be visible if users don't have appro
 == Middleware Monitoring Architecture
 In the middleware monitoring architecture there are two monitoring stacks running.
 
-image::arch.png[]
-
 === OpenShift Monitoring Stack
 This stack gathers metrics from kube-state-metrics & node_exporter. These metrics give state information about kubernetes resources, and container metrics like cpu, memory & volumes across all nodes in the kubernetes cluster.
 
