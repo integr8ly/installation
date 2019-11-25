@@ -1,3 +1,4 @@
+mdc_operator_release_tag: '0.2.6'
 mdc_operator_image: 'quay.io/aerogear/mobile-developer-console-operator:{{ mdc_operator_release_tag }}'
 mdc_template_dir: /tmp
 mdc_namespace: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"
