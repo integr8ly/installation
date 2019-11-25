@@ -18,14 +18,9 @@
     src: rbac.yaml.j2
     dest: "{{ rhsso_user_tmp_dir }}/rbac.yaml"
 
-- name: Apply rbac file
-  shell: "oc create -f {{ rhsso_user_tmp_dir }}/rbac.yaml -n {{ rhsso_user_mdc_namespace }}"
-  register: output
-  failed_when: output.stderr != '' and 'AlreadyExists' not in output.stderr
-
 - name: Set consumer namespaces var
   set_fact:
-    rhsso_user_consumer_namespaces: "{{ rhsso_user_namespace }};{{ rhsso_user_mdc_namespace }}"
+    rhsso_user_consumer_namespaces: "{{ rhsso_user_namespace }}"
   when: rhsso_user_consumer_namespaces is undefined
 
 - name: Set new env var
