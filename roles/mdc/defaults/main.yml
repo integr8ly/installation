@@ -6,3 +6,4 @@ mdc_oauth_client_id: mobile-developer-console
 mdc_name: mdc
 mdc_resource_items:
   - "{{ mdc_operator_resources }}/crds/mdc_v1alpha1_mobiledeveloperconsole_crd.yaml"
+mdc_openshift_master_config_path: "{{ eval_openshift_master_config_path | default('/etc/origin/master/master-config.yaml') }}"
