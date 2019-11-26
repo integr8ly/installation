@@ -1,4 +1,0 @@
----
-- import_playbook: "./mobile_generate_manifest.yml"
-- import_playbook: "./mobile_restart_master.yml"
-      

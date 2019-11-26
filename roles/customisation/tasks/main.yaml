@@ -236,8 +236,7 @@
     component_manifests: "{{component_manifests}} + {{enmasse_manifest}}"
   when: enmasse
 
-#user-rhsso
-- name: Mobile Identity Management
+- name: User RH-SSO
   block:
     - name: Get route for user-facing rhsso
       shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace | default('user-sso') }}
@@ -255,6 +254,25 @@
     - set_fact:
         component_manifests: "{{component_manifests}} + {{ user_rhsso_manifest }}"
   when: user_rhsso | default(true) | bool
+
+- name: UnifiedPush Server
+  block:
+    - name: Get Unified Push Server route
+      shell: oc get route/unifiedpush-unifiedpush-proxy  -o template --template \{\{.spec.host\}\} -n {{ eval_ups_namespace | default('unifiedpush') }}
+      register: ups_route_cmd
+    - set_fact:
+        ups_route: "https://{{ups_route_cmd.stdout}}"
+    - name: Set Unified Push Server component
+      set_fact:
+        ups_manifest:
+          - name: Unified Push Server
+            version: "{{ ups_release_tag }}"
+            host: "{{ ups_route }}"
+            mobile: true
+            type: "push"
+    - set_fact:
+        component_manifests: "{{ component_manifests }} + {{ ups_manifest }}"
+  when: ups | default(true) | bool
 
 - name: Retrieve launcher sso hostvars
   shell: "oc get route/{{launcher_sso_prefix}} -o jsonpath='{.spec.host}' -n {{ launcher_namespace }}"
