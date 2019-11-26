@@ -41,7 +41,6 @@
         - name: Restart openshift master services
           shell: "/usr/local/bin/master-restart {{ item }}"
           become: yes
-          when: mdc
           with_items:
             - api
             - controllers
