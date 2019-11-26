@@ -1,4 +1,3 @@
-
 - name: Create a list to store the manifest for each component that will be installed
   set_fact:
     component_manifests: []
@@ -218,7 +217,7 @@
   when: enmasse
 
 - set_fact:
-    enmasse_rest_route: "https://{{enmsase_route_cmd.stdout}}"
+    enmasse_rest_route: "https://{{enmasse_route_cmd.stdout}}"
   when: enmasse and enmasse_route_cmd.rc == 0
 
 - set_fact:
@@ -239,7 +238,7 @@
 
 #user-rhsso
 - name: Mobile Identity Management
-  block: 
+  block:
     - name: Get route for user-facing rhsso
       shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace | default('user-sso') }}
       register: user_sso_route_cmd
