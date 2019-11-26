@@ -26,11 +26,32 @@
 
     # Mobile Developer Console
     - name: Uninstall Mobile Developer Console
-      include_role:
-        name: mdc
-        tasks_from: uninstall.yml
-      vars:
-        mdc_namespace: "{{ eval_mdc_namespace }}"
+      block:
+        - name: Run MDC uninstall role
+          include_role:
+            name: mdc
+            tasks_from: uninstall.yml
+          vars:
+            mdc_namespace: "{{ eval_mdc_namespace }}"
+        - name: Remove CORS entry from OpenShift master config
+          include_role:
+            name: mdc
+            tasks_from: uninstall-cors
+          tags: ['mdc']
+        - name: Restart openshift master services
+          shell: "/usr/local/bin/master-restart {{ item }}"
+          become: yes
+          when: mdc
+          with_items:
+            - api
+            - controllers
+        - name: Check if openshift master services are running
+          shell: oc get nodes
+          register: task_result
+          until: task_result.rc == 0
+          retries: 6
+          delay: 5
+          failed_when: task_result.rc != 0
 
     # Mobile Security Service
     - name: Uninstall Mobile Security Service
