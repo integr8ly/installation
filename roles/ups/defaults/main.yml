@@ -1,5 +1,4 @@
 ups_namespace: "{{ eval_ups_namespace | default('mobile-unifiedpush') }}"
-ups_app_namespaces: "{{ eval_mdc_namespace | default('mobile-developer-console') }}"
 ups_resources_list:
   - "{{ ups_operator_resources }}/service_account.yaml"
   - "{{ ups_operator_resources }}/role.yaml"

@@ -52,6 +52,10 @@
           retries: 6
           delay: 5
           failed_when: task_result.rc != 0
+        - name: Remove MDC namespace from User RH-SSO list
+          shell: "oc set env deployment/keycloak-operator 'CONSUMER_NAMESPACES={{ eval_user_rhsso_namespace }}' -n {{ eval_user_rhsso_namespace }}"
+        - name: Remove MDC namespace from UPS list
+          shell: "oc set env deployment/unifiedpush-operator 'APP_NAMESPACES={{ eval_ups_namespace }}' -n {{ eval_ups_namespace }}"
 
     # Mobile Security Service
     - name: Uninstall Mobile Security Service
