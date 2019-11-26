@@ -6,6 +6,9 @@
   with_items:
     - mobiledeveloperconsole
     - keycloakrealm
+    - grafanadashboards
+    - prometheusrules
+    - servicemonitors
 
 - set_fact:
     mdc_resource_list: "{{ mdc_resource_list | default([]) + item.stdout_lines }}"
@@ -22,13 +25,8 @@
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr
 
-- name: Process operator template
-  template:
-    src: operator.yaml.j2
-    dest: "{{ mdc_template_dir }}/mdc-operator.yaml"
-
 - name: Delete mdc operator
-  shell: "oc delete -f {{ mdc_template_dir }}/mdc-operator.yaml -n {{ mdc_namespace }}"
+  shell: "oc delete deployment mobile-developer-console-operator -n {{ mdc_namespace }}"
 
 - name: "Wait for resources to be removed"
   shell: oc get {{ item }} -n {{ mdc_namespace }}

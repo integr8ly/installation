@@ -1,8 +1,0 @@
-apiVersion: oauth.openshift.io/v1
-grantMethod: auto
-kind: OAuthClient
-metadata:
-  name: "{{ mdc_oauth_client_id }}"
-secret: "{{ mdc_oauth_client_secret }}"
-redirectURIs:
-  - "https://{{ mdc_secure_route }}"
