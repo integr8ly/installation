@@ -1,5 +1,0 @@
-- hosts: localhost
-  tasks:
-    - include_role:
-        name: mdc
-        tasks_from: patch-manifest.yml
