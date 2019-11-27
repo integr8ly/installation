@@ -5,7 +5,9 @@
   failed_when: false
   with_items:
     - mobiledeveloperconsole
-    - keycloakrealm
+    - grafanadashboards
+    - prometheusrules
+    - servicemonitors
 
 - set_fact:
     mdc_resource_list: "{{ mdc_resource_list | default([]) + item.stdout_lines }}"
@@ -22,6 +24,9 @@
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr
 
+- name: Delete mdc operator
+  shell: "oc delete deployment mobile-developer-console-operator -n {{ mdc_namespace }}"
+
 - name: "Wait for resources to be removed"
   shell: oc get {{ item }} -n {{ mdc_namespace }}
   register: result
@@ -31,10 +36,3 @@
   failed_when: result.stdout
   changed_when: False
   with_items: "{{ mdc_resource_list }}"
-
-- include_role:
-    name: namespace
-    tasks_from: delete
-  vars:
-    names:
-      - "{{ mdc_namespace }}"

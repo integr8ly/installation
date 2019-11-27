@@ -21,9 +21,6 @@
         name: launcher
         tasks_from: new_limits.yml
     - include_role:
-        name: mdc
-        tasks_from: new_limits.yml
-    - include_role:
         name: middleware_monitoring
         tasks_from: new_limits.yml
     - include_role:

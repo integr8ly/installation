@@ -12,7 +12,6 @@
     - include_vars: ../roles/rhsso/defaults/main.yml
     - include_vars: ../roles/webapp/defaults/main.yml
     - include_vars: ../roles/ups/defaults/main.yml
-    - include_vars: ../roles/mdc/defaults/main.yml
 
     - name: Set eval_app_host var
       set_fact:

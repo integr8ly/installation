@@ -7,6 +7,29 @@
         tasks_from: set_master_vars
       when: run_master_tasks | default(true) | bool
 
+    - name: Remove CORS entry from OpenShift master config
+      include_role:
+        name: mdc
+        tasks_from: uninstall-cors
+      tags: ['mdc']
+      when: run_master_tasks | default(true) | bool
+    - name: Restart openshift master services
+      shell: "/usr/local/bin/master-restart {{ item }}"
+      become: yes
+      with_items:
+        - api
+        - controllers
+      when: run_master_tasks | default(true) | bool
+    - name: Check if openshift master services are running
+      shell: oc get nodes
+      register: task_result
+      until: task_result.rc == 0
+      retries: 6
+      delay: 5
+      failed_when: task_result.rc != 0
+      when: run_master_tasks | default(true) | bool
+
+
 # Required for Ansible Tower installs that need to login via oc as a prerequisite
 - import_playbook: "../openshift.yml"
 
@@ -23,6 +46,20 @@
         upgrade_webapp_image: quay.io/integreatly/tutorial-web-app:{{ webapp_version }}
         upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
         upgrade_fuse_image_tag: 1.7
+
+    # Mobile Developer Console
+    - name: Uninstall Mobile Developer Console
+      block:
+        - name: Run MDC uninstall role
+          include_role:
+            name: mdc
+            tasks_from: uninstall.yml
+          vars:
+            mdc_namespace: "{{ eval_mdc_namespace }}"
+        - name: Remove MDC namespace from User RH-SSO list
+          shell: "oc set env deployment/keycloak-operator 'CONSUMER_NAMESPACES={{ eval_user_rhsso_namespace }}' -n {{ eval_user_rhsso_namespace }}"
+        - name: Remove MDC namespace from UPS list
+          shell: "oc set env deployment/unifiedpush-operator 'APP_NAMESPACES={{ eval_ups_namespace }}' -n {{ eval_ups_namespace }}"
 
     # Mobile Security Service
     - name: Uninstall Mobile Security Service
@@ -145,4 +182,3 @@
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"
-- import_playbook: "../mobile_generate_manifest.yml"

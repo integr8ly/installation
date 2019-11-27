@@ -1,4 +1,3 @@
-
 - name: Create a list to store the manifest for each component that will be installed
   set_fact:
     component_manifests: []
@@ -218,7 +217,7 @@
   when: enmasse
 
 - set_fact:
-    enmasse_rest_route: "https://{{enmsase_route_cmd.stdout}}"
+    enmasse_rest_route: "https://{{enmasse_route_cmd.stdout}}"
   when: enmasse and enmasse_route_cmd.rc == 0
 
 - set_fact:
@@ -237,9 +236,8 @@
     component_manifests: "{{component_manifests}} + {{enmasse_manifest}}"
   when: enmasse
 
-#user-rhsso
-- name: Mobile Identity Management
-  block: 
+- name: User RH-SSO
+  block:
     - name: Get route for user-facing rhsso
       shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace | default('user-sso') }}
       register: user_sso_route_cmd
@@ -256,6 +254,25 @@
     - set_fact:
         component_manifests: "{{component_manifests}} + {{ user_rhsso_manifest }}"
   when: user_rhsso | default(true) | bool
+
+- name: UnifiedPush Server
+  block:
+    - name: Get Unified Push Server route
+      shell: oc get route/unifiedpush-unifiedpush-proxy  -o template --template \{\{.spec.host\}\} -n {{ eval_ups_namespace | default('unifiedpush') }}
+      register: ups_route_cmd
+    - set_fact:
+        ups_route: "https://{{ups_route_cmd.stdout}}"
+    - name: Set Unified Push Server component
+      set_fact:
+        ups_manifest:
+          - name: Unified Push Server
+            version: "{{ ups_release_tag }}"
+            host: "{{ ups_route }}"
+            mobile: true
+            type: "push"
+    - set_fact:
+        component_manifests: "{{ component_manifests }} + {{ ups_manifest }}"
+  when: ups | default(true) | bool
 
 - name: Retrieve launcher sso hostvars
   shell: "oc get route/{{launcher_sso_prefix}} -o jsonpath='{.spec.host}' -n {{ launcher_namespace }}"
@@ -306,21 +323,6 @@
 
 - name: Create manifest secret
   shell: oc create secret generic manifest --from-file=/tmp/generated_manifest --type=application/json -n {{webapp_namespace}}
-
-- name: Create manifest file in mdc namespace
-  block:
-    - name: Check if manifest secret exists
-      shell: oc get secret manifest -n {{ mdc_namespace }}
-      register: manifest_secret
-      failed_when: manifest_secret.stderr != '' and 'NotFound' not in manifest_secret.stderr
-
-    - name: Delete secret if it exists
-      shell: oc delete secret manifest -n {{ mdc_namespace }}
-      when: manifest_secret.stderr == ""
-
-    - name: Create manifest secret
-      shell: oc create secret generic manifest --from-file=/tmp/generated_manifest --type=application/json -n {{ mdc_namespace }}
-  when: mdc
 
 - name: Check if inventory secret exists
   shell: oc get secret inventory -n {{webapp_namespace}}
