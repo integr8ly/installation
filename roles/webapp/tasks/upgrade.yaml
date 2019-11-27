@@ -43,25 +43,26 @@
   register: upgrade_webapp
   failed_when: upgrade_webapp.stderr != ''
 
-- name: Wait for pods
-  shell: sleep 5; oc get pods --namespace {{ webapp_namespace }}  |  grep  "Creating"
-  register: result
-  until: not result.stdout
-  retries: 50
-  delay: 10
-  failed_when: result.stdout
-  changed_when: False
+- block: 
+  - name: Wait for dc to come up
+    shell: oc wait --for=condition=available dc tutorial-web-app  --namespace {{ webapp_namespace }} --timeout=600s
+    register: result
+    retries: 50
+    delay: 1
+    until: result.stdout is search("condition met")
+    
+  - name: Add unifiedpush in service list
+    set_fact:
+      webapp_provision_services: "{{ webapp_provision_services + ['unifiedpush'] }}"
+      webapp_watch_services: "{{ webapp_watch_services + ['unifiedpush'] }}"
+    when: ups | bool | default(true)
 
-- name: Add unifiedpush in service list
-  set_fact:
-    webapp_provision_services: "{{ webapp_provision_services + ['unifiedpush'] }}"
-    webapp_watch_services: "{{ webapp_watch_services + ['unifiedpush'] }}"
+  - name: Set webapp env var
+    shell: "oc set env \
+    dc/tutorial-web-app \
+    'OPTIONAL_PROVISION_SERVICES={{ webapp_provision_services|join(',') }}' \
+    'OPTIONAL_WATCH_SERVICES={{ webapp_watch_services|join(',') }}' \
+    -n {{ webapp_namespace }}"
+    when: webapp_provision_services|length > 0 or webapp_watch_services|length > 0
+
   when: ups | bool | default(true)
-
-- name: Set webapp env var
-  shell: "oc set env \
-  dc/tutorial-web-app \
-  'OPTIONAL_PROVISION_SERVICES={{ webapp_provision_services|join(',') }}' \
-  'OPTIONAL_WATCH_SERVICES={{ webapp_watch_services|join(',') }}' \
-  -n {{ webapp_namespace }}"
-  when: webapp_provision_services|length > 0 or webapp_watch_services|length > 0
