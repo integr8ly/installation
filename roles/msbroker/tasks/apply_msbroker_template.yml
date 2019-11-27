@@ -48,20 +48,20 @@
   shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace }}
   register: user_sso_route
 
-- name: Get mdc route
-  shell: oc get route/mdc-mdc-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_mdc_namespace }}
-  register: mdc_route
+- name: Get ups route
+  shell: oc get route/unifiedpush-unifiedpush-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_ups_namespace }}
+  register: ups_route
   failed_when: false
 
-- name: Set mdc url var
+- name: Set ups url var
   set_fact:
-    msb_mdc_url: "https://{{ mdc_route.stdout }}"
-  when: mdc_route.rc == 0
+    msb_ups_url: "https://{{ ups_route.stdout }}"
+  when: ups_route.rc == 0
 
-- name: Set mdc url var to empty string
+- name: Set ups url var to empty string
   set_fact:
-    msb_mdc_url: ""
-  when: mdc_route.rc != 0
+    msb_ups_url: ""
+  when: ups_route.rc != 0
 
 # Used to pull images from registry.redhat.io
 - name: Expose vars
@@ -93,6 +93,7 @@
     -p 'SSO_URL=https://{{ sso_route.stdout }}/auth/admin/{{ sso_realm }}/console' \
     -p 'USER_SSO_URL=https://{{ user_sso_route.stdout }}' \
     -p 'FUSE_OPERATOR_RESOURCES_URL={{ msbroker_fuse_operator_resources_url }}' \
+    -p 'UNIFIEDPUSH_DASHBOARD_URL={{ msb_ups_url }}' \
     -p 'IMAGE_ORG={{ msbroker_image_org }}' \
     -p 'IMAGE_TAG={{ msbroker_release_tag }}' \
     -p 'MONITORING_KEY={{ monitoring_key }}' | oc apply -n "{{ msbroker_namespace }}" -f -
