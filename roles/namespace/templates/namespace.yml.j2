@@ -3,6 +3,7 @@ apiVersion: v1
 metadata:
   name: {{ name }}
   labels:
+    {{ rhmi_label }}: {{ rhmi_label_value}}
 {% if monitor is defined %}
     {{ monitoring_label_name }}: {{ monitoring_label_value }}
 {% endif %}

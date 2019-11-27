@@ -1,0 +1,17 @@
+# Get Console Config Namespace
+- name: Expose console config vars
+  include_vars: "../../customise-web-console/defaults/main.yml"
+
+- name: Get integreatly middleware services namespaces
+  shell: "oc get namespace -l integreatly-middleware-service=true | tail -n +2 | awk '{print $1}'"
+  register: rhmi_namespaces
+
+# Ensures all namespaces created by the Integreatly installer has the label rhmi=true
+- name: "Add rhmi label to Integreatly namespaces"
+  shell: "oc label namespace {{ item }} {{ rhmi_label }}={{ rhmi_label_value }} --overwrite=true"
+  register: output
+  failed_when: output.stderr != '' and 'NotFound' not in output.stderr
+  changed_when: output.rc == 0
+  with_items:
+    - "{{ rhmi_namespaces.stdout_lines }}"
+    - "{{ customise_web_console.namespace}}"
