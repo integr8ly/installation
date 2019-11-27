@@ -6,7 +6,7 @@ msbroker_clusterrolebinding: default-cluster-account-managed-service
 msbroker_deployment_name: msb
 msbroker_servicebroker_name: managed-service-broker
 monitoring_key: brokered-fuse-online
-msbroker_fuse_operator_resources_url: "{{ fuse_online_operator_resources }}"
+msbroker_fuse_operator_resources_url: "{{ fuse_online_binary_resources_base }}"
 msbroker_required_crds:
   - "{{ fuse_online_crd_resources }}"
 

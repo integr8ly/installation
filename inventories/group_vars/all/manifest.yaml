@@ -31,15 +31,16 @@ enmasse_git_url: https://github.com/jboss-container-images/amq-online-images.git
 #controls whether fuse is installed or not
 fuse: True
 #This is the release tag for fuse on openshift in github currently used to pull in the templates and image streams
-fuse_release_tag: 'application-templates-2.1.fuse-740025-redhat-00004'
+fuse_release_tag: 'application-templates-2.1.fuse-750056-redhat-00006'
 #not currently used as the operator decides what to install
 fuse_version: '7.4.1'
 
 #controls whether Fuse Online is installed or not
 fuse_online: True
 # Below Fuse vars are not currently used but will be used to source the resources needed to do the install.
-fuse_online_release_tag: '1.7.27'
-fuse_online_resources_base: 'https://raw.githubusercontent.com/syndesisio/fuse-online-install/{{fuse_online_release_tag}}/resources'
+fuse_online_release_tag: '1.8.13'
+fuse_online_resources_base: 'https://raw.githubusercontent.com/integr8ly/fuse-online-install/{{fuse_online_release_tag}}/resources'
+fuse_online_binary_resources_base: https://github.com/jboss-fuse/fuse-clients/releases/download/{{fuse_online_release_tag}}/syndesis-{{fuse_online_release_tag}}-linux-64bit.tar.gz
 fuse_online_operator_resources: '{{fuse_online_resources_base}}/fuse-online-operator.yml'
 fuse_online_imagestream_resources: '{{fuse_online_resources_base}}/fuse-online-image-streams.yml'
 fuse_online_crd_resources: '{{fuse_online_resources_base}}/syndesis-crd.yml'
@@ -127,7 +128,7 @@ monitoring_label_value: 'middleware'
 middleware_monitoring_operator_release_tag: '0.0.29'
 middleware_monitoring_operator_resources: 'https://raw.githubusercontent.com/integr8ly/application-monitoring-operator/{{ middleware_monitoring_operator_release_tag }}/deploy'
 
-msbroker_release_tag: 'v0.0.10'
+msbroker_release_tag: 'v0.0.11'
 msbroker_template: 'https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_release_tag }}/templates/broker.template.yaml'
 
 #AMQ Streams

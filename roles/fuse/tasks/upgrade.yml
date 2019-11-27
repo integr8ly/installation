@@ -3,15 +3,6 @@
     old_fuse_templates_url: "https://raw.githubusercontent.com/jboss-fuse/application-templates/{{ old_fuse_tag }}/quickstarts"
     old_fuse_resource_base: "https://raw.githubusercontent.com/jboss-fuse/application-templates/{{ old_fuse_tag }}"
 
-- name: Update Fuse Online image streams
-  include: _upgrade_fuse_online_imagestreams.yml
-
-- name: Create new Fuse on Openshift images
-  shell: "oc replace --force -f {{ fuse_on_openshift_imagestreams_url }} -n openshift"
-  register: create_fuse_imagestream_cmd
-  failed_when: create_fuse_imagestream_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_imagestream_cmd.stderr
-  changed_when: create_fuse_imagestream_cmd.rc == 0
-
 # Delete old templates
 - name: Delete old fuse quickstart templates
   shell: oc delete -f {{ old_fuse_templates_url }}/{{ item }} -n openshift
@@ -78,8 +69,6 @@
 - name: Create Fuse Console templates
   shell: oc replace --force -f {{ fuse_resource_base }}/{{ item }} -n openshift
   with_items:
-    - "fis-console-cluster-template.json"
-    - "fis-console-namespace-template.json"
     - "fuse-apicurito.yml"
   register: create_fuse_console_template_cmd
   failed_when: create_fuse_console_template_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_console_template_cmd.stderr
@@ -93,7 +82,3 @@
   vars:
     namespace: "{{ msbroker_namespace }}"
     product_ns_pull_secret_name: "{{ fuse_pull_secret_name }}"
-
-- name: Update the fuse operator resources url for msbroker
-  shell: "oc set env deployment/msb FUSE_OPERATOR_RESOURCES_URL={{ fuse_online_operator_resources }} -n {{ msbroker_namespace }}"
-    

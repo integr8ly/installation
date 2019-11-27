@@ -6,7 +6,6 @@
   failed_when: create_fuse_imagestream_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_imagestream_cmd.stderr
   changed_when: create_fuse_imagestream_cmd.rc == 0
   with_items:
-    - "{{ fuse_online_imagestream_resources }}"
     - "{{ fuse_on_openshift_imagestreams_url }}"
 
 # SETUP FUSE ON OPENSHIFT TEMPLATES
@@ -45,4 +44,4 @@
     - "fuse-apicurito.yml"
   register: create_fuse_console_template_cmd
   failed_when: create_fuse_console_template_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_console_template_cmd.stderr
-  changed_when: create_fuse_console_template_cmd.rc == 0
+  changed_when: create_fuse_console_template_cmd.rc == 0 

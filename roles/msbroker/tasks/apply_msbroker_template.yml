@@ -73,10 +73,6 @@
     product_ns_pull_secret_name: "{{ fuse_pull_secret_name }}"
   when: fuse_online
 
-- name: Create CRDs
-  shell: "oc apply -f {{ item }}"
-  with_items: "{{ msbroker_required_crds }}"
-
 - set_fact:
     fuse_online_enabled: "true"
   when: fuse_online
@@ -97,7 +93,6 @@
     -p 'SSO_URL=https://{{ sso_route.stdout }}/auth/admin/{{ sso_realm }}/console' \
     -p 'USER_SSO_URL=https://{{ user_sso_route.stdout }}' \
     -p 'FUSE_OPERATOR_RESOURCES_URL={{ msbroker_fuse_operator_resources_url }}' \
-    -p 'MDC_DASHBOARD_URL={{ msb_mdc_url }}' \
     -p 'IMAGE_ORG={{ msbroker_image_org }}' \
     -p 'IMAGE_TAG={{ msbroker_release_tag }}' \
     -p 'MONITORING_KEY={{ monitoring_key }}' | oc apply -n "{{ msbroker_namespace }}" -f -

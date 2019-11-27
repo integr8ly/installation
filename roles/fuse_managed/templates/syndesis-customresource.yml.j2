@@ -4,7 +4,7 @@ metadata:
   name: {{ fuse_cr_name }}
 spec:
   components:
-    db:
+    database:
       resources: {}
     meta:
       resources: {}
@@ -16,6 +16,6 @@ spec:
       resources: {}
     upgrade:
       resources: {}
-  imageStreamNamespace: openshift
-  integration:
-    limit: 0
+  addons:
+    ops: 
+      enabled: "true"
