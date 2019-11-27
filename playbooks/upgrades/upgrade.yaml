@@ -12,12 +12,14 @@
         name: mdc
         tasks_from: uninstall-cors
       tags: ['mdc']
+      when: run_master_tasks | default(true) | bool
     - name: Restart openshift master services
       shell: "/usr/local/bin/master-restart {{ item }}"
       become: yes
       with_items:
         - api
         - controllers
+      when: run_master_tasks | default(true) | bool
     - name: Check if openshift master services are running
       shell: oc get nodes
       register: task_result
@@ -25,6 +27,7 @@
       retries: 6
       delay: 5
       failed_when: task_result.rc != 0
+      when: run_master_tasks | default(true) | bool
 
 
 # Required for Ansible Tower installs that need to login via oc as a prerequisite
