@@ -5,7 +5,6 @@
   failed_when: false
   with_items:
     - mobiledeveloperconsole
-    - keycloakrealm
     - grafanadashboards
     - prometheusrules
     - servicemonitors
