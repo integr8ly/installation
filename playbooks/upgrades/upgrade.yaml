@@ -50,16 +50,66 @@
     # Mobile Developer Console
     - name: Uninstall Mobile Developer Console
       block:
+        - name: Get User RHSSO deployment desired replicas
+          shell: "oc get deployment/keycloak-operator -o jsonpath='{.spec.replicas}' -n {{ eval_user_rhsso_namespace }}"
+          register: expected_sso_operator_replicas
+        - name: Scale down User RH-SSO
+          shell: "oc scale --replicas=0 deployment/keycloak-operator -n {{ eval_user_rhsso_namespace }}"
+
+        - name: Get UPS deployment desired replicas
+          shell: "oc get deployment/unifiedpush-operator -o jsonpath='{.spec.replicas}' -n {{ eval_ups_namespace }}"
+          register: expected_ups_operator_replicas
+        - name: Scale down UPS
+          shell: "oc scale --replicas=0 deployment/unifiedpush-operator -n {{ eval_ups_namespace }}"
+
+        - name: Wait for User RH-SSO operator down
+          shell: "oc get po -l 'name=keycloak-operator' --no-headers -o name -n {{ eval_user_rhsso_namespace }} | wc -l"
+          register: result
+          until: result.stdout == "0"
+          retries: 50
+          delay: 10
+          changed_when: False
+        - name: Wait for UPS operator down
+          shell: "oc get po -l 'name=unifiedpush-operator' --no-headers -o name -n {{ eval_ups_namespace }} | wc -l"
+          register: result
+          until: result.stdout == "0"
+          retries: 50
+          delay: 10
+          changed_when: False
+
+        - name: Remove MDC namespace from User RH-SSO list
+          shell: "oc set env deployment/keycloak-operator 'CONSUMER_NAMESPACES={{ eval_user_rhsso_namespace }}' -n {{ eval_user_rhsso_namespace }}"
+        - name: Remove MDC namespace from UPS list
+          shell: "oc set env deployment/unifiedpush-operator 'APP_NAMESPACES={{ eval_ups_namespace }}' -n {{ eval_ups_namespace }}"
+
+
         - name: Run MDC uninstall role
           include_role:
             name: mdc
             tasks_from: uninstall.yml
           vars:
             mdc_namespace: "{{ eval_mdc_namespace }}"
-        - name: Remove MDC namespace from User RH-SSO list
-          shell: "oc set env deployment/keycloak-operator 'CONSUMER_NAMESPACES={{ eval_user_rhsso_namespace }}' -n {{ eval_user_rhsso_namespace }}"
-        - name: Remove MDC namespace from UPS list
-          shell: "oc set env deployment/unifiedpush-operator 'APP_NAMESPACES={{ eval_ups_namespace }}' -n {{ eval_ups_namespace }}"
+
+        - name: Scale up User RH-SSO
+          shell: "oc scale --replicas={{ expected_sso_operator_replicas.stdout }} deployment/keycloak-operator -n {{ eval_user_rhsso_namespace }}"
+        - name: Scale up UPS
+          shell: "oc scale --replicas={{ expected_ups_operator_replicas.stdout }} deployment/unifiedpush-operator -n {{ eval_ups_namespace }}"
+
+        - name: Wait for User RHSSO operator up
+          shell: "oc get deployment/keycloak-operator -o jsonpath='{.status.availableReplicas}' -n {{ eval_user_rhsso_namespace }}"
+          register: result
+          until: result.stdout == expected_sso_operator_replicas.stdout
+          retries: 50
+          delay: 10
+          changed_when: False
+
+        - name: Wait for UPS operator up
+          shell: "oc get deployment/unifiedpush-operator -o jsonpath='{.status.availableReplicas}' -n {{ eval_ups_namespace }}"
+          register: result
+          until: result.stdout == expected_ups_operator_replicas.stdout
+          retries: 50
+          delay: 10
+          changed_when: False
 
     # Mobile Security Service
     - name: Uninstall Mobile Security Service
@@ -174,7 +224,7 @@
         tasks_from: upgrade
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
-    
+
     # Namespaces
     - include_role:
         name: namespace
