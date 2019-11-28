@@ -1,10 +1,10 @@
 ---
 - name: Construct openshift host string
-  shell: echo {{ openshift_master_public_url | default(openshift_asset_url, true) }} | cut -d '/' -f3
+  shell: echo {{ openshift_master_public_url | default(openshift_asset_url, true) | replace('https://', '') }} | cut -d '/' -f1
   register: openshift_host
 
 - name: Construct openshift oauth string
-  shell: echo {{ openshift_master_url }} | cut -d '/' -f3
+  shell: echo {{ openshift_master_url | replace('https://', '') }} | cut -d '/' -f1
   register: openshift_oauth_host
 
 - name: Get SSO route
