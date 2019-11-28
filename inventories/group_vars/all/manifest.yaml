@@ -10,7 +10,7 @@ cluster_type: rhpds
 threescale: True
 # below threescale variables below are not currently used. They define where and what to pull in from github. These will be important as we look to break out and decouple the resources from the installer ###############
 # not currently used but records the version installed by the operator, this should come from the status block
-threescale_version: '2.6.0.GA'
+threescale_version: '2.7.0.GA'
 threescale_namespace: "{{ns_prefix | default('')}}3scale"
 threescale_display_name: "Red Hat 3scale API Management Platform"
 threescale_resources_base: 'https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/{{threescale_version}}/amp'
@@ -33,7 +33,7 @@ fuse: True
 #This is the release tag for fuse on openshift in github currently used to pull in the templates and image streams
 fuse_release_tag: 'application-templates-2.1.fuse-750056-redhat-00006'
 #not currently used as the operator decides what to install
-fuse_version: '7.4.1'
+fuse_version: '7.5'
 
 #controls whether Fuse Online is installed or not
 fuse_online: True
