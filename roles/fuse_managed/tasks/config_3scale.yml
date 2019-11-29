@@ -1,0 +1,5 @@
+---
+
+- name: Patch syndesis cr with 3scale dashboard
+  shell: 'oc patch syndesis {{ fuse_cr_name }} -p ''{"spec": {"components": {"server": {"features": {"managementUrlFor3scale": "{{ threescale_url }}" }}}}}'' -n {{ fuse_namespace }} --type=merge'
+  when: threescale_url is defined and threescale_url != ''

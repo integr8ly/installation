@@ -88,6 +88,7 @@
       tags: ['che']
       when: eval_action == 'install' and che and launcher
 
+    # BEGIN 3SCALE SETUP
     - name: Expose vars
       include_vars: "../roles/3scale/defaults/main.yml"
     - set_fact:
@@ -105,6 +106,21 @@
         enable_wildcard_route: "{{ eval_threescale_enable_wildcard_route }}"
       tags: ['3scale']
       when: threescale
+    - 
+      name: Get 3scale dashboard url
+      shell: oc get routes -l zync.3scale.net/route-to={{ threescale_route_system_provider }} -o jsonpath='{.items[*].spec.host}' -n {{ threescale_namespace }}
+      register: threescale_host_cmd
+      when: threescale
+    -
+      name: Setup 3scale integration in Fuse Online
+      include_role:
+        name: fuse_managed
+        tasks_from: config_3scale
+      vars:
+        threescale_url: "https://{{ threescale_host_cmd.stdout}}"
+      when: threescale and fuse_online
+    # END 3SCALE SETUP
+
     -
       name: Expose vars
       include_vars: "../roles/webapp/defaults/main.yml"
