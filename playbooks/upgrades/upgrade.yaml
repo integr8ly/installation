@@ -82,6 +82,13 @@
         - name: Remove MDC namespace from UPS list
           shell: "oc set env deployment/unifiedpush-operator 'APP_NAMESPACES={{ eval_ups_namespace }}' -n {{ eval_ups_namespace }}"
 
+        - name: Get MDC ServiceInstances
+          shell: "oc get serviceinstances --all-namespaces -o custom-columns='NS:.metadata.namespace,NAME:.metadata.name,CLASS:.spec.clusterServiceClassRef.name' | grep mdc-service-id | awk '{ print $1, $2 }'"
+          register: mdc_serviceinstances
+
+        - name: Delete MDC ServiceInstances
+          shell:  "oc delete serviceinstance {{ item.split(' ')[1] }} -n {{ item.split(' ')[0] }}"
+          loop: "{{ mdc_serviceinstances.stdout_lines }}"
 
         - name: Run MDC uninstall role
           include_role:

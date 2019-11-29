@@ -16,3 +16,13 @@
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr
   changed_when: output.rc == 0
+
+- name: "Delete MSS CRDs"
+  shell: "oc delete crd {{ item }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  with_items:
+    - mobilesecurityserviceapps.mobile-security-service.aerogear.org
+    - mobilesecurityservicebackups.mobile-security-service.aerogear.org
+    - mobilesecurityservicedbs.mobile-security-service.aerogear.org
+    - mobilesecurityservices.mobile-security-service.aerogear.org
