@@ -26,6 +26,8 @@
 
 - name: Delete mdc operator
   shell: "oc delete deployment mobile-developer-console-operator -n {{ mdc_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
 
 - name: "Wait for resources to be removed"
   shell: oc get {{ item }} -n {{ mdc_namespace }}

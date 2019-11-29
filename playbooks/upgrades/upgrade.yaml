@@ -141,8 +141,8 @@
       vars:
         rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
         rhsso_namespace: "{{ eval_rhsso_namespace }}"
-        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
-        openshift_asset_url: "{{ hostvars['EVAL_VARS']['openshift_asset_url'] | replace('https://', '') }}"
+        openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+        openshift_asset_url: "{{ hostvars['EVAL_VARS']['openshift_asset_url'] }}"
 
     - name: SSO upgrade
       include_role:
