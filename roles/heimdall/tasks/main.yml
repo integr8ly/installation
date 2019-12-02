@@ -23,6 +23,15 @@
   register: create_heimdall_operator_resource_cmd
   failed_when: create_heimdall_operator_resource_cmd.stderr != '' and 'AlreadyExists' not in create_heimdall_operator_resource_cmd.stderr
 
+- template:
+    src: cluster_role_binding.yml.j2
+    dest: /tmp/cluster_role_binding.yml
+
+- name: Create Heimdall Cluster Role Binding
+  shell: "oc create -f /tmp/cluster_role_binding.yml -n {{ heimdall_namespace }}"
+  register: create_heimdall_crb_cmd
+  failed_when: create_heimdall_crb_cmd.stderr != '' and 'AlreadyExists' not in create_heimdall_crb_cmd.stderr
+
 - name: "Wait for heimdall pods to be ready"
   shell: "oc get pods --namespace={{ heimdall_namespace }} --selector='name=heimdall' -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w"
   register: heimdall_result
