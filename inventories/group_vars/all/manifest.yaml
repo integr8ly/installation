@@ -1,9 +1,6 @@
 ---
 integreatly_version: master
 
-# Possible values are: rhpds, poc, osd, dev
-cluster_type: rhpds
-
 # threescale version is controlled by the operator. Changing the operator version will change the 3scale version
 
 # controls whether threescale is installed or not.
@@ -87,7 +84,7 @@ apicurito: True
 apicurito_version: '0.2.18.Final'
 
 #controls whether nexus is installed or not
-nexus: "{{ 'True' if cluster_type == 'rhpds' else 'False' }}"
+nexus: False
 nexus_version: '2.14.11-01'
 
 ## Enables datasync templates (enabled by default)

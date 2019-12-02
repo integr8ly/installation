@@ -5,6 +5,9 @@ ansible_connection: local
 # AMQ Streams are included in the pour for PDS environments
 amq_streams: True
 
+# Nexus is included in the pour for PDS environments
+nexus: True
+
 # By default self signed certs are enabled on PDS
 # Integreatly role on PDS will override if LE certs are detected on target environment
 self_signed_certs_enabled: True
