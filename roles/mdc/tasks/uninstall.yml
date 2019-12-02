@@ -83,3 +83,11 @@
   vars:
     names:
       - "{{ mdc_namespace }}"
+
+- name: "Delete MDC CRDs"
+  shell: "oc delete crd {{ item }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  with_items:
+    - mobileclients.mdc.aerogear.org
+    - mobiledeveloperconsoles.mdc.aerogear.org
