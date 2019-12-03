@@ -165,11 +165,6 @@
         name: rhsso
         tasks_from: upgrade
 
-    - name: Fuse Online upgrade
-      include_role:
-        name: fuse_managed
-        tasks_from: upgrade
-
     - name: AMQ Online upgrade
       include_role:
         name: enmasse
@@ -183,7 +178,8 @@
         - apicurito
         - codeready
         - enmasse
-        - fuse
+        # Ignored for 1.6 release as it is not required (image streams are moved to Fuse's own namespace). May still be required in the future.
+        # - fuse
         - launcher
         - sso
         - webapp
@@ -245,6 +241,18 @@
     - include_role:
         name: 3scale
         tasks_from: upgrade_2.6_to_2.7
+
+    # Need to set 3scale url for fuse 1.8
+    - name: Get 3scale dashboard url
+      shell: oc get routes -l zync.3scale.net/route-to={{ threescale_route_system_provider }} -o jsonpath='{.items[*].spec.host}' -n {{ threescale_namespace }}
+      register: threescale_host_cmd
+    
+    - name: Setup 3scale integration in Fuse Online
+      include_role:
+        name: fuse_managed
+        tasks_from: config_3scale
+      vars:
+        threescale_url: "https://{{ threescale_host_cmd.stdout}}"
 
     # Namespaces
     - include_role:

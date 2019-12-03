@@ -15,6 +15,10 @@ spec:
       resources: {}
     upgrade:
       resources: {}
+    imageStreamNamespace: {{ fuse_namespace }}
+    oauth:
+      disableSarCheck: true
+    
   addons:
     ops: 
       enabled: "true"
