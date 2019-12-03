@@ -139,6 +139,11 @@
       vars:
         route_suffix: "{{ eval_app_host }}"
         sso_realm: "{{ rhsso_realm }}"
+    
+    # data sync update
+    - name: Data sync upgrade
+      include_role:
+        name: datasync
 
     # Solution Explorer
     - name: Webapp upgrade
