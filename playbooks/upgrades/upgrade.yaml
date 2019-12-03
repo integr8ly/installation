@@ -232,6 +232,11 @@
       vars:
         fuse_image_tag: "{{ upgrade_fuse_image_tag }}"
 
+    # 3Scale
+    - include_role:
+        name: 3scale
+        tasks_from: upgrade_2.6_to_2.7
+
     # Namespaces
     - include_role:
         name: namespace

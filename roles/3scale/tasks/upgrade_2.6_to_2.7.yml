@@ -1,0 +1,287 @@
+---
+
+- name: Target 3Scale project
+  shell: "oc project {{ threescale_namespace }}"
+
+- name: Retrieve Master Access Token
+  shell: oc get secret system-seed -o json | jq -r .data.MASTER_ACCESS_TOKEN | base64 --decode
+  register: master_access_token
+  failed_when: master_access_token.stderr or master_access_token.stdout == ""
+
+- set_fact:
+    system_app_pre_hook_cmd: bundle exec rake boot openshift:deploy MASTER_ACCESS_TOKEN={{ master_access_token.stdout }} && bundle exec rake services:create_backend_apis services:update_metric_owners proxy:update_proxy_rule_owners
+
+- name: Update pre-hook pod command in system-app deploymentconfig
+  shell: oc patch dc/system-app -p "{\"spec\":{\"strategy\":{\"rollingParams\":{\"pre\":{\"execNewPod\":{\"command\":[\"bash\",\"-c\",\"bundle exec rake boot openshift:deploy MASTER_ACCESS_TOKEN={{ master_access_token.stdout }} && bundle exec rake services:create_backend_apis services:update_metric_owners proxy:update_proxy_rule_owners\"]}}}}}}"
+  register: system_app_pre_hook_update
+  failed_when: system_app_pre_hook_update.stderr
+
+- name: Validate pre-hook pod command in system-app deploymentconfig
+  shell: oc get dc system-app -o json | jq .spec.strategy.rollingParams.pre.execNewPod.command
+  register: validate_system_app_pre_hook_update
+  failed_when: system_app_pre_hook_cmd not in validate_system_app_pre_hook_update.stdout
+
+- name: Retrieve previous system-sidekiq component replication controller
+  shell: oc get rc | grep system-sidekiq | tail -1 | awk {'print $1'}
+  register: system_sidekiq_replication_controller_id
+
+- name: Retrieve previous system-sphinx component replication controller
+  shell: oc get rc | grep system-sphinx | tail -1 | awk {'print $1'}
+  register: system_sphinx_replication_controller_id
+
+- name: Retrieve previous system-app component replication controller
+  shell: oc get rc | grep system-app | tail -1 | awk {'print $1'}
+  register: system_app_replication_controller_id
+
+- name: "Patch amp-system image stream: AMP system 2.7"
+  shell: "oc patch imagestream/amp-system --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP system 2.7\"}, \"from\": { \"kind\": \"DockerImage\", \"name\": \"registry.redhat.io/3scale-amp2/system-rhel7:3scale2.7\"}, \"name\": \"2.7\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: amp_system_patch_27
+  failed_when: amp_system_patch_27.stderr
+
+- name: "Patch amp-system image stream: AMP system latest"
+  shell: "oc patch imagestream/amp-system --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP system (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.7\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: amp_system_patch_latest
+  failed_when: amp_system_patch_latest.stderr
+
+- name: Wait for system-sidekiq rollout
+  shell: "oc rollout status dc/system-sidekiq -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and system_sidekiq_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_system_patch_latest.stdout.find("no change") == -1
+
+- name: Wait for system-sphinx rollout
+  shell: "oc rollout status dc/system-sphinx -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and system_sphinx_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_system_patch_latest.stdout.find("no change") == -1
+
+- name: Wait for system-app rollout
+  shell: "oc rollout status dc/system-app -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and system_app_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_system_patch_latest.stdout.find("no change") == -1
+
+- name: Retrieve previous apicast-production component replication controller
+  shell: oc get rc | grep apicast-production | tail -1 | awk {'print $1'}
+  register: apicast_production_replication_controller_id
+
+- name: Retrieve previous apicast-staging component replication controller
+  shell: oc get rc | grep apicast-staging | tail -1 | awk {'print $1'}
+  register: apicast_staging_replication_controller_id
+
+- name: "Patch amp-apicast image stream: AMP APIcast 2.7"
+  shell: "oc patch imagestream/amp-apicast --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP APIcast 2.7\"}, \"from\": { \"kind\": \"DockerImage\", \"name\": \"registry.redhat.io/3scale-amp2/apicast-gateway-rhel7:3scale2.7\"}, \"name\": \"2.7\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: amp_apicast_patch_27
+  failed_when: amp_apicast_patch_27.stderr
+
+- name: "Patch amp-apicast image stream: AMP APIcast latest"
+  shell: "oc patch imagestream/amp-apicast --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP APIcast (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.7\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: amp_apicast_patch_latest
+  failed_when: amp_apicast_patch_latest.stderr
+
+- name: Wait for apicast-production rollout
+  shell: "oc rollout status dc/apicast-production -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and apicast_production_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_apicast_patch_latest.stdout.find("no change") == -1
+
+- name: Wait for apicast-staging rollout
+  shell: "oc rollout status dc/apicast-staging -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and apicast_staging_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_apicast_patch_latest.stdout.find("no change") == -1
+
+- name: Retrieve previous replication controller for backend-listener
+  shell: oc get rc | grep backend-listener | tail -1 | awk {'print $1'}
+  register: backend_listener_replication_controller_id
+  failed_when: backend_listener_replication_controller_id.stderr
+
+- name: Retrieve previous replication controller for backend-worker
+  shell: oc get rc | grep backend-worker | tail -1 | awk {'print $1'}
+  register: backend_worker_replication_controller_id
+  failed_when: backend_worker_replication_controller_id.stderr
+
+- name: Retrieve previous replication controller for backend-cron
+  shell: oc get rc | grep backend-cron | tail -1 | awk {'print $1'}
+  register: backend_cron_replication_controller_id
+  failed_when: backend_cron_replication_controller_id.stderr
+
+- name: "Patch amp-backend image stream: AMP Backend 2.7"
+  shell: "oc patch imagestream/amp-backend --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP Backend 2.7\"}, \"from\": { \"kind\": \"DockerImage\", \"name\": \"registry.redhat.io/3scale-amp2/backend-rhel7:3scale2.7\"}, \"name\": \"2.7\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: amp_backend_patch_27
+
+- name: "Patch amp-backend image stream: AMP Backend latest"
+  shell: "oc patch imagestream/amp-backend --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP Backend (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.7\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: amp_backend_patch_latest
+
+- name: Wait for backend-listener rollout
+  shell: "oc rollout status dc/backend-listener -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and backend_listener_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_backend_patch_latest.stdout.find("no change") == -1
+
+- name: Wait for backend-worker rollout
+  shell: "oc rollout status dc/backend-worker -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and backend_worker_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_backend_patch_latest.stdout.find("no change") == -1
+
+- name: Wait for backend-cron rollout
+  shell: "oc rollout status dc/backend-cron -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and backend_cron_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_backend_patch_latest.stdout.find("no change") == -1
+
+- name: Retrieve previous replication controller for zync
+  shell: oc get rc | grep zync | grep -v database | grep -v que | tail -1 | awk {'print $1'}
+  register: zync_replication_controller_id
+  failed_when: zync_replication_controller_id.stderr
+
+- name: Retrieve previous replication controller for zync-que
+  shell: oc get rc | grep zync-que | tail -1 | awk {'print $1'}
+  register: zync_que_replication_controller_id
+  failed_when: zync_que_replication_controller_id.stderr
+
+- name: "Patch amp-zync image stream: AMP Zync 2.7"
+  shell: "oc patch imagestream/amp-zync --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP Zync 2.7\"}, \"from\": { \"kind\": \"DockerImage\", \"name\": \"registry.redhat.io/3scale-amp2/zync-rhel7:3scale2.7\"}, \"name\": \"2.7\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: amp_zync_patch_27
+
+- name: "Patch amp-zync image stream: AMP Zync latest"
+  shell: "oc patch imagestream/amp-zync --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"AMP Zync (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.7\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: amp_zync_patch_latest
+
+- name: Wait for zync rollout
+  shell: "oc rollout status dc/zync -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and zync_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_zync_patch_latest.stdout.find("no change") == -1
+
+- name: Wait for zync-que rollout
+  shell: "oc rollout status dc/zync-que -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and zync_que_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_zync_patch_latest.stdout.find("no change") == -1
+
+- name: Retrieve previous replication controller for system-memcache
+  shell: oc get rc | grep system-memcache | tail -1 | awk {'print $1'}
+  register: system_memcache_replication_controller_id
+  failed_when: system_memcache_replication_controller_id.stderr
+
+- name: "Patch system-memcache image stream: System Memcache 2.7"
+  shell: "oc patch imagestream/system-memcached --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"System 2.7 Memcached\"}, \"from\": { \"kind\": \"DockerImage\", \"name\": \"registry.redhat.io/3scale-amp2/memcached-rhel7:3scale2.7\"}, \"name\": \"2.7\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: system_memcache_patch_27
+
+- name: "Patch system-memcache image stream: System Memcache latest"
+  shell: "oc patch imagestream/system-memcached --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"System Memcached (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.7\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: system_memcache_patch_latest
+
+- name: Wait for system-memcache rollout
+  shell: "oc rollout status dc/system-memcache -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and system_memcache_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: system_memcache_patch_latest.stdout.find("no change") == -1
+
+- name: "Patch zync-database-postgresql image stream: Zync Database PostgreSQL 2.7"
+  shell: "oc patch imagestream/zync-database-postgresql --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"Zync 2.7 PostgreSQL\"}, \"from\": { \"kind\": \"DockerImage\", \"name\": \"registry.redhat.io/rhscl/postgresql-10-rhel7\"}, \"name\": \"2.7\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: zync_db_postgresql_patch_27
+
+- name: "Patch zync-database-postgresql image stream: Zync Database PostgreSQL latest"
+  shell: "oc patch imagestream/zync-database-postgresql --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"Zync PostgreSQL (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.7\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: zync_db_postgresql_patch_latest
+
+- name: Retrieve previous replication controller for backend-redis
+  shell: oc get rc | grep backend-redis | tail -1 | awk {'print $1'}
+  register: backend_redis_replication_controller_id
+  failed_when: backend_redis_replication_controller_id.stderr
+
+- name: "Patch backend-redis image stream: Backend Redis 2.7"
+  shell: "oc patch imagestream/backend-redis --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"Backend 2.7 Redis\"}, \"from\": { \"kind\": \"DockerImage\", \"name\": \"registry.redhat.io/rhscl/redis-32-rhel7:3.2\"}, \"name\": \"2.7\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: backend_redis_patch_27
+
+- name: "Patch backend-redis image stream: Backend Redis latest"
+  shell: "oc patch imagestream/backend-redis --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"Backend Redis (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.7\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: backend_redis_patch_latest
+
+- name: Retrieve previous replication controller for system-redis
+  shell: oc get rc | grep system-redis | tail -1 | awk {'print $1'}
+  register: system_redis_replication_controller_id
+  failed_when: system_redis_replication_controller_id.stderr
+
+- name: "Patch system-redis image stream: System Redis 2.7"
+  shell: "oc patch imagestream/system-redis --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"System 2.7 Redis\"}, \"from\": { \"kind\": \"DockerImage\", \"name\": \"registry.redhat.io/rhscl/redis-32-rhel7:3.2\"}, \"name\": \"2.7\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: system_redis_patch_27
+
+- name: "Patch system-redis image stream: System Redis latest"
+  shell: "oc patch imagestream/system-redis --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"System Redis (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.7\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: system_redis_patch_latest
+
+- name: Retrieve previous replication controller for system-mysql
+  shell: oc get rc | grep system-mysql | tail -1 | awk {'print $1'}
+  register: system_mysql_replication_controller_id
+  failed_when: system_mysql_replication_controller_id.stderr
+
+- name: "Patch system-mysql image stream: System MySQL 2.7"
+  shell: "oc patch imagestream/system-mysql --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"System 2.7 MySQL\"}, \"from\": { \"kind\": \"DockerImage\", \"name\": \"registry.redhat.io/rhscl/mysql-57-rhel7:5.7\"}, \"name\": \"2.7\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: system_mysql_patch_27
+
+- name: "Patch system-mysql image stream: System MySQL latest"
+  shell: "oc patch imagestream/system-mysql --type=json -p '[{\"op\": \"add\", \"path\": \"/spec/tags/-\", \"value\": {\"annotations\": {\"openshift.io/display-name\": \"System MySQL (latest)\"}, \"from\": { \"kind\": \"ImageStreamTag\", \"name\": \"2.7\"}, \"name\": \"latest\", \"referencePolicy\": {\"type\": \"Source\"}}}]'"
+  register: system_mysql_patch_latest
+
+- name: Retrieve previous replication controller for system-app
+  shell: oc get rc | grep system-app | tail -1 | awk {'print $1'}
+  register: system_app_replication_controller_id
+  failed_when: system_app_replication_controller_id.stderr
+
+- name: Check AMP_RELEASE environment variable
+  shell: oc set env dc/system-app --list | grep AMP_RELEASE=2.7
+  register: amp_release_env_var
+  failed_when: amp_release_env_var.stderr
+
+- name: Update visible release version to 2.7
+  shell: "oc set env dc/system-app AMP_RELEASE=2.7"
+  register: threescale_update_release_version
+  failed_when: threescale_update_release_version.stderr
+  when: amp_release_env_var.stdout == ""
+
+- name: Wait for system-app rollout
+  shell: "oc rollout status dc/system-app -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout and system_app_replication_controller_id.stdout not in result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  when: amp_release_env_var.stdout == ""
