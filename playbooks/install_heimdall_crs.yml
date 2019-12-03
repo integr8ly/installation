@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Update heimdall resources
+      include_role:
+        name: "{{ item }}"
+        tasks_from: heimdall.yml
+      with_items:
+      - 3scale
+      - apicurito
+      - codeready
+      - enmasse
+      - fuse_managed
+      - rhsso
+      when: heimdall | default(true) | bool
