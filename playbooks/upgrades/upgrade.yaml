@@ -32,6 +32,7 @@
 
 # Required for Ansible Tower installs that need to login via oc as a prerequisite
 - import_playbook: "../openshift.yml"
+- import_playbook: "../install_heimdall.yml"
 
 - hosts: localhost
   gather_facts: yes
@@ -255,8 +256,6 @@
       - fuse_managed
       - rhsso
       when: heimdall | default(true) | bool
-
-- import_playbook: "../install_heimdall.yml"
 
 
 #Update product version (should always be last)
