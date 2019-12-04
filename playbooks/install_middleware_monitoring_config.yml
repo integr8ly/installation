@@ -19,9 +19,3 @@
     when:
       - middleware_monitoring | default(true) | bool
       - webapp | default(true) | bool
-  - include_role:
-      name: ups
-      tasks_from: monitoring
-    when:
-      - middleware_monitoring | default(true) | bool
-      - ups | default(true) | bool

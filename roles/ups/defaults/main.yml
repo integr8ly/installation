@@ -2,9 +2,6 @@ ups_namespace: "{{ eval_ups_namespace | default('mobile-unifiedpush') }}"
 ups_resources_list:
   - "{{ ups_operator_resources }}/service_account.yaml"
   - "{{ ups_operator_resources }}/role.yaml"
-  - "{{ ups_operator_resources }}/crds/push_v1alpha1_androidvariant_crd.yaml"
-  - "{{ ups_operator_resources }}/crds/push_v1alpha1_iosvariant_crd.yaml"
-  - "{{ ups_operator_resources }}/crds/push_v1alpha1_pushapplication_crd.yaml"
   - "{{ ups_operator_resources }}/crds/push_v1alpha1_unifiedpushserver_crd.yaml"
 ups_operator_deployment: "{{ ups_operator_resources }}/operator.yaml"
 ups_template_dir: /tmp

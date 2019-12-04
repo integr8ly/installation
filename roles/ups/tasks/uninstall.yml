@@ -11,9 +11,6 @@
   register: ups_resource_list_cmd
   failed_when: false
   with_items:
-    - androidvariants
-    - iosvariants
-    - pushapplications
     - unifiedpushservers
 
 - set_fact:
@@ -25,7 +22,6 @@
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr
   with_items: "{{ ups_resource_list }}"
-
 
 - name: "Wait for resources to be removed"
   shell: oc get {{ item }} -n {{ resource_namespace }}
