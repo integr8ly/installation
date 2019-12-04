@@ -100,6 +100,7 @@ product_ns_pull_secret_name: imagestreamsecret
 
 rhsso_evals_admin_password: Password1
 rhsso_cluster_admin_password: Password1
+rhsso_cssre_admin_password: Password1
 
 threescale_file_upload_storage: "{{ eval_threescale_file_upload_storage | default('filesystem') }}"
 threescale_storage_s3_aws_access_key: "{{ eval_threescale_storage_s3_aws_access_key | default('null') }}"

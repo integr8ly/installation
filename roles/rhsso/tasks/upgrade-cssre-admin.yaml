@@ -1,0 +1,19 @@
+users:
+  - enabled: true,
+    attributes: {},
+    username: {{ rhsso_cssre_admin_username }},
+    emailVerified: true,
+    email: {{ rhsso_cssre_admin_email }},
+    password: {{ rhsso_cssre_admin_password }},
+    realmRoles: [
+      offline_access,
+      uma_authorization
+    ],
+    clientRoles: {
+      account: [
+        manage-account,
+        view-profile
+      ]
+    },
+    outputSecret: {{ rhsso_cssre_admin_username }}-user-credentials
+    

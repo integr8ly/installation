@@ -25,3 +25,27 @@
   shell: "oc patch keycloak rhsso -n {{ eval_rhsso_namespace }} --type json -p '[{\"op\": \"replace\", \"path\": \"/status/monitoringResourcesCreated\", \"value\": false}]'"
   register: cr_patch_keycloak_version
   failed_when: cr_patch_keycloak_version.stderr != ''
+
+- name: "Check whether CS SRE admin user exists"
+  shell: "oc get keycloakrealm -n {{ eval_rhsso_namespace }} -o json | jq .items[0].spec.users | jq -c '.[] | select(.username | contains({{ rhsso_cssre_admin_username }}))'"
+  register: cs_sre_admin_user
+  failed_when: cs_sre_admin_user.stderr != ""
+
+- name: "Check whether cssre-admin-user-credentials secret exists"
+  shell: "oc get secret {{ rhsso_cssre_admin_secret_name }} -n {{ eval_rhsso_namespace }}"
+  register: cssre-admin-user-credentials
+  failed_when: cssre-admin-user-credentials.stderr != ""
+
+- name: "Create secret for CS SRE Admin user if it does not exist"
+  shell: >
+    oc create secret generic {{ rhsso_cssre_admin_username }}-user-credentials -n {{ eval_rhsso_namespace }} \
+      --from-literal=username={{ rhsso_cssre_admin_username }} \
+      --from-literal=password={{ rhsso_cssre_admin_password }} \
+      --dry-run -o yaml | oc apply -f -
+  when: '"not found" in cssre-admin-user-credentials.stdout'
+
+- name: "Patch rhsso CR to add CS SRE Admin user if it doesn't exist"
+  shell: "oc patch keycloak rhsso -n {{ eval_rhsso_namespace }} -p $(cat upgrade-cssre-admin.yaml)"
+  when: cs_sre_admin_user.stdout == ""
+  register: result
+  failed_when: not result.stdout
