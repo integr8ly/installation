@@ -127,6 +127,12 @@
       vars:
         mss_namespace: "{{ eval_mobile_security_service_namespace }}"
 
+    # UnifiedPush Server
+    - name: Upgrade UnifiedPush Server operator
+      include_role:
+        name: ups
+        tasks_from: operator_upgrade_0.2.0_0.4.0.yaml
+
     # Managed Service Broker
     - name: Expose vars
       include_vars: "../../roles/rhsso/defaults/main.yml"
@@ -140,7 +146,7 @@
       vars:
         route_suffix: "{{ eval_app_host }}"
         sso_realm: "{{ rhsso_realm }}"
-    
+
     # data sync update
     - name: Data sync upgrade
       include_role:
