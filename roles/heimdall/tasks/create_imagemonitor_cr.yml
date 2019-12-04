@@ -1,0 +1,12 @@
+---
+
+- name: Generate image monitor custom resource template
+  template:
+    src: "imagemonitor-cr.yml.j2"
+    dest: /tmp/imagemonitor-cr-{{ imagemonitor_cr_namespace }}.yml
+
+- name: Create image monitor custom resource
+  shell: oc create -f /tmp/imagemonitor-cr-{{ imagemonitor_cr_namespace }}.yml -n {{ imagemonitor_cr_namespace }}
+  register: create_imagemonitor_custom_resource_cmd
+  failed_when: create_imagemonitor_custom_resource_cmd.stderr != '' and 'AlreadyExists' not in create_imagemonitor_custom_resource_cmd.stderr
+  changed_when: create_imagemonitor_custom_resource_cmd.rc == 0

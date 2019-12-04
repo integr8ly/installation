@@ -44,3 +44,5 @@ fuse_image_streams:
     image: "registry.redhat.io/fuse7/fuse-online-operator:1.4-16"
     tag: "1.7"
     namespace: "{{ fuse_namespace }}"
+
+fuse_heimdall_exclude_pattern: "todo"

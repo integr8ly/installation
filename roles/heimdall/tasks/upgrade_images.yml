@@ -1,0 +1,9 @@
+---
+
+- name: Patch Heimdall Deployment
+  shell: oc patch deployment {{ patch_deployment_item.name }} -n {{ heimdall_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ patch_deployment_item.image }}"}]'
+  register: patch_heimdall_deployment
+  failed_when: patch_heimdall_deployment.stderr != '' and 'not patched' not in patch_heimdall_deployment.stderr
+  with_items: "{{ heimdall_deployments }}"
+  loop_control:
+      loop_var: patch_deployment_item

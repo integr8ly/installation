@@ -32,6 +32,7 @@
 
 # Required for Ansible Tower installs that need to login via oc as a prerequisite
 - import_playbook: "../openshift.yml"
+- import_playbook: "../install_heimdall.yml"
 
 - hosts: localhost
   gather_facts: yes
@@ -241,6 +242,21 @@
     - include_role:
         name: namespace
         tasks_from: upgrade
+
+    # Heimdall
+    - name: Update heimdall resources
+      include_role:
+        name: "{{ item }}"
+        tasks_from: heimdall.yml
+      with_items:
+      - 3scale
+      - apicurito
+      - codeready
+      - enmasse
+      - fuse_managed
+      - rhsso
+      when: heimdall | default(true) | bool
+
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

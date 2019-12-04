@@ -1,0 +1,10 @@
+---
+
+- name: Add Heimdall Image Monitoring
+  include_role:
+    name: heimdall
+    tasks_from: create_imagemonitor_cr
+  vars:
+    imagemonitor_cr_namespace: "{{ enmasse_namespace }}"
+    excludePattern: "{{ enmasse_heimdall_exclude_pattern }}"
+  when: heimdall | default(true) | bool

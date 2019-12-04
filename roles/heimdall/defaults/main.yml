@@ -1,0 +1,13 @@
+heimdall_namespace: "{{ns_prefix | default('')}}heimdall"
+
+heimdall_operator_resource_items:
+  - "{{ heimdall_operator_resources }}/service_account.yaml"
+  - "{{ heimdall_operator_resources }}/role.yaml"
+  - "{{ heimdall_operator_resources }}/cluster_role.yaml"
+  - "{{ heimdall_operator_resources }}/role_binding.yaml"
+  - "{{ heimdall_operator_resources }}/crds/imagemonitor_v1alpha1_imagemonitor_crd.yaml"
+  - "{{ heimdall_operator_resources }}/operator.yaml"
+
+heimdall_deployments:
+  - name: "heimdall"
+    image: "quay.io/integreatly/heimdall-operator:{{ heimdall_operator_release_tag }}"

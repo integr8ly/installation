@@ -75,3 +75,5 @@ rhsso_resources:
 rhsso_image_streams:
   - "{{ rhsso_imagestream_name }}"
   - postgresql:9.5
+
+rhsso_heimdall_exclude_pattern: ""

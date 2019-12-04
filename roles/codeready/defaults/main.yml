@@ -44,3 +44,5 @@ codeready_pv_cronjob_name: 'codeready-pv-backup'
 
 #scaling
 codeready_resources: []
+
+codeready_heimdall_exclude_pattern: ""

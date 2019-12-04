@@ -11,3 +11,5 @@ apicurito_resources: []
 apicurito_image_streams:
   - apicurito-ui:1.2
   - fuse-apicurito-generator:1.2
+
+apicurito_heimdall_exclude_pattern: ""
