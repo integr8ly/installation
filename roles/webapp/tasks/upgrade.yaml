@@ -22,6 +22,11 @@
   failed_when: rollout_cmd.rc != 0
   changed_when: rollout_cmd.rc == 0
 
+- name: Add additional walkthrough locations in the default list
+  set_fact:
+    webapp_walkthrough_locations: "{{ webapp_walkthrough_locations + [datasync_walkthrough_location] }}"
+  when: datasync | bool | default(true)
+
 - name: Generate WebApp custom resource template
   template:
     src: "cr.yaml.j2"
