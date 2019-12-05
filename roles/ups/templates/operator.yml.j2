@@ -21,8 +21,6 @@ spec:
           imagePullPolicy: Always
           env:
             - name: WATCH_NAMESPACE
-              value: ""
-            - name: SERVICE_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
@@ -32,9 +30,3 @@ spec:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
               value: "unifiedpush-operator"
-            - name: UPS_IMAGE_STREAM_INITIAL_IMAGE
-              value: "{{ ups_image }}"
-            - name: OAUTH_PROXY_IMAGE_STREAM_INITIAL_IMAGE
-              value: "{{ ups_proxy_image }}"
-            - name: APP_NAMESPACES
-              value: "{{ ups_namespace }}"

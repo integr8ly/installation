@@ -1,0 +1,97 @@
+---
+- name: Scale down UPS operator
+  shell: "oc scale --replicas=0 deployment/unifiedpush-operator -n {{ ups_namespace }}"
+
+- name: Wait for UPS operator down
+  shell: "oc get po -l 'name=unifiedpush-operator' --no-headers -o name -n {{ ups_namespace }} | wc -l"
+  register: result
+  until: result.stdout == "0"
+  retries: 50
+  delay: 10
+  changed_when: False
+
+- name: "Delete {{ item }}"
+  shell: "oc delete --ignore-not-found {{ item }}"
+  loop:
+    - "clusterrole/unifiedpush-operator"
+    - "clusterrolebinding/unifiedpush-operator"
+
+- name: Create Role
+  shell: "oc apply -f {{ ups_operator_resources }}/role.yaml -n {{ ups_namespace }}"
+
+- name: Create RoleBinding
+  block:
+    - name: Copy template
+      template:
+        src: role_binding.yml.j2
+        dest: "{{ ups_template_dir }}/role-binding.yml"
+
+    - name: Create role binding
+      shell: "oc apply -f {{ ups_template_dir }}/role-binding.yml -n {{ ups_namespace }}"
+
+    - name: Delete role binding temporary file
+      file:
+        path: "{{ ups_template_dir }}/role-binding.yml"
+        state: absent
+
+- name: Ensure CRs are deleted before CRDs
+  block:
+    - name: Get CRs to be deleted
+      shell: "oc get androidvariants,iosvariants,pushapplications --all-namespaces --no-headers -o custom-columns='KIND:.kind,NAME:.metadata.name,NS:.metadata.namespace' | awk '{ print $1, $2, $3 }'"
+      register: crs_to_be_deleted
+
+    - name: Remove finalizers on CRs
+      shell: "oc patch --type merge {{ item.split(' ')[0] }}/{{ item.split(' ')[1] }} -p '{\"metadata\": {\"finalizers\": []}}' -n {{ item.split(' ')[2] }}"
+      register: output
+      failed_when: output.stderr != '' and 'not found' not in output.stderr
+      loop: "{{ crs_to_be_deleted.stdout_lines }}"
+
+    - name: Delete CRs
+      shell: "oc delete --ignore-not-found {{ item.split(' ')[0] }}/{{ item.split(' ')[1] }} -n {{ item.split(' ')[2] }}"
+      register: output
+      failed_when: output.stderr != '' and 'not found' not in output.stderr
+      loop: "{{ crs_to_be_deleted.stdout_lines }}"
+
+    - name: "Wait for resources to be removed"
+      shell: "oc get {{ item.split(' ')[0] }}/{{ item.split(' ')[1] }} -n {{ item.split(' ')[2] }}"
+      register: result
+      until: not result.stdout
+      retries: 50
+      delay: 10
+      failed_when: result.stdout
+      changed_when: False
+      loop: "{{ crs_to_be_deleted.stdout_lines }}"
+
+- name: Ensure POSTGRES_PORT is set on Secret
+  shell: "oc patch secret {{ ups_server_name }}-postgresql -n {{ ups_namespace }} -p '{\"data\": {\"POSTGRES_PORT\": \"NTQzMg==\"}}'"
+
+- name: Apply updated UnifiedPushServer CRD
+  shell: "oc apply -f {{ ups_operator_resources }}/crds/push_v1alpha1_unifiedpushserver_crd.yaml"
+
+- name: Apply updated operator.yml
+  block:
+    - template:
+        src: operator.yml.j2
+        dest: "{{ ups_template_dir }}/operator.yml"
+    - shell: "oc apply -f {{ ups_template_dir }}/operator.yml -n {{ ups_namespace }}"
+    - file:
+        path: "{{ ups_template_dir }}/operator.yml"
+        state: absent
+
+- name: Scale up UPS operator
+  shell: "oc scale --replicas=1 deployment/unifiedpush-operator -n {{ ups_namespace }}"
+
+- name: Wait for operator readiness
+  shell: "oc get deployment/unifiedpush-operator -o jsonpath='{.status.availableReplicas}' -n {{ ups_namespace }}"
+  register: result
+  until: result.stdout == "1"
+  retries: 50
+  delay: 10
+  changed_when: False
+
+- name: "Delete CRD {{ item }}"
+  shell: "oc delete --ignore-not-found crd {{ item }}"
+  loop:
+    - iosvariants.push.aerogear.org
+    - androidvariants.push.aerogear.org
+    - pushapplications.push.aerogear.org

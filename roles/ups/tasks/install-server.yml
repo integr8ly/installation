@@ -14,7 +14,7 @@
 - name: Wait for ups readiness
   shell: "oc get unifiedpushserver/{{ ups_server_name }} -o jsonpath='{.status.phase}' -n {{ ups_namespace }}"
   register: result
-  until: result.stdout == 'Complete'
+  until: result.stdout == 'Reconciling'
   retries: 50
   delay: 10
   changed_when: False

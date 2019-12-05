@@ -1,5 +1,5 @@
 ---
-kind: ClusterRoleBinding
+kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: unifiedpush-operator
@@ -8,19 +8,6 @@ subjects:
   name: unifiedpush-operator
   namespace: {{ ups_namespace }}
 roleRef:
-  kind: ClusterRole
+  kind: Role
   name: unifiedpush-operator
-  apiGroup: rbac.authorization.k8s.io
----
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: unifiedpush-operator-enmasse
-subjects:
-- kind: ServiceAccount
-  name: unifiedpush-operator
-  namespace: {{ ups_namespace }}
-roleRef:
-  kind: ClusterRole
-  name: enmasse.io:tenant-edit
   apiGroup: rbac.authorization.k8s.io
