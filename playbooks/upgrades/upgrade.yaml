@@ -57,9 +57,6 @@
         - name: Scale down User RH-SSO
           shell: "oc scale --replicas=0 deployment/keycloak-operator -n {{ eval_user_rhsso_namespace }}"
 
-        - name: Get UPS deployment desired replicas
-          shell: "oc get deployment/unifiedpush-operator -o jsonpath='{.spec.replicas}' -n {{ eval_ups_namespace }}"
-          register: expected_ups_operator_replicas
         - name: Scale down UPS
           shell: "oc scale --replicas=0 deployment/unifiedpush-operator -n {{ eval_ups_namespace }}"
 
@@ -101,7 +98,7 @@
         - name: Scale up User RH-SSO
           shell: "oc scale --replicas={{ expected_sso_operator_replicas.stdout }} deployment/keycloak-operator -n {{ eval_user_rhsso_namespace }}"
         - name: Scale up UPS
-          shell: "oc scale --replicas={{ expected_ups_operator_replicas.stdout }} deployment/unifiedpush-operator -n {{ eval_ups_namespace }}"
+          shell: "oc scale --replicas=1 deployment/unifiedpush-operator -n {{ eval_ups_namespace }}"
 
         - name: Wait for User RHSSO operator up
           shell: "oc get deployment/keycloak-operator -o jsonpath='{.status.availableReplicas}' -n {{ eval_user_rhsso_namespace }}"
@@ -114,7 +111,7 @@
         - name: Wait for UPS operator up
           shell: "oc get deployment/unifiedpush-operator -o jsonpath='{.status.availableReplicas}' -n {{ eval_ups_namespace }}"
           register: result
-          until: result.stdout == expected_ups_operator_replicas.stdout
+          until: result.stdout == "1"
           retries: 50
           delay: 10
           changed_when: False
