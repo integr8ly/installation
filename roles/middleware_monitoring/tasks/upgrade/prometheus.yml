@@ -5,6 +5,12 @@
     - "prometheus_cluster_role.yml"
     - "alert_manager_cluster_role.yml"
 
+- name: Upgrade cluster rolebindings
+  include: ./apply_resource_from_template.yml
+  with_items:
+    - "prometheus_cluster_role_binding.yml"
+    - "alert_manager_cluster_role_binding.yml"
+
 - name: Scale down the prometheus operator
   shell: "oc scale deployment/prometheus-operator --replicas 0 -n {{ monitoring_namespace }}"
   register: po_scale_down_cmd
