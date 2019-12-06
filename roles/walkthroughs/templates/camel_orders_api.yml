@@ -46,7 +46,7 @@ objects:
             value: ${PG_USERNAME}
           - name: PG_PASSWORD
             value: ${PG_PASSWORD}
-          image: quay.io/evanshortiss/rhmi-lab-internal-fuse-api
+          image: quay.io/integreatly/rhmi-lab-internal-fuse-api:v1.0.0
           imagePullPolicy: Always
           name: rhmi-lab-internal-fuse-api
           ports:

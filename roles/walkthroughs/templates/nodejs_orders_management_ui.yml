@@ -40,7 +40,7 @@ objects:
         - env:
           - name: ORDERS_API_BASE_URL
             value: ${ORDERS_API_BASE_URL}
-          image: quay.io/evanshortiss/rhmi-lab-order-management-ui
+          image: quay.io/integreatly/rhmi-lab-order-management-ui:v1.0.0
           imagePullPolicy: Always
           name: rhmi-lab-order-management-ui
           ports:

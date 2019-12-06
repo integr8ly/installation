@@ -92,7 +92,7 @@ objects:
           envFrom:
           - configMapRef:
               name: messaging-service
-          image: quay.io/integreatly/nodejs-messaging-work-queue:{{ msg_work_queue_node_image_tag }}
+          image: quay.io/integreatly/rhmi-lab-nodejs-order-frontend:{{ msg_work_queue_node_image_tag }}
           imagePullPolicy: Always
           livenessProbe:
             httpGet:

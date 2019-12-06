@@ -5,7 +5,7 @@
     src: camel_orders_api.yml
     dest: /tmp/camel_orders_api.yml
   
-- name: Add crud spring boot example app to the catalog
+- name: Add crud Camel/Fuse example app to the catalog
   command: oc create -f /tmp/camel_orders_api.yml -n openshift
   register: out
   until: '"created" in out.stdout or "AlreadyExists" in out.stderr'
