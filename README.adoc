@@ -16,7 +16,7 @@ toc::[]
 
 = Overview
 
-The purpose of this repository is to provide a set of Ansible playbooks that can be used to install a range of Red Hat middleware products & other projects via Ansible Tower on openshift.
+The purpose of this repository is to provide a set of Ansible playbooks that can be used to install a range of Red Hat middleware products & other projects via Ansible Tower on Openshift.
 
 These products include:
 
@@ -33,8 +33,6 @@ These products include:
 * Datasync
 * Unified push
 * AMQ streams
-
-
 
 == Prerequisites
 
@@ -54,98 +52,34 @@ These products include:
 ====
 * SSH Access to Openshift master(s)
 * Cluster administrator permissions
-* The ssh user defined in the inventory, `ansible_user`, needs have sudo permission
 ====
 
 == Installation Steps
 
-The following will provide information on how to install Integreatly on a openshift cluster via an bastion host.
+=== RHPDS
+
+The following steps will provide information on how to install Integreatly on an RHPDS Openshift cluster.
 
 
-#### 1. Sign into your bastion host and become root of the host
+==== SSH to the master host and become root
 
 [source,shell]
 
 ```
-ssh -i /path/ocpkey.pem ec2-user@bastion.NAME-GUID.openshiftworkshop.com
+ssh -i /path/ocpkey.pem ec2-user@master.NAME-GUID.open.redhat.com
 
 sudo -i
 ```
 
 
-#### 2. Clone installation GIT repository on the bastion host
+==== Clone installation GIT repository on the master host
 
 [source,shell]
 ```
 git clone https://github.com/integr8ly/installation.git
 ```
 
-#### 3. Obtain your openshift master hostname using the following command
-
-
-__NOTE__: This hostname will be needed in a following step to allow connection to your cluster
-
-[source,shell]
-
-```
-oc get nodes
-```
-
-#### 4. Create the inventory hosts file
-
-. Create the host file based on the template(`../inventories/hosts.default`) located in the inventories directory.
-+
-[source,shell]
-----
-cp inventories/hosts.template inventories/hosts
-----
-. Update the hosts file master field with the master hostname from the previous step.
-+
-
-[source]
-----
-~/installation/inventories/hosts
-
-[local:vars]
-ansible_connection=local
-
-run_master_tasks=true
-
-[local]
-127.0.0.1
-
-[OSEv3:children]
-master
-
-[OSEv3:vars]
-ansible_user=ec2-user
-
-[master]
-127.0.0.1
-----
-
-
-#### 5. Check the connection with the OpenShift cluster
-
-Run the following command to verify the connection to the OpenShift cluster.
-[source,shell]
-```
-ansible -m ping all
-```
-
-Output:
-
-[source,shell]
-
-```
-ansible -m ping all
-master.example.openshiftworkshop.com | SUCCESS => {
-    "changed": false,
-    "ping": "pong"
-}
-```
-
-#### 6. Create GitHub OAuth to enable GitHub authorization
+==== Create GitHub OAuth to enable GitHub authorization [OPTIONAL]
 
 . Login into GitHub
 . Go to `Settings >> Developer Settings >> New OAuth App`.
@@ -172,9 +106,7 @@ IMPORTANT: The callback URL is a placeholder for now and will be changed after t
 
 image::https://user-images.githubusercontent.com/7708031/48856868-7141d680-edaf-11e8-836f-4d533f8ed402.png[GitHub OAuth App Fields]
 
-
-[[install-all]]
-#### 7. Install all products from a single playbook
+==== Run the installation playbook
 
 All products can be installed using the *install.yml* playbook located in the *playbooks/* directory.
 
@@ -184,7 +116,6 @@ Before running the installer, please consider the following variables:
 |===
 | Variable | Description
 | eval_self_signed_certs | Whether the OpenShift cluster uses self-signed certs or not. Defaults to `false`
-| eval_threescale_enable_wildcard_route | Whether 3Scale enables wildcard routing. Defaults to `false`
 | github_client_id | GitHub OAuth client ID to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
 | github_client_secret | GitHub OAuth client secret to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
 | prerequisites_install | Boolean var that skips the installation of system wide tools/packages that are required by the installer if set to false (needs to be set to false when running the installer in a linux container). Defaults to `true`. 
@@ -192,7 +123,9 @@ Before running the installer, please consider the following variables:
 | heimdall_pull_secret_token | Heimdall pull secret token
 |===
 
-Some products can be excluded from the install by setting a var. For example, setting `gitea=false` will not install gitea. Installation of individual products will not be a supported installation method with this repo. You can however write your own playbook to execute specific roles & tasks as needed.
+Some products can be excluded from the install by setting a var. For example, setting `gitea=false` will not install gitea. The flags for installing specific products can be found in the link:./inventories/group_vars/all/manifest.yaml[manifest.yaml] file
+
+NOTE: Installation of individual products will not be a supported installation method with this repo. You can however write your own playbook to execute specific roles & tasks as needed. 
 
 By default Mobile Developer Services will not be installed. In order to install these services, consider the following variables.
 
@@ -203,25 +136,22 @@ By default Mobile Developer Services will not be installed. In order to install 
 | datasync | Whether DataSync components will be installed or not | `true`
 |===
 
+The installation can be run using the following command:
 
-#### 8. Run the playbook
+NOTE: If installing v1.5.2 or any prior release set the inventory file to `inventories/hosts.template` rather than `inventories/pds.template` as shown below
 
 [source,shell]
 ----
- ansible-playbook -i inventories/hosts playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
+ansible-playbook -i inventories/pds.template playbooks/install.yml -e github_client_id=<your_client-id> -e github_client_secret=<your_client_secret>
 ----
 
-
-====
 The following flag can be used if self signed certs are used.
-
 
 [source,shell]
 ----
 -e eval_self_signed_certs=true
 ----
 
-====
 To enable Heimdall you will need a valid pull secret token to access the registry, you can retrieve these from https://access.redhat.com/terms-based-registry/#/token/-heimdall/openshift-secret
 
 [source,shell]
@@ -229,22 +159,16 @@ To enable Heimdall you will need a valid pull secret token to access the registr
 -e heimdall_pull_secret_name=<your_secret-name> -e heimdall_pull_secret_token=<your_secret-token>
 ----
 
-====
 
 [TIP]
-====
 The following command installs Integreatly without GitHub authorization for Launcher.
-
 
 [source,shell]
 ----
-$ ansible-playbook -i inventories/hosts playbooks/install.yml
+ ansible-playbook -i inventories/pds.template playbooks/install.yml
 ----
-====
 
-
-
-#### 9. Add the generated Authorization callback URL to GitHub OAuth
+==== Add the generated Authorization callback URL to GitHub OAuth
 
 Replace the authorization callback URL previously containing a temporary localhost value with the output of the installation seen below.
 
@@ -252,14 +176,14 @@ Replace the authorization callback URL previously containing a temporary localho
 ----
 TASK [debug] *************************************************************************************************************************************************************************************************
 ok: [127.0.0.1] => {
-    "msg": "All services have been provisioned successfully. Please add 'https://launcher-sso-launcher.apps.example.openshiftworkshop.com/auth/realms/launcher_realm/broker/github/endpoint' as the Authorization callback URL of your GitHub OAuth Application."
+    "msg": "All services have been provisioned successfully. Please add 'https://launcher-sso-launcher.apps.example.open.redhat.com/auth/realms/launcher_realm/broker/github/endpoint' as the Authorization callback URL of your GitHub OAuth Application."
 }
 ----
 
 
 image::https://user-images.githubusercontent.com/7708031/48856981-c1209d80-edaf-11e8-9d23-f550c7ec31be.png[GitHub OAuth auhotization callback URL, 640]
 
-#### 10.Add backup jobs (Optional not needed for dev)
+==== Add backup jobs (Optional not needed for dev)
 
 __NOTE__: Needs to be used in an existing integreatly cluster.
 
@@ -267,9 +191,11 @@ __NOTE__: Requires an existing s3 secret `s3-credentials` in the backup namespac
 
 Sample command:
 
+NOTE: If installing v1.5.2 or any prior release set the inventory file to `inventories/hosts.template` rather than `inventories/pds.template` as shown below
+
 ```
 ansible-playbook \
--i inventories/host \
+-i inventories/pds.template \
 -e 'backup_schedule="30 2 * * *"' \
 -e 'backup_namespace=openshift-integreatly-backups' \
 playbooks/install_backups.yml
@@ -286,12 +212,12 @@ Parameters:
 | backup_namespace | backup namespace name to add all cronjobs | `openshift-integreatly-backups`
 |===
 
-#### 11. Check the installation
+==== Validate installation
 
 IMPORTANT: Once the installation has finished you will no longer be able to login via the Openshift console or oc cli as the admin if there is an sso redirect in place. The new admin user is `admin@example.com` password is `Password1`
 
 The URL for the solution explorer is `https://tutorial-web-app-webapp.apps.<domain>/` 
-For example, if the master url is `https://master.example.openshiftworkshop.com/`, the web app is available at  `https://tutorial-web-app-webapp.apps.example.openshiftworkshop.com/`.
+For example, if the master url is `https://master.example.open.redhat.com/`, the web app is available at  `https://tutorial-web-app-webapp.apps.example.open.redhat.com/`.
 
 image::https://user-images.githubusercontent.com/53817495/64680924-a3bfdb80-d476-11e9-801e-08f8a28c47a8.png[integr8ly WebApp]
 
@@ -305,9 +231,12 @@ IMPORTANT: The default login credentials are `admin@example.com` / `Password1`
 == Uninstalling Integreatly
 
 Run the uninstall.yml playbook from the root of the repository:
+
+NOTE: If installing v1.5.2 or any prior release set the inventory file to `inventories/hosts.template` rather than `inventories/pds.template` as shown below
+
 [source,shell]
 ----
-$ ansible-playbook -i inventories/hosts playbooks/uninstall.yml
+ansible-playbook -i inventories/pds.template playbooks/uninstall.yml
 ----
 
 By default this will delete all user-created namespaces as well, if you wish to keep these namespaces then add the following flag:
