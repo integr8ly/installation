@@ -42,9 +42,9 @@ These products include:
 |Ansible
 |>= v2.6
 |Openshift Container Platform
-|>= v3.10
+|>= v3.11
 |Openshift CLI (OC)
-|>= v3.10
+|>= v3.11
 |===
 
 
