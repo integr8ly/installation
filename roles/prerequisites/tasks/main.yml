@@ -1,5 +1,8 @@
 ---
 
+- name: "Ensure cluster type is set"
+  include_tasks: check_cluster_type.yml
+
 - name: "Verify oc version"
   include_tasks: oc_version.yml
 

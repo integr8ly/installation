@@ -266,7 +266,7 @@ The issue means that python version used by Ansible has not this required module
 $ pip install jsonpointer
 ----
 
-Also, you might need to use the varible `ansible_python_interpreter` in the host file to fix it, for example:
+Also, you might need to use the varible `ansible_python_interpreter` in the inventory file being used to fix it, for example:
 
 [source,yum]
 ----

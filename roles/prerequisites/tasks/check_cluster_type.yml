@@ -1,0 +1,5 @@
+---
+
+- debug:
+    msg: "cluster_type variable is not defined, please use one of the provided inventory files for your environment or set it manually"
+  failed_when: cluster_type is not defined
