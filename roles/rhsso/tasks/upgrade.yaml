@@ -33,7 +33,8 @@
 
 - name: "Check whether cssre-admin-user-credentials secret exists"
   shell: "oc get secret {{ rhsso_cssre_admin_username }}-user-credentials -n {{ eval_rhsso_namespace }}"
-  register: cssre-admin-user-credentials
+  register: get_sre_admin_secret
+  ignore_errors: True
 
 - name: "Create secret for CS SRE Admin user if it does not exist"
   shell: >
@@ -41,7 +42,7 @@
       --from-literal=username={{ rhsso_cssre_admin_username }} \
       --from-literal=password={{ rhsso_cssre_admin_password }} \
       --dry-run -o yaml | oc apply -f -
-  when: '"not found" in cssre-admin-user-credentials.stdout'
+  when: get_sre_admin_secret is succeeded
 
 - name: "Patch rhsso CR to add CS SRE Admin user if it doesn't exist"
   shell: "oc patch keycloak rhsso -n {{ eval_rhsso_namespace }} -p $(cat upgrade-cssre-admin.yaml)"
