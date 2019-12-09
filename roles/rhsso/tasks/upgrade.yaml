@@ -32,7 +32,7 @@
   failed_when: cs_sre_admin_user.stderr != ""
 
 - name: "Check whether cssre-admin-user-credentials secret exists"
-  shell: "oc get secret {{ rhsso_cssre_admin }}-user-credentials -n {{ eval_rhsso_namespace }}"
+  shell: "oc get secret {{ rhsso_cssre_admin_username }}-user-credentials -n {{ eval_rhsso_namespace }}"
   register: cssre-admin-user-credentials
   failed_when: cssre-admin-user-credentials.stderr != ""
 
