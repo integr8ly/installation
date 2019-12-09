@@ -27,7 +27,7 @@
   failed_when: cr_patch_keycloak_version.stderr != ''
 
 - name: "Check whether CS SRE admin user exists"
-  shell: "oc get keycloakrealm -n {{ eval_rhsso_namespace }} -o json | jq .items[0].spec.users | jq -c '.[] | select(.username | contains({{ rhsso_cssre_admin_username }}))'"
+  shell: "oc get keycloakrealm -n {{ eval_rhsso_namespace }} -o json | jq .items[0].spec.users | jq -c '.[] | select(.username | contains(\"{{ rhsso_cssre_admin_username }}\"))'"
   register: cs_sre_admin_user
   failed_when: cs_sre_admin_user.stderr != ""
 
