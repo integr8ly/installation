@@ -1,0 +1,56 @@
+---
+- name: Wait until RH SSO API is available 
+  uri: 
+    url: https://{{user_sso_route}}
+    method: HEAD
+    follow_redirects: safe
+    validate_certs: no
+  register: wait_sso_result
+  until: wait_sso_result is succeeded
+  ignore_errors: yes
+  retries: 30
+  delay: 30
+
+- name: Get SSO Admin Username
+  shell: oc get dc/sso -n {{rhsso_user_namespace}} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="SSO_ADMIN_USERNAME")].value}'
+  register: sso_login_username
+
+- name: Get SSO Admin Password
+  shell: oc get dc/sso -n {{rhsso_user_namespace}} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="SSO_ADMIN_PASSWORD")].value}'
+  register: sso_login_password
+
+- name: Get SSO Token
+  shell: "curl --insecure -X POST 'https://{{user_sso_route}}/auth/realms/master/protocol/openid-connect/token' \
+  -H 'Content-Type: application/x-www-form-urlencoded' -d 'username={{ sso_login_username.stdout }}' -d 'password={{ sso_login_password.stdout }}' -d 'grant_type=password' -d 'client_id=admin-cli'"
+  register: token_text
+
+- set_fact: user_sso_token={{ (token_text.stdout | from_json).access_token }}
+
+- debug:
+    msg: "RH SSO token being used is {{ user_sso_token }}"
+
+- name: Increase Token Lifespan (60 mins)
+  uri: 
+    url: 'https://{{user_sso_route}}/auth/admin/realms/master'
+    method: PUT
+    body: "{\"realm\":\"master\", \"accessTokenLifespan\":\"3600\"}"
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer {{ user_sso_token }}"
+    return_content: yes
+    validate_certs: no
+    status_code: 204
+
+- name: Get SSO Token with Longer Lifespan
+  shell: "curl --insecure -X POST 'https://{{user_sso_route}}/auth/realms/master/protocol/openid-connect/token' \
+  -H 'Content-Type: application/x-www-form-urlencoded' -d 'username={{ sso_login_username.stdout }}' -d 'password={{ sso_login_password.stdout }}' -d 'grant_type=password' -d 'client_id=admin-cli'"
+  register: token_text
+
+- set_fact: user_sso_token={{ (token_text.stdout | from_json).access_token }}
+
+- debug: var=user_sso_token
+
+- name: Create evals user realms
+  include_tasks: ./create-realm.yml
+  with_sequence: start=1 end={{ eval_seed_users_count }} format=evals%02d

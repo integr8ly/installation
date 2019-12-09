@@ -1,0 +1,44 @@
+{
+  "realm": "{{ username }}",
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "enabled": true,
+  "displayName": "{{ username }} Realm",
+  "users": [
+    {
+      "username": "{{ username }}",
+      "enabled": true,
+      "email": "{{ username }}@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password"
+        }
+      ],
+      "realmRoles": [
+        "admin",
+        "offline_access",
+        "uma_authorization"
+      ],
+      "clientRoles": {
+        "account": [
+          "manage-account",
+          "view-profile"
+        ],
+        "realm-management": [
+          "create-client",
+          "impersonation",
+          "manage-authorization",
+          "manage-clients",
+          "manage-events",
+          "manage-identity-providers",
+          "manage-realm",
+          "manage-users",
+          "realm-admin"
+        ]
+      }
+    }
+  ],
+  "scopeMappings": [],
+  "clients": []
+}

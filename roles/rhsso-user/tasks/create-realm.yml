@@ -1,0 +1,17 @@
+- name: Create Realm JSON from template
+  template: src=evals-user-realm.j2 dest=/tmp/evals-user-realm.json
+  vars:
+    username: "{{ item }}"
+
+- name: Create {{ item }} Realm
+  uri: 
+    url: 'https://{{user_sso_route}}/auth/admin/realms'
+    method: POST
+    body: "{{ lookup('file','/tmp/evals-user-realm.json') }}"
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer {{ user_sso_token }}"
+    return_content: yes
+    validate_certs: no
+    status_code: 201,409
