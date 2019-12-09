@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: rhmi-lab-order-management-ui
+  displayName: RHMI Lab Order Management UI
+  annotations:
+    openshift.io/display-name: RHMI Lab Order Management UI
+    description: "The internal Order management UI that's used in RHMI Solution Patterns"
+    iconClass: "icon-nodejs"
+    tags: "rhmi,nodejs"
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: rhmi-lab-order-management-ui
+    name: rhmi-lab-order-management-ui
+  spec:
+    replicas: 1
+    selector:
+      app: rhmi-lab-order-management-ui
+      deploymentconfig: rhmi-lab-order-management-ui
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: rhmi-lab-order-management-ui
+          deploymentconfig: rhmi-lab-order-management-ui
+      spec:
+        containers:
+        - env:
+          - name: ORDERS_API_BASE_URL
+            value: ${ORDERS_API_BASE_URL}
+          image: quay.io/integreatly/rhmi-lab-order-management-ui:v1.0.0
+          imagePullPolicy: Always
+          name: rhmi-lab-order-management-ui
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: rhmi-lab-order-management-ui
+    name: rhmi-lab-order-management-ui
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: rhmi-lab-order-management-ui
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      app: order-management-ui
+    name: order-management-ui
+  spec:
+    port:
+      targetPort: 8080-tcp
+    tls:
+      termination: edge
+    to:
+      kind: Service
+      name: rhmi-lab-order-management-ui
+      weight: 100
+    wildcardPolicy: None
+parameters:
+- description: The URL of the Orders Fuse API, e.g http://orders-fuse-api.myproject.svc:8080
+  displayName: Fuse Order API URL
+  required: true
+  name: ORDERS_API_BASE_URL

@@ -3,5 +3,6 @@
   include_tasks: '{{ item  }}.yml'
   with_items:
     - "messaging_work_queue_nodejs"
-    - "crud_spboot_example"
+    - "camel_orders_api"
+    - "nodejs_orders_management_ui"
     - "location_soap"

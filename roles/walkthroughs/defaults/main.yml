@@ -9,7 +9,7 @@ crud_spboot_artifact_copy_args: "'*.jar'"
 crud_spboot_github_webhook_secret: ""
 crud_spboot_maven_mirror_url: ""
 
-msg_work_queue_node_image_tag: "3.0.1"
+msg_work_queue_node_image_tag: "v5.0.0"
 msg_work_queue_node_source_repo_url: "https://github.com/integr8ly/nodejs-messaging-work-queue.git"
 msg_work_queue_node_source_repo_dir: "frontend"
 msg_work_queue_node_github_webhook_secret: ""

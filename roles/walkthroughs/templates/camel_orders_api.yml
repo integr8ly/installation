@@ -1,0 +1,114 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: rhmi-lab-fuse-internal-orders-api
+  displayName: RHMI Lab Fuse Internal API
+  annotations:
+    openshift.io/display-name: RHMI Lab Fuse Internal API
+    description: "The internal Fuse Orders API that's used in RHMI Solution Patterns"
+    iconClass: "icon-jboss"
+    tags: "fuse,camel,rhmi"
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: rhmi-lab-internal-fuse-api
+    name: rhmi-lab-internal-fuse-api
+  spec:
+    replicas: 1
+    selector:
+      app: rhmi-lab-internal-fuse-api
+      deploymentconfig: rhmi-lab-internal-fuse-api
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: rhmi-lab-internal-fuse-api
+          deploymentconfig: rhmi-lab-internal-fuse-api
+      spec:
+        containers:
+        - env:
+          - name: PG_HOSTNAME
+            value: ${PG_HOSTNAME}
+          - name: PG_DATABASE
+            value: ${PG_DATABASE}
+          - name: PG_USERNAME
+            value: ${PG_USERNAME}
+          - name: PG_PASSWORD
+            value: ${PG_PASSWORD}
+          image: quay.io/integreatly/rhmi-lab-internal-fuse-api:v1.0.0
+          imagePullPolicy: Always
+          name: rhmi-lab-internal-fuse-api
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: rhmi-lab-internal-fuse-api
+    name: rhmi-lab-internal-fuse-api
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: rhmi-lab-internal-fuse-api
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      app: orders-fuse-api
+    name: orders-fuse-api
+  spec:
+    port:
+      targetPort: 8080-tcp
+    tls:
+      termination: edge
+    to:
+      kind: Service
+      name: rhmi-lab-internal-fuse-api
+      weight: 100
+    wildcardPolicy: None
+parameters:
+- description: The hostname of the PostgreSQL instance orders are stored in
+  displayName: PostgreSQL Hostname
+  required: true
+  name: PG_HOSTNAME
+- description: The name of the database in the PostgreSQL instance orders are stored in
+  displayName: PostgreSQL Database Name
+  required: true
+  value: orders
+  name: PG_DATABASE
+- description: The username for logging into the PostgreSQL instance
+  displayName: PostgreSQL Username
+  required: true
+  name: PG_USERNAME
+- description: The password for logging into the PostgreSQL instance
+  displayName: PostgreSQL Password
+  required: true
+  name: PG_PASSWORD

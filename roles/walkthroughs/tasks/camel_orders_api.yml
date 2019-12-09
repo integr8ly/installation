@@ -1,0 +1,14 @@
+---
+# ADDS CRUD SPRING BOOT EXAMPLE APP TO THE CATALOG
+- name: template Camel/Fuse orders API
+  template:
+    src: camel_orders_api.yml
+    dest: /tmp/camel_orders_api.yml
+  
+- name: Add crud Camel/Fuse example app to the catalog
+  command: oc create -f /tmp/camel_orders_api.yml -n openshift
+  register: out
+  until: '"created" in out.stdout or "AlreadyExists" in out.stderr'
+  retries: 200
+  delay: 5
+  failed_when: out.stderr != '' and 'AlreadyExists' not in out.stderr

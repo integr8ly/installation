@@ -1,12 +1,12 @@
 ---
 # ADDS CRUD SPRING BOOT EXAMPLE APP TO THE CATALOG
-- name: template crud spring boot example app
+- name: template Node.js Orders Management UI
   template:
-    src: crud_spboot_example.yml
-    dest: /tmp/crud_spboot_example.yml
+    src: nodejs_orders_management_ui.yml
+    dest: /tmp/nodejs_orders_management_ui.yml
   
 - name: Add crud spring boot example app to the catalog
-  command: oc create -f /tmp/crud_spboot_example.yml -n openshift
+  command: oc create -f /tmp/nodejs_orders_management_ui.yml -n openshift
   register: out
   until: '"created" in out.stdout or "AlreadyExists" in out.stderr'
   retries: 200
