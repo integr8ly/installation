@@ -84,3 +84,6 @@ integreatly_operator: False
 
 # Increasing prometheus volume size for prod environments to 50gb
 monitoring_prometheus_storage_request: 50Gi
+
+# Set the location of the kubeconfig file so that the Fuse operator CLI can use it to perform installation.
+kube_config_file: "/var/lib/awx/.kube/config"
