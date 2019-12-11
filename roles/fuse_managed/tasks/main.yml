@@ -53,11 +53,23 @@
     src: /tmp/fuse-binary-archive
     dest: /tmp/fuse-binary
 
+- set_fact:
+    syndesis_install_params: ""
+
+- name: check if kubeconfig file exists
+  stat: 
+    path: "{{ kube_config_file }}"
+  register: kube_config_exists
+
+- set_fact:
+    syndesis_install_params: "--config {{ kube_config_dir }}"
+  when: kube_config_exists.stat.exists == True
+
 - name: Run operator cluster install
-  shell: "/tmp/fuse-binary/syndesis-operator install cluster --namespace {{ fuse_namespace }}"
+  shell: "/tmp/fuse-binary/syndesis-operator install cluster --namespace {{ fuse_namespace }} {{ syndesis_install_params }}"
 
 - name: Run operator install
-  shell: "/tmp/fuse-binary/syndesis-operator install operator --namespace {{ fuse_namespace }}"
+  shell: "/tmp/fuse-binary/syndesis-operator install operator --namespace {{ fuse_namespace }} {{ syndesis_install_params }}"
 
 - template:
     src: syndesis-customresource.yml.j2
