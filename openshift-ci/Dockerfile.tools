@@ -1,0 +1,7 @@
+FROM registry.svc.ci.openshift.org/openshift/release:golang-1.13
+
+RUN yum -y install python-pip ansible-lint \
+    && yum clean all \
+    && pip install ansible \
+    && mkdir /.ansible \
+    && chmod g+xw -R /.ansible

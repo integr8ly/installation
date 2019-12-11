@@ -1,0 +1,14 @@
+#!/bin/bash -e
+#
+# Test the Dockerfile.tools image.
+#
+# IMAGE_NAME specifies the name of the candidate image used for testing.
+# The image has to be available before this script is executed.
+#
+
+docker run --rm --entrypoint=/bin/sh ${IMAGE_NAME} -c 'go version'
+docker run --rm --entrypoint=/bin/sh ${IMAGE_NAME} -c 'ansible-playbook --version'
+docker run --rm --entrypoint=/bin/sh ${IMAGE_NAME} -c 'ansible-lint --version'
+docker run --rm -u $UID --entrypoint=/bin/sh ${IMAGE_NAME} -c 'touch /.ansible/test'
+docker run --rm -u $UID -v "$(pwd)/..:/installation:z" --entrypoint=/bin/sh ${IMAGE_NAME} -c "cd /installation && make test/format"
+echo "SUCCESS!"

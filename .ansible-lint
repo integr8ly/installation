@@ -1,0 +1,35 @@
+skip_list:
+- '201'
+- '204'
+- '206'
+- '301'
+- '303'
+- '305'
+- '306'
+- '502'
+- '503'
+- '601'
+- '602'
+exclude_paths:
+- ./roles/datasync/tasks/main.yml
+- ./roles/customisation/tasks/main.yaml
+- ./roles/codeready/tasks/heimdall.yml
+- ./roles/codeready/tasks/keycloak-client.yml
+- ./roles/codeready/tasks/install.yml
+- ./roles/codeready/tasks/download_installer.yml
+- ./roles/codeready/tasks/main.yaml
+- ./roles/backup/tasks/_setup_service_account.yml
+- ./roles/backup/tasks/main.yml
+- ./roles/application_monitoring/tasks/main.yml
+- ./roles/apicurito/tasks/heimdall.yml
+- ./roles/apicurito/tasks/main.yml
+- ./roles/amq_streams/tasks/check_installation_succeeded.yml
+- ./roles/amq_streams/tasks/create_kafka.yml
+- ./roles/amq_streams/tasks/install_amq_streams_cluster_operator.yml
+- ./roles/amq_streams/tasks/install.yml
+- ./roles/amq_streams/tasks/main.yml
+- ./roles/3scale_config/
+- ./roles/3scale/
+- ./roles/delete-user-namespaces
+use_default_rules: true
+verbosity: 1
