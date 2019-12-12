@@ -265,6 +265,11 @@
       - rhsso
       when: heimdall | default(true) | bool
 
+    # Namespaces
+    - include_role:
+        name: walkthroughs
+        tasks_from: upgrade
+
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

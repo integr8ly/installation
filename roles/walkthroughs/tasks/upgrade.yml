@@ -1,0 +1,3 @@
+---
+- name: Reinstall walkthroughs for upgrade
+  include_tasks: walkthroughs.yaml
