@@ -265,7 +265,7 @@
       - rhsso
       when: heimdall | default(true) | bool
 
-    # Namespaces
+    # Walkthroughs
     - include_role:
         name: walkthroughs
         tasks_from: upgrade
