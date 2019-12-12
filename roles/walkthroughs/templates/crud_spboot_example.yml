@@ -1,0 +1,269 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: spring-boot-rest-http-crud
+  annotations:
+    iconClass: icon-spring
+    tags: spring-boot, rest, crud, java, microservice
+    openshift.io/display-name: Spring Boot - REST HTTP and CRUD
+    openshift.io/provider-display-name: "Red Hat, Inc."
+    openshift.io/documentation-url: "https://appdev.prod-preview.openshift.io/docs/spring-boot-runtime.html#mission-crud-spring-boot-tomcat"
+    description: >-
+      The Relational Database Backend booster expands on the REST API Level 0 booster to provide a basic example of performing create, read, update and delete (CRUD) operations on a PostgreSQL database using a simple HTTP API.
+      CRUD operations are the four basic functions of persistent storage, widely used when developing an HTTP API dealing with a database.
+parameters:
+- name: RUNTIME_VERSION
+  displayName: OpenJDK 8 image version to use
+  description: Specifies which version of the OpenShift OpenJDK 8 image to use
+  value: {{ crud_spboot_runtime_version }}
+  required: true
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: spring-boot-rest-http-crud
+  spec: {}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: runtime
+  spec:
+    tags:
+    - name: "${RUNTIME_VERSION}"
+      from:
+        kind: DockerImage
+        name: registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:${RUNTIME_VERSION}
+
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    labels:
+      app: spring-boot-rest-http-crud
+      provider: snowdrop
+      version: "BOOSTER_VERSION"
+      group: io.openshift.booster
+    name: my-database-secret
+  stringData:
+    user: luke
+    password: secret
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: spring-boot-rest-http-crud
+      provider: snowdrop
+      version: "BOOSTER_VERSION"
+      group: io.openshift.booster
+    name: spring-boot-rest-http-crud
+  spec:
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: spring-boot-rest-http-crud
+      provider: snowdrop
+      group: io.openshift.booster
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: spring-boot-rest-http-crud
+      provider: snowdrop
+      version: "BOOSTER_VERSION"
+      group: io.openshift.booster
+    name: spring-boot-rest-http-crud
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 2
+    selector:
+      app: spring-boot-rest-http-crud
+      provider: snowdrop
+      group: io.openshift.booster
+    strategy:
+      rollingParams:
+        timeoutSeconds: 3600
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: spring-boot-rest-http-crud
+          provider: snowdrop
+          version: "BOOSTER_VERSION"
+          group: io.openshift.booster
+      spec:
+        containers:
+        - env:
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: user
+                name: my-database-secret
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: my-database-secret
+          - name: JAVA_OPTIONS
+            value: -Dspring.profiles.active=openshift
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          image: quay.io/integreatly/spring-boot-rest-http-crud:{{ crud_spboot_image_tag }}
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 180
+          name: spring-boot
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+          securityContext:
+            privileged: false
+    triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+            - spring-boot
+          from:
+            kind: ImageStreamTag
+            name: 'spring-boot-rest-http-crud:latest'
+        type: ConfigChange
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      app: spring-boot-rest-http-crud
+      provider: snowdrop
+      version: "BOOSTER_VERSION"
+      group: io.openshift.booster
+    name: crud
+  spec:
+    port:
+      targetPort: 8080
+    to:
+      kind: Service
+      name: spring-boot-rest-http-crud
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: my-database
+    name: my-database
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: openshift/postgresql-92-centos7
+      from:
+        kind: DockerImage
+        name: openshift/postgresql-92-centos7
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: my-database
+    name: my-database
+  spec:
+    replicas: 1
+    selector:
+      app: my-database
+      deploymentconfig: my-database
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: my-database
+          deploymentconfig: my-database
+      spec:
+        containers:
+        - env:
+          - name: POSTGRESQL_DATABASE
+            value: my_data
+          - name: POSTGRESQL_PASSWORD
+            value: secret
+          - name: POSTGRESQL_USER
+            value: luke
+          image: openshift/postgresql-92-centos7
+          name: my-database
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          resources: {}
+          volumeMounts:
+          - mountPath: /var/lib/pgsql/data
+            name: my-database-volume-1
+        volumes:
+        - emptyDir: {}
+          name: my-database-volume-1
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - my-database
+        from:
+          kind: ImageStreamTag
+          name: my-database:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: my-database
+    name: my-database
+  spec:
+    ports:
+    - name: 5432-tcp
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      app: my-database
+      deploymentconfig: my-database
+  status:
+    loadBalancer: {}
