@@ -1,4 +1,11 @@
 ---
+- name: Get user SSO route for evalsNN realm creation
+  shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace | default('user-sso') }}
+  register: user_sso_route_cmd
+
+- set_fact:
+    user_sso_route: "{{ user_sso_route_cmd.stdout }}"
+
 - name: Wait until RH SSO API is available 
   uri: 
     url: https://{{user_sso_route}}
