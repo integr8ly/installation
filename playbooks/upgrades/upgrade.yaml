@@ -37,6 +37,7 @@
 - hosts: localhost
   gather_facts: yes
   tasks:
+    - include_vars: ../../roles/rhsso-user/defaults/main.yml
     - include_role:
         name: prerequisites
         tasks_from: upgrade
@@ -273,7 +274,6 @@
     
     # User SSO (evals realms for new walkthroughs)
     - name: Create evalsNN realms in user sso for new walkthroughs
-      include_vars: ../../roles/rhsso-user/defaults/main.yml
       include_role:
         name: rhsso-user
         tasks_from: create-eval-user-realms
