@@ -266,7 +266,8 @@
       when: heimdall | default(true) | bool
 
     # Walkthroughs
-    - include_role:
+    - name: Update walkthroughs
+      include_role:
         name: walkthroughs
         tasks_from: upgrade
 
