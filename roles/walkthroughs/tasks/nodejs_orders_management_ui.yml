@@ -1,11 +1,10 @@
 ---
-# ADDS CRUD SPRING BOOT EXAMPLE APP TO THE CATALOG
 - name: template Node.js Orders Management UI
   template:
     src: nodejs_orders_management_ui.yml
     dest: /tmp/nodejs_orders_management_ui.yml
   
-- name: Add crud spring boot example app to the catalog
+- name: adds a nodejs based UI that renders data from the camel_orders_api template
   command: oc create -f /tmp/nodejs_orders_management_ui.yml -n openshift
   register: out
   until: '"created" in out.stdout or "AlreadyExists" in out.stderr'

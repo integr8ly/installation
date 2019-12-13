@@ -24,7 +24,7 @@
       shell: oc get nodes
       register: task_result
       until: task_result.rc == 0
-      retries: 6
+      retries: 30
       delay: 5
       failed_when: task_result.rc != 0
       when: run_master_tasks | default(true) | bool
@@ -37,6 +37,7 @@
 - hosts: localhost
   gather_facts: yes
   tasks:
+    - include_vars: ../../roles/rhsso-user/defaults/main.yml
     - include_role:
         name: prerequisites
         tasks_from: upgrade
@@ -265,6 +266,17 @@
       - rhsso
       when: heimdall | default(true) | bool
 
+    # Walkthroughs
+    - name: Update walkthroughs
+      include_role:
+        name: walkthroughs
+        tasks_from: upgrade
+    
+    # User SSO (evals realms for new walkthroughs)
+    - name: Create evalsNN realms in user sso for new walkthroughs
+      include_role:
+        name: rhsso-user
+        tasks_from: create-eval-user-realms
 
 #Update product version (should always be last)
 - import_playbook: "../generate-customisation-inventory.yml"

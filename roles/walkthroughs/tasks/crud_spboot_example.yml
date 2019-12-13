@@ -1,0 +1,14 @@
+---
+# ADDS CRUD SPRING BOOT EXAMPLE APP TO THE CATALOG
+- name: template crud spring boot example app
+  template:
+    src: crud_spboot_example.yml
+    dest: /tmp/crud_spboot_example.yml
+    
+- name: Add crud spring boot example app to the catalog
+  command: oc create -f /tmp/crud_spboot_example.yml -n openshift
+  register: out
+  until: '"created" in out.stdout or "AlreadyExists" in out.stderr'
+  retries: 200
+  delay: 5
+  failed_when: out.stderr != '' and 'AlreadyExists' not in out.stderr
