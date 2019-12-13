@@ -53,11 +53,27 @@
     src: /tmp/fuse-binary-archive
     dest: /tmp/fuse-binary
 
+- set_fact:
+    syndesis_install_params: ""
+
+- name: Build syndesis install params
+  block:
+    - name: check if kubeconfig file exists
+      stat: 
+        path: "{{ kube_config_file }}"
+      register: kube_config_exists
+
+    - set_fact:
+        syndesis_install_params: "--config {{ kube_config_file }}"
+      when: kube_config_exists.stat.exists == True
+  when: (kube_config_file is defined) and (kube_config_file|length > 0)
+
+
 - name: Run operator cluster install
-  shell: "/tmp/fuse-binary/syndesis-operator install cluster --namespace {{ fuse_namespace }}"
+  shell: "/tmp/fuse-binary/syndesis-operator install cluster --namespace {{ fuse_namespace }} {{ syndesis_install_params }}"
 
 - name: Run operator install
-  shell: "/tmp/fuse-binary/syndesis-operator install operator --namespace {{ fuse_namespace }}"
+  shell: "/tmp/fuse-binary/syndesis-operator install operator --namespace {{ fuse_namespace }} {{ syndesis_install_params }}"
 
 - template:
     src: syndesis-customresource.yml.j2
@@ -69,7 +85,7 @@
 - name: Verify Fuse deployment succeeded
   shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
   register: fuse_verify_result
-  until: fuse_verify_result.stdout.find("8") != -1
+  until: fuse_verify_result.stdout|int >= 7
   retries: 50
   delay: 10
   changed_when: False
@@ -82,7 +98,7 @@
 - name: Verify Fuse deployment succeeded
   shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
   register: fuse_verify_result
-  until: fuse_verify_result.stdout.find("8") != -1
+  until: fuse_verify_result.stdout|int >= 7
   retries: 50
   delay: 10
   changed_when: False

@@ -106,3 +106,8 @@ threescale_storage_s3_aws_access_key: "{{ eval_threescale_storage_s3_aws_access_
 threescale_storage_s3_aws_secret_key: "{{ eval_threescale_storage_s3_aws_secret_key | default('null') }}"
 threescale_storage_s3_aws_region: "{{ eval_threescale_storage_s3_aws_region | default('null') }}"
 threescale_storage_s3_aws_bucket: "{{ eval_threescale_storage_s3_aws_bucket | default('null') }}"
+
+# The default location where kubeconfig will be saved on when the job is running from Tower. For now this is used by the Fuse operator CLI.
+# It is set to emtpy value here because it is not required for all environments and it will be overriden in the environments where they are required.
+# You should ALWAYS check if the file exists on the cluster before using it.
+kube_config_file: ""
