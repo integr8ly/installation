@@ -61,3 +61,21 @@
 - name: Create evals user realms
   include_tasks: ./create-realm.yml
   with_sequence: start=1 end={{ eval_seed_users_count }} format=evals%02d
+
+- name: Create customer-admin Realm JSON from template
+  template: src=evals-user-realm.j2 dest=/tmp/customer-admin-realm.json
+  vars:
+    username: "{{ rhsso_evals_admin_username | default('customer-admin') }}"
+
+- name: Create {{ item }} Realm
+  uri:
+    url: 'https://{{user_sso_route}}/auth/admin/realms'
+    method: POST
+    body: "{{ lookup('file','/tmp/customer-admin-realm.json') }}"
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer {{ user_sso_token }}"
+    return_content: yes
+    validate_certs: no
+    status_code: 201,409
