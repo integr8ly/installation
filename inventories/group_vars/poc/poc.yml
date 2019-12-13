@@ -48,3 +48,6 @@ ups: True
 
 # Use Integreatly Operator for Installation
 integreatly_operator: False
+
+# Set the location of the kubeconfig file so that the Fuse operator CLI can use it to perform installation.
+kube_config_file: "/var/lib/awx/.kube/config"
