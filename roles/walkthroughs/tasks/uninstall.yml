@@ -17,3 +17,21 @@
   register: output
   failed_when: output.stderr != '' and 'not found' not in output.stderr
   changed_when: output.rc == 0
+
+- name: Remove messaging nodejs order entry UI from the catalog
+  command: oc delete template/rhmi-lab-nodejs-order-ui -n openshift
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+
+- name: Remove messaging nodejs order management UI from the catalog
+  command: oc delete template/rhmi-lab-order-management-ui -n openshift
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
+
+- name: Remove messaging camel/fuse order API from the catalog
+  command: oc delete template/rhmi-lab-fuse-internal-orders-api -n openshift
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
+  changed_when: output.rc == 0
