@@ -44,6 +44,13 @@
       --dry-run -o yaml | oc apply -f -
   when: get_sre_admin_secret is failed
 
+- pause:
+    prompt: |
+      oc patch keycloak rhsso \
+      -n {{ eval_rhsso_namespace }} 
+      -p "$(cat upgrade-cssre-admin.yaml)"
+    echo: no
+
 - name: "Patch rhsso CR to add CS SRE Admin user if it doesn't exist"
   shell: oc patch keycloak rhsso -n {{ eval_rhsso_namespace }} -p "$(cat upgrade-cssre-admin.yaml)"
   when: cs_sre_admin_user.stdout == ""
