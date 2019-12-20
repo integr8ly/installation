@@ -44,15 +44,13 @@
       --dry-run -o yaml | oc apply -f -
   when: get_sre_admin_secret is failed
 
-- pause:
-    prompt: |
-      oc patch keycloak rhsso \
-      -n {{ eval_rhsso_namespace }} 
-      -p "$(cat '{{ role_path }}/files/upgrade-cssre-admin.yaml')"
-    echo: no
+- name: "Create Openshift Keycloakrealm patch with added CSSRE Admin User"
+  shell: oc get keycloakrealm openshift -n {{ eval_rhsso_namespace }} -o json | jq '.spec.users += [{"clientRoles":{"account":["manage-account","view-profile"]},"email":"{{ rhsso_cssre_admin_email }}","emailVerified":true,"enabled":true,"outputSecret":"{{rhsso_cssre_admin_username}}-user-credentials","password":"{{rhsso_cssre_admin_password}}","realmRoles":["offline_access","uma_authorization"],"username":"{{rhsso_cssre_admin_username}}"}]'
+  register: updated-keycloakrealm-openshift
+  when: cs_sre_admin_user.stdout == ""
 
-- name: "Patch rhsso CR to add CS SRE Admin user if it doesn't exist"
-  shell: oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} -p "$(cat '{{ role_path }}/files/upgrade-cssre-admin.yaml')"
+- name: "Apply Openshift Keycloakrealm patch to add CS SRE Admin"
+  shell: oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} -p {{ updated-keycloakrealm-openshift.stdout }}
   when: cs_sre_admin_user.stdout == ""
   register: result
   failed_when: not result.stdout
