@@ -49,6 +49,9 @@
   register: updated_keycloakrealm_openshift
   when: cs_sre_admin_user.stdout == ""
 
+- pause: 
+  prompt: {{ updated_keycloakrealm_openshift.stdout }}
+
 - name: "Apply Openshift Keycloakrealm patch to add CS SRE Admin"
   shell: oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} --type json -p {{ updated_keycloakrealm_openshift.stdout }}
   when: cs_sre_admin_user.stdout == ""
