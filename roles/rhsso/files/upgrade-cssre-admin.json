@@ -1,0 +1,24 @@
+{
+  "spec": {
+      "users": [
+          {
+              "clientRoles": {
+                  "account": [
+                      "manage-account",
+                      "view-profile"
+                  ]
+              },
+              "email": "{{ rhsso_cssre_admin_email }}",
+              "emailVerified": true,
+              "enabled": true,
+              "outputSecret": "{{ rhsso_cssre_admin_username }}-user-credentials",
+              "password": "{{ rhsso_cssre_admin_password }}",
+              "realmRoles": [
+                  "offline_access",
+                  "uma_authorization"
+              ],
+              "username": "{{ rhsso_cssre_admin_username }}"
+          }
+      ]
+  }
+}
