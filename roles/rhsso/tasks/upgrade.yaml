@@ -50,7 +50,7 @@
   when: cs_sre_admin_user.stdout == ""
 
 - name: "Apply Openshift Keycloakrealm patch to add CS SRE Admin"
-  shell: oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} -p {{ updated_keycloakrealm_openshift.stdout }}
+  shell: oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} --type json -p {{ updated_keycloakrealm_openshift.stdout }}
   when: cs_sre_admin_user.stdout == ""
   register: result
   failed_when: not result.stdout
