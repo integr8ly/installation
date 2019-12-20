@@ -5,11 +5,13 @@ spec:
     emailVerified: true
     email: "{{ rhsso_cssre_admin_email }}"
     password: "{{ rhsso_cssre_admin_password }}"
-    realmRoles:
-    - offline_access
-    - uma_authorization
+    realmRoles: [
+      offline_access, 
+      uma_authorization
+    ]
     clientRoles:
-      account:
-      - manage-account
-      - view-profile
+      account: [
+        manage-account,
+        view-profile
+    ]
     outputSecret: "{{ rhsso_cssre_admin_username }}-user-credentials"
