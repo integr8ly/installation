@@ -46,11 +46,11 @@
 
 - name: "Create Openshift Keycloakrealm patch with added CSSRE Admin User"
   shell: oc get keycloakrealm openshift -n {{ eval_rhsso_namespace }} -o json | jq '.spec.users += [{"clientRoles":{"account":["manage-account","view-profile"]},"email":"{{ rhsso_cssre_admin_email }}","emailVerified":true,"enabled":true,"outputSecret":"{{rhsso_cssre_admin_username}}-user-credentials","password":"{{rhsso_cssre_admin_password}}","realmRoles":["offline_access","uma_authorization"],"username":"{{rhsso_cssre_admin_username}}"}]'
-  register: updated-keycloakrealm-openshift
+  register: updated_keycloakrealm_openshift
   when: cs_sre_admin_user.stdout == ""
 
 - name: "Apply Openshift Keycloakrealm patch to add CS SRE Admin"
-  shell: oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} -p {{ updated-keycloakrealm-openshift.stdout }}
+  shell: oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} -p {{ updated_keycloakrealm_openshift.stdout }}
   when: cs_sre_admin_user.stdout == ""
   register: result
   failed_when: not result.stdout
