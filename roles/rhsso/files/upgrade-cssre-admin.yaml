@@ -2,7 +2,7 @@ spec:
   users:
   - enabled: true
     username: {{ rhsso_cssre_admin_username }}
-    emailVerified: true,
+    emailVerified: true
     email: {{ rhsso_cssre_admin_email }}
     password: {{ rhsso_cssre_admin_password }}
     realmRoles:
