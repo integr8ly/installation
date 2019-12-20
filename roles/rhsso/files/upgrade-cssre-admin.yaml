@@ -6,10 +6,10 @@ spec:
     email: {{ rhsso_cssre_admin_email }}
     password: {{ rhsso_cssre_admin_password }}
     realmRoles:
-      - offline_access
-      - uma_authorization
+    - offline_access
+    - uma_authorization
     clientRoles:
       account:
-        - manage-account
-        - view-profile
+      - manage-account
+      - view-profile
     outputSecret: {{ rhsso_cssre_admin_username }}-user-credentials
