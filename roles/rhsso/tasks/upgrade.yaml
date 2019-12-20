@@ -27,7 +27,7 @@
   failed_when: cr_patch_keycloak_version.stderr != ''
 
 - name: "Check whether CS SRE admin user exists"
-  shell: "oc get keycloakrealm -n {{ eval_rhsso_namespace }} -o json | jq .items[0].spec.users | jq -c '.[] | select(.username | contains(\"{{ rhsso_cssre_admin_username }}\"))'"
+  shell: "oc get keycloakrealm openshift -n {{ eval_rhsso_namespace }} -o json | jq .items[0].spec.users | jq -c '.[] | select(.username | contains(\"{{ rhsso_cssre_admin_username }}\"))'"
   register: cs_sre_admin_user
   failed_when: cs_sre_admin_user.stderr != ""
 
@@ -52,7 +52,7 @@
     echo: no
 
 - name: "Patch rhsso CR to add CS SRE Admin user if it doesn't exist"
-  shell: oc patch keycloakrealm -n {{ eval_rhsso_namespace }} -p "$(cat '{{ role_path }}/files/upgrade-cssre-admin.yaml')"
+  shell: oc patch keycloakrealm openshift -n {{ eval_rhsso_namespace }} -p "$(cat '{{ role_path }}/files/upgrade-cssre-admin.yaml')"
   when: cs_sre_admin_user.stdout == ""
   register: result
   failed_when: not result.stdout
