@@ -1,10 +1,10 @@
 spec:
   users:
   - enabled: true
-    username: {{ rhsso_cssre_admin_username }}
+    username: "{{ rhsso_cssre_admin_username }}"
     emailVerified: true
-    email: {{ rhsso_cssre_admin_email }}
-    password: {{ rhsso_cssre_admin_password }}
+    email: "{{ rhsso_cssre_admin_email }}"
+    password: "{{ rhsso_cssre_admin_password }}"
     realmRoles:
     - offline_access
     - uma_authorization
@@ -12,4 +12,4 @@ spec:
       account:
       - manage-account
       - view-profile
-    outputSecret: {{ rhsso_cssre_admin_username }}-user-credentials
+    outputSecret: "{{ rhsso_cssre_admin_username }}-user-credentials"
