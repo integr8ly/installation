@@ -9,6 +9,7 @@ approvers:
 - pb82
 - jessesarn
 - davidffrench
+- wei-lee
 
 reviewers:
 - pmccarthy
@@ -27,3 +28,4 @@ reviewers:
 - StevenTobin
 - obrienrobert
 - damienomurchu
+- wei-lee
