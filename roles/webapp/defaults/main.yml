@@ -13,7 +13,7 @@ webapp_operator_resource_items:
   - "{{ webapp_operator_resources }}/operator.yaml"
 webapp_walkthrough_locations:
   - "https://github.com/integr8ly/tutorial-web-app-walkthroughs#v1.10.1"
-datasync_walkthrough_location: "https://github.com/aerogear/mobile-walkthrough#0.6.0"
+datasync_walkthrough_location: "https://github.com/aerogear/mobile-walkthrough#0.6.1"
 webapp_provision_services: []
 webapp_watch_services: []
 
