@@ -119,7 +119,8 @@
   register: deploy_result
   until: deploy_result.stdout|int > 0
   retries: 50
-  delay: 10
+  delay: 5
+  ignore_errors: True
 
 - name: Verify Fuse deployment succeeded
   shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
