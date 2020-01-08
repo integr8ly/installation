@@ -1,5 +1,5 @@
 ---
-- name: Get user SSO route for evalsNN realm creation
+- name: Get user SSO route for walkthroughs realm creation
   shell: oc get route/sso -o template --template \{\{.spec.host\}\} -n {{ eval_user_rhsso_namespace | default('user-sso') }}
   register: user_sso_route_cmd
 
@@ -58,9 +58,10 @@
 
 - debug: var=user_sso_token
 
-- name: Create evals user realms
+- name: Create the walkthroughs realm
   include_tasks: ./create-realm.yml
-  with_sequence: count={{ eval_seed_users_count }} format=evals%02d
+  with_items:
+    - walkthroughs
 
 - name: Create customer-admin Realm JSON from template
   template: src=evals-user-realm.j2 dest=/tmp/customer-admin-realm.json
