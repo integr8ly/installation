@@ -1,0 +1,45 @@
+{% macro newUser(username, email="", password="", admin="no" ) %}
+- username: "{{ username }}"
+  email: "{{ email | default(username + '@example.com',true) }}"
+  password: "{{ password | default(lookup('password', '/dev/null length=15'), true) | e }}"
+  admin: "{{ admin | default('no',true) }}"
+{% endmacro %}
+
+{% if create_cluster_admin | default(false) %}
+{{
+  newUser(
+    username=rhsso_cluster_admin_username,
+    email=rhsso_cluster_admin_email,
+    password=rhsso_cluster_admin_password | default(''),
+    admin="cluster"
+  )
+}}
+{% endif %}
+{{
+  newUser(
+    username=rhsso_evals_admin_username | default('customer-admin'),
+    email=rhsso_evals_admin_email,
+    password=rhsso_evals_admin_password | default(''),
+    admin="customer"
+  )
+}}
+{% for n in range(1, (rhsso_seed_users_count | int) + 1) %}
+{{
+  newUser(
+    username=rhsso_seed_users_name_format|format(n),
+    email=rhsso_seed_users_email_format|format(n),
+    password=rhsso_seed_users_password,
+    admin="no"
+  )
+}}
+{% endfor %}
+{% for u in rhsso_seed_user_list %}
+{{
+  newUser(
+    username=u.username,
+    email=u.email | default(''),
+    password=u.password | default(''),
+    admin=u.admin | default('')
+  )
+}}
+{% endfor %}

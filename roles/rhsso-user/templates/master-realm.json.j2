@@ -12,13 +12,14 @@
         "displayName": "master",
         "enabled": true,
         "users": [
+            {% for user in rhsso_seed_users_all | selectattr('admin','match','cluster') %}
             {
                 "enabled":true,
                 "attributes":{},
-                "username":"{{ rhsso_evals_admin_username }}",
+                "username":"{{ user.username }}",
                 "emailVerified":true,
-                "email":"{{ rhsso_evals_admin_email }}",
-                "password": "{{ rhsso_evals_admin_password }}",
+                "email":"{{ user.email }}",
+                "password": "{{ user.password }}",
                 "realmRoles": [
                     "offline_access",
                     "uma_authorization",
@@ -35,8 +36,9 @@
                         "view-realm"
                     ]
                 },
-                "outputSecret": "customer-admin-user-credentials"
-            }
+                "outputSecret": "{{ user.username | replace("@", "-")}}-credentials"
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
         ],
         "identityProviders": [
             {
@@ -58,6 +60,6 @@
                 }
             }
         ]
-                    
+
     }
   }

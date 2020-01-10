@@ -12,51 +12,34 @@
         "enabled": true,
         "eventsListeners": ["{{ rhsso_realm_event_listeners | join('","') }}"],
         "users": [
-            {% if create_cluster_admin | bool %}
+            {% for user in rhsso_seed_users_all %}
             {
                 "enabled":true,
                 "attributes":{},
-                "username":"{{ rhsso_cluster_admin_username }}",
+                "username":"{{ user.username }}",
                 "emailVerified":true,
-                "email":"{{ rhsso_cluster_admin_email }}",
-                "password": "{{ rhsso_cluster_admin_password }}",
+                "email":"{{ user.email | default('') }}",
+                "password": "{{ user.password | default(lookup('password', '/dev/null length=15'), true) }}",
                 "realmRoles": [
                     "offline_access",
                     "uma_authorization"
                 ],
                 "clientRoles": {
-                    "account": [
-                        "manage-account",
-                        "view-profile"
-                    ]
-                },
-                "outputSecret": "admin-user-credentials"
-            },
-            {% endif %}
-            {
-                "enabled":true,
-                "attributes":{},
-                "username":"{{ rhsso_evals_admin_username }}",
-                "emailVerified":true,
-                "email":"{{ rhsso_evals_admin_email }}",
-                "password": "{{ rhsso_evals_admin_password }}",
-                "realmRoles": [
-                    "offline_access",
-                    "uma_authorization"
-                ],
-                "clientRoles": {
-                    "account": [
-                        "manage-account",
-                        "view-profile"
-                    ],
+                    {% if user.admin | default('no') == 'customer' %}
                     "realm-management": [
                         "manage-users",
                         "manage-identity-providers",
                         "view-realm"
+                    ],
+                    {% endif %}
+                    "account": [
+                        "manage-account",
+                        "view-profile"
                     ]
                 },
-                "outputSecret": "customer-admin-user-credentials"
-            }
+                "outputSecret": "{{ user.username | replace("@", "-")}}-credentials"
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
         ],
         "clients": [
             {
@@ -74,7 +57,7 @@
                 "standardFlowEnabled": true,
                 "directAccessGrantsEnabled": true
             },
-            {% if threescale %}
+            {%- if threescale %}
             {
                 "id": "{{ threescale_namespace }}",
                 "clientId": "{{ threescale_namespace }}",
@@ -207,8 +190,8 @@
                     }
                 ]
             },
-            {% endif %}
-            {% if launcher %}
+            {% endif -%}
+            {%- if launcher %}
             {
                 "clientId": "{{launcher_sso_keycloak_client_id}}",
                 "id": "{{launcher_sso_keycloak_client_id}}",
@@ -336,7 +319,7 @@
                     "manage": true
                 }
             }
-            {% endif %}
+            {% endif -%}
         ]
     }
   }

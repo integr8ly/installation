@@ -11,10 +11,6 @@
   failed_when: namespace_patch.stderr != '' and 'not patched' not in namespace_patch.stderr
   changed_when: namespace_patch.rc == 0
 
-# oc exec doesn't accept a namespace argument so make sure we are using the correct one
-- name: Make sure we are using the gitea namespace
-  shell: "oc project {{ gitea_namespace }}"
-
 - name: Create Gitea Operator Resources
   shell: "oc create -f {{ item }} -n {{ gitea_namespace }}"
   with_items: "{{ gitea_operator_resource_items }}"
@@ -33,21 +29,21 @@
   changed_when: create_gitea_custom_resource_cmd.rc == 0
 
 - name: "Wait for Gitea pods to be ready"
-  shell: "oc get pods --namespace={{ gitea_namespace }} --selector='deployment=gitea' -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w"
+  shell: "oc get pods -n {{ gitea_namespace }} --selector='deployment=gitea' -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w"
   register: gitea_result
   until: gitea_result.stdout.find("1") != -1
   retries: 90
   delay: 5
 
 - name: Get the name of the gitea pod
-  shell: "oc get pods --namespace={{ gitea_namespace }} --selector='deployment=gitea' -o jsonpath='{.items[0].metadata.name}'"
+  shell: "oc get pods -n {{ gitea_namespace }} --selector='deployment=gitea' -o jsonpath='{.items[0].metadata.name}'"
   register: gitea_pod_name
 
 - name: "include rhsso vars"
   include_vars: ../../rhsso/defaults/main.yml
 
 - name: Create the gitea admin user
-  shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ gitea_admin_username }} --password={{ gitea_admin_password }} --admin --email={{ rhsso_cluster_admin_email }} --config /home/gitea/conf/app.ini"
+  shell: "oc -n {{ gitea_namespace }} exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ gitea_admin_username }} --password={{ gitea_admin_password }} --admin --email={{ rhsso_cluster_admin_email }} --config /home/gitea/conf/app.ini"
   register: create_admin_user_cmd
   failed_when: create_admin_user_cmd.stderr != '' and 'already exists' not in create_admin_user_cmd.stderr
   changed_when: create_admin_user_cmd.rc == 0
@@ -101,21 +97,22 @@
   debug:
     msg: "Gitea admin token is {{ gitea_token }}"
 
+# namespace CAN be specified for oc exec; however, it has to come before the exec verb
 - name: Create gitea walkthrough users
-  shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ rhsso_seed_users_name_format|format(item|int)}} --password={{ rhsso_seed_users_password }} --email={{ rhsso_seed_users_email_format|format(item|int) }} --config /home/gitea/conf/app.ini"
+  shell: "oc -n {{ gitea_namespace }} exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ rhsso_seed_users_name_format|format(item|int)}} --password={{ rhsso_seed_users_password }} --email={{ rhsso_seed_users_email_format|format(item|int) }} --config /home/gitea/conf/app.ini"
   register: create_walkthrough_user_cmd
   failed_when: create_walkthrough_user_cmd.stderr != '' and 'already exists' not in create_walkthrough_user_cmd.stderr
   changed_when: create_walkthrough_user_cmd.rc == 0
   with_sequence: count={{ eval_seed_users_count }}
 
 - name: Create a user for the evals admin
-  shell: "oc exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ rhsso_evals_admin_username }} --password={{ rhsso_evals_admin_password }} --email={{ rhsso_evals_admin_email }} --config /home/gitea/conf/app.ini"
+  shell: "oc -n {{ gitea_namespace }} exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ rhsso_evals_admin_username }} --password={{ rhsso_evals_admin_password }} --email={{ rhsso_evals_admin_email }} --config /home/gitea/conf/app.ini"
   register: create_eval_admin_user_cmd
   failed_when: create_eval_admin_user_cmd.stderr != '' and 'already exists' not in create_eval_admin_user_cmd.stderr
   changed_when: create_eval_admin_user_cmd.rc == 0
 
 - name: Get the gitea ingress host
-  shell: oc get ingress --namespace=gitea --selector='app=gitea' -o jsonpath='{.items[0].spec.rules[0].host}'
+  shell: oc get ingress -n {{ gitea_namespace }} --selector='app=gitea' -o jsonpath='{.items[0].spec.rules[0].host}'
   register: gitea_ingress_host
 
 # SET GITEA TOKEN ENV VAR IN THE WEBAPP

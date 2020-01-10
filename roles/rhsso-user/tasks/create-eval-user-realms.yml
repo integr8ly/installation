@@ -6,8 +6,8 @@
 - set_fact:
     user_sso_route: "{{ user_sso_route_cmd.stdout }}"
 
-- name: Wait until RH SSO API is available 
-  uri: 
+- name: Wait until RH SSO API is available
+  uri:
     url: https://{{user_sso_route}}
     method: HEAD
     follow_redirects: safe
@@ -37,7 +37,7 @@
     msg: "RH SSO token being used is {{ user_sso_token }}"
 
 - name: Increase Token Lifespan (60 mins)
-  uri: 
+  uri:
     url: 'https://{{user_sso_route}}/auth/admin/realms/master'
     method: PUT
     body: "{\"realm\":\"master\", \"accessTokenLifespan\":\"3600\"}"
@@ -63,20 +63,7 @@
   with_items:
     - walkthroughs
 
-- name: Create customer-admin Realm JSON from template
-  template: src=evals-user-realm.j2 dest=/tmp/customer-admin-realm.json
-  vars:
-    username: "{{ rhsso_evals_admin_username | default('customer-admin') }}"
+- name: Create rhmi customer admins and user realms
+  include_tasks: ./create-realm.yml
+  with_items: "{{ rhsso_seed_users_all | selectattr('admin','match','^(customer|no)$') | map(attribute='username') | list }}"
 
-- name: Create {{ item }} Realm
-  uri:
-    url: 'https://{{user_sso_route}}/auth/admin/realms'
-    method: POST
-    body: "{{ lookup('file','/tmp/customer-admin-realm.json') }}"
-    body_format: json
-    headers:
-      Content-Type: "application/json"
-      Authorization: "Bearer {{ user_sso_token }}"
-    return_content: yes
-    validate_certs: no
-    status_code: 201,409

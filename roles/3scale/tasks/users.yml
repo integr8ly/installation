@@ -2,6 +2,7 @@
 
 - import_tasks: admin_token.yml
 
+
 - name: Retrieve 3Scale users
   uri:
     url: "https://{{ threescale_admin_route }}/admin/api/users.xml"
@@ -64,6 +65,11 @@
   failed_when: result.stdout
   changed_when: False
 
+- name: Normalize users list
+  include_role:
+    name: rhsso
+    tasks_from: expand_user_list.yml
+
 - name: Seed evaluation users
-  include: _user.yml email={{ rhsso_seed_users_email_format|format(item|int) }} username={{ rhsso_seed_users_name_format|format(item|int) }} password={{ rhsso_seed_users_password }}
-  with_sequence: count={{ rhsso_seed_users_count }}
+  include: _user.yml email={{ item.email }} username={{ item.username }} password={{ item.password }}
+  with_items: "{{ rhsso_seed_users_all | selectattr('admin','match','^(customer|no)$') | rejectattr('username','match','^' + rhsso_evals_admin_username + '$') | list }}"

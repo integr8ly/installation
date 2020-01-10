@@ -4,7 +4,7 @@
     username: "{{ item }}"
 
 - name: Create {{ item }} Realm
-  uri: 
+  uri:
     url: 'https://{{user_sso_route}}/auth/admin/realms'
     method: POST
     body: "{{ lookup('file','/tmp/evals-user-realm.json') }}"
