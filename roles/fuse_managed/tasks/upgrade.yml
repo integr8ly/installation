@@ -96,7 +96,7 @@
   shell: oc get imagestream -n {{ fuse_namespace }} -l "syndesis.io/app=syndesis" -o name | wc -l
   register: is_output
   until: is_output.stdout|int >= 8
-  retries: 50
+  retries: 100
   delay: 10
 
 - name: Patch db deployment configs to make sure they are using image streams from the right namespace
