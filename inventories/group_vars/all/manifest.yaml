@@ -107,7 +107,7 @@ ups_proxy_image: 'docker.io/openshift/oauth-proxy:{{ ups_proxy_release_tag }}'
 application_metrics: False
 
 #mobile
-mobile_walkthrough_tag: '0.7.1'
+mobile_walkthrough_tag: '0.7.2'
 mobile_walkthrough_location: 'https://github.com/aerogear/mobile-walkthrough#{{ mobile_walkthrough_tag }}'
 
 monitoring_label_name: 'monitoring-key'
