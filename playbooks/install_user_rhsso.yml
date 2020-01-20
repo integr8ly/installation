@@ -30,6 +30,10 @@
         include_role:
           name: rhsso-user
           tasks_from: create-eval-user-realms.yml
+      - name: Disable review and confirming link account 
+        include_role:
+          name: rhsso-user
+          tasks_from: disable-idp-review-link-confirm.yml
 
       tags: ['user_rhsso']
       when: user_rhsso | default(true) | bool
