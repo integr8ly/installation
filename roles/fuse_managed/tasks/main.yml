@@ -26,8 +26,14 @@
 - name: "include rhsso vars"
   include_vars: ../../rhsso/defaults/main.yml
 
-- name: Give role-binder role to customer-admin
-  shell: "oc adm policy add-role-to-user role-binder {{ rhsso_evals_admin_username }} --role-namespace={{ fuse_namespace }} -n {{ fuse_namespace }}"
+- name: Normalize users list
+  include_role:
+    name: rhsso
+    tasks_from: expand_user_list
+
+- name: Give role-binder role to customer admin users
+  shell: "oc adm policy add-role-to-user role-binder {{ item }} --role-namespace={{ fuse_namespace }} -n {{ fuse_namespace }}"
+  with_items: "{{ rhsso_seed_users_all | selectattr('admin','match','^customer$') | map(attribute='username') | list }}"
 
 - include_role:
     name: imagestream_pull_secret
@@ -37,7 +43,7 @@
 
 - name: Link imagestream pull secret for images
   shell: oc secrets link default {{ fuse_pull_secret_name }} --for=pull -n {{ fuse_namespace }}
-  
+
 - name: Download fuse binary
   get_url:
     url: https://github.com/jboss-fuse/fuse-clients/releases/download/{{ fuse_online_release_tag }}/syndesis-{{ fuse_online_release_tag }}-linux-64bit.tar.gz
@@ -59,7 +65,7 @@
 - name: Build syndesis install params
   block:
     - name: check if kubeconfig file exists
-      stat: 
+      stat:
         path: "{{ kube_config_file }}"
       register: kube_config_exists
 

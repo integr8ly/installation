@@ -38,6 +38,26 @@ rhsso_evals_admin_username: customer-admin
 rhsso_cluster_admin_email: admin@example.com
 rhsso_cluster_admin_username: admin
 
+# Legacy values for cluster admn, customer admin and eval users are automatically imported to new multi-user list structure
+#
+# - name: ...       # only required field is name
+#   password: ...   # if missing/empty, one is randomly generated (initial value can be looked up from the corresponding secret only if it hasn't been changed)
+#   email: ...      # if missing/empty; appends @example.com to username; otherwise, 3scale setup would fail for user
+#   admin: ...      # supported values: "cluster", "customer", "no" (default if missing/empty)
+#
+# Note: Users created using this structure WILL NOT be configured for gitea
+rhsso_seed_user_list: []
+  # -
+  #   username: cssre-admin
+  #   password: 'C@/\/-u-3|/e|\/-R3@c|-|\/|3'
+  #   admin: cluster
+  # -
+  #   username: extra-customer-admin
+  #   email: extra-customer-admin@example.com
+  #   admin: customer
+  # -
+  #   username: basic-user
+
 rhsso_plugins:
   - keycloak-metrics-spi
 original_identityprovider_config_path: /etc/origin/master/idp-config.integreatly-original.yaml

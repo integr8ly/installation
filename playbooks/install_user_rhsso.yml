@@ -8,6 +8,10 @@
     - name: Include vars from rhsso
       include_vars: "../roles/rhsso/defaults/main.yml"
     - block:
+      - name: Normalize users list
+        include_role:
+          name: rhsso
+          tasks_from: expand_user_list.yml
       - name: Install user rhsso
         include_role:
           name: rhsso
@@ -28,4 +32,4 @@
           tasks_from: create-eval-user-realms.yml
 
       tags: ['user_rhsso']
-      when: user_rhsso | default(true) | bool  
+      when: user_rhsso | default(true) | bool

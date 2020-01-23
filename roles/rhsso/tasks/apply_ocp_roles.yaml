@@ -1,20 +1,24 @@
 ---
-- name: Add cluster admin role to admin user
-  shell: "oc adm policy add-cluster-role-to-user cluster-admin {{rhsso_cluster_admin_username}}"
+
+- name: Add cluster admin role to admin user {{ item }}
+  shell: oc adm policy add-cluster-role-to-user cluster-admin {{ item }}
   register: policy_cmd
   failed_when: policy_cmd.rc != 0
   when: create_cluster_admin | bool
+  with_items: "{{ rhsso_seed_users_all | selectattr('admin','match','cluster') | map(attribute='username') | list }}"
 
-- name: apply {{ eval_managed_fuse_namespace }}/view role to {{ rhsso_evals_admin_username }} user
-  shell: "oc adm policy add-role-to-user view {{rhsso_evals_admin_username}} -n {{ eval_managed_fuse_namespace }}"
+- name: apply {{ eval_managed_fuse_namespace }}/view role to {{ item }} user
+  shell: "oc adm policy add-role-to-user view {{ item }} -n {{ eval_managed_fuse_namespace }}"
   register: policy_cmd
   failed_when: policy_cmd.rc != 0
+  with_items: "{{ rhsso_seed_users_all | selectattr('admin','match','customer') | map(attribute='username') | list }}"
 
-- name: apply {{ eval_user_rhsso_namespace }}/view role to {{ rhsso_evals_admin_username }} user
-  shell: "oc adm policy add-role-to-user view {{rhsso_evals_admin_username}} -n {{ eval_user_rhsso_namespace }}"
+- name: apply {{ eval_user_rhsso_namespace }}/view role to {{ item }} user
+  shell: "oc adm policy add-role-to-user view {{ item }} -n {{ eval_user_rhsso_namespace }}"
   register: policy_cmd
   failed_when: policy_cmd.rc != 0
   when: user_rhsso | default(true) | bool
+  with_items: "{{ rhsso_seed_users_all | selectattr('admin','match','customer') | map(attribute='username') | list }}"
 
 - name: Generate {{ rhsso_threescale_route_creator_role }} cluster role template
   template:
@@ -26,12 +30,20 @@
   register: threescale_route_creator_output
   failed_when: threescale_route_creator_output.stderr != '' and 'AlreadyExists' not in threescale_route_creator_output.stderr
 
-- name: Add role {{ rhsso_threescale_route_creator_role }} to user {{ rhsso_evals_admin_username }} in {{ threescale_namespace }} namespace
-  shell: oc adm policy add-role-to-user {{ rhsso_threescale_route_creator_role }} {{ rhsso_evals_admin_username }} -n {{ threescale_namespace }}
+- name: Add role {{ rhsso_threescale_route_creator_role }} to user {{ item }} in {{ threescale_namespace }} namespace
+  shell: oc adm policy add-role-to-user {{ rhsso_threescale_route_creator_role }} {{ item }} -n {{ threescale_namespace }}
   register: policy_cmd
   failed_when: policy_cmd.rc != 0
+  with_items: "{{ rhsso_seed_users_all | selectattr('admin','match','customer') | map(attribute='username') | list }}"
 
 - name: Clean up generated {{ rhsso_threescale_route_creator_role }} cluster role template
   file:
     state: absent
     path: "{{ rhsso_threescale_route_creator_role_filepath }}"
+
+- name: Add customer admin users to dedicated-admins group (OSD only)
+  shell: oc adm groups add-users dedicated-admins {{ item }}
+  with_items: "{{ rhsso_seed_users_all | selectattr('admin','match','customer') | map(attribute='username') | list }}"
+  register: policy_cmd
+  failed_when: policy_cmd.rc != 0 and 'NotFound' not in policy_cmd.stderr
+  when: cluster_type=='osd'

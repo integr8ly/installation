@@ -8,7 +8,7 @@
   include_tasks: install_sso.yml
   vars:
     sso_namespace: "{{ rhsso_namespace }}"
-    
+
 - name: "Generate secret for rhsso client"
   set_fact:
     rhsso_client_secret: "{{ (ansible_date_time.epoch + rhsso_namespace) | hash('sha512') }}"
@@ -53,19 +53,13 @@
     threescale_route_suffix: "{{ apps_redirect_uri }}"
   when: not enable_threescale_wildcard_route
 
+- name: Normalize users list
+  include_tasks: expand_user_list.yml
+
 - name: "Create keycloak realm resource template"
   template:
     src: "keycloak-realm.json.j2"
     dest: "/tmp/keycloak-realm.json"
-
-- name: Seed evaluation users
-  include_tasks: _inject_user.yml
-  vars:
-    template: "/tmp/keycloak-realm.json"
-    email: "{{ rhsso_seed_users_email_format|format(item|int) }}"
-    username: "{{ rhsso_seed_users_name_format|format(item|int)}}"
-    password: "{{ rhsso_seed_users_password }}"
-  with_sequence: count={{ rhsso_seed_users_count }}
 
 - name: "Create keycloak realm resource"
   shell: oc create -f /tmp/keycloak-realm.json -n {{ rhsso_namespace }}

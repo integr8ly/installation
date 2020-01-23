@@ -1,0 +1,4 @@
+---
+
+- set_fact:
+    rhsso_seed_users_all: "{{ lookup('template', './normalize_seed_users.yaml.j2') | from_yaml }}"
