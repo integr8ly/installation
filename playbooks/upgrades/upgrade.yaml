@@ -1,0 +1,5 @@
+## PLEASE DO NOT ADD UPDATES TO THIS FILE!!
+## Upgrade logic should be added to ../upgrade.yml
+## This file will be deleted once all tower config is updated to point to the correct upgrade playbook (1.6.1+)
+
+- import_playbook: "../upgrade.yml"
