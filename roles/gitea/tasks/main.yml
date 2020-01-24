@@ -43,7 +43,7 @@
   include_vars: ../../rhsso/defaults/main.yml
 
 - name: Create the gitea admin user
-  shell: "oc -n {{ gitea_namespace }} exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ gitea_admin_username }} --password={{ gitea_admin_password }} --admin --email={{ rhsso_cluster_admin_email }} --config /home/gitea/conf/app.ini"
+  shell: "oc -n {{ gitea_namespace }} exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --username={{ gitea_admin_username }} --password={{ gitea_admin_password }} --admin --email={{ rhsso_cluster_admin_email }} --config /home/gitea/runtime-config/app.ini"
   register: create_admin_user_cmd
   failed_when: create_admin_user_cmd.stderr != '' and 'already exists' not in create_admin_user_cmd.stderr
   changed_when: create_admin_user_cmd.rc == 0
@@ -99,14 +99,14 @@
 
 # namespace CAN be specified for oc exec; however, it has to come before the exec verb
 - name: Create gitea walkthrough users
-  shell: "oc -n {{ gitea_namespace }} exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ rhsso_seed_users_name_format|format(item|int)}} --password={{ rhsso_seed_users_password }} --email={{ rhsso_seed_users_email_format|format(item|int) }} --config /home/gitea/conf/app.ini"
+  shell: "oc -n {{ gitea_namespace }} exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --username={{ rhsso_seed_users_name_format|format(item|int)}} --password={{ rhsso_seed_users_password }} --email={{ rhsso_seed_users_email_format|format(item|int) }} --config /home/gitea/runtime-config/app.ini"
   register: create_walkthrough_user_cmd
   failed_when: create_walkthrough_user_cmd.stderr != '' and 'already exists' not in create_walkthrough_user_cmd.stderr
   changed_when: create_walkthrough_user_cmd.rc == 0
   with_sequence: count={{ eval_seed_users_count }}
 
 - name: Create a user for the evals admin
-  shell: "oc -n {{ gitea_namespace }} exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --name={{ rhsso_evals_admin_username }} --password={{ rhsso_evals_admin_password }} --email={{ rhsso_evals_admin_email }} --config /home/gitea/conf/app.ini"
+  shell: "oc -n {{ gitea_namespace }} exec {{ gitea_pod_name.stdout }} -- /home/gitea/gitea admin create-user --username={{ rhsso_evals_admin_username }} --password={{ rhsso_evals_admin_password }} --email={{ rhsso_evals_admin_email }} --config /home/gitea/runtime-config/app.ini"
   register: create_eval_admin_user_cmd
   failed_when: create_eval_admin_user_cmd.stderr != '' and 'already exists' not in create_eval_admin_user_cmd.stderr
   changed_when: create_eval_admin_user_cmd.rc == 0
