@@ -165,10 +165,10 @@ spec:
       - alert: AMQOnlinePodHighMemory
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
-          message: The {{ '{{' }} $labels.container {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory for longer than 15 minutes.
+          message: The {{ '{{' }} $labels.pod {{ '}}' }} pod has been using {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of available memory for longer than 15 minutes.
           scaling_plan: https://github.com/integr8ly/middleware-load-testing/blob/master/sops/amq-scaling.md
         expr: |
-          sum by(container) (label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ eval_enmasse_namespace }}"}, "container", "$1", "container_name", "(.*)")) / sum by(container) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ eval_enmasse_namespace }}"}) * 100 > 90
+          sum by(container,pod) (label_replace(label_replace(container_memory_usage_bytes{container_name!="",namespace="{{ eval_enmasse_namespace }}"}, "container", "$1", "container_name", "(.*)"), "pod", "$1", "pod_name", "(.*)")) / sum by(container,pod) (kube_pod_container_resource_limits_memory_bytes{namespace="{{ eval_enmasse_namespace }}"}) * 100 > 90
         for: 15m
         labels:
           severity: warning
