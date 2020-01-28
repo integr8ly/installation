@@ -1,0 +1,12 @@
+---
+
+- name: Import Image Streams
+  shell: oc import-image {{ patch_image_stream_item }} -n openshift
+  with_items: "{{ rhsso_user_image_streams }}"
+  loop_control:
+    loop_var: patch_image_stream_item
+
+- name: Patch Keycloak Operator Deployment
+  shell: oc patch deployment keycloak-operator --patch='{"spec":{"template":{"spec":{"containers":[{"name":"keycloak-operator","image":"{{ rhsso_user_operator_image }}"}]}}}}' --namespace {{ rhsso_user_namespace }}
+  register: keycloak_operator_image_patch
+  failed_when: keycloak_operator_image_patch.stderr
