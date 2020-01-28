@@ -1,0 +1,36 @@
+---
+- name: Getting ids for preventing user to link customer-admin to incorrect account
+  uri:
+    url: 'https://{{user_sso_route}}/auth/admin/realms/master/authentication/flows/first%20broker%20login/executions'
+    method: GET
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer {{ user_sso_token }}"
+    return_content: yes
+    validate_certs: no
+    body_format: json
+    status_code: 200
+  register: json_response
+
+- name: Search response for ids for idp-review-profile and idp-confirm-link
+  debug:
+    msg: "{{json_response.json | json_query(jmesquery) }}"
+  vars:
+    jmesquery: "[? providerId == `idp-review-profile` || providerId == `idp-confirm-link`]"
+  register: id_list
+  failed_when: "(id_list.msg | length) != 2" 
+
+- name: "Disabling idp-review-profile and idp-confirm-link"
+  uri:
+    url: 'https://{{user_sso_route}}/auth/admin/realms/master/authentication/flows/first%20broker%20login/executions'
+    method: PUT
+    body: "{\"id\":\"{{ item.id }}\", \"requirement\":\"DISABLED\"}"
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer {{ user_sso_token }}"
+    return_content: yes
+    validate_certs: no
+    status_code: 204
+  with_items: "{{ id_list.msg }}"
+
