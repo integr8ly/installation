@@ -23,7 +23,7 @@
       - "{{ upgrade_from_version }}"
 
   - name: Set Upgrade Facts
-    set_fact: upgrade_{{ item }}=true
+    set_fact: upgrade_{{ item | replace('-', '') }}=true
     with_items: "{{ upgrade_product_roles }}"
 
   - name: Upgrade product images
