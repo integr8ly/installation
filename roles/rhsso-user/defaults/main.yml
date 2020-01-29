@@ -15,3 +15,9 @@ rhsso_user_resources:
     resources:
       requests:
         memory: 25Mi
+
+rhsso_user_operator_image: "quay.io/integreatly/keycloak-operator:{{ rhsso_operator_release_tag }}"
+
+rhsso_user_image_streams:
+  - "{{ rhsso_imagestream_name }}"
+  - postgresql:9.5
