@@ -1,12 +1,6 @@
 ---
-- name: Add new tag to Fuse online images
-  shell: "oc tag --source docker {{ patch_image_stream_item.image }} {{ patch_image_stream_item.name }}:{{ patch_image_stream_item.tag }} -n {{ patch_image_stream_item.namespace }}"
-  with_items: "{{ fuse_image_streams }}"
-  loop_control:
-    loop_var: patch_image_stream_item 
-
 - name: Import new Fuse online images
-  shell: "oc import-image {{ patch_image_stream_item.name }}:{{ patch_image_stream_item.tag }} --confirm='true' {{ patch_image_stream_item.image }} -n {{ patch_image_stream_item.namespace }}"
+  shell: "oc import-image {{ patch_image_stream_item }} --confirm='true' -n {{ fuse_namespace }}"
   with_items: "{{ fuse_image_streams }}"
   loop_control:
     loop_var: patch_image_stream_item 
