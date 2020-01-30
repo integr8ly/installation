@@ -3,3 +3,4 @@ upgrade_product_roles:
 - 3scale
 - enmasse
 - rhsso
+- rhsso-user
