@@ -2,3 +2,5 @@ upgrade_from_version: release-1.6.0
 upgrade_product_roles:
 - 3scale
 - enmasse
+- rhsso
+- rhsso-user

@@ -62,7 +62,7 @@ rhsso_version: '7.3.2.GA'
 #below vars not currently used but will be used to pull in the new versions of RH-SSO once we decouple the resources from the installer.
 rhsso_imagestream_name: redhat-sso73-openshift:1.0
 rhsso_imagestream_image: registry.redhat.io/redhat-sso-7/sso73-openshift:1.0
-rhsso_operator_release_tag: 'v1.9.4'
+rhsso_operator_release_tag: 'v1.9.5'
 rhsso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
 
 #controls whether gitea is installed or not
