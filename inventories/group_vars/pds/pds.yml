@@ -11,6 +11,7 @@ nexus: True
 # By default self signed certs are enabled on PDS
 # Integreatly role on PDS will override if LE certs are detected on target environment
 self_signed_certs_enabled: True
+eval_self_signed_certs: '{{ self_signed_certs_enabled }}'
 
 # Configures webapp namespace name
 webapp_namespace: webapp
