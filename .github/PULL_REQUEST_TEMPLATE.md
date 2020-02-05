@@ -22,17 +22,14 @@ Add the steps required to check this change. Following an example.
 4. Check if in the left menu the feature X is not so long present.
 -->
 
-## Is an upgrade task required and are there additional steps needed to test this?
+## Checklist
 <!-- If there is an upgrade required, either outline the steps to test it or link to the issue for the upgrade -->
 
-- [ ] Yes
-- [ ] No
-
-
-
-
-
-
+- [ ] Updated [Changelog](https://github.com/integr8ly/installation/blob/master/CHANGELOG.md)
 - [ ] Tested Installation
 - [ ] Tested Uninstallation
 - [ ] Tested or Created follow on for Upgrade
+
+Is an upgrade task required and are there additional steps needed to test this?
+- [ ] Yes
+- [ ] No
