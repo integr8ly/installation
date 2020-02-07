@@ -26,7 +26,7 @@ che_persistent_volume_storageclassname: efs
 
 #images
 che_operator_image_name: 'registry.redhat.io/codeready-workspaces/server-operator-rhel8:1.2'
-che_postgre_image_name: 'registry.access.redhat.com/rhscl/postgresql-96-rhel7:latest'
+che_postgre_image_name: 'registry.access.redhat.com/rhscl/postgresql-96-rhel7:1-52'
 
 #keycloak
 che_keycloak_user: admin
