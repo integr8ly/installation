@@ -125,7 +125,7 @@ amq_streams_repo_url: https://github.com/jboss-container-images/amqstreams-1-ope
 amq_version: 1.1.0
 
 # information about backups
-backup_version: '1.0.10'
+backup_version: '1.0.12'
 backup_resources_location: 'https://raw.githubusercontent.com/integr8ly/backup-container-image/{{ backup_version }}/templates/openshift'
 backup_image: quay.io/integreatly/backup-container:{{ backup_version }}
 backup_schedule: '30 2 * * *'
