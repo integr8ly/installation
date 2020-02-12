@@ -40,6 +40,12 @@
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
 
+  - name: Upgrade CodeReady Workspace to version 2.0.0
+    include_role:
+      name: codeready
+      tasks_from: upgrade_1.2_to_2.0
+    when: upgrade_codeready|bool
+
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
     include_role:
