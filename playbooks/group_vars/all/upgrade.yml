@@ -4,3 +4,4 @@ upgrade_product_roles:
 - enmasse
 - rhsso
 - rhsso-user
+- codeready
