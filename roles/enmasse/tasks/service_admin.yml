@@ -1,0 +1,13 @@
+---
+- name: "include rhsso vars"
+  include_vars: ../../rhsso/defaults/main.yml
+
+- name: Generate service admin role binding template
+  template:
+    src: service_admin_role_binding.yml.j2
+    dest: /tmp/service_admin_role_binding.yml
+
+- name: Create Enmasse Service Admin Role Binding
+  shell: "oc create -f /tmp/service_admin_role_binding.yml -n {{ enmasse_namespace }}"
+  register: create_service_admin_rb_cmd
+  failed_when: create_service_admin_rb_cmd.stderr != '' and 'AlreadyExists' not in create_service_admin_rb_cmd.stderr

@@ -11,7 +11,6 @@ enmasse_clean_artifacts: true
 enmasse_backup_postgres_secret: 'enmasse-postgres-secret'
 enmasse_postgres_cronjob_name: 'enmasse-postgres-backup'
 enmasse_pv_cronjob_name: 'enmasse-pv-backup'
-enmasse_postgresql_image: 'postgresql:9.6'
 
 enmasse_resources:
   - name: api-server

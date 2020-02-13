@@ -1,0 +1,13 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ rhsso_evals_admin_username }}-service-admin
+  namespace: {{ enmasse_namespace }}
+subjects:
+  - kind: User
+    name: {{ rhsso_evals_admin_username }}
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: enmasse.io:service-admin
+  apiGroup: rbac.authorization.k8s.io

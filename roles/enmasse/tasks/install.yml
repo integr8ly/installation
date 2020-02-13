@@ -16,7 +16,6 @@
     monitor: true
     is_service: true
 
-
 - include_tasks: "_install_enmasse_from_artifact.yml"
 
 - name: "Verify EnMasse deployment succeeded"
@@ -27,5 +26,7 @@
   delay: 10
   failed_when: result.stdout
   changed_when: False
+
+- import_tasks: service_admin.yml
 
 - import_tasks: heimdall.yml
