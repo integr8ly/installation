@@ -3,32 +3,43 @@
 # The deploy script is creating a role, but doesn't specify the namespace. We need this here to make sure the context is correct before running deploy.
 - shell: "oc project {{ che_namespace }}"
 
-- name: Update Che Cluster Custom Resource
-  replace:
-    path: "{{ codeready_install_scripts_dir }}/custom-resource.yaml"
-    regexp: '{{ item.key }}:.*$'
-    replace: '{{ item.key }}: {{ item.value }}'
-  with_items:
-    - { key: 'externalIdentityProvider', value: 'true' }
-    - { key: 'identityProviderAdminUserName', value: "''" }
-    - { key: 'identityProviderPassword', value: "''" }
-    - { key: 'identityProviderURL', value: "'{{ che_protocol }}://{{ che_keycloak_host }}'" }
-    - { key: 'identityProviderRealm', value: "'{{ che_keycloak_realm }}'" }
-    - { key: 'identityProviderClientId', value: "'{{ che_keycloak_client_id }}'" }
+- name: Copy CodeReady CR file
+  template: 
+    src: che-cluster-cr.yaml.j2
+    dest: /tmp/che-cluster-cr.yaml
 
-- name: Update Che Cluster Custom Resource pvc claim size for POC and OSD
-  replace:
-    path: "{{ codeready_install_scripts_dir }}/custom-resource.yaml"
-    regexp: 'pvcClaimSize:.*$'
-    replace: 'pvcClaimSize: {{ che_persistent_volume_size }}'
-  when: cluster_type == "osd" or cluster_type == "poc" or cluster_type == "dev"
+- name: Extract CodeReady CLI version 2.0.0 to the temp directory
+  unarchive:
+    src: crwctl.tar.gz
+    dest: /tmp
 
-- name: install code ready with self signed cert
-  shell: "cd {{ codeready_install_scripts_dir }} && OPENSHIFT_PROJECT={{ che_namespace }} ./deploy.sh --deploy --secure"
-  when: eval_self_signed_certs|bool
+- set_fact:
+    crwctl_install_params: ""
 
-- name: install code ready valid certs
-  shell: "cd {{ codeready_install_scripts_dir }} && OPENSHIFT_PROJECT={{ che_namespace }} ./deploy.sh --deploy --public-certs --secure"
-  when: not eval_self_signed_certs|bool
+- set_fact:
+    crwctl_install_params: "--multiuser"
+  when: che_multiuser
+    
+- name: Run the CodeReady CLI Install command
+  shell: /tmp/crwctl/bin/crwctl server:start -n {{ che_namespace }} --installer=operator --platform=openshift --che-operator-cr-yaml=/tmp/che-cluster-cr.yaml --domain={{ che_route_suffix }} --k8spodwaittimeout=180000 {{ crwctl_install_params }}
+  # need to ignore errors until https://issues.redhat.com/browse/CRW-641 is fixed
+  ignore_errors: true
+
+- name: Wait for CodeReady is available
+  shell: oc get checluster {{ che_cr_name }} -n {{ che_namespace }} -o jsonpath='{.status.cheClusterRunning}'
+  register: codeready_verify_result
+  until: codeready_verify_result.stdout == 'Available'
+  retries: 50
+  delay: 10
+
+- name: Remove the temp file
+  file:
+    path: /tmp/che-cluster-cr.yaml
+    state: absent
+
+- name: Remove the temp directory
+  file:
+    path: /tmp/crwctl
+    state: absent
 
 - import_tasks: heimdall.yml

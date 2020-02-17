@@ -9,16 +9,7 @@
     monitor: true
     is_service: true
 
-- include_tasks: download_installer.yml
 - include_tasks: install.yml
-
-- name: Set the launcher keycloak user as admin within the che deployment
-  shell: "oc set env deployment/codeready CHE_SYSTEM_ADMIN__NAME={{launcher_sso_admin_username}} -n {{che_namespace}} --overwrite=true"
-  register: set_kc_admin_env
-  failed_when: set_kc_admin_env.rc != 0
-
-- name: Wait for codeready
-  shell: "oc rollout status deployment/codeready -n {{ che_namespace }}"
 
 - name: Include keycloak tasks
   include_tasks: keycloak-client.yml

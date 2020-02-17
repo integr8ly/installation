@@ -1,4 +1,19 @@
 ---
+- name: "Delete CodeReady CR"
+  shell: "oc delete CheCluster {{ che_cr_name }} -n {{ che_namespace }}"
+  register: output
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and 'The system is ensuring all content is removed from this namespace.' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
+  changed_when: output.rc == 0
+
+- name: "Wait for CodeReady resources to be removed"
+  shell: oc get CheCluster {{ che_cr_name }} -n {{ che_namespace }}
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
+
 - name: Delete che namespace
   shell: "oc delete project {{ che_namespace }}"
   register: output

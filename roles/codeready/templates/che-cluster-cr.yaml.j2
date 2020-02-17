@@ -1,0 +1,37 @@
+apiVersion: org.eclipse.che/v1
+kind: CheCluster
+metadata:
+  name: {{ che_cr_name }}
+spec:
+  server:
+    # defaults to `che`. When set to `codeready`, CodeReady Workspaces is deployed
+    # the difference is in images, labels, exec commands
+    cheFlavor: 'codeready'
+    # when set to true the operator will attempt to get a secret in OpenShift router namespace
+    # to add it to Java trust store of Che server. Requires cluster-admin privileges for operator service account
+{% if eval_self_signed_certs|bool %}
+    selfSignedCert: true
+{% else %}
+    selfSignedCert: false
+{% endif %}
+    # TLS mode for Che. Make sure you either have public cert, or set selfSignedCert to true
+    tlsSupport: true
+{% if (cluster_type == "osd" or cluster_type == "poc" or cluster_type == "dev") %}
+  storage:
+    # size of a persistent volume claim for workspaces. Defaults to 1Gi
+    pvcClaimSize: '{{ che_persistent_volume_size }}'
+{% endif %}
+
+  auth:
+    # instructs operator on whether or not to deploy Keycloak/RH SSO instance. When set to true provision connection details
+    externalIdentityProvider: true
+    # retrieved from respective route/ingress unless explicitly specified in CR (when ExternalKeycloak is true)
+    identityProviderURL: '{{ che_protocol }}://{{ che_keycloak_host }}'
+    # desired admin username of Keycloak admin user (applicable only when externalIdentityProvider is false)
+    identityProviderAdminUserName: ''
+    # desired password of Keycloak admin user (applicable only when externalIdentityProvider is false)
+    identityProviderPassword: ''
+    # name of a keycloak realm. This realm will be created, when externalIdentityProvider is true, otherwise passed to Che server
+    identityProviderRealm: '{{ che_keycloak_realm }}'
+    # id of a keycloak client. This client will be created, when externalIdentityProvider is false, otherwise passed to Che server
+    identityProviderClientId: '{{ che_keycloak_client_id }}'
