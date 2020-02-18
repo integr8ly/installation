@@ -46,6 +46,14 @@
       tasks_from: upgrade_1.2_to_2.0
     when: upgrade_codeready|bool
 
+  - name: Expose vars
+    include_vars: "../roles/enmasse/defaults/main.yml"
+
+  - name: Add AMQ Online service admin role to customer admin
+    include_role:
+      name: enmasse
+      tasks_from: service_admin.yml
+
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
     include_role:
