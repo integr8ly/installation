@@ -46,6 +46,11 @@
       tasks_from: upgrade_1.2_to_2.0
     when: upgrade_codeready|bool
 
+  - name: Upgrade Alert Manager
+    include_role:
+      name: middleware_monitoring_config
+      tasks_from: upgrade_alert_manager_email
+
   - name: Expose vars
     include_vars: "../roles/enmasse/defaults/main.yml"
 
