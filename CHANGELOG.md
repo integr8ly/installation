@@ -16,6 +16,7 @@ Some of these changes may include:
 
 ### Changed
 * [INTLY-3623] - Refactor of inventories and associated group_vars to support POC, OSD and PDS environments
+* [INTLY-3847] - Update Alert Manager emails to include cluster URL and timestamps 
 
 ### Removed
 

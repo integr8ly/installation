@@ -10,16 +10,27 @@
       alertmanager_route: "{{alertmanager.stdout}}"
     when: alertmanager
 
+  - set_fact:
+      openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+
   - name: Generate custom alertmanager config
     template:
       src: "alertmanager.yml.j2"
       dest: /tmp/alertmanager.yaml
 
+  - name: Generate custom alertmanager email template
+    template:
+      src: "custom-alert-manager-email.tmpl.j2"
+      dest: /tmp/custom-alert-manager-email.tmpl
+
   - name: Create and apply alertmanager-application-monitoring secret
-    shell: oc create secret generic alertmanager-application-monitoring --from-file=/tmp/alertmanager.yaml --dry-run -o yaml | oc apply -n {{ middleware_monitoring_namespace }} -f -
+    shell: oc create secret generic alertmanager-application-monitoring --from-file=/tmp/alertmanager.yaml --from-file=/tmp/custom-alert-manager-email.tmpl --dry-run -o yaml | oc apply -n {{ middleware_monitoring_namespace }} -f -
 
   - name: Remove generated alertmanager template
     file: path='/tmp/alertmanager.yaml' state=absent
+
+  - name: Remove generated alertmanager email template
+    file: path='/tmp/custom-alert-manager-email.tmpl' state=absent
 
   # Once any of these are present, update alertmanager secret
   when: smtp_auth_password != '' or

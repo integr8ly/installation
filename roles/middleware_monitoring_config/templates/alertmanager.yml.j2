@@ -26,6 +26,7 @@ receivers:
   email_configs:
   - send_resolved: true
     to: {{ alertmanager_to_email }}
+    html: '{{ '{{' }} template "email.enhanced.html" . {{ '}}' }}'
 - name: critical
 {% if pd_service_key %}
   pagerduty_configs:
@@ -34,6 +35,7 @@ receivers:
   email_configs:
   - send_resolved: true
     to: {{ alertmanager_to_email }}
+    html: '{{ '{{' }} template "email.enhanced.html" . {{ '}}' }}'
 {% if dms_webhook_url %}
 - name: deadmansswitch
   webhook_configs:
@@ -47,3 +49,5 @@ inhibit_rules:
     alertname: 'JobRunningTimeExceeded'
     severity: 'warning'
   equal: ['alertname', 'job', 'label_cronjob_name']
+templates:
+- '*.tmpl'

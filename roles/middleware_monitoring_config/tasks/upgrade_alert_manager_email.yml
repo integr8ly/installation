@@ -1,0 +1,16 @@
+- name: Upgrade AlertManager
+  block:
+  - name: Delete alertmanager-application-monitoring secret
+    shell: oc delete --ignore-not-found secret alertmanager-application-monitoring -n middleware-monitoring
+
+  # Recreate the secret
+  - include_tasks: ./create_alertmanager.yml  
+
+  # Delete the pod to force a re create and a re mount of the new secret
+  - name: Restart the pod with new secret
+    shell: oc delete --ignore-not-found pod alertmanager-application-monitoring-0 -n middleware-monitoring
+
+  # Once any of these are present, update alertmanager secret
+  when: smtp_auth_password != '' or
+        dms_webhook_url != '' or
+        pd_service_key != ''
