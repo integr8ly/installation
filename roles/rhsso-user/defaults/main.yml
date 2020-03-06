@@ -7,9 +7,7 @@ rhsso_user_client_id: user-sso
 rhsso_user_resources:
   - name: sso
     kind: dc
-    resources:
-      requests:
-        memory: 500Mi
+    replicas: 2
   - name: sso-postgresql
     kind: dc
     resources:
