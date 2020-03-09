@@ -83,9 +83,6 @@ rhsso_operator_image: "quay.io/integreatly/keycloak-operator:{{rhsso_operator_re
 rhsso_resources:
   - name: sso
     kind: dc
-    # resources:
-    #   requests:
-    #     memory: 500Mi
     replicas: 2
   - name: sso-postgresql
     kind: dc
