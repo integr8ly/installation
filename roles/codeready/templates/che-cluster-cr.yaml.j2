@@ -21,6 +21,18 @@ spec:
     # size of a persistent volume claim for workspaces. Defaults to 1Gi
     pvcClaimSize: '{{ che_persistent_volume_size }}'
 {% endif %}
+    # override the JVM defaults for workspaces 
+    customCheProperties:
+      CHE_WORKSPACE_JAVA__OPTIONS: >-
+        -XX:MaxRAM=2048m -XX:MaxRAMFraction=2 -XX:+UseParallelGC
+        -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4
+        -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xms20m
+        -Djava.security.egd=file:/dev/./urandom 
+      CHE_WORKSPACE_MAVEN__OPTIONS: >-
+        -XX:MaxRAM=1024m -XX:MaxRAMFraction=2 -XX:+UseParallelGC
+        -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4
+        -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xms20m
+        -Djava.security.egd=file:/dev/./urandom 
 
   auth:
     # instructs operator on whether or not to deploy Keycloak/RH SSO instance. When set to true provision connection details
