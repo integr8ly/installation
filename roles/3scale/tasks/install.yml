@@ -52,8 +52,6 @@
       when: threescale_file_upload_storage == "s3"
   when: threescale_resources_exist.stderr == "No resources found."
 
-- import_tasks: resources.yml
-
 - name: "Setup pv-based storage"
   block:
     - name: "Check for storage class: {{ threescale_pvc_rwx_storageclassname }}"

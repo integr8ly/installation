@@ -1,9 +1,8 @@
 ---
 - name: Delete limit range (if exists)
-  shell: oc delete limitrange 3scale-core-resource-limits -n {{ threescale_namespace }}
+  shell: oc delete limitrange 3scale-core-resource-limits -n {{ threescale_namespace }} --ignore-not-found
   register: delete_limits_cmd
   changed_when: delete_limits_cmd.rc == 0 and 'deleted' in delete_limits_cmd.stderr
-  failed_when: delete_limits_cmd.stderr != '' and 'not found' not in delete_limits_cmd.stderr
 
 - name: Apply resource overrides for 3scale
   include_role:

@@ -65,10 +65,15 @@
       name: rhsso-user
       tasks_from: obtain-user-sso-token.yml
 
-  - name: Disable review and confirming link account 
+  - name: Disable review and confirming link account
     include_role:
       name: rhsso-user
       tasks_from: disable-idp-review-link-confirm.yml
+
+
+- name: Apply overrides for resource limits and replica counts
+  import_playbook: "./update_resources.yml"
+  when: resource_limits_managed | default(true) | bool
 
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"

@@ -1,6 +1,0 @@
----
-- name: Generate resource limitrange template
-  template:
-    src: "resource-limits.yml.j2"
-    dest: /tmp/resource-limits.yml
-

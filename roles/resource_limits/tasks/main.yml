@@ -9,22 +9,22 @@
 
       ***************************************************************************
 
-      WARNING: one or more patch items are invalid for namespace for ns={{ ns }}
+      WARNING: one or more patch items are invalid for namespace {{ ns }}
 
       ***************************************************************************
 
       The following resource patches will be processed:
-      
+
       {% for i in (resources | intersect(valid_resource_patches)) %}
         {{ i }}
       {% endfor %}
-      
+
       The following resource patches will NOT be processed:
 
       {% for i in (resources | difference(valid_resource_patches)) %}
         {{ i }}
       {% endfor %}
-      
+
       {{  (resources | difference(valid_resource_patches)) }}
       {{  (resources | difference(valid_resource_patches)) | length }}
 
@@ -39,7 +39,7 @@
     loop_var: resource_patch
 
 - name: Set up watch for rollout status of resources with overrides
-  shell: oc rollout status {{ item.kind }}/{{ item.name }} -n {{ ns }} -w 
+  shell: oc rollout status {{ item.kind }}/{{ item.name }} -n {{ ns }} -w
   async: 7200
   poll: 0
   register: rollout_status

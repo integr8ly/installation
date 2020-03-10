@@ -19,6 +19,9 @@
 - import_playbook: "./customise_web_console_install.yml"
 - import_playbook: "./apply_ocp_roles.yml"
 
+- import_playbook: "./update_resources.yml"
+  when: resource_limits_managed | default(true) | bool
+
 - hosts: master
   gather_facts: no
   tasks:
