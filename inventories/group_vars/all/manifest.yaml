@@ -1,5 +1,5 @@
 ---
-integreatly_version: release-1.6.0
+integreatly_version: release-1.6.1-rc1
 
 # threescale version is controlled by the operator. Changing the operator version will change the 3scale version
 
@@ -96,7 +96,7 @@ rhsso_user_operator_resources: "{{ rhsso_operator_resources }}"
 
 #unifiedpush
 ups: True
-ups_operator_release_tag: '0.4.2'
+ups_operator_release_tag: '0.4.3'
 ups_operator_resources: 'https://raw.githubusercontent.com/aerogear/unifiedpush-operator/{{ups_operator_release_tag}}/deploy'
 ups_operator_image: 'quay.io/aerogear/unifiedpush-operator:{{ ups_operator_release_tag }}'
 ups_release_tag: '2.3.2-1'
