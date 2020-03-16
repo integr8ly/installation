@@ -1,4 +1,7 @@
 ---
-#ToDo Implement CVE image update steps as described https://github.com/RHCloudServices/integreatly-help/blob/master/sops/cves/applying-cve-updates.md
-- debug:
-    msg: "TODO Implement me!!"
+
+- name: Patch unifiedpush Operator Deployment
+  shell: oc patch deployment unifiedpush-operator --patch='{"spec":{"template":{"spec":{"containers":[{"name":"unifiedpush-operator","image":"{{ ups_operator_image }}"}]}}}}' --namespace {{ ups_namespace }}
+  register: unifedpush_operator_image_patch
+  failed_when: unifedpush_operator_image_patch.stderr
+  
