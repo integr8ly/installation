@@ -1,8 +1,3 @@
 ---
 upgrade_product_images:
-  - 3scale
-  - apicurito
-  - codeready
-  - enmasse
-  - fuse_managed
-  - rhsso
+  - ups
