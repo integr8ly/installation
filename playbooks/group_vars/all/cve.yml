@@ -6,3 +6,4 @@ upgrade_product_images:
   - enmasse
   - fuse_managed
   - rhsso
+  - ups
