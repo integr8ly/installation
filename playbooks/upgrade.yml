@@ -40,5 +40,11 @@
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
 
+  #Ensure integreatly version in webapp cr matches new version (should always be 2nd last)
+  - name: Update webapp version information
+    include_role:
+      name: webapp
+      tasks_from: update_version_info
+
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"
