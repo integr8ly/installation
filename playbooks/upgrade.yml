@@ -46,9 +46,6 @@
       tasks_from: upgrade_2.7_to_2.8
     when: upgrade_3scale|bool
 
-  - pause:
-      prompt: 3scale upgrade completed
-
   - name: Upgrade CodeReady Workspace to version 2.0.0
     include_role:
       name: codeready
@@ -90,6 +87,11 @@
       name: 3scale
       tasks_from: admins-view-namespace.yml
 
+  #Ensure integreatly version in webapp cr matches new version (should always be 2nd last)
+  - name: Update webapp version information
+    include_role:
+      name: webapp
+      tasks_from: update_version_info
 
 - name: Apply overrides for resource limits and replica counts
   import_playbook: "./update_resources.yml"

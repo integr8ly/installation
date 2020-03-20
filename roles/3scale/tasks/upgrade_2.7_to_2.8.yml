@@ -20,7 +20,7 @@
       register: amp_smtp_data
       changed_when: false
 
-    - name: Create system-smtp secret using values import from legacy configuration
+    - name: Create system-smtp secret using values imported from legacy configuration
       shell: |
         echo '{
           "apiVersion": "v1",
@@ -37,14 +37,14 @@
           "stringData": {{ amp_smtp_data.stdout }}
         }' | oc create -n {{ threescale_namespace }} -f -
       register: update_cmd_result
-      changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ created")
 
 # Section 1.2.3, “Updating the pre-hook pod command of the system-app DeploymentConfig”
 
 - name: Update the pre-hook pod command to the new one needed for this release
   shell: oc patch -n {{ threescale_namespace }} dc/system-app -p '{"spec":{"strategy":{"rollingParams":{"pre":{"execNewPod":{"command":["bash","-c","bundle exec rake boot openshift:deploy"]}}}}}}'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
 # Section 1.2.4, “Patching the pre-hook pod environment of the system-app DeploymentConfig”
 
@@ -78,7 +78,7 @@
       ]
     ' | oc apply -n {{ threescale_namespace }} -f -
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ configured")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ configured")
 
 # Section 1.2.5, “Patching the environment of the system-app DeploymentConfig containers”
 
@@ -115,7 +115,7 @@
       ]}}}
     }'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
 # Section 1.2.6, “Patching the environment of the system-sidekiq DeploymentConfig container”
 
@@ -135,7 +135,7 @@
       ]}}}
     }'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
 # Section 1.2.7, “Migrating S3 specific configuration”
 
@@ -165,7 +165,7 @@
           "stringData": {{ amp_s3_legacy_config.stdout }}
         '
       register: update_cmd_result
-      changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
     # added protocol, hostname, and path style vars to del list to make it idempotent
     - name: Patch the pre-hook pod environment variables from system-app DeploymentConfig
@@ -187,7 +187,7 @@
           ]
         ' | oc apply -n {{ threescale_namespace }} -f -
       register: update_cmd_result
-      changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ configured")
 
     - name: Patch the containers environment variables in system-app DeploymentConfig
       shell: |
@@ -219,7 +219,7 @@
           }}
         }'
       register: update_cmd_result
-      changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
     - name: Patch the container environment variables in system-sidekiq DeploymentConfig
       shell: |
@@ -237,7 +237,7 @@
           }}
         }'
       register: update_cmd_result
-      changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
     - name: Delete the unused system-environment ConfigMap keys
       shell: |
@@ -245,7 +245,7 @@
           "data": {"AWS_BUCKET": null, "AWS_REGION": null}
         }'
       register: update_cmd_result
-      changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
   when:
     - threescale_file_upload_storage == "s3"
@@ -259,7 +259,7 @@
       {"data": {"AMP_RELEASE": "2.8"}
     }'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
 # Section 1.2.9, “Upgrading 3scale images”
 
@@ -270,7 +270,7 @@
       {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP system (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
     ]'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
 - name: Wait for redeployments of system-app, system-sphinx and system-sidekiq DeploymentConfigs
   import_tasks: wait_for_rollouts.yml
@@ -289,7 +289,7 @@
       {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP APIcast (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
     ]'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
 - name: Wait for redeployments of apicast-production and apicast-staging
   import_tasks: wait_for_rollouts.yml
@@ -307,7 +307,7 @@
       {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP Backend (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
     ]'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
 - name: Wait for redeployments of backend-listener, backend-worker, and backend-cron
   import_tasks: wait_for_rollouts.yml
@@ -327,7 +327,7 @@
       {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP Zync (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
     ]'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
 - name: Wait for redeployments of zync and zync-que
   import_tasks: wait_for_rollouts.yml
@@ -346,7 +346,7 @@
       {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System Memcached (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
     ]'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
 - name: Wait for redeployments of system-memcache
   import_tasks: wait_for_rollouts.yml
@@ -364,7 +364,7 @@
       {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "Zync PostgreSQL (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
     ]'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
 
 - name: Wait for redeployments of zync-database
   import_tasks: wait_for_rollouts.yml
@@ -384,7 +384,7 @@
       {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "Backend Redis (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
     ]'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
   failed_when: update_cmd_result.rc != 0 and update_cmd_result.stderr is not regex("not found")
 
 - name: Wait for redeployments of backend-redis
@@ -404,7 +404,7 @@
       {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System Redis (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
     ]'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
   failed_when: update_cmd_result.rc != 0 and update_cmd_result.stderr is not regex("not found")
 
 - name: Wait for redeployments of system-redis
@@ -424,7 +424,7 @@
       {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System MySQL (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
     ]'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
   failed_when: update_cmd_result.rc != 0 and update_cmd_result.stderr is not regex("not found")
 
 - name: Wait for redeployments of system-mysql
@@ -445,7 +445,7 @@
       {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System PostgreSQL (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
     ]'
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex("/[a-z-]+ patched")
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
   failed_when: update_cmd_result.rc != 0 and update_cmd_result.stderr is not regex("not found")
 
 - name: Wait for redeployments of system-postgresql
@@ -461,5 +461,5 @@
 - name: Delete old smtp ConfigMap
   shell: oc delete configmap smtp -n {{ threescale_namespace }}
   register: update_cmd_result
-  changed_when: update_cmd_result.stderr is regex(" [a-z-]+ deleted")
+  changed_when: update_cmd_result.stdout is regex(" [a-z-]+ deleted")
   failed_when: update_cmd_result.rc != 0 and update_cmd_result.stderr is not regex("not found")
