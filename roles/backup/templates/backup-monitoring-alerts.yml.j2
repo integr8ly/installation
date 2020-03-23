@@ -51,8 +51,8 @@ spec:
           message: CronJob {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.cronjob {{ '}}' }} does not exist
         expr: |
           absent(kube_cronjob_info{cronjob="{{ cronjob }}", namespace="{{ namespace }}"})
-        for: 60s
+        for: 5m
         labels:
-          severity: critical
+          severity: warning
       {% endfor %}
       {% endfor %}
