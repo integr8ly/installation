@@ -1,0 +1,31 @@
+---
+# Allow admin users to view 3Scale logs via Kibana
+- name: Generate Get Namepspaces Role file
+  template:
+    src: "get-namespaces-role.yml.j2"
+    dest: /tmp/get-namespaces-role.yml
+
+- name: Create Namespace Get Role
+  shell: oc apply -f /tmp/get-namespaces-role.yml
+
+- name: Normalize users list
+  include_role:
+    name: rhsso
+    tasks_from: expand_user_list.yml
+
+- name: Add Get Namespaces permission for customer-admin and other admin users
+  block:
+    - name: Generate Get Namespaces RoleBinding
+      template:
+        src: "get-namespaces-rolebinding.yml.j2"
+        dest: /tmp/{{ item }}-get-namespaces-rolebinding.yml
+      vars:
+        username: "{{ item }}"
+      with_items: "{{ rhsso_seed_users_all | selectattr('admin','match','^customer$') | map(attribute='username') | list }}"
+
+    - name: Apply the RoleBinding for {{ item }}
+      shell: oc apply -f /tmp/{{ item }}-get-namespaces-rolebinding.yml
+      with_items: "{{ rhsso_seed_users_all | selectattr('admin','match','^customer$') | map(attribute='username') | list }}"
+
+  
+
