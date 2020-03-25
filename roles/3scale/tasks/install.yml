@@ -82,3 +82,4 @@
 - import_tasks: sso.yml
 - import_tasks: service_discovery.yml
 - import_tasks: heimdall.yml
+- import_tasks: admins-view-namespace.yml

@@ -70,6 +70,12 @@
       name: rhsso-user
       tasks_from: disable-idp-review-link-confirm.yml
 
+  # Allow admin users to view 3Scale logs via Kibana
+  - name: Add Get Namespaces (3Scale) permission to admin users
+    include_role:
+      name: 3scale
+      tasks_from: admins-view-namespace.yml
+
 
 - name: Apply overrides for resource limits and replica counts
   import_playbook: "./update_resources.yml"
