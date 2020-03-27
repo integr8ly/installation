@@ -22,7 +22,7 @@
     shell: oc get route keycloak -o template --template \{\{.spec.host\}\} -n {{ eval_enmasse_namespace }}
     register: enmasse_keycloak_route
   - name: get enmasse keycloak route
-    shell: oc get route console-proxy -o template --template \{\{.spec.host\}\} -n {{ eval_enmasse_namespace }}
+    shell: oc get route console -o template --template \{\{.spec.host\}\} -n {{ eval_enmasse_namespace }}
     register: enmasse_console_proxy_route
   when: enmasse | default(true) | bool
 
