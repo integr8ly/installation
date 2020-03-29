@@ -4,3 +4,4 @@ upgrade_product_roles:
 - ups
 - enmasse
 - fuse_managed
+- 3scale
