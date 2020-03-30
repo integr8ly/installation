@@ -1,4 +1,4 @@
-upgrade_from_version: release-1.6.0
+upgrade_from_version: release-1.6.1
 upgrade_product_roles:
   - codeready
   - ups
