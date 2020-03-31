@@ -1,4 +1,5 @@
 upgrade_from_version: release-1.6.0
 upgrade_product_roles:
-  - codeready
-  - ups
+- codeready
+- ups
+- enmasse
