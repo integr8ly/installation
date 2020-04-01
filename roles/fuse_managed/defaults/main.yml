@@ -8,15 +8,8 @@ fuse_pull_secret_name: "syndesis-pull-secret"
 fuse_resources: []
 
 fuse_image_streams:
-  - fuse-ignite-meta:{{ fuse_online_operator_imagestream_version }}
-  - fuse-ignite-s2i:{{ fuse_online_operator_imagestream_version }}
-  - fuse-ignite-server:{{ fuse_online_operator_imagestream_version }}
-  - fuse-ignite-ui:{{ fuse_online_operator_imagestream_version }}
-  - fuse-postgres-exporter:{{ fuse_online_operator_imagestream_version }}
   - jboss-amq-63:1.3
-  - oauth-proxy:4.2
-  - prometheus:v3.9
   - syndesis-operator:{{ fuse_online_operator_imagestream_version }}
-  - syndesis-postgresql:latest
+  - syndesis-s2i:{{ fuse_online_operator_imagestream_version }}
 
 fuse_heimdall_exclude_pattern: "todo"

@@ -26,6 +26,8 @@
     set_fact: upgrade_{{ item | replace('-', '') }}=true
     with_items: "{{ upgrade_product_roles }}"
 
+  # Fuse images upgrade fails because new image tags don't exist
+  # I am not sure whether this is needed for minor product releases upgrades
   - name: Upgrade product images
     include_role:
       name: "{{ item }}"
@@ -45,6 +47,35 @@
       name: codeready
       tasks_from: upgrade_1.2_to_2.0
     when: upgrade_codeready|bool
+
+  - name: Upgrade Fuse on Openshift
+    include_role:
+      name: fuse
+      tasks_from: upgrade
+    when: upgrade_fuse|bool
+
+  - name: Upgrade Fuse Online
+    include_role:
+      name: fuse_managed
+      tasks_from: upgrade
+    when: upgrade_fuse_managed|bool
+
+  # Managed Service Broker upgrade
+  - name: Include SSO vars
+    include_vars: "../roles/rhsso/defaults/main.yml"
+
+  - name: Set eval_app_host var
+    set_fact:
+      eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+
+  - name: Upgrade Managed Service Broker
+    include_role:
+      name: msbroker
+      tasks_from: upgrade
+    vars:
+      route_suffix: "{{ eval_app_host }}"
+      sso_realm: "{{ rhsso_realm }}"
+    when: upgrade_fuse_managed|bool
 
   - name: Upgrade Alert Manager
     include_role:

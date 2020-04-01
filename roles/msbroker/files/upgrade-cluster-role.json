@@ -1,7 +1,0 @@
-[
-  {"op":"add", "path":"/rules/-", "value":{"apiGroups": ["syndesis.io"],"attributeRestrictions": null,"resources": ["*", "*/finalizers"],"verbs": ["create", "delete", "deletecollection", "get", "list", "update", "watch"]}},
-  {"op":"add", "path":"/rules/-", "value":{"apiGroups": ["rbac.authorization.k8s.io"],"attributeRestrictions": null,"resources": ["roles"],"verbs": ["create", "delete", "deletecollection", "get", "list", "update", "watch"]}},
-  {"op":"add", "path":"/rules/-", "value":{"apiGroups": ["camel.apache.org"],"attributeRestrictions": null,"resources": ["*"],"verbs": ["create", "delete", "deletecollection", "get", "list", "update", "watch"]}},
-  {"op":"add", "path":"/rules/-", "value":{"apiGroups": ["monitoring.coreos.com"],"attributeRestrictions": null,"resources": ["alertmanagers", "prometheuses", "servicemonitors", "prometheusrules"],"verbs": ["create", "delete", "deletecollection", "get", "list", "update", "watch"]}},
-  {"op":"add", "path":"/rules/-", "value":{"apiGroups": ["integreatly.org"],"attributeRestrictions": null,"resources": ["grafanadashboards"],"verbs": ["create", "delete", "deletecollection", "get", "list", "update", "watch"]}}
-]
