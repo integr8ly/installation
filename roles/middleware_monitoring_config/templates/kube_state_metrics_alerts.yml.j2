@@ -137,9 +137,9 @@ spec:
       - alert: SSOPodCount
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
-          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 3 pods.
+          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected exactly 4 pods.
         expr: |
-          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_rhsso_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_rhsso_namespace }}"}) != 3
+          (1-absent(kube_pod_status_ready{condition="true", namespace="{{ eval_rhsso_namespace }}"})) or sum(kube_pod_status_ready{condition="true", namespace="{{ eval_rhsso_namespace }}"}) != 4
         for: 5m
         labels:
           severity: critical
