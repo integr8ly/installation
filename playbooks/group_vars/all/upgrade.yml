@@ -3,3 +3,4 @@ upgrade_product_roles:
 - codeready
 - ups
 - enmasse
+- fuse_managed
