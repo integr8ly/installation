@@ -12,6 +12,26 @@ enmasse_backup_postgres_secret: 'enmasse-postgres-secret'
 enmasse_postgres_cronjob_name: 'enmasse-postgres-backup'
 enmasse_pv_cronjob_name: 'enmasse-pv-backup'
 
-enmasse_resources: []
+enmasse_resources:
+  - name: api-server
+    kind: deploy
+    resources:
+      requests:
+        memory: 256Mi
+  - name: enmasse-operator
+    kind: deploy
+    resources:
+      requests:
+        memory: 75M
+  - name: postgresql
+    kind: dc
+    resources:
+      requests:
+        memory: 50Mi
+  - name: service-broker
+    kind: deploy
+    resources:
+      requests:
+        memory: 200Mi
 
 enmasse_heimdall_exclude_pattern: ""
