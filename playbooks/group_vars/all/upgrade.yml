@@ -3,3 +3,6 @@ upgrade_product_roles:
 - codeready
 - enmasse
 - 3scale
+- fuse_managed
+- rhsso
+- rhsso-user
