@@ -90,6 +90,7 @@
 
           NOTE: If a rollout was paused by this script, it will be resumed automatically regardless of
           whether you continue or abort in order to leave the cluster in a consistent state.
+        seconds: "{{ resource_limits_auto_dismiss_prompts_seconds|default(omit) }}"
 
   always:
     - name: Resume auto-rollout for {{ resource_patch.kind }}/{{ resource_patch.name }} if it was paused by this script
