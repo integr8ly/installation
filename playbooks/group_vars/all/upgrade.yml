@@ -1,8 +1,8 @@
 upgrade_from_version: release-1.6.1
 upgrade_product_roles:
 - codeready
-- ups
 - enmasse
+- 3scale
 - fuse_managed
 - rhsso
 - rhsso-user

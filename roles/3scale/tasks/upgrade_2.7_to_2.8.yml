@@ -1,0 +1,465 @@
+---
+# Section 1.2.2, “Migrating the smtp ConfigMap to system-smtp secret”
+
+- name: Check if system-smtp secret exists already
+  shell: oc get secret system-smtp -n {{ threescale_namespace }} --ignore-not-found -o name | wc -l
+  register: amp_skip_smtp_migration
+  changed_when: false
+
+# if secret/system-smtp already exists, don't try to migrate again
+- name: Migrate smtp settings from ConfigMap to Secret
+  when: amp_skip_smtp_migration.stdout | int == 0
+  block:
+    - name: Get app label for backend-listener
+      shell: oc get dc backend-listener -n {{ threescale_namespace }} -o json | jq .spec.template.metadata.labels.app -r
+      register: amp_smtp_app_label
+      changed_when: false
+
+    - name: Get smtp settings from configmap
+      shell: oc get configmap smtp -n {{ threescale_namespace }} -o json | jq -r .data
+      register: amp_smtp_data
+      changed_when: false
+
+    - name: Create system-smtp secret using values imported from legacy configuration
+      shell: |
+        echo '{
+          "apiVersion": "v1",
+          "kind": "Secret",
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "app": "{{ amp_smtp_app_label.stdout }}",
+              "threescale_component": "system",
+              "threescale_component_element": "smtp"
+            },
+            "name": "system-smtp"
+          },
+          "stringData": {{ amp_smtp_data.stdout }}
+        }' | oc create -n {{ threescale_namespace }} -f -
+      register: update_cmd_result
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ created")
+
+# Section 1.2.3, “Updating the pre-hook pod command of the system-app DeploymentConfig”
+
+- name: Update the pre-hook pod command to the new one needed for this release
+  shell: oc patch -n {{ threescale_namespace }} dc/system-app -p '{"spec":{"strategy":{"rollingParams":{"pre":{"execNewPod":{"command":["bash","-c","bundle exec rake boot openshift:deploy"]}}}}}}'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+# Section 1.2.4, “Patching the pre-hook pod environment of the system-app DeploymentConfig”
+
+# Added MASTER_ACCESS_TOKEN to del list to make it idempotent.  The output from this logic
+# always writes "<kind>/<name> configured" to stderr regardless of whether anything changed.
+- name: Patch the pre-hook pod environment variables in the system-app DeploymentConfig
+  shell: |
+    oc get dc system-app -n {{ threescale_namespace }} -o json | jq '
+      del(
+        .spec.strategy.rollingParams.pre.execNewPod.env[] |
+        select(
+          .name == "SMTP_ADDRESS" //
+          .name == "SMTP_USER_NAME" //
+          .name == "SMTP_PASSWORD" //
+          .name == "SMTP_DOMAIN" //
+          .name == "SMTP_PORT" //
+          .name == "SMTP_AUTHENTICATION" //
+          .name == "SMTP_OPENSSL_VERIFY_MODE" //
+          .name == "MASTER_ACCESS_TOKEN"
+        )
+      ) |
+      .spec.strategy.rollingParams.pre.execNewPod.env += [
+        {"name":"SMTP_ADDRESS","valueFrom":{"secretKeyRef":{"key":"address","name":"system-smtp"}}},
+        {"name":"SMTP_USER_NAME","valueFrom":{"secretKeyRef":{"key":"username","name":"system-smtp"}}},
+        {"name":"SMTP_PASSWORD","valueFrom":{"secretKeyRef":{"key":"password","name":"system-smtp"}}},
+        {"name":"SMTP_DOMAIN","valueFrom":{"secretKeyRef":{"key":"domain","name":"system-smtp"}}},
+        {"name":"SMTP_PORT","valueFrom":{"secretKeyRef":{"key":"port","name":"system-smtp"}}},
+        {"name":"SMTP_AUTHENTICATION","valueFrom":{"secretKeyRef":{"key":"authentication","name":"system-smtp"}}},
+        {"name":"SMTP_OPENSSL_VERIFY_MODE","valueFrom":{"secretKeyRef":{"key":"openssl.verify.mode","name":"system-smtp"}}},
+        {"name":"MASTER_ACCESS_TOKEN","valueFrom":{"secretKeyRef":{"key":"MASTER_ACCESS_TOKEN","name":"system-seed"}}}
+      ]
+    ' | oc apply -n {{ threescale_namespace }} -f -
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ configured")
+
+# Section 1.2.5, “Patching the environment of the system-app DeploymentConfig containers”
+
+- name: Patch the container environment variables in system-app DeploymentConfig
+  shell: |
+    oc patch dc/system-app -n {{ threescale_namespace }} -p '{
+      "spec":{"template":{"spec":{"containers":[
+        {"name":"system-master","env":[
+          {"name":"SMTP_ADDRESS","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"address","name":"system-smtp"}}},
+          {"name":"SMTP_USER_NAME","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"username","name":"system-smtp"}}},
+          {"name":"SMTP_PASSWORD","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"password","name":"system-smtp"}}},
+          {"name":"SMTP_DOMAIN","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"domain","name":"system-smtp"}}},
+          {"name":"SMTP_PORT","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"port","name":"system-smtp"}}},
+          {"name":"SMTP_AUTHENTICATION","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"authentication","name":"system-smtp"}}},
+          {"name":"SMTP_OPENSSL_VERIFY_MODE","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"openssl.verify.mode","name":"system-smtp"}}}
+        ]},
+        {"name":"system-provider","env":[{"name":"SMTP_ADDRESS","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"address","name":"system-smtp"}}},
+          {"name":"SMTP_USER_NAME","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"username","name":"system-smtp"}}},
+          {"name":"SMTP_PASSWORD","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"password","name":"system-smtp"}}},
+          {"name":"SMTP_DOMAIN","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"domain","name":"system-smtp"}}},
+          {"name":"SMTP_PORT","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"port","name":"system-smtp"}}},
+          {"name":"SMTP_AUTHENTICATION","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"authentication","name":"system-smtp"}}},
+          {"name":"SMTP_OPENSSL_VERIFY_MODE","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"openssl.verify.mode","name":"system-smtp"}}}
+        ]},
+        {"name":"system-developer","env":[
+          {"name":"SMTP_ADDRESS","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"address","name":"system-smtp"}}},
+          {"name":"SMTP_USER_NAME","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"username","name":"system-smtp"}}},
+          {"name":"SMTP_PASSWORD","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"password","name":"system-smtp"}}},
+          {"name":"SMTP_DOMAIN","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"domain","name":"system-smtp"}}},
+          {"name":"SMTP_PORT","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"port","name":"system-smtp"}}},
+          {"name":"SMTP_AUTHENTICATION","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"authentication","name":"system-smtp"}}},
+          {"name":"SMTP_OPENSSL_VERIFY_MODE","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"openssl.verify.mode","name":"system-smtp"}}}
+        ]}
+      ]}}}
+    }'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+# Section 1.2.6, “Patching the environment of the system-sidekiq DeploymentConfig container”
+
+- name: Patch the environment variables of system-sidekiq DeploymentConfig
+  shell: |
+    oc patch dc/system-sidekiq -n {{ threescale_namespace }} -p '{
+      "spec":{"template":{"spec":{"containers":[
+        {"name":"system-sidekiq","env":[
+          {"name":"SMTP_ADDRESS","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"address","name":"system-smtp"}}},
+          {"name":"SMTP_USER_NAME","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"username","name":"system-smtp"}}},
+          {"name":"SMTP_PASSWORD","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"password","name":"system-smtp"}}},
+          {"name":"SMTP_DOMAIN","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"domain","name":"system-smtp"}}},
+          {"name":"SMTP_PORT","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"port","name":"system-smtp"}}},
+          {"name":"SMTP_AUTHENTICATION","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"authentication","name":"system-smtp"}}},
+          {"name":"SMTP_OPENSSL_VERIFY_MODE","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"openssl.verify.mode","name":"system-smtp"}}}
+        ]}
+      ]}}}
+    }'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+# Section 1.2.7, “Migrating S3 specific configuration”
+
+- name: Check if s3 configuration needs to be migrated
+  shell: |
+    oc get secret aws-auth -n {{ threescale_namespace }} -o json | jq '
+      .data |
+      (.AWS_BUCKET?!=null and .AWS_REGION?!=null)
+    '
+  register: amp_skip_s3_migration
+  changed_when: false
+  when: threescale_file_upload_storage == "s3"
+
+- name: Migrating S3 configuration
+  block:
+    - name: Get s3 configuration parameters from legacy configuration
+      shell: |
+        oc get configmap system-environment -n {{ threescale_namespace }} -o json | jq '
+          .data | {AWS_BUCKET, AWS_REGION}
+        '
+      register: amp_s3_legacy_config
+      changed_when: false
+
+    - name: Add the values into the existing aws-auth secret
+      shell: |
+        oc patch secret aws-auth -n {{ threescale_namespace }} --patch '
+          "stringData": {{ amp_s3_legacy_config.stdout }}
+        '
+      register: update_cmd_result
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+    # added protocol, hostname, and path style vars to del list to make it idempotent
+    - name: Patch the pre-hook pod environment variables from system-app DeploymentConfig
+      shell: |
+        oc get dc system-app -n {{ threescale_namespace }} -o json | jq '
+          del(.spec.strategy.rollingParams.pre.execNewPod.env[] | select(
+            .name == "AWS_BUCKET" //
+            .name == "AWS_REGION" //
+            .name == "AWS_PROTOCOL" //
+            .name == "AWS_HOSTNAME" //
+            .name == "AWS_PATH_STYLE"
+          )) |
+          .spec.strategy.rollingParams.pre.execNewPod.env += [
+            {"name":"AWS_BUCKET","valueFrom":{"secretKeyRef":{"key":"AWS_BUCKET","name":"aws-auth"}}},
+            {"name":"AWS_REGION","valueFrom":{"secretKeyRef":{"key":"AWS_REGION","name":"aws-auth"}}},
+            {"name":"AWS_PROTOCOL","valueFrom":{"secretKeyRef":{"key":"AWS_PROTOCOL","name":"aws-auth", "optional": true}}},
+            {"name":"AWS_HOSTNAME","valueFrom":{"secretKeyRef":{"key":"AWS_HOSTNAME","name":"aws-auth", "optional": true}}},
+            {"name":"AWS_PATH_STYLE","valueFrom":{"secretKeyRef":{"key":"AWS_PATH_STYLE","name":"aws-auth", "optional": true}}}
+          ]
+        ' | oc apply -n {{ threescale_namespace }} -f -
+      register: update_cmd_result
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ configured")
+
+    - name: Patch the containers environment variables in system-app DeploymentConfig
+      shell: |
+        oc patch dc/system-app -n {{ threescale_namespace }} -p '{
+          "spec":{"template":{"spec":{
+            "containers":[
+              {"name":"system-master","env":[
+                {"name":"AWS_BUCKET","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"AWS_BUCKET","name":"aws-auth"}}},
+                {"name":"AWS_REGION","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"AWS_REGION","name":"aws-auth"}}},
+                {"name":"AWS_PROTOCOL","valueFrom":{"secretKeyRef":{"key":"AWS_PROTOCOL","name":"aws-auth", "optional": true}}},
+                {"name":"AWS_HOSTNAME","valueFrom":{"secretKeyRef":{"key":"AWS_HOSTNAME","name":"aws-auth", "optional": true}}},
+                {"name":"AWS_PATH_STYLE","valueFrom":{"secretKeyRef":{"key":"AWS_PATH_STYLE","name":"aws-auth", "optional": true}}}
+              ]},
+              {"name":"system-provider","env":[
+                {"name":"AWS_BUCKET","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"AWS_BUCKET","name":"aws-auth"}}},
+                {"name":"AWS_REGION","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"AWS_REGION","name":"aws-auth"}}},
+                {"name":"AWS_PROTOCOL","valueFrom":{"secretKeyRef":{"key":"AWS_PROTOCOL","name":"aws-auth", "optional": true}}},
+                {"name":"AWS_HOSTNAME","valueFrom":{"secretKeyRef":{"key":"AWS_HOSTNAME","name":"aws-auth", "optional": true}}},
+                {"name":"AWS_PATH_STYLE","valueFrom":{"secretKeyRef":{"key":"AWS_PATH_STYLE","name":"aws-auth", "optional": true}}}
+              ]},
+              {"name":"system-developer","env":[
+                {"name":"AWS_BUCKET","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"AWS_BUCKET","name":"aws-auth"}}},
+                {"name":"AWS_REGION","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"AWS_REGION","name":"aws-auth"}}},
+                {"name":"AWS_PROTOCOL","valueFrom":{"secretKeyRef":{"key":"AWS_PROTOCOL","name":"aws-auth", "optional": true}}},
+                {"name":"AWS_HOSTNAME","valueFrom":{"secretKeyRef":{"key":"AWS_HOSTNAME","name":"aws-auth", "optional": true}}},
+                {"name":"AWS_PATH_STYLE","valueFrom":{"secretKeyRef":{"key":"AWS_PATH_STYLE","name":"aws-auth", "optional": true}}}
+              ]}
+            ]}
+          }}
+        }'
+      register: update_cmd_result
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+    - name: Patch the container environment variables in system-sidekiq DeploymentConfig
+      shell: |
+        oc patch dc/system-sidekiq -n {{ threescale_namespace }} -p '{
+          "spec":{"template":{"spec":{
+            "containers":[
+              {"name":"system-sidekiq","env":[
+                {"name":"AWS_BUCKET","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"AWS_BUCKET","name":"aws-auth"}}},
+                {"name":"AWS_REGION","valueFrom":{"configMapKeyRef":null,"secretKeyRef":{"key":"AWS_REGION","name":"aws-auth"}}},
+                {"name":"AWS_PROTOCOL","valueFrom":{"secretKeyRef":{"key":"AWS_PROTOCOL","name":"aws-auth", "optional": true}}},
+                {"name":"AWS_HOSTNAME","valueFrom":{"secretKeyRef":{"key":"AWS_HOSTNAME","name":"aws-auth", "optional": true}}},
+                {"name":"AWS_PATH_STYLE","valueFrom":{"secretKeyRef":{"key":"AWS_PATH_STYLE","name":"aws-auth", "optional": true}}}
+              ]}
+            ]}
+          }}
+        }'
+      register: update_cmd_result
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+    - name: Delete the unused system-environment ConfigMap keys
+      shell: |
+        oc patch configmap system-environment -n {{ threescale_namespace }} --patch '{
+          "data": {"AWS_BUCKET": null, "AWS_REGION": null}
+        }'
+      register: update_cmd_result
+      changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+  when:
+    - threescale_file_upload_storage == "s3"
+    - amp_skip_s3_migration.stdout == "false"
+
+# Section 1.2.8, “Updating 3scale version number”
+
+- name: Update 3scale release version
+  shell: >
+    oc patch cm system-environment -n {{ threescale_namespace }} --patch '
+      {"data": {"AMP_RELEASE": "2.8"}
+    }'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+# Section 1.2.9, “Upgrading 3scale images”
+
+- name: Patch the amp-system image stream
+  shell: |
+    oc patch imagestream/amp-system -n {{ threescale_namespace }} --type=json -p '[
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP system 2.8"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/3scale-amp2/system-rhel7:3scale2.8"}, "name": "2.8", "referencePolicy": {"type": "Source"}}},
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP system (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
+    ]'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+- name: Wait for redeployments of system-app, system-sphinx and system-sidekiq DeploymentConfigs
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+      - dc/system-app
+      - dc/system-sphinx
+      - dc/system-sidekiq
+  when: update_cmd_result is changed
+
+- name: Patch the amp-apicast image stream
+  shell: |
+    oc patch imagestream/amp-apicast -n {{ threescale_namespace }} --type=json -p '[
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP APIcast 2.8"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/3scale-amp2/apicast-gateway-rhel8:3scale2.8"}, "name": "2.8", "referencePolicy": {"type": "Source"}}},
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP APIcast (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
+    ]'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+- name: Wait for redeployments of apicast-production and apicast-staging
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+    - dc/apicast-production
+    - dc/apicast-staging
+  when: update_cmd_result is changed
+
+- name: Patch the amp-backend image stream
+  shell: |
+    oc patch imagestream/amp-backend -n {{ threescale_namespace }} --type=json -p '[
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP Backend 2.8"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/3scale-amp2/backend-rhel7:3scale2.8"}, "name": "2.8", "referencePolicy": {"type": "Source"}}},
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP Backend (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
+    ]'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+- name: Wait for redeployments of backend-listener, backend-worker, and backend-cron
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+      - dc/backend-listener
+      - dc/backend-worker
+      - dc/backend-cron
+  when: update_cmd_result is changed
+
+
+- name: Patch the amp-zync image stream
+  shell: |
+    oc patch imagestream/amp-zync -n {{ threescale_namespace }} --type=json -p '[
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP Zync 2.8"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/3scale-amp2/zync-rhel7:3scale2.8"}, "name": "2.8", "referencePolicy": {"type": "Source"}}},
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP Zync (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
+    ]'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+- name: Wait for redeployments of zync and zync-que
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+      - dc/zync
+      - dc/zync-que
+  when: update_cmd_result is changed
+
+
+- name: Patch the system-memcached image stream
+  shell: |
+    oc patch imagestream/system-memcached -n {{ threescale_namespace }} --type=json -p '[
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System 2.8 Memcached"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/3scale-amp2/memcached-rhel7:3scale2.8"}, "name": "2.8", "referencePolicy": {"type": "Source"}}},
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System Memcached (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
+    ]'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+- name: Wait for redeployments of system-memcache
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+      - dc/system-memcache
+  when: update_cmd_result is changed
+
+
+- name: Patch the zync-database-postgresql image stream
+  shell: |
+    oc patch imagestream/zync-database-postgresql -n {{ threescale_namespace }} --type=json -p '[
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "Zync 2.8 PostgreSQL"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/rhscl/postgresql-10-rhel7"}, "name": "2.8", "referencePolicy": {"type": "Source"}}},
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "Zync PostgreSQL (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
+    ]'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+
+- name: Wait for redeployments of zync-database
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+      - dc/zync-database
+  when: update_cmd_result is changed
+
+
+# Section 1.2.9.1.1, “backend-redis DeploymentConfig”
+
+- name: Patch the backend-redis
+  shell: |
+    oc patch imagestream/backend-redis -n {{ threescale_namespace }} --type=json -p '[
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "Backend 2.8 Redis"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/rhscl/redis-32-rhel7:3.2"}, "name": "2.8", "referencePolicy": {"type": "Source"}}},
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "Backend Redis (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
+    ]'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+  failed_when: update_cmd_result.rc != 0 and update_cmd_result.stderr is not regex("not found")
+
+- name: Wait for redeployments of backend-redis
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+      - dc/backend-redis
+  when: update_cmd_result is changed
+
+# Section 1.2.9.1.2, “system-redis DeploymentConfig”
+
+- name: Patch the system-redis
+  shell: |
+    oc patch imagestream/system-redis -n {{ threescale_namespace }} --type=json -p '[
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System 2.8 Redis"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/rhscl/redis-32-rhel7:3.2"}, "name": "2.8", "referencePolicy": {"type": "Source"}}},
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System Redis (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
+    ]'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+  failed_when: update_cmd_result.rc != 0 and update_cmd_result.stderr is not regex("not found")
+
+- name: Wait for redeployments of system-redis
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+      - dc/system-redis
+  when: update_cmd_result is changed
+
+# Section 1.2.9.1.3, “system-mysql DeploymentConfig”
+
+- name: Patch the system-mysql
+  shell: |
+    oc patch imagestream/system-mysql -n {{ threescale_namespace }} --type=json -p '[
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System 2.8 MySQL"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/rhscl/mysql-57-rhel7:5.7"}, "name": "2.8", "referencePolicy": {"type": "Source"}}},
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System MySQL (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
+    ]'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+  failed_when: update_cmd_result.rc != 0 and update_cmd_result.stderr is not regex("not found")
+
+- name: Wait for redeployments of system-mysql
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+      - dc/system-mysql
+  when: update_cmd_result is changed
+
+
+# Section 1.2.9.1.4, “system-postgresql DeploymentConfig”
+
+- name: Patch the system-postgresql
+  shell: |
+    oc patch imagestream/system-postgresql -n {{ threescale_namespace }} --type=json -p '[
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System 2.8 PostgreSQL"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/rhscl/postgresql-10-rhel7"}, "name": "2.8", "referencePolicy": {"type": "Source"}}},
+      {"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System PostgreSQL (latest)"}, "from": { "kind": "ImageStreamTag", "name": "2.8"}, "name": "latest", "referencePolicy": {"type": "Source"}}}
+    ]'
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex("/[a-z-]+ patched")
+  failed_when: update_cmd_result.rc != 0 and update_cmd_result.stderr is not regex("not found")
+
+- name: Wait for redeployments of system-postgresql
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+      - dc/system-postgresql
+  when: update_cmd_result is changed
+
+
+# Section 1.2.10, “Deleting smtp ConfigMap”
+- name: Delete old smtp ConfigMap
+  shell: oc delete configmap smtp -n {{ threescale_namespace }}
+  register: update_cmd_result
+  changed_when: update_cmd_result.stdout is regex(" [a-z-]+ deleted")
+  failed_when: update_cmd_result.rc != 0 and update_cmd_result.stderr is not regex("not found")

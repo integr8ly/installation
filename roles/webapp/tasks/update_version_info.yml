@@ -1,0 +1,15 @@
+---
+#This ensures that the Integreatly version of webapp CR matches the new version
+#If webapp role was included in list of roles to be upgraded, the value may have been updated already; however, its harmless
+- name: Ensure integreatly version in custom resource reflects new release
+  shell: |
+    oc patch webapp tutorial-web-app-operator -n {{ webapp_namespace }} --type=json \
+      -p '[{"op":"replace","path":"/spec/template/parameters/INTEGREATLY_VERSION","value":"{{ integreatly_version }}"}]'
+  register: patch_webapp_version
+  changed_when: patch_webapp_version.stdout is not regex("not changed")
+
+# Since we update a CR and rely on the operator to initiate rollout of the deloyment indirectly vs. directly modifying the deploy ourselves
+# there may be a delay before the new rollout begins, we need to make sure we don't mistake the previous rollout status completion as the new onea
+- name: Wait for the new web app operator to be ready
+  shell: sleep 5; oc rollout status deployment/tutorial-web-app-operator -n {{ webapp_namespace }} -w
+  when: patch_webapp_version is changed
