@@ -3,6 +3,12 @@
 - set_fact:
     valid_resource_patches: '{{ resources | selectattr("kind","defined") | selectattr("name","defined") | list }}'
 
+# This allows omit to be used to prevent seconds parameter from existing when prompts are used
+- set_fact:
+    resource_limits_auto_dismiss_prompts_seconds: 1
+  when: not (resource_limits_interactive_prompts|default(false)|bool)
+
+
 - name: Warn about invalid patches that will be skipped
   pause:
     prompt: |
@@ -29,6 +35,7 @@
       {{  (resources | difference(valid_resource_patches)) | length }}
 
       Press enter to continue or Ctrl+C to abort?
+    seconds: "{{ resource_limits_auto_dismiss_prompts_seconds|default(omit) }}"
   when: (resources | difference(valid_resource_patches)) | length > 0
 
 -

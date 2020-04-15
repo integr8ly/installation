@@ -14,3 +14,8 @@ resource_limits_wait_for_rollouts_per_ns: true
 
 # if enabled, script will halt if an override is specified for a resource that does not exist
 resource_limits_fail_on_missing_resource: false
+
+# if enabled, user will be interactively prompted to decide whether execution should continue when 
+# invalid resource overrides are detected and/or unhandled errors during patching.  If disabled,
+# prompt will still be displayed; however, it will be automatically dismissed as continue
+resource_limits_interactive_prompts: false
