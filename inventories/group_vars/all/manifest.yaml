@@ -29,7 +29,11 @@ enmasse_postgresql_image: 'postgresql:9.6'
 #controls whether fuse is installed or not
 fuse: True
 #This is the release tag for fuse on openshift in github currently used to pull in the templates and image streams
+<<<<<<< HEAD
 fuse_release_tag: 'application-templates-2.1.0.fuse-760043-redhat-00003'
+=======
+fuse_release_tag: 'application-templates-2.1.fuse-750056-redhat-00006'
+>>>>>>> Updated fuse product version to application-templates-2.1.fuse-750056-redhat-00006
 #Used in customisation role to specify fuse version
 fuse_version: '7.6.0'
 
