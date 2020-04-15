@@ -29,16 +29,16 @@ enmasse_postgresql_image: 'postgresql:9.6'
 #controls whether fuse is installed or not
 fuse: True
 #This is the release tag for fuse on openshift in github currently used to pull in the templates and image streams
-fuse_release_tag: 'application-templates-2.1.fuse-750056-redhat-00006'
+fuse_release_tag: 'application-templates-2.1.0.fuse-760043-redhat-00001'
 #Used in customisation role to specify fuse version
-fuse_version: '7.5.1'
+fuse_version: '7.6.0'
 
 #controls whether Fuse Online is installed or not
 fuse_online: True
 # Syndesis operator version to be installed
 fuse_online_release_tag: '1.9.12'
 #Imagestream version installed by syndesis operator
-fuse_online_operator_imagestream_version: '1.5'
+fuse_online_operator_imagestream_version: '1.6'
 # Used by msbroker
 fuse_online_resources_base: 'https://raw.githubusercontent.com/integr8ly/fuse-online-install/{{fuse_online_release_tag}}/resources'
 fuse_online_binary_resources_base: https://github.com/jboss-fuse/fuse-clients/releases/download/{{fuse_online_release_tag}}/syndesis-{{fuse_online_release_tag}}-linux-64bit.tar.gz
@@ -117,7 +117,7 @@ monitoring_label_value: 'middleware'
 middleware_monitoring_operator_release_tag: '0.0.29'
 middleware_monitoring_operator_resources: 'https://raw.githubusercontent.com/integr8ly/application-monitoring-operator/{{ middleware_monitoring_operator_release_tag }}/deploy'
 
-msbroker_release_tag: 'v0.0.12'
+msbroker_release_tag: 'v0.0.13'
 msbroker_template: 'https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_release_tag }}/templates/broker.template.yaml'
 
 #AMQ Streams

@@ -4,5 +4,6 @@ upgrade_product_roles:
 - enmasse
 - 3scale
 - fuse_managed
+- fuse
 - rhsso
 - rhsso-user

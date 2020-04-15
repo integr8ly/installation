@@ -40,10 +40,6 @@
   failed_when: output.stderr != '' and 'not found' not in output.stderr
   with_items: "{{ existing_prometheus_rules.stdout_lines }}"
 
-# patches syndesis operator to remove args passed in previous install
-- name: TODO-THIS-IS-ONLY-NEEDED-ON-UPGRADES-FROM-FUSE-1.7-INSTALLS
-  shell: oc patch dc/syndesis-operator -p='{"spec":{"template":{"spec":{"containers":[{"name":"syndesis-operator","args":[]}]}}}}}' -n {{ fuse_namespace }}
-
 - name: Download fuse binary
   get_url:
     url: https://github.com/jboss-fuse/fuse-clients/releases/download/{{ fuse_online_release_tag }}/syndesis-{{ fuse_online_release_tag }}-linux-64bit.tar.gz
@@ -80,39 +76,12 @@
 - name: Run operator install
   shell: "/tmp/fuse-binary/syndesis-operator install operator  --wait --namespace {{ fuse_namespace }} {{ syndesis_install_params }}"
 
-- name: Remove Komodo-Server DC
-  shell: oc delete dc komodo-server --namespace {{ fuse_namespace }}
-  register: result
-  failed_when: result.stderr != '' and 'not found' not in result.stderr
-
 - template:
     src: syndesis-customresource.yml.j2
     dest: /tmp/syndesis-customresource.yml
 
 - name: Update Syndesis custom resource in {{ fuse_namespace }}
   shell: oc apply -f /tmp/syndesis-customresource.yml -n {{ fuse_namespace }}
-
-- name: Wait for new image streams are available
-  shell: oc get imagestream -n {{ fuse_namespace }} -l "syndesis.io/app=syndesis" -o name | wc -l
-  register: is_output
-  until: is_output.stdout|int >= 8
-  retries: 100
-  delay: 10
-
-- name: Patch db deployment configs to make sure they are using image streams from the right namespace
-  shell: oc patch dc/syndesis-db --type=json --patch='[{"op":"replace", "path":"/spec/triggers/1/imageChangeParams/from/namespace", "value":"{{ fuse_namespace }}"}, {"op":"replace", "path":"/spec/triggers/2/imageChangeParams/from/namespace", "value":"{{ fuse_namespace }}"}]' -n {{ fuse_namespace }}
-
-- name: Patch all the other infrastructure deployment configs to make sure they are using image streams from the right namespace
-  shell: oc patch dc/{{ item }} --type=json --patch='[{"op":"replace", "path":"/spec/triggers/0/imageChangeParams/from/namespace", "value":"{{ fuse_namespace }}"}]' -n {{ fuse_namespace }}
-  with_items:
-    - syndesis-meta
-    - syndesis-oauthproxy
-    - syndesis-prometheus
-    - syndesis-server
-    - syndesis-ui
-
-- name: Remove OpenShift SAR configuration on Fuse Managed OAuth proxy
-  shell: sleep 5; oc get dc syndesis-oauthproxy -o yaml -n {{ fuse_namespace }} | sed '/--openshift-sar/d' | oc apply -f - -n {{ fuse_namespace }}; sleep 5
 
 - name: Wait for a new deployment is started
   shell: oc get pods -n {{ fuse_namespace }} | grep -- "-deploy" | wc -l

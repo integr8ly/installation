@@ -1,45 +1,6 @@
 ---
-- set_fact:
-    old_fuse_templates_url: "https://raw.githubusercontent.com/jboss-fuse/application-templates/{{ old_fuse_tag }}/quickstarts"
-    old_fuse_resource_base: "https://raw.githubusercontent.com/jboss-fuse/application-templates/{{ old_fuse_tag }}"
 
-# Delete old templates
-- name: Delete old fuse quickstart templates
-  shell: oc delete -f {{ old_fuse_templates_url }}/{{ item }} -n openshift
-  with_items:
-    - "eap-camel-amq-template.json"
-    - "eap-camel-cdi-template.json"
-    - "eap-camel-cxf-jaxrs-template.json"
-    - "eap-camel-cxf-jaxws-template.json"
-    - "eap-camel-jpa-template.json"
-    - "karaf-camel-amq-template.json"
-    - "karaf-camel-log-template.json"
-    - "karaf-camel-rest-sql-template.json"
-    - "karaf-cxf-rest-template.json"
-    - "spring-boot-camel-amq-template.json"
-    - "spring-boot-camel-config-template.json"
-    - "spring-boot-camel-drools-template.json"
-    - "spring-boot-camel-infinispan-template.json"
-    - "spring-boot-camel-rest-sql-template.json"
-    - "spring-boot-camel-template.json"
-    - "spring-boot-camel-xa-template.json"
-    - "spring-boot-camel-xml-template.json"
-    - "spring-boot-cxf-jaxrs-template.json"
-    - "spring-boot-cxf-jaxws-template.json"
-  register: delete_fuse_quickstart_template_cmd
-  failed_when: delete_fuse_quickstart_template_cmd.stderr != '' and 'NotFound' not in delete_fuse_quickstart_template_cmd.stderr
-
-- name: Delete old fuse console templates
-  shell: oc delete -f {{ old_fuse_resource_base }}/{{ item }} -n openshift
-  with_items:
-    - "fis-console-cluster-template.json"
-    - "fis-console-namespace-template.json"
-    - "fuse-apicurito.yml"
-  register: delete_fuse_console_template_cmd
-  failed_when: delete_fuse_console_template_cmd.stderr != '' and 'NotFound' not in delete_fuse_console_template_cmd.stderr
-
-# Create new templates
-- name: Create Fuse quickstart templates
+- name: Update Fuse quickstart templates
   shell: oc replace --force -f {{ fuse_templates_url }}/{{ item }} -n openshift
   with_items:
     - "eap-camel-amq-template.json"
@@ -66,7 +27,7 @@
   failed_when: create_fuse_quickstart_template_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_quickstart_template_cmd.stderr
   changed_when: create_fuse_quickstart_template_cmd.rc == 0
 
-- name: Create Fuse Console templates
+- name: Update Fuse Console templates
   shell: oc replace --force -f {{ fuse_resource_base }}/{{ item }} -n openshift
   with_items:
     - "fuse-apicurito.yml"
