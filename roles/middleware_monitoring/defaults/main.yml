@@ -36,6 +36,16 @@ monitoring_resource_templates_pre:
 - "alert_manager_cluster_role_binding.yml"
 - "alert_manager_cluster_role.yml"
 
+monitoring_resource_uninstall_templates_pre:
+# Grafana resources
+- "grafana_crd.yml"
+- "grafana_dashboard_crd.yml"
+- "grafana_datasource_crd.yml"
+- "grafana_cluster_role.yml"
+- "grafana_cluster_role_binding.yml"
+- "grafana-proxy-clusterrole.yml"
+- "grafana-proxy-clusterrole_binding.yml"
+  # Prometheus resources
 
 monitoring_resource_templates_post:
   # Application monitoring resources
