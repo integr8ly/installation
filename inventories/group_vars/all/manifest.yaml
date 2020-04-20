@@ -134,7 +134,7 @@ backup_namespace: "openshift-integreatly-backups"
 
 #Heimdall
 heimdall: False
-heimdall_operator_release_tag: 'release-1.0.0'
+heimdall_operator_release_tag: 'release-1.0.1'
 heimdall_operator_resources: 'https://raw.githubusercontent.com/integr8ly/heimdall/{{heimdall_operator_release_tag}}/deploy'
 
 # Supported oc versions
