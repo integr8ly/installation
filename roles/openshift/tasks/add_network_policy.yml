@@ -1,0 +1,24 @@
+---
+- copy:
+    src: allow-from-middleware-namespaces.json
+    dest: /tmp/allow-from-middleware-namespaces.json
+
+- name: Store contents of the allow-from-middleware-namespaces NetworkPolicy
+  shell: cat /tmp/allow-from-middleware-namespaces.json
+  register: allow_from_middleware_namespaces
+
+- name: Get existing NetworkPolicies in project template
+  shell: oc get template project-request -n default -o json | jq '.objects[] | select(.kind == "NetworkPolicy")' 
+  register: existing_network_policies
+
+- name: Get existing "allow-from-middleware-namespaces" NetworkPolicy from project template
+  shell: oc get template project-request -n default -o json | jq '.objects[] | select(.kind == "NetworkPolicy") | select(.metadata.name == "allow-from-middleware-namespaces")'
+  register: existing_allow_from_middleware_network_policy
+
+- name: Add allow-from-middleware-namespaces NetworkPolicy
+  when:
+    - existing_network_policies.stdout | length > 0
+    - existing_allow_from_middleware_network_policy.stdout | length == 0
+  shell: oc get template project-request -n default -o json | jq '.objects += [{{allow_from_middleware_namespaces.stdout}}]' | oc apply -f -
+  register: apply_cmd_result
+  changed_when: apply_cmd_result.stdout is regex("/[a-z-]+ configured")
