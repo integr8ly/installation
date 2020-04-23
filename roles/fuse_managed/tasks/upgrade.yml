@@ -1,9 +1,8 @@
-
 ---
 # Used to pull images from registry.redhat.io
 - name: Expose vars
   include_vars: "{{ role_path }}/../imagestream_pull_secret/defaults/main.yml"
-  
+
 - include_role:
     name: imagestream_pull_secret
   vars:
@@ -51,7 +50,7 @@
 - name: Build syndesis install params
   block:
     - name: check if kubeconfig file exists
-      stat: 
+      stat:
         path: "{{ kube_config_file }}"
       register: kube_config_exists
 
@@ -83,18 +82,17 @@
 - name: Update Syndesis custom resource in {{ fuse_namespace }}
   shell: oc apply -f /tmp/syndesis-customresource.yml -n {{ fuse_namespace }}
 
-- name: Wait for a new deployment is started
-  shell: oc get pods -n {{ fuse_namespace }} | grep -- "-deploy" | wc -l
-  register: deploy_result
-  until: deploy_result.stdout|int > 0
-  retries: 50
-  delay: 5
-  ignore_errors: True
+- name: Wait for Fuse rollouts to complete
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ fuse_namespace }}"
+    rollouts_to_watch:
+      - dc/broker-amq
+      - dc/syndesis-db
+      - dc/syndesis-meta
+      - dc/syndesis-oauthproxy
+      - dc/syndesis-operator
+      - dc/syndesis-prometheus
+      - dc/syndesis-server
+      - dc/syndesis-ui
 
-- name: Verify Fuse deployment succeeded
-  shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
-  register: fuse_verify_result
-  until: fuse_verify_result.stdout|int >= 7
-  retries: 100
-  delay: 10
-  changed_when: False
