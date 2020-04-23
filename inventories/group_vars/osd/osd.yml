@@ -65,10 +65,10 @@ prerequisites_install: False
 pull_secret_name: registry-redhat-io-dockercfg
 
 # Reads in password set via ansible tower survey
-rhsso_evals_admin_password: "{{ rhsso_admin_pass }}"
+rhsso_evals_admin_password: "{{ rhsso_admin_pass | default('') }}"
 
 # Don't run any tasks on the master.
-# See group_vars/all/common.yml & relevant SOP for more info when 
+# See group_vars/all/common.yml & relevant SOP for more info when
 # setting this to False.
 run_master_tasks: False
 
