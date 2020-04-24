@@ -26,8 +26,6 @@
     set_fact: upgrade_{{ item | replace('-', '') }}=true
     with_items: "{{ upgrade_product_roles }}"
 
-  # Fuse images upgrade fails because new image tags don't exist
-  # I am not sure whether this is needed for minor product releases upgrades
   - name: Upgrade product images
     include_role:
       name: "{{ item }}"
@@ -42,91 +40,16 @@
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
 
-  - name: Upgrade 3scale to 2.8
-    include_role:
-      name: 3scale
-      tasks_from: upgrade_2.7_to_2.8
-    when: upgrade_3scale|bool
-
-  - name: Upgrade CodeReady Workspace to version 2.0.0
-    include_role:
-      name: codeready
-      tasks_from: upgrade_1.2_to_2.0
-    when: upgrade_codeready|bool
-
-  - name: Upgrade Fuse on Openshift
-    include_role:
-      name: fuse
-      tasks_from: upgrade
-    when: upgrade_fuse|bool
-
-  - name: Upgrade Fuse Online
-    include_role:
-      name: fuse_managed
-      tasks_from: upgrade
-    when: upgrade_fuse_managed|bool
-
-  # Managed Service Broker upgrade
-  - name: Include SSO vars
-    include_vars: "../roles/rhsso/defaults/main.yml"
-
-  - name: Set eval_app_host var
-    set_fact:
-      eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
-
-  - name: Upgrade Managed Service Broker
-    include_role:
-      name: msbroker
-      tasks_from: upgrade
-    vars:
-      route_suffix: "{{ eval_app_host }}"
-      sso_realm: "{{ rhsso_realm }}"
-    when: upgrade_fuse_managed|bool
-
-  - name: Upgrade Alert Manager
-    include_role:
-      name: middleware_monitoring_config
-      tasks_from: upgrade_alert_manager_email
-
-  - name: Update monitoring alerts
-    include_role:
-      name: middleware_monitoring_config
-      tasks_from: create_alerts
-
-  - name: Expose vars
-    include_vars: "../roles/enmasse/defaults/main.yml"
-
-  - name: Add AMQ Online service admin role to customer admin
-    include_role:
-      name: enmasse
-      tasks_from: service_admin.yml
-
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
     include_role:
       name: rhsso-user
       tasks_from: obtain-user-sso-token.yml
 
-  - name: Disable review and confirming link account
+  - name: Disable review and confirming link account 
     include_role:
       name: rhsso-user
       tasks_from: disable-idp-review-link-confirm.yml
-
-  # Allow admin users to view 3Scale logs via Kibana
-  - name: Add Get Namespaces (3Scale) permission to admin users
-    include_role:
-      name: 3scale
-      tasks_from: admins-view-namespace.yml
-
-  #Ensure integreatly version in webapp cr matches new version (should always be 2nd last)
-  - name: Update webapp version information
-    include_role:
-      name: webapp
-      tasks_from: update_version_info
-
-- name: Apply overrides for resource limits and replica counts
-  import_playbook: "./update_resources.yml"
-  when: resource_limits_managed | default(true) | bool
 
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"

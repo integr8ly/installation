@@ -51,7 +51,7 @@ To cut subsequent RCs for a patch release:
 ### Minor Release
 
 There may be logic in the upgrade playbook that is targetted at a specific release only.
-After the minor release branch is created, the upgrade playbook in `playbooks/upgrades/upgrade.yml` should be reviewed and reset on `master` to remove any version specific blocks, tasks or roles being included.
+After the minor release branch is created, the upgrade playbook in `playbooks/upgrade.yml` should be reviewed and reset on `master` to remove any version specific blocks, tasks or roles being included.
 
 As this is a manual task, here are some guidelines for doing the review.
 
