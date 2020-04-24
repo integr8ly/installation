@@ -13,11 +13,6 @@ enmasse_postgres_cronjob_name: 'enmasse-postgres-backup'
 enmasse_pv_cronjob_name: 'enmasse-pv-backup'
 
 enmasse_resources:
-  - name: api-server
-    kind: deploy
-    resources:
-      requests:
-        memory: 256Mi
   - name: enmasse-operator
     kind: deploy
     resources:
