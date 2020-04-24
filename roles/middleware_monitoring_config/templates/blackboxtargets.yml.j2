@@ -26,7 +26,7 @@ spec:
     url: https://{{ enmasse_keycloak_route.stdout }}/auth/admin/master/console/
     module: http_2xx
   - service: amq-service-broker
-    url: https://{{ enmasse_console_proxy_route.stdout }}/healthz
+    url: https://{{ enmasse_console_proxy_route.stdout }}/oauth/healthz
     module: http_2xx
 {% endif %}
 {% if che | default(true) | bool %}
