@@ -54,6 +54,11 @@
       openshift_asset_url: "{{ hostvars['EVAL_VARS']['openshift_asset_url'] | replace('https://', '') }}"
       upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
     when: upgrade_webapp|bool
+    
+  - name: AMQ BlackboxTarget Route update
+    include_role:
+      name: enmasse
+      tasks_from: upgrade_1.6_1.7
 
   - name: Upgrade 3scale to 2.8
     include_role:
