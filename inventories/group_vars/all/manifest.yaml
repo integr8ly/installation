@@ -77,8 +77,8 @@ gitea_operator_resources: 'https://raw.githubusercontent.com/integr8ly/gitea-ope
 #controls whether webapp is installed or not
 webapp: True
 #below vars are not currently used but reflect the current state. In the future they will be used when we source resources from outside of the installer
-webapp_version: '2.22.3'
-webapp_operator_release_tag: 'v0.0.49'
+webapp_version: '2.22.6'
+webapp_operator_release_tag: 'v0.0.50'
 webapp_operator_resources: 'https://raw.githubusercontent.com/integr8ly/tutorial-web-app-operator/{{webapp_operator_release_tag}}/deploy'
 
 #controls whether apicurito is installed or not
@@ -117,7 +117,7 @@ monitoring_label_value: 'middleware'
 middleware_monitoring_operator_release_tag: '0.0.29'
 middleware_monitoring_operator_resources: 'https://raw.githubusercontent.com/integr8ly/application-monitoring-operator/{{ middleware_monitoring_operator_release_tag }}/deploy'
 
-msbroker_release_tag: 'v0.0.14'
+msbroker_release_tag: 'v0.0.15'
 msbroker_template: 'https://raw.githubusercontent.com/integr8ly/managed-service-broker/{{ msbroker_release_tag }}/templates/broker.template.yaml'
 
 #AMQ Streams
