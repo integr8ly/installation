@@ -1,4 +1,4 @@
 ---
-#ToDo Implement CVE image update steps as described https://github.com/RHCloudServices/integreatly-help/blob/master/sops/cves/applying-cve-updates.md
-- debug:
-    msg: "TODO Implement me!!"
+# Upgrade templates
+- name: Upgrade templates
+  import_tasks: main.yml

@@ -1,6 +1,6 @@
 ---
 # SETUP FUSE OPERATOR AND FUSE ON OPENSHIFT IMAGES
-- name: Create Fuse image streams
+- name: Create/Update Fuse image streams
   shell: "oc replace --force -f {{ item }} -n openshift"
   register: create_fuse_imagestream_cmd
   failed_when: create_fuse_imagestream_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_imagestream_cmd.stderr
@@ -9,7 +9,7 @@
     - "{{ fuse_on_openshift_imagestreams_url }}"
 
 # SETUP FUSE ON OPENSHIFT TEMPLATES
-- name: Create Fuse quickstart templates
+- name: Create/Update Fuse quickstart templates
   shell: oc replace --force -f {{ fuse_templates_url }}/{{ item }} -n openshift
   with_items:
     - "eap-camel-amq-template.json"
@@ -36,8 +36,8 @@
   failed_when: create_fuse_quickstart_template_cmd.stderr != '' and 'AlreadyExists' not in create_fuse_quickstart_template_cmd.stderr
   changed_when: create_fuse_quickstart_template_cmd.rc == 0
 
-- name: Create Fuse Console templates
-  shell: oc create -f {{ fuse_resource_base }}/{{ item }} -n openshift
+- name: Create/Update Fuse Console templates
+  shell: oc replace --force -f {{ fuse_resource_base }}/{{ item }} -n openshift
   with_items:
     - "fis-console-cluster-template.json"
     - "fis-console-namespace-template.json"
