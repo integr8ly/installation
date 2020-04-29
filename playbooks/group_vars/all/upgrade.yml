@@ -7,3 +7,4 @@ upgrade_product_roles:
 - fuse
 - rhsso
 - rhsso-user
+- webapp
