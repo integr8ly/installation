@@ -1,4 +1,26 @@
 ---
-#ToDo Implement CVE image update steps as described https://github.com/RHCloudServices/integreatly-help/blob/master/sops/cves/applying-cve-updates.md
-- debug:
-    msg: "TODO Implement me!!"
+- name: Get cronjobs with monitoring-key middleware
+  shell: oc get cronjobs -n {{ backup_namespace }} --selector=monitoring-key=middleware | awk '{print $1}' | grep -v 'NAME'
+  register: cronjobs_names
+
+- name: Extract cronjob names and namespaces
+  set_fact:
+    cronjobs_names_list: "{{ cronjobs_names.stdout_lines }}"
+
+- name: Patch the image in each cronjob
+  shell: "oc patch cronjob {{ item }} -n {{ backup_namespace }} --type json -p '[{\"op\":\"replace\", \"path\":\"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\":\"{{ backup_image }}\"}]'"
+  with_items: "{{ cronjobs_names_list }}"
+  when: (cronjobs_names_list | length) > 0
+
+- name: include rhsso vars
+  include_vars: ../../rhsso/defaults/main.yml
+
+- name: Patch keycloak crs
+  include_role:
+    name: rhsso
+    tasks_from: backup
+  vars:
+      sso_namespace: "{{ item }}"
+  with_items:
+    - "{{ eval_rhsso_namespace }}"
+    - "{{ eval_user_rhsso_namespace }}"
