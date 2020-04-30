@@ -1,6 +1,6 @@
 ---
 - include: ./delete_resource_from_template.yml
-  with_items: "{{ monitoring_resource_templates_pre }}"
+  with_items: "{{ monitoring_resource_uninstall_templates_pre }}"
 
 - include: ./delete_resource_from_template.yml
   with_items: "{{ monitoring_resource_templates_post }}"
