@@ -42,6 +42,7 @@
 
 - name: Download fuse binary
   get_url:
+    force: yes
     url: https://github.com/jboss-fuse/fuse-clients/releases/download/{{ fuse_online_release_tag }}/syndesis-{{ fuse_online_release_tag }}-linux-64bit.tar.gz
     dest: /tmp/fuse-binary-archive
 
