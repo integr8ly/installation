@@ -1,6 +1,6 @@
 ---
 - name: Import new Fuse online images
-  shell: "oc import-image {{ patch_image_stream_item }} --confirm='true' -n {{ fuse_namespace }}"
+  shell: "oc import-image {{ patch_image_stream_item.name }} --from={{ patch_image_stream_item.source }} --confirm='true' -n {{ fuse_namespace }}"
   with_items: "{{ fuse_image_streams }}"
   loop_control:
     loop_var: patch_image_stream_item 
