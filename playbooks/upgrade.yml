@@ -92,6 +92,14 @@
       tasks_from: upgrade
     when: upgrade_fuse_managed|bool
 
+  - name: Upgrade Apicurito
+    include_role:
+      name: apicurito
+      tasks_from: upgrade
+    vars:
+      route_suffix: "{{ eval_app_host }}"
+    when: upgrade_apicurito|bool
+
   # Managed Service Broker upgrade
   - name: Include SSO vars
     include_vars: "../roles/rhsso/defaults/main.yml"

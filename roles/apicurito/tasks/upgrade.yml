@@ -1,0 +1,9 @@
+---
+# Upgrade templates
+- name: Remove current Apicurito
+  shell: oc process -f {{ apicurito_template_file }} --param=ROUTE_HOSTNAME={{ apicurito_route_hostname }}.{{ route_suffix }} | oc delete -f - -n {{ apicurito_namespace }}
+
+- name: Install new version of Apicurito
+  import_tasks: main.yml
+  vars:
+    apicurito_route_suffix: "{{ route_suffix }}"
