@@ -67,6 +67,7 @@
     include_role:
       name: enmasse
       tasks_from: upgrade_1.6_1.7
+    when: upgrade_enmasse|bool
 
   - name: Upgrade 3scale to 2.8
     include_role:
