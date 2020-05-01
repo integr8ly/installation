@@ -6,3 +6,12 @@
 - name: Delete Fuse roles
   shell: oc delete role role-binder -n {{ fuse_namespace }}
   failed_when: false
+
+## Ensure fuse binary is removed after installation
+- name: Remove fuse binary
+  file:
+      path: "{{ item }}"
+      state: absent
+  with_items:
+    - "/tmp/fuse-binary-archive"
+    - "/tmp/fuse-binary"
