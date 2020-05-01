@@ -1,17 +1,6 @@
 ---
-- name: "get all deployments"
-  shell: "oc get deployments -o custom-columns=NAME:{.metadata.name} --no-headers -n {{ enmasse_namespace }}"
-  register: deployments_result
-  failed_when: deployments_result.stderr != ""
-
-- set_fact:
-    deployments: "{{ deployments_result.stdout.splitlines() }}"
-
-- name: "patch all deployments"
-  shell: oc patch deployment {{ item }} -p  "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"last-restart\":\"`date +'%s'`\"}}}}}" -n {{ enmasse_namespace }}
-  register: patch_result
-  failed_when: patch_result.stderr != ""
-  with_items: "{{ deployments }}"
+- name: Install EnMasse
+  import_tasks: main.yml
 
 - name: "Postgresql update the imagestreams"
   shell: oc import-image {{ enmasse_postgresql_image }} -n openshift
