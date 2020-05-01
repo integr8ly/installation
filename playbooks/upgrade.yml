@@ -34,6 +34,13 @@
       tasks_from: "upgrade_images"
     with_items: "{{ upgrade_product_roles }}"
 
+# Only set these vars if run_master_tasks is true. false for osd, true for pds
+  - set_fact:
+      openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] }}"
+      openshift_asset_url: "{{ hostvars['EVAL_VARS']['openshift_asset_url'] }}"
+    when:
+      - run_master_tasks | default(true) | bool
+
 # Add product specific upgrade tasks here, make sure to use the "when: upgrade_<product>|bool" condition on any new tasks added!!
 #
 #    - name: Some Special webapp only upgrade thing
@@ -50,8 +57,6 @@
     vars:
       rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
       rhsso_namespace: "{{ eval_rhsso_namespace }}"
-      openshift_master_url: "{{ hostvars['EVAL_VARS']['openshift_master_url'] | replace('https://', '') }}"
-      openshift_asset_url: "{{ hostvars['EVAL_VARS']['openshift_asset_url'] | replace('https://', '') }}"
       upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
     when: upgrade_webapp|bool
 
