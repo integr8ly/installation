@@ -1,7 +1,2 @@
 ---
-
-- name: Import Image Streams
-  shell: oc import-image {{ patch_image_stream_item }} -n openshift
-  with_items: "{{ apicurito_image_streams }}"
-  loop_control:
-    loop_var: patch_image_stream_item
+# This is done by the fuse on openshift upgrade images, so there's no need to do anything here

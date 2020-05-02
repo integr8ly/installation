@@ -67,6 +67,7 @@
     include_role:
       name: enmasse
       tasks_from: upgrade_1.6_1.7
+    when: upgrade_enmasse|bool
 
   - name: Upgrade 3scale to 2.8
     include_role:
@@ -92,13 +93,21 @@
       tasks_from: upgrade
     when: upgrade_fuse_managed|bool
 
-  # Managed Service Broker upgrade
-  - name: Include SSO vars
-    include_vars: "../roles/rhsso/defaults/main.yml"
-
   - name: Set eval_app_host var
     set_fact:
       eval_app_host: "{{ hostvars['EVAL_VARS']['eval_app_host'] }}"
+
+  - name: Upgrade Apicurito
+    include_role:
+      name: apicurito
+      tasks_from: upgrade
+    vars:
+      route_suffix: "{{ eval_app_host }}"
+    when: upgrade_apicurito|bool
+
+  # Managed Service Broker upgrade
+  - name: Include SSO vars
+    include_vars: "../roles/rhsso/defaults/main.yml"
 
   - name: Upgrade Managed Service Broker
     include_role:
