@@ -1,6 +1,7 @@
 ---
 - name: Get cronjobs with monitoring-key middleware
-  shell: oc get cronjobs -n {{ backup_namespace }} --selector=monitoring-key=middleware | awk '{print $2}' | grep -v 'NAME'
+  shell: oc get cronjobs -n {{ backup_namespace }} --selector=monitoring-key=middleware | awk '{print $1}' | grep -v 'NAME'
+  failed_when: false
   register: cronjobs_names
 
 - name: Extract cronjob names and namespaces
