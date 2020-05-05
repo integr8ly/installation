@@ -15,7 +15,7 @@
   - name: Create ImageStream Pull Secret
     shell: oc apply -f /tmp/heimdall-dockercfg.yml -n {{ heimdall_namespace }}
 
-  when: heimdall_pull_secret_name is defined and heimdall_pull_secret_token is defined
+  when: heimdall_pull_secret_token is defined
 
 - name: Create Heimdall Operator Resources
   shell: "oc create -f {{ item }} -n {{ heimdall_namespace }}"

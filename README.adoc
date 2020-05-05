@@ -119,7 +119,6 @@ Before running the installer, please consider the following variables:
 | github_client_id | GitHub OAuth client ID to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
 | github_client_secret | GitHub OAuth client secret to enable GitHub authorization for Launcher. If not defined, GitHub authorization for Launcher will be disabled
 | prerequisites_install | Boolean var that skips the installation of system wide tools/packages that are required by the installer if set to false (needs to be set to false when running the installer in a linux container). Defaults to `true`. 
-| heimdall_pull_secret_name | Heimdall pull secret name
 | heimdall_pull_secret_token | Heimdall pull secret token
 |===
 
@@ -156,7 +155,7 @@ To enable Heimdall you will need a valid pull secret token to access the registr
 
 [source,shell]
 ----
--e heimdall_pull_secret_name=<your_secret-name> -e heimdall_pull_secret_token=<your_secret-token>
+-e heimdall_pull_secret_token=<your_secret-token>
 ----
 
 
