@@ -69,7 +69,7 @@
   - name: Include vars for blackbox target update
     include_vars: "../roles/3scale/defaults/main.yml"
 
-  - name: AMQ BlackboxTarget Route update
+  - name: Upgrade Enmasse and AMQ BlackboxTarget Route update
     include_role:
       name: enmasse
       tasks_from: upgrade_1.6_1.7
@@ -141,6 +141,7 @@
     include_role:
       name: enmasse
       tasks_from: service_admin.yml
+
 
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
