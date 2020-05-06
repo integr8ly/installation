@@ -10,3 +10,4 @@ upgrade_product_roles:
 - rhsso-user
 - webapp
 - apicurito
+- launcher

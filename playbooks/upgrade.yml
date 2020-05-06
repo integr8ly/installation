@@ -59,7 +59,13 @@
       rhsso_namespace: "{{ eval_rhsso_namespace }}"
       upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
     when: upgrade_webapp|bool
-    
+
+  - name: Patch launcher config map to patch launcher.backend.catalog.git.ref
+    include_role:
+      name: launcher
+      tasks_from: upgrade
+    when: upgrade_launcher|bool
+
   - name: Include vars for blackbox target update
     include_vars: "../roles/3scale/defaults/main.yml"
 
