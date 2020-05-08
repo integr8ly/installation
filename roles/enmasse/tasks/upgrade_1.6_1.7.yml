@@ -7,3 +7,7 @@
 - name: Remove console-proxy route
   shell: "oc delete route console-proxy -n {{ enmasse_namespace }}"
   failed_when: false
+
+- name: Upgrade Prometheus Rule
+  import_tasks: upgrade_prometheus_rule.yml
+  
