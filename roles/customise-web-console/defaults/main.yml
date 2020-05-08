@@ -37,11 +37,10 @@ customise_web_console:
       name: Red Hat Developer Launcher
       icon: fa fa-noicon
       description: Continuous application delivery, built and deployed on OpenShift.
-#    EnMasse does not currently generate useful URL by the end of installation, so let's remove it until it does
-#    enmasse:
-#      name: Red Hat AMQ Online
-#      icon: fa fa-noicon
-#      description: Continuous application delivery, built and deployed on OpenShift.
+    enmasse:
+      name: Red Hat AMQ Online
+      icon: fa fa-noicon
+      description: Continuous application delivery, built and deployed on OpenShift.
     fuse_online:
       name: Red Hat Fuse Online
       icon: fa fa-noicon
