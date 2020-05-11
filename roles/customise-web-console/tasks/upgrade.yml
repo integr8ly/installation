@@ -1,0 +1,16 @@
+---
+- name: Update {{ customise_web_console.configmap_name }} configmap
+  import_tasks: install.yml
+
+- name: Redeploy {{ customise_web_console.app_name }}
+  shell: oc rollout latest {{ customise_web_console.app_name }} -n {{ customise_web_console.namespace }}
+  changed_when: False
+
+- name: Wait for {{ customise_web_console.app_name }} rollout
+  shell: "oc rollout status deployment/{{ customise_web_console.app_name }} -n {{ customise_web_console.namespace }} --watch=false | grep 'rolled out'"
+  register: result
+  until: result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stderr
+  changed_when: False
