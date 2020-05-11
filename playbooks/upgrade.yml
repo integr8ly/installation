@@ -58,13 +58,13 @@
       rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
       rhsso_namespace: "{{ eval_rhsso_namespace }}"
       upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
-    when: upgrade_webapp|bool
+    when: upgrade_webapp|default(false)|bool
 
   - name: Patch launcher config map to patch launcher.backend.catalog.git.ref
     include_role:
       name: launcher
       tasks_from: upgrade
-    when: upgrade_launcher|bool
+    when: upgrade_launcher|default(false)|bool
 
   - name: Include vars for blackbox target update
     include_vars: "../roles/3scale/defaults/main.yml"
@@ -73,31 +73,31 @@
     include_role:
       name: enmasse
       tasks_from: upgrade_1.6_1.7
-    when: upgrade_enmasse|bool
+    when: upgrade_enmasse|default(false)|bool
 
   - name: Upgrade 3scale to 2.8
     include_role:
       name: 3scale
       tasks_from: upgrade_2.7_to_2.8
-    when: upgrade_3scale|bool
+    when: upgrade_3scale|default(false)|bool
 
   - name: Upgrade CodeReady Workspace to version 2.0.0
     include_role:
       name: codeready
       tasks_from: upgrade_1.2_to_2.0
-    when: upgrade_codeready|bool
+    when: upgrade_codeready|default(false)|bool
 
   - name: Upgrade Fuse on Openshift
     include_role:
       name: fuse
       tasks_from: upgrade
-    when: upgrade_fuse|bool
+    when: upgrade_fuse|default(false)|bool
 
   - name: Upgrade Fuse Online
     include_role:
       name: fuse_managed
       tasks_from: upgrade
-    when: upgrade_fuse_managed|bool
+    when: upgrade_fuse_managed|default(false)|bool
 
   - name: Set eval_app_host var
     set_fact:
@@ -109,7 +109,7 @@
       tasks_from: upgrade
     vars:
       route_suffix: "{{ eval_app_host }}"
-    when: upgrade_apicurito|bool
+    when: upgrade_apicurito|default(false)|bool
 
   # Managed Service Broker upgrade
   - name: Include SSO vars
@@ -122,7 +122,7 @@
     vars:
       route_suffix: "{{ eval_app_host }}"
       sso_realm: "{{ rhsso_realm }}"
-    when: upgrade_fuse_managed|bool
+    when: upgrade_fuse_managed|default(false)|bool
 
   - name: Upgrade Alert Manager
     include_role:
@@ -172,3 +172,12 @@
 
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"
+
+# The following role requires an up to date manifest so this should be called after generating the customisation inventory playbook
+- hosts: localhost
+  gather_facts: yes
+  tasks:
+  - name: Update console links in the app launcher menu
+    include_role:
+      name: customise-web-console
+      tasks_from: upgrade

@@ -1,5 +1,5 @@
 - name: Get the operator pod
-  shell: "oc get pods -n {{ enmasse_namespace }} --selector=name=enmasse-operator | grep -v NAME | awk '{print$1}'"
+  shell: "oc get pods -n {{ enmasse_namespace }} --selector=name=enmasse-operator -o jsonpath='{.items[0].metadata.name}'"
   register: pod
 
 - name: Set pod name
