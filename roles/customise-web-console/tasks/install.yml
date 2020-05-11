@@ -10,6 +10,7 @@
 
 - name: "Generate Javascript file"
   template:
+    force: yes
     src: web-console-config.js.j2
     dest: "/tmp/{{ customise_web_console.javascript_filename }}"
 
