@@ -174,7 +174,10 @@
 - import_playbook: "./generate-customisation-inventory.yml"
 
 # The following role requires an up to date manifest so this should be called after generating the customisation inventory playbook
-- name: Update console links in the app launcher menu
-  include_role:
-    name: customise-web-console
-    tasks_from: upgrade.yml
+- hosts: localhost
+  gather_facts: yes
+  tasks:
+  - name: Update console links in the app launcher menu
+    include_role:
+      name: customise-web-console
+      tasks_from: upgrade
