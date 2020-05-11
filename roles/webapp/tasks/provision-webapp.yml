@@ -28,7 +28,7 @@
   when: datasync | bool | default(true)
 
 - name: Get AMQ console route
-  shell: "oc get route/console -o template --template \{\{.spec.host\}\} -n {{ eval_enmasse_namespace }}"
+  shell: oc get route/console -o template --template \{\{.spec.host\}\} -n {{ eval_enmasse_namespace }}
   register: enmasse_console_route
   
 - name: Generate WebApp custom resource template
