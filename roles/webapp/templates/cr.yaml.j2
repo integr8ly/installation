@@ -18,3 +18,9 @@ spec:
 {% if webapp_walkthrough_locations is defined  %}
       WALKTHROUGH_LOCATIONS: "{{ webapp_walkthrough_locations|join(',') }}"
 {% endif %}
+      INSTALLED_SERVICES: |-
+        {
+          "amq-online-standard": {
+            "Host": "{{ enmasse_console_route.stdout }}"
+          }
+        }
