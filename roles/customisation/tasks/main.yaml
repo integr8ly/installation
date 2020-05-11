@@ -211,7 +211,6 @@
 
 - name: Get enmasse console route
   shell: oc get route/console -o template --template \{\{.spec.host\}\} -n {{ enmasse_namespace | default('enmasse') }}
-  failed_when: no
   register: enmasse_route_cmd
   when: enmasse
 
