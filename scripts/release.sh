@@ -109,7 +109,7 @@ fi
 sed -i.bak -E "s/^integreatly_version: .*$/integreatly_version: ${releaseTag}/g"  ./inventories/group_vars/all/manifest.yaml && rm ./inventories/group_vars/all/manifest.yaml.bak
 
 #commit the change, tag
-git commit -am "release manifest version  update for ${releaseTag}"
+git commit -am "release manifest version update for ${releaseTag}"
 git tag ${releaseTag}
 
 #reset upgrade playbook and variables if this is the final release
@@ -123,3 +123,15 @@ fi
 #push branch
 git push ${REMOTE} ${baseBranch}
 git push ${REMOTE} ${releaseTag}
+
+#reset master upgrade playbook
+if [[ -z $LABEL_VERSION ]]; then
+    echo "resetting master upgrade playbook"
+    resetMasterUpgradebranch=${releaseTag}-master-upgrade-reset
+    git checkout master
+    git checkout -b ${resetMasterUpgradebranch}
+    cp scripts/upgrade.template.yml playbooks/upgrade.yml
+    sed "s,UPGRADE_FROM_VERSION,$releaseTag,g" scripts/upgrade_vars.template.yml > playbooks/group_vars/all/upgrade.yml
+    git commit -am "Reset upgrade variables after final release ${releaseTag}"
+    git push ${REMOTE} ${resetMasterUpgradebranch}
+fi

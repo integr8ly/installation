@@ -44,30 +44,14 @@ To cut subsequent RCs for a patch release:
 
 `./scripts/release.sh -b v1.5 -r release-1.5.1-rc2`
 
+### Final release
 
-## Resetting the upgrade playbook
+When the script above is run for the final release e.g. (non rc release - release-x.y.z) the upgrade files will be reset. This was done manually but is now automated by the release script to reset these files on both the release branch and on master.
 
+Release branch - A commit is pushed to the release branch to reset the files
+Master branch - A new branch titled ${releaseTag}-master-upgrade-reset is pushed
 
-### Minor Release
-
-There may be logic in the upgrade playbook that is targetted at a specific release only.
-After the minor release branch is created, the upgrade playbook in `playbooks/upgrade.yml` should be reviewed and reset on `master` to remove any version specific blocks, tasks or roles being included.
-
-As this is a manual task, here are some guidelines for doing the review.
-
-* Any blocks that include a version specific upgrade task such as `upgrade_sso_72_to_73` can be removed
-* Any blocks that are doing an install of a new product can be removed.
-* Any blocks that are calling out to a generic `upgrade` task in a product role can usually be kept. These are likely to be doing an `oc apply` to resources that have been modified between releases and are safe to apply. Alternatively, they may be changing the version of a product operator, and the operator could be upgrading the product.
-
-All changes should be PR'd against `master`.
-Any release specific upgrade changes that need to be merged while a release is in progress should probably only land on the release branch. Discretion is advised based on the upgrade change being proposed and the above guidelines.
-
-### Patch Release
-
-The upgrade playbook in `playbooks/upgrades/upgrade.yml` should be emptied of all tasks except for the version prerequisite check and manifest update task.
-A patch release relies on the previous patch version having being installed/upgraded to already.
-For example
-
+For the master branch reset, please go ahead and create a pr from the above branch to master, and review and merge it using the normal procedures.
 
 ## SOPs/help repo
 
