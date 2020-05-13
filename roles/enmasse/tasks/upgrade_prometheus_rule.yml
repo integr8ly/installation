@@ -1,0 +1,22 @@
+- name: Get the operator pod
+  shell: "oc get pods -n {{ enmasse_namespace }} --selector=name=enmasse-operator -o jsonpath='{.items[0].metadata.name}'"
+  register: pod
+
+- name: Set pod name
+  set_fact:
+    pod_name: "{{ pod.stdout }}"
+
+- name: Delete the promethues Rule
+  shell: oc delete prometheusrule enmasse -n {{ enmasse_namespace }}
+  register: output
+  failed_when: false
+
+- name: Restart the enmasse operator to recreate the rule
+  shell: oc delete pod {{ pod_name }} -n {{ enmasse_namespace }}
+
+- name: Wait for enmasse operator pod to be ready
+  shell: "oc get pods -n {{ enmasse_namespace }} --selector=name=enmasse-operator -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w"
+  register: enmasse_result
+  until: enmasse_result.stdout.find("1") != -1
+  retries: 50
+  delay: 5

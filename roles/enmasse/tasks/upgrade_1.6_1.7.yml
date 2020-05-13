@@ -1,0 +1,13 @@
+---
+- name: Patch blackbox targets
+  include_role:
+    name: middleware_monitoring_config
+    tasks_from: create_blackboxtargets.yml
+
+- name: Remove console-proxy route
+  shell: "oc delete route console-proxy -n {{ enmasse_namespace }}"
+  failed_when: false
+
+- name: Upgrade Prometheus Rule
+  import_tasks: upgrade_prometheus_rule.yml
+  
