@@ -7,4 +7,6 @@
   vars:
     imagemonitor_cr_namespace: "{{ enmasse_namespace }}"
     excludePattern: "{{ enmasse_heimdall_exclude_pattern }}"
-  when: heimdall | default(true) | bool
+  when:
+    - heimdall | default(true) | bool
+    - enmasse | default(true) | bool
