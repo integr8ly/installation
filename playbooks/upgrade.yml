@@ -48,6 +48,12 @@
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
 
+  - name: Upgrade fuse online
+    include_role:
+      name: fuse_managed
+      tasks_from: upgrade
+    when: upgrade_fuse_managed|bool
+
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
     include_role:

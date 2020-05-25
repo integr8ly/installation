@@ -1,3 +1,4 @@
 upgrade_from_version: release-1.7.0
 upgrade_product_roles:
+- codeready
 - fuse_managed
