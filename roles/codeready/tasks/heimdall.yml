@@ -7,4 +7,6 @@
   vars:
     imagemonitor_cr_namespace: "{{ che_namespace }}"
     excludePattern: "{{ codeready_heimdall_exclude_pattern }}"
-  when: heimdall | default(true) | bool
+  when:
+    - heimdall | default(true) | bool
+    - che | default(true) | bool

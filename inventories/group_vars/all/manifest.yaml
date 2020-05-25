@@ -17,7 +17,7 @@ threescale_template_s3: '{{threescale_resources_base}}/amp-s3.yml'
 #controls whether che is installed or not
 #note che cannot be installed without launcher being present currently
 che: True
-che_version: '2.0.0.GA'
+che_version: '2.1.1.GA'
 che_git_url: https://github.com/redhat-developer/codeready-workspaces-deprecated.git
 
 #controls whether enmasse is installed or not
@@ -133,7 +133,7 @@ backup_schedule: '30 2 * * *'
 backup_namespace: "openshift-integreatly-backups"
 
 #Heimdall
-heimdall: False
+heimdall: True
 heimdall_operator_release_tag: 'release-1.0.1'
 heimdall_operator_resources: 'https://raw.githubusercontent.com/integr8ly/heimdall/{{heimdall_operator_release_tag}}/deploy'
 

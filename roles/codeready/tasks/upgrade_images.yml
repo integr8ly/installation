@@ -1,1 +1,26 @@
----
+#automate codeready update
+- name: Extract CodeReady CLI to the temp directory
+  unarchive:
+    src: "{{ che_version }}/crwctl.tar.gz"
+    dest: /tmp
+
+- name: Run the CodeReady CLI upgrade command
+  shell: /tmp/crwctl/bin/crwctl server:update -n {{ che_namespace }} --skip-version-check
+
+#add wait
+- name: Wait for codeready pods (upgrade)
+  shell: sleep 5; oc get pods --namespace {{ che_namespace }}  |  grep  "Creating"
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
+
+- name: Remove the temp directory
+  file:
+    path: /tmp/crwctl
+    state: absent
+
+  
+
