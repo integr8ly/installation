@@ -10,7 +10,7 @@
 
 - name: Extract CodeReady CLI version 2.0.0 to the temp directory
   unarchive:
-    src: crwctl.tar.gz
+    src: "{{ che_version }}/crwctl.tar.gz"
     dest: /tmp
 
 - set_fact:
