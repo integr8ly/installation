@@ -172,6 +172,24 @@ spec:
         for: 15m
         labels:
           severity: warning
+      - alert: NodeCPUUtilisationHigh
+        annotations:
+          message: The node {{ '{{' }} $node {{ '}}' }}% has been using more than 80% of its CPU for longer than 15 minutes.
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/Cluster_Schedulable_Resources_Low.asciidoc
+        expr: |
+           node:node_cpu_utilisation:avg1m * on(node) group_left() (kube_node_labels{label_node_role_kubernetes_io_compute='true'} == 1) > 0.8
+        for: 15m
+        labels:
+          severity: warning
+      - alert: NodeMemoryUtilisationHigh
+        annotations:
+          message: The node {{ '{{' }} $node {{ '}}' }}% has been using more than 80% of its memory for longer than 15 minutes.
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/Cluster_Schedulable_Resources_Low.asciidoc
+        expr: |
+           node:node_memory_utilisation: * on(node) group_left() (kube_node_labels{label_node_role_kubernetes_io_compute='true'} == 1) > 0.8
+        for: 15m
+        labels:
+          severity: warning
       - alert: ClusterSchedulableMemoryLow
         annotations:
           message: The cluster has {{ '{{' }} printf "%.0f" $value {{ '}}' }}% of memory requested and unavailable for scheduling for longer than 15 minutes.
