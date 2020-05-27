@@ -1,0 +1,26 @@
+# Waits for multiple rollouts to complete before continuing
+#
+# input vars:
+#   namespace_to_watch - <project where the apps being rolled out are located>
+#   rollouts_to_watch  - <list of the rollouts in kind/name format that must all complete>
+#
+
+
+
+- name: Set up watch for rollout status of {{item}}
+  shell: oc rollout status {{ item }} -n {{ namespace_to_watch }} -w
+  async: 7200
+  poll: 0
+  register: rollout_status
+  changed_when: rollout_status.stderr is defined and rollout_status.stderr != "" and (rollout_status.stderr is regex("not found|server doesn't have a resource type"))
+  with_items:
+    '{{ rollouts_to_watch }}'
+
+- name: Wait for all rollouts to complete
+  async_status: jid={{ item.ansible_job_id }}
+  register: rollout_jobs
+  until: rollout_jobs.finished
+  retries: 300
+  with_items:
+    "{{ rollout_status.results }}"
+  changed_when: rollout_jobs.stderr is defined and rollout_jobs.stderr != ""
