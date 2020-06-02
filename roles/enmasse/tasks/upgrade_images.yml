@@ -1,4 +1,9 @@
 ---
+#without this the upgrade fails with:
+#  The deploymentconfigs "postgresql" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update
+- name: Delete annotation from postgresql deploymentconfig
+  shell: oc annotate deploymentconfig postgresql -n {{ enmasse_namespace }} kubectl.kubernetes.io/last-applied-configuration-
+
 - name: Install EnMasse
   import_tasks: main.yml
 
