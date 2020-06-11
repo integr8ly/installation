@@ -47,6 +47,11 @@
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
 
+  - name: Upgrade backup
+    include_role:
+      name: backup
+      tasks_from: upgrade
+
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
     include_role:
