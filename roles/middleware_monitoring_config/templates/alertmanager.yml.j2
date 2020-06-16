@@ -15,6 +15,9 @@ route:
   repeat_interval: 12h
   receiver: default
   routes:
+  - match_re:
+      alertname: ^RouterMeshConnectivityHealth$|^RouterMeshUndeliveredHealth$
+    receiver: critical
   - match:
       severity: critical
     receiver: critical
