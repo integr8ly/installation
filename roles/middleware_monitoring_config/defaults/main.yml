@@ -50,8 +50,8 @@ dms_webhook_url: "{{ deadmanssnitch_url | default('') }}"
 pd_service_key: "{{ pagerduty_integration_key | default('') }}"
 
 # slack
-alertmanager_slack_api_url: "{{ alertmanager_slack_api_url | default('') }}"
-alertmanager_slack_default_channel: "{{ alertmanager_slack_default_channel | default('') }}"
+alertmanager_slack_api_url: ''
+alertmanager_slack_default_channel: ''
 
 # Custom SOP URLs for alerts
 sops:
