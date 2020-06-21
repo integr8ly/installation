@@ -26,3 +26,5 @@ Some of these changes may include:
 ### Removed
 
 ### Bug Fixes
+* [INTLY-8385] - Added SOPs to 5 new alerts in 1.7.0
+* [INTLY-8386] - Route RouterMeshConnectivityHealth and RouterMeshUndeliveredHealth to critical receiver
