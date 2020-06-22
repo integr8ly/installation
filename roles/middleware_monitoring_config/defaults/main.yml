@@ -55,8 +55,8 @@ alertmanager_slack_default_channel: ''
 
 # Custom SOP URLs for alerts
 sops:
-  BrokerMemory: https://github.com/integr8ly/integreatly-help/blob/master/sops/AMQOnline_BrokerMemory.asciidoc
-  ComponentHealth: https://github.com/integr8ly/integreatly-help/blob/master/sops/AMQOnline_ComponentHealth.asciidoc
-  AuthenticationService: https://github.com/integr8ly/integreatly-help/blob/master/sops/AMQOnline_AuthenticationService.asciidoc
-  RouterMeshUndeliveredHealth: https://github.com/integr8ly/integreatly-help/blob/master/sops/AMQOnline_RouterMeshUndeliveredHealth.asciidoc
-  RouterMeshConnectivityHealth: https://github.com/integr8ly/integreatly-help/blob/master/sops/AMQOnline_RouterMeshConnectivityHealth.asciidoc
+  BrokerMemory: https://github.com/integr8ly/integreatly-help/blob/master/sops/alerts/AMQOnline_BrokerMemory.asciidoc
+  ComponentHealth: https://github.com/integr8ly/integreatly-help/blob/master/sops/alerts/AMQOnline_ComponentHealth.asciidoc
+  AuthenticationService: https://github.com/integr8ly/integreatly-help/blob/master/sops/alerts/AMQOnline_AuthenticationService.asciidoc
+  RouterMeshUndeliveredHealth: https://github.com/integr8ly/integreatly-help/blob/master/sops/alerts/AMQOnline_RouterMeshUndeliveredHealth.asciidoc
+  RouterMeshConnectivityHealth: https://github.com/integr8ly/integreatly-help/blob/master/sops/alerts/AMQOnline_RouterMeshConnectivityHealth.asciidoc
