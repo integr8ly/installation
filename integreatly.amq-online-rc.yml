@@ -1,3 +1,33 @@
 imageSync:
   sourceRepo: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888
-  projects: {}
+  projects:
+    amq7:
+      images:
+      - amq-broker:7.6
+      - amq-interconnect:1.7
+      - amq-online-1-address-space-controller:1.4
+      - amq-online-1-agent:1.4
+      - amq-online-1-auth-plugin:1.4
+      - amq-online-1-broker-plugin:1.4
+      - amq-online-1-console-init:1.4
+      - amq-online-1-console-server-rhel7:1.4
+      - amq-online-1-controller-manager-rhel7-operator:1.4
+      - amq-online-1-controller-manager-rhel7-operator-metadata:1.4
+      - amq-online-1-mqtt-gateway:1.4
+      - amq-online-1-mqtt-lwt:1.4
+      - amq-online-1-none-auth-service:1.4
+      - amq-online-1-service-broker:1.4
+      - amq-online-1-standard-controller:1.4
+      - amq-online-1-topic-forwarder:1.4
+    amq7-tech-preview:
+      images:
+      - amq-online-1-iot-auth-service:1.4
+      - amq-online-1-iot-device-registry-datagrid:1.4
+      - amq-online-1-iot-device-registry-file:1.4
+      - amq-online-1-iot-http-adapter:1.4
+      - amq-online-1-iot-lorawan-adapter-rhel7:1.4
+      - amq-online-1-iot-mqtt-adapter:1.4
+      - amq-online-1-iot-proxy-configurator:1.4
+      - amq-online-1-iot-sigfox-adapter-rhel7:1.4
+      - amq-online-1-iot-tenant-cleaner-rhel7:1.4
+      - amq-online-1-iot-tenant-service:1.4
