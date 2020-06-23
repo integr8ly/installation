@@ -16,7 +16,7 @@ route:
   receiver: default
   routes:
   - match_re:
-      alertname: ^RouterMeshConnectivityHealth$|^RouterMeshUndeliveredHealth$
+      alertname: ^RouterMeshConnectivityHealth$|^RouterMeshUndeliveredHealth$|^ComponentHealth$|^BrokerMemory$|^AuthenticationService$
     receiver: critical
   - match:
       severity: critical
@@ -44,6 +44,16 @@ receivers:
 {% if pd_service_key %}
   pagerduty_configs:
   - service_key: {{ pd_service_key }}
+    details:
+      sop_url: |-
+        {{ '{{' }} range .Alerts {{ '}}' }}
+          {{ '{{' }}if eq .Labels.alertname "AuthenticationService"{{ '}}' }}{{ sops.AuthenticationService }}
+          {{ '{{' }}else if eq .Labels.alertname "BrokerMemory"{{ '}}' }}{{ sops.BrokerMemory }}
+          {{ '{{' }}else if eq .Labels.alertname "ComponentHealth"{{ '}}' }}{{ sops.ComponentHealth }}
+          {{ '{{' }}else if eq .Labels.alertname "RouterMeshConnectivityHealth"{{ '}}' }}{{ sops.RouterMeshConnectivityHealth }}
+          {{ '{{' }}else if eq .Labels.alertname "RouterMeshUndeliveredHealth"{{ '}}' }}{{ sops.RouterMeshUndeliveredHealth }}
+          {{ '{{' }} end {{ '}}' }}
+        {{ '{{' }} end {{ '}}' }}
 {% endif %}
   email_configs:
   - send_resolved: true
