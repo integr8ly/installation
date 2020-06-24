@@ -48,6 +48,11 @@
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
 
+  - name: Upgrade backup
+    include_role:
+      name: backup
+      tasks_from: upgrade
+
   - name: Upgrade fuse online
     include_role:
       name: fuse_managed
