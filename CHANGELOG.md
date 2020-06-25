@@ -22,9 +22,11 @@ Some of these changes may include:
 * [INTLY-6525] - Updated heimdall version to release-1.0.1
 * [INTLY-6512] - Heimdall installed by default
 * [INTLY-7813] - New Alerts for Node CPU & Memory utilisation
-* [INTLY-8459] - Fix 3Scale probe alerts
- 
+* [INTLY-8459] - Fix 3Scale probe alerts 
+* [INTLY-8601] - Add dummy/null reciever for UnifiedPushJavaHeapThresholdExceeded alert
+
 ### Removed
+
 
 ### Bug Fixes
 * [INTLY-8385] - Added SOPs to 5 new alerts in 1.7.0
