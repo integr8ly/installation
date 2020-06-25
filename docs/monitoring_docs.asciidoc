@@ -179,14 +179,6 @@ receivers:
   - send_resolved: true
     to: cssre-alerts@redhat.com
 - name: deadmansswitch
-inhibit_rules:
-- source_match:
-    alertname: 'JobRunningTimeExceeded'
-    severity: 'critical'
-  target_match:
-    alertname: 'JobRunningTimeExceeded'
-    severity: 'warning'
-  equal: ['alertname', 'job', 'label_cronjob_name']
 ```
 
 
