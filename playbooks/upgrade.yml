@@ -70,10 +70,15 @@
       name: rhsso-user
       tasks_from: obtain-user-sso-token.yml
 
-  - name: Disable review and confirming link account 
+  - name: Disable review and confirming link account
     include_role:
       name: rhsso-user
       tasks_from: disable-idp-review-link-confirm.yml
+
+  - name: Upgrade AlertManager configuration
+    include_role:
+      name: middleware_monitoring_config
+      tasks_from: upgrade_alert_manager_email
 
 # Install Heimdall
 - import_playbook: "./install_heimdall.yml"
