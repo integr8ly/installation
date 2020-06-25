@@ -15,6 +15,9 @@ route:
   repeat_interval: 12h
   receiver: default
   routes:
+  - receiver: "null"
+    match:
+      alertname: UnifiedPushJavaHeapThresholdExceeded
   - match_re:
       alertname: ^RouterMeshConnectivityHealth$|^RouterMeshUndeliveredHealth$|^ComponentHealth$|^BrokerMemory$|^AuthenticationService$
     receiver: critical
@@ -64,5 +67,6 @@ receivers:
   webhook_configs:
     - url: "{{ dms_webhook_url }}"
 {% endif %}
+- name: "null"
 templates:
 - '*.tmpl'

@@ -1,5 +1,4 @@
 ---
-
 - name: Configure AlertManager
   block:
   - name: get alertmanager route for alertmanager config
