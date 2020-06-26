@@ -21,6 +21,7 @@
     vars:
       from_versions:
       - "{{ upgrade_from_version }}"
+      - "release-1.6.1"
 
   - name: Set Upgrade Facts
     set_fact: upgrade_{{ item | replace('-', '') }}=true
