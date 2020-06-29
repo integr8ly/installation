@@ -9,16 +9,14 @@ spec:
   groups:
     - name: general.rules
       rules:
-      {% for check in [{ 'time': '300', 'severity': 'warning' }, { 'time': '600', 'severity': 'critical' }] %}
       - alert: JobRunningTimeExceeded
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
-          message: Job {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.job {{ '}}' }} has been running for longer than {{ check['time'] }} seconds
+          message: Job {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.job {{ '}}' }} has been running for longer than 600 seconds
         expr: |
-          time() - (max(kube_job_status_active * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"}) BY (job) * ON(job) GROUP_RIGHT() max(kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"}) BY (job, namespace, label_cronjob_name) > 0) > {{ check['time'] }}
+          time() - (max(kube_job_status_active * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"}) BY (job) * ON(job) GROUP_RIGHT() max(kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"}) BY (job, namespace, label_cronjob_name) > 0) > 600
         labels:
-          severity: {{ check['severity'] }}
-      {% endfor %}
+          severity: critical
       - alert: CronJobSuspended
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md

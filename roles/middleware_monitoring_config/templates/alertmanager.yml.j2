@@ -64,13 +64,5 @@ receivers:
   webhook_configs:
     - url: "{{ dms_webhook_url }}"
 {% endif %}
-inhibit_rules:
-- source_match:
-    alertname: 'JobRunningTimeExceeded'
-    severity: 'critical'
-  target_match:
-    alertname: 'JobRunningTimeExceeded'
-    severity: 'warning'
-  equal: ['alertname', 'job', 'label_cronjob_name']
 templates:
 - '*.tmpl'
