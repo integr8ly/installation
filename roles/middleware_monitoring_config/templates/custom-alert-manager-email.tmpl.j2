@@ -143,9 +143,9 @@ SOFTWARE.
                 </tr>
                 <tr style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:20px;margin:0">
                   <td style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;vertical-align:top;margin:0;padding:0 0 20px" valign="top">
-                    <strong style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:20px;margin:0">Cluster: {{ openshift_master_url }} </strong> 
+                    <strong style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:20px;margin:0">Cluster: {{ openshift_master_url }} </strong>
                   </td>
-                </tr>                
+                </tr>
                 {{ '{{' }}if gt (len .Alerts.Firing) 0{{ '}}' }}
                 <tr style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                   <td style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
@@ -158,11 +158,18 @@ SOFTWARE.
                   <td style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
                     <strong style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">Labels</strong><br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />
                     {{ '{{' }}range .Labels.SortedPairs{{ '}}' }}{{ '{{' }}.Name{{ '}}' }} = {{ '{{' }}.Value{{ '}}' }}<br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />{{ '{{' }}end{{ '}}' }}
+
                     {{ '{{' }}if gt (len .Annotations) 0{{ '}}' }}<strong style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">Annotations</strong><br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />{{ '{{' }}end{{ '}}' }}
                     {{ '{{' }}range .Annotations.SortedPairs{{ '}}' }}{{ '{{' }}.Name{{ '}}' }} = {{ '{{' }}.Value{{ '}}' }}<br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />{{ '{{' }}end{{ '}}' }}
+                    {{ '{{' }}if eq .Labels.alertname "AuthenticationService"{{ '}}' }}sop_url = {{ sops.AuthenticationService }}<br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />{{ '{{' }}end{{ '}}' }}
+                    {{ '{{' }}if eq .Labels.alertname "BrokerMemory"{{ '}}' }}sop_url = {{ sops.BrokerMemory }}<br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />{{ '{{' }}end{{ '}}' }}
+                    {{ '{{' }}if eq .Labels.alertname "ComponentHealth"{{ '}}' }}sop_url = {{ sops.ComponentHealth }}<br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />{{ '{{' }}end{{ '}}' }}
+                    {{ '{{' }}if eq .Labels.alertname "RouterMeshConnectivityHealth"{{ '}}' }}sop_url = {{ sops.RouterMeshConnectivityHealth }}<br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />{{ '{{' }}end{{ '}}' }}
+                    {{ '{{' }}if eq .Labels.alertname "RouterMeshUndeliveredHealth"{{ '}}' }}sop_url = {{ sops.RouterMeshUndeliveredHealth }}<br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />{{ '{{' }}end{{ '}}' }}
+
                     <a href="{{ '{{' }}.GeneratorURL{{ '}}' }}" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; color: #348eda; text-decoration: underline; margin: 0;">Source</a><br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />
                     <strong style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">Timestamp</strong>
-                    <br style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;margin:0">Alert Started: {{ '{{' }} .StartsAt {{ '}}' }} </br>                                                      
+                    <br style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;margin:0">Alert Started: {{ '{{' }} .StartsAt {{ '}}' }} </br>
                   </td>
                 </tr>
                 {{ '{{' }}end{{ '}}' }}
@@ -192,7 +199,7 @@ SOFTWARE.
                     {{ '{{' }}range .Annotations.SortedPairs{{ '}}' }}{{ '{{' }}.Name{{ '}}' }} = {{ '{{' }}.Value{{ '}}' }}<br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />{{ '{{' }}end{{ '}}' }}
                     <a href="{{ '{{' }}.GeneratorURL{{ '}}' }}" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; color: #348eda; text-decoration: underline; margin: 0;">Source</a><br style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />
                     <strong style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">Timestamp</strong>
-                    <br style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;margin:0">Alert Ended: {{ '{{' }} .EndsAt {{ '}}' }} </br>                               
+                    <br style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;margin:0">Alert Ended: {{ '{{' }} .EndsAt {{ '}}' }} </br>
                   </td>
                 </tr>
                 {{ '{{' }}end{{ '}}' }}
