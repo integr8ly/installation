@@ -3,3 +3,4 @@ upgrade_product_roles:
 - codeready
 - fuse_managed
 - 3scale
+- enmasse
