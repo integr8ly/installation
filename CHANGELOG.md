@@ -19,7 +19,8 @@ Some of these changes may include:
 * [INTLY-3847] - Update Alert Manager emails to include cluster URL and timestamps
 * [INTLY-5856] - Improve resiliency of sso/user-sso w/ 2nd replica and qos of postgres pods up from BestEffort to Burstable
 * [INTLY-2544] - allow customer-admins view 3Scale logs in Kibana
-
+* [INTLY-8459] - Fix 3Scale probe alerts
+ 
 ### Removed
 
 ### Bug Fixes

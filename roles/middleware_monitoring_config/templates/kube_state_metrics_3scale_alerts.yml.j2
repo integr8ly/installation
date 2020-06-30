@@ -95,7 +95,7 @@ spec:
             3Scale Admin UI Blackbox Target: If this console is unavailable,
             the client is unable to configure or administer their API setup.
         expr: |
-          absent(probe_success{job="blackbox", service="3scale-admin-ui"})
+          absent(probe_success{job="blackbox", service="3scale-admin-ui"} == 1)
         for: 5m
         labels:
           severity: critical
@@ -108,7 +108,7 @@ spec:
             API management.
         expr: >
           absent(probe_success{job="blackbox",
-          service="3scale-developer-console-ui"})
+          service="3scale-developer-console-ui"} == 1)
         for: 5m
         labels:
           severity: critical
@@ -121,7 +121,7 @@ spec:
             Analytics or Billing.
         expr: >
           absent(probe_success{job="blackbox",
-          service="3scale-system-admin-ui"})
+          service="3scale-system-admin-ui"} == 1)
         for: 5m
         labels:
           severity: critical
