@@ -26,6 +26,7 @@ Some of these changes may include:
 * [INTLY-8601] - Add dummy/null reciever for UnifiedPushJavaHeapThresholdExceeded alert
 
 ### Removed
+* Removed unused templates from UPS role
 
 
 ### Bug Fixes
