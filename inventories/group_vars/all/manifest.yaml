@@ -1,5 +1,5 @@
 ---
-integreatly_version: release-1.7.0
+integreatly_version: release-1.7.1
 
 # threescale version is controlled by the operator. Changing the operator version will change the 3scale version
 
@@ -22,7 +22,7 @@ che_git_url: https://github.com/redhat-developer/codeready-workspaces-deprecated
 
 #controls whether enmasse is installed or not
 enmasse: True
-enmasse_version: '1.4.1.GA'
+enmasse_version: '1.4.4.GA'
 enmasse_git_url: https://github.com/jboss-container-images/amq-online-images.git
 enmasse_postgresql_image: 'postgresql:9.6'
 

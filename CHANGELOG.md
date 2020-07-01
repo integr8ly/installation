@@ -15,6 +15,7 @@ Some of these changes may include:
 ### Added
 
 ### Changed
+* [INTLY-8401] - Update AMQ version to 1.4.4
 * [INTLY-3623] - Refactor of inventories and associated group_vars to support POC, OSD and PDS environments
 * [INTLY-3847] - Update Alert Manager emails to include cluster URL and timestamps
 * [INTLY-5856] - Improve resiliency of sso/user-sso w/ 2nd replica and qos of postgres pods up from BestEffort to Burstable
