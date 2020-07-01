@@ -20,8 +20,10 @@ Some of these changes may include:
 * [INTLY-5856] - Improve resiliency of sso/user-sso w/ 2nd replica and qos of postgres pods up from BestEffort to Burstable
 * [INTLY-2544] - allow customer-admins view 3Scale logs in Kibana
 * [INTLY-8459] - Fix 3Scale probe alerts
- 
+* [INTLY-8601] - Add dummy/null reciever for UnifiedPushJavaHeapThresholdExceeded alert
+
 ### Removed
+
 
 ### Bug Fixes
 * [INTLY-8385] - Added SOPs to 5 new alerts in 1.7.0
