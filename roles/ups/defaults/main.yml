@@ -17,14 +17,6 @@ ups_encryption_secret: ''
 ups_encryption_secret_namespace: "{{ backup_namespace }}"
 
 #monitor
-ups_svc_monitor_resource_list:
-  - "{{ ups_operator_resources }}/monitor/service_monitor.yaml"
-  - "{{ ups_operator_resources }}/monitor/push_service_monitor.yaml"
-ups_svc_monitor_templates:
-  - grafana_dashboard
-  - prometheus_rule
-  - operator_grafana_dashboard
-  - operator_prometheus_rule
 ups_message_broker: false
 
 #scaling
