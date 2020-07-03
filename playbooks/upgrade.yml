@@ -27,6 +27,13 @@
     set_fact: upgrade_{{ item | replace('-', '') }}=true
     with_items: "{{ upgrade_product_roles }}"
 
+  # We need to call this early in the upgrade before the product image updates
+  # This is to ensure the namespaces are created before we get to upgrading enmasse
+  - name: Patch Enmasse Namespaces
+    include_role:
+      name: enmasse
+      tasks_from: patch_namespaces_upgrade_1.6_1.7.yml
+
   # Fuse images upgrade fails because new image tags don't exist
   # I am not sure whether this is needed for minor product releases upgrades
   - name: Upgrade product images
