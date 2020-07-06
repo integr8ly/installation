@@ -1,0 +1,20 @@
+---
+- name: Patch missing namespaces
+  shell: |
+    expected_namespaces=()
+    for ns in $(oc get configmap -n {{ enmasse_namespace }} -l type=address-space -o jsonpath={.items[*].metadata.labels.namespace})
+    do
+      expected_namespaces=("${ns}" "${expected_namespaces[@]}")
+    done
+    for expected in "${expected_namespaces[@]}"
+    do
+      oc get namespace ${expected} > /dev/null 2> /dev/null
+      if [ $? -gt 0 ]; then
+        echo "could not find enmasse namespace : ${expected}"
+        if ! oc create namespace ${expected} ; then
+          echo "ERROR, unable to create amq missing namespace : ${expected}"
+          exit 1
+        fi
+      fi
+    done
+    echo "all enmasse namespaces found"
