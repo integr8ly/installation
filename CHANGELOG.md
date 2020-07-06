@@ -22,6 +22,7 @@ Some of these changes may include:
 * [INTLY-2544] - allow customer-admins view 3Scale logs in Kibana
 * [INTLY-8459] - Fix 3Scale probe alerts
 * [INTLY-8601] - Add dummy/null reciever for UnifiedPushJavaHeapThresholdExceeded alert
+* [INTLY-7813] - New Alerts for Node CPU & Memory utilisation
 
 ### Removed
 
