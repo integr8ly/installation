@@ -25,6 +25,8 @@ Some of these changes may include:
 * [INTLY-8459] - Fix 3Scale probe alerts 
 * [INTLY-8601] - Add dummy/null reciever for UnifiedPushJavaHeapThresholdExceeded alert
 
+* [INTLY-8600] - Updated SSOPodCount alert to check for at least 2 sso pods to allow for scaling of pods
+
 ### Removed
 * Removed unused templates from UPS role
 
