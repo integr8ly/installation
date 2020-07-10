@@ -21,7 +21,6 @@
     vars:
       from_versions:
       - "{{ upgrade_from_version }}"
-      - "release-1.6.1"
 
   - name: Set Upgrade Facts
     set_fact: upgrade_{{ item | replace('-', '') }}=true
@@ -42,28 +41,11 @@
 
 # Add product specific upgrade tasks here, make sure to use the "when: upgrade_<product>|bool" condition on any new tasks added!!
 #
-
-#  - name: Some Special webapp only upgrade thing
+#    - name: Some Special webapp only upgrade thing
 #      include_role:
 #        name: webapp
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
-
-  - name: Upgrade backup
-    include_role:
-      name: backup
-      tasks_from: upgrade
-
-  - name: Upgrade fuse online
-    include_role:
-      name: fuse_managed
-      tasks_from: upgrade
-    when: upgrade_fuse_managed|bool
-
-  - name: Update monitoring alerts
-    include_role:
-      name: middleware_monitoring_config
-      tasks_from: create_alerts
 
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
@@ -71,21 +53,10 @@
       name: rhsso-user
       tasks_from: obtain-user-sso-token.yml
 
-  - name: Disable review and confirming link account
+  - name: Disable review and confirming link account 
     include_role:
       name: rhsso-user
       tasks_from: disable-idp-review-link-confirm.yml
-
-  - name: Upgrade AlertManager configuration
-    include_role:
-      name: middleware_monitoring_config
-      tasks_from: upgrade_alert_manager_email
-
-# Install Heimdall
-- import_playbook: "./install_heimdall.yml"
-
-# Add the relevant heimdall image monitor crs to the namespaces to be monitored as part of the upgrade
-- import_playbook: "./install_heimdall_crs.yml"
 
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"
