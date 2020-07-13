@@ -1,10 +1,10 @@
 imageSync:
-  sourceRepo: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888
+  sourceRepo: registry-proxy.engineering.redhat.com
   projects:
-    3scale-amp2:
+    rh-osbs:
       images:
-      - apicast-gateway-rhel8:3scale2.9
-      - backend-rhel7:3scale2.9
-      - memcached-rhel7:3scale2.9
-      - system-rhel7:3scale2.9
-      - zync-rhel7:3scale2.9
+      - 3scale-amp2-apicast-gateway-rhel8:3scale2.9
+      - 3scale-amp2-backend-rhel7:3scale2.9
+      - 3scale-amp2-memcached-rhel7:3scale2.9
+      - 3scale-amp2-system-rhel7:3scale2.9
+      - 3scale-amp2-zync-rhel7:3scale2.9
