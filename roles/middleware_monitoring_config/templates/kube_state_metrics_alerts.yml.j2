@@ -22,7 +22,7 @@ spec:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           message: Expected at least Elastic Search 1 pods in namespace {{ '{{' }} $labels.namespace {{ '}}' }}.
         expr: |
-          (1 - absent(kube_pod_status_ready{condition="true",namespace="openshift-logging", pod=~"logging-es-data-master-.*"})) 
+          (1 - absent(kube_pod_status_ready{condition="true",namespace="openshift-logging", pod=~"logging-es-data-master-.*"}))
         for: 5m
         labels:
           severity: warning
@@ -227,19 +227,20 @@ spec:
         for: 15m
         labels:
           severity: warning
-      - alert: PVCStorageWillFillIn4Days
+      - alert: KubePersistentVolumeFillingUp
         annotations:
-          message: The {{ '{{' }} $labels.persistentvolumeclaim {{ '}}' }} PVC will run of disk space in the next 4 days.
+          message: Based on recent sampling, the PersistentVolume claimed by {{ '{{' }} $labels.persistentvolumeclaim {{ '}}' }} in Namespace {{ '{{' }} $labels.namespace {{ '}}' }} is expected to fill up within four days. Currently {{ '{{' }} $value | humanizePercentage {{ '}}' }} is available.
         expr: |
-          ((sum by(persistentvolumeclaim, namespace) (predict_linear(kubelet_volume_stats_available_bytes{job="kubelet"}[6h], 4 * 24 * 3600)) * on(namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) * on (persistentvolumeclaim, namespace) kube_persistentvolumeclaim_info)  <= 0
+          (predict_linear(kubelet_volume_stats_available_bytes{job="kubelet"}[6h], 4 * 24 * 3600) <= 0 and kubelet_volume_stats_available_bytes{job="kubelet"} / kubelet_volume_stats_capacity_bytes{job="kubelet"} < 0.15) * on(namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}
         for: 15m
         labels:
           severity: warning
-      - alert: PVCStorageWillFillIn4Hours
+      - alert: KubePersistentVolumeFillingUp
         annotations:
-          message: The {{ '{{' }} $labels.persistentvolumeclaim {{ '}}' }} PVC will run of disk space in the next 4 hours.
+          message: The PersistentVolume claimed by {{ '{{' }} $labels.persistentvolumeclaim {{ '}}' }} in Namespace {{ '{{' }} $labels.namespace {{ '}}' }} is only {{ '{{' }} $value | humanizePercentage {{ '}}' }} free.
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/pvc_storage.asciidoc#kubepersistentvolumefillingup
         expr: |
-          ((sum by(persistentvolumeclaim, namespace) (predict_linear(kubelet_volume_stats_available_bytes{job="kubelet"}[1h], 4 * 3600)) * on(namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) * on (persistentvolumeclaim, namespace) kube_persistentvolumeclaim_info) <= 0
+          (kubelet_volume_stats_available_bytes{job="kubelet"} / kubelet_volume_stats_capacity_bytes{job="kubelet"} < 0.03) * on(namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}
         for: 15m
         labels:
           severity: critical
@@ -251,7 +252,7 @@ spec:
         for: 15m
         labels:
           severity: critical
-      {% if heimdall | default(false) | bool %}    
+      {% if heimdall | default(false) | bool %}
       - alert: ResolvableCriticalCVEs
         annotations:
            message: There is a following deployment which has some resolvable critical CVEs {{ '{{' }} $labels.label_deployment {{ '}}' }} in {{ '{{' }} $labels.namespace {{ '}}' }} namespace with {{ '{{' }} $labels.label_heimdall_resolvableCriticalCVEs {{ '}}' }} resolvable critical CVEs
@@ -260,4 +261,4 @@ spec:
         for: 1m
         labels:
           severity: critical
-      {% endif %}    
+      {% endif %}

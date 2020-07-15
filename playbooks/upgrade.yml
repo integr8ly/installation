@@ -47,13 +47,18 @@
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
 
+  - name: Update monitoring alerts
+    include_role:
+      name: middleware_monitoring_config
+      tasks_from: create_alerts
+
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
     include_role:
       name: rhsso-user
       tasks_from: obtain-user-sso-token.yml
 
-  - name: Disable review and confirming link account 
+  - name: Disable review and confirming link account
     include_role:
       name: rhsso-user
       tasks_from: disable-idp-review-link-confirm.yml
