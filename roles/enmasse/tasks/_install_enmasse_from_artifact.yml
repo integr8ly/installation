@@ -7,6 +7,17 @@
     force: yes
   when: ns_prefix != ""
 
+# Workaround to modify enmasse iot crds to remove `type: object` from the 
+# root of the openAPIV3Schema, since this field is not supported in Kubernetes 1.11
+# and Openshift 3.11.1x clusters 
+# This should be patched in the next release of AMQ Online 
+# More information here: https://issues.redhat.com/browse/INTLY-9324
+- name: "Modify enmasse IoT CRDs"
+  shell: "sed -i '0,/type: object/s/type: object//g' {{ item }}"
+  with_items:
+    - '{{ enmasse_crds_path }}/*-iotconfigs*.yaml'
+    - '{{ enmasse_crds_path }}/*-iotprojects*.yaml'
+
 - name: "Provision EnMasse {{ enmasse_version }}"
   shell: ansible-playbook -i {{ enmasse_inventory_path }}/hosts /tmp/{{enmasse_playbook_location}}
   args:
