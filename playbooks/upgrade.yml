@@ -58,5 +58,20 @@
       name: rhsso-user
       tasks_from: disable-idp-review-link-confirm.yml
 
+  - name: Upgrade RHSSO
+    include_role:
+      name: rhsso
+      tasks_from: upgrade_images.yml
+
+  - name: Upgrade RHSSO User
+    include_role:
+      name: rhsso-user
+      tasks_from: upgrade_images.yml
+
+  - name: Upgrade walkthrough templates
+    include_role:
+      name: walkthroughs
+      tasks_from: upgrade.yml
+
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"

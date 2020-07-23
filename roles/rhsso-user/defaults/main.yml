@@ -21,4 +21,3 @@ rhsso_user_operator_image: "quay.io/integreatly/keycloak-operator:{{ rhsso_opera
 
 rhsso_user_image_streams:
   - "{{ rhsso_imagestream_name }}"
-  - postgresql:9.5

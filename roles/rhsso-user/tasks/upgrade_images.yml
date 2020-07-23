@@ -1,7 +1,7 @@
 ---
 
 - name: Import Image Streams
-  shell: oc import-image {{ patch_image_stream_item }} -n openshift
+  shell: oc import-image {{ patch_image_stream_item }} --from={{ rhsso_imagestream_image }} --confirm -n openshift
   with_items: "{{ rhsso_user_image_streams }}"
   loop_control:
     loop_var: patch_image_stream_item
