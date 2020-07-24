@@ -4,6 +4,11 @@
 
 - set_fact:
     codeready_install_scripts_dir: "{{ codeready_install_dir }}/operator-installer"
+    
+- name: Remove directory
+      file:
+        path: /tmp/codeready-{{ che_version }}
+        state: absent
 
 - name: download code ready installer
   git:
