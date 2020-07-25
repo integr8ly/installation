@@ -7,7 +7,7 @@
     
 - name: Remove directory
       file:
-        path: /tmp/codeready-{{ che_version }}
+        path: "{{ codeready_install_dir }}"
         state: absent
 
 - name: download code ready installer
