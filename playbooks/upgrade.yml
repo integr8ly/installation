@@ -40,12 +40,13 @@
       - run_master_tasks | default(true) | bool
 
 # Add product specific upgrade tasks here, make sure to use the "when: upgrade_<product>|bool" condition on any new tasks added!!
+#
+#    - name: Some Special webapp only upgrade thing
+#      include_role:
+#        name: webapp
+#        tasks_from: upgrade_patch
+#      when: upgrade_webapp|bool
 
-  - name: Upgrade webapp walkthrough version
-    include_role:
-      name: webapp
-      tasks_from: provision-webapp
-    # when: upgrade_webapp|bool
 
   - name: Update monitoring alerts
     include_role:
