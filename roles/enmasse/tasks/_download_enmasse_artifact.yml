@@ -14,6 +14,7 @@
 - set_fact:
     enmasse_playbook_location: enmasse-"{{ enmasse_version }}"/templates/ansible/playbooks/openshift/deploy_all.yml
     enmasse_inventory_path: /tmp/enmasse-{{ enmasse_version }}/templates/ansible/inventory/
+    enmasse_crds_path: /tmp/enmasse-{{ enmasse_version }}/templates/ansible/playbooks/openshift/components/crds
     enmasse_authentication_services: [standard]
 
 - name: Generate keycloak admin password
