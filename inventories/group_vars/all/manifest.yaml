@@ -65,7 +65,7 @@ rhsso_version: '7.4.1.GA'
 rhsso_imagestream_name: redhat-sso74-openshift:1.0
 rhsso_imagestream_image:  registry.redhat.io/rh-sso-7/sso74-openshift-rhel8
 rhsso_operator_release_tag: 'v1.10.0'
-rhsso_operator_resources: 'https://raw.githubusercontent.com/integreatly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
+rhsso_operator_resources: 'https://raw.githubusercontent.com/integr8ly/keycloak-operator/{{rhsso_operator_release_tag}}/deploy/'
 
 #controls whether gitea is installed or not
 gitea: False
