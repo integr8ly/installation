@@ -29,14 +29,14 @@ enmasse_postgresql_image: 'postgresql:9.6'
 #controls whether fuse is installed or not
 fuse: True
 #This is the release tag for fuse on openshift in github currently used to pull in the templates and image streams
-fuse_release_tag: 'application-templates-2.1.0.fuse-760043-redhat-00003'
+fuse_release_tag: 'application-templates-2.1.0.fuse-770012-redhat-00004'
 #Used in customisation role to specify fuse version
-fuse_version: '7.6.0'
+fuse_version: '7.7.0'
 
 #controls whether Fuse Online is installed or not
 fuse_online: True
 # Syndesis operator version to be installed
-fuse_online_release_tag: '1.9.15'
+fuse_online_release_tag: '1.10.3'
 #Imagestream version installed by syndesis operator
 fuse_online_operator_imagestream_version: '1.6'
 # Used by msbroker
