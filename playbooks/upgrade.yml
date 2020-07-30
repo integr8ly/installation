@@ -51,6 +51,11 @@
       name: middleware_monitoring_config
       tasks_from: create_alerts
 
+  - name: Fuse upgrade
+    include_role:
+      name: fuse_managed
+      tasks_from: upgrade
+
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
     include_role:
