@@ -252,7 +252,7 @@ spec:
         for: 15m
         labels:
           severity: critical
-      {% if heimdall | default(false) | bool %}
+{% if heimdall | default(false) | bool %}
       - alert: ResolvableCriticalCVEs
         annotations:
            message: There is a following deployment which has some resolvable critical CVEs {{ '{{' }} $labels.label_deployment {{ '}}' }} in {{ '{{' }} $labels.namespace {{ '}}' }} namespace with {{ '{{' }} $labels.label_heimdall_resolvableCriticalCVEs {{ '}}' }} resolvable critical CVEs
@@ -261,4 +261,4 @@ spec:
         for: 1m
         labels:
           severity: critical
-      {% endif %}
+{% endif %}
