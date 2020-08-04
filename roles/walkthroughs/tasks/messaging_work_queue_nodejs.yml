@@ -6,9 +6,6 @@
     dest: /tmp/messaging_work_queue_nodejs.yml
 
 - name: Add messaging work queue nodejs to the catalog
-  command: oc create -f /tmp/messaging_work_queue_nodejs.yml -n openshift
+  command: oc apply -f /tmp/messaging_work_queue_nodejs.yml -n openshift
   register: out
-  until: '"created" in out.stdout or "AlreadyExists" in out.stderr'
-  retries: 200
-  delay: 5
   failed_when: out.stderr != '' and 'AlreadyExists' not in out.stderr
