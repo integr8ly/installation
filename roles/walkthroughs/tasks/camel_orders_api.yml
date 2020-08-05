@@ -7,4 +7,4 @@
 - name: Add crud Camel/Fuse order API app to the catalog
   command: oc apply -f /tmp/camel_orders_api.yml -n openshift
   register: out
-  failed_when: out.stderr != '' and 'AlreadyExists' not in out.stderr
+  failed_when: out.stderr != '' and 'Warning' not in out.stderr

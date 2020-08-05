@@ -8,4 +8,4 @@
 - name: Add crud spring boot example app to the catalog
   command: oc apply -f /tmp/crud_spboot_example.yml -n openshift
   register: out
-  failed_when: out.stderr != '' and 'AlreadyExists' not in out.stderr
+  failed_when: out.stderr != '' and 'Warning' not in out.stderr

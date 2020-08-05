@@ -7,4 +7,4 @@
 - name: adds a nodejs based UI that renders data from the camel_orders_api template
   command: oc apply -f /tmp/nodejs_orders_management_ui.yml -n openshift
   register: out
-  failed_when: out.stderr != '' and 'AlreadyExists' not in out.stderr
+  failed_when: out.stderr != '' and 'Warning' not in out.stderr
