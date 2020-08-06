@@ -7,6 +7,4 @@
   vars:
     imagemonitor_cr_namespace: "{{ threescale_namespace }}"
     excludePattern: "{{ threescale_heimdall_exclude_pattern }}"
-  when:
-    - heimdall | default(true) | bool
-    - threescale | default(true) | bool
+  when: heimdall | default(true) | bool
