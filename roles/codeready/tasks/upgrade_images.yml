@@ -5,7 +5,7 @@
     dest: /tmp
 
 - name: Run the CodeReady CLI upgrade command
-  shell: /tmp/crwctl/bin/crwctl server:update -n {{ che_namespace }} --skip-version-check
+  shell: /tmp/crwctl/bin/crwctl server:update -n {{ che_namespace }} 
 
 #add wait
 - name: Wait for codeready pods (upgrade)
