@@ -1,13 +1,1 @@
-#automate codeready update
-- name: Extract CodeReady CLI to the temp directory
-  unarchive:
-    src: crwctl.tar.gz
-    dest: /tmp
-
-- name: Run the CodeReady CLI upgrade command
-  shell: /tmp/crwctl/bin/crwctl server:update -n {{ che_namespace }} 
-
-- name: Remove the temp directory
-  file:
-    path: /tmp/crwctl
-    state: absent
+---
