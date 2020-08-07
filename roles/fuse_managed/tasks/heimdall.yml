@@ -7,6 +7,4 @@
   vars:
     imagemonitor_cr_namespace: "{{ fuse_namespace }}"
     excludePattern: "{{ fuse_heimdall_exclude_pattern }}"
-  when:
-    - heimdall | default(true) | bool
-    - fuse_managed | default(true) | bool
+  when: heimdall | default(true) | bool

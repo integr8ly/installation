@@ -7,6 +7,4 @@
   vars:
     imagemonitor_cr_namespace: "{{ apicurito_namespace }}"
     excludePattern: "{{ apicurito_heimdall_exclude_pattern }}"
-  when:
-    - heimdall | default(true) | bool
-    - apicurito | default(true) | bool
+  when: heimdall | default(true) | bool
