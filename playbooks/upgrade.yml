@@ -77,5 +77,10 @@
       name: walkthroughs
       tasks_from: upgrade.yml
 
+  - name: Upgrade webapp integreatly version
+    include_role:
+      name: webapp
+      tasks_from: update_version_info.yml
+
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"
