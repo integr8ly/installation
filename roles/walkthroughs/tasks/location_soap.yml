@@ -6,9 +6,9 @@
     dest: /tmp/location.yml
   
 - name: Add location soap app to the catalog
-  command: oc create -f /tmp/location.yml -n openshift
+  command: oc apply -f /tmp/location.yml -n openshift
   register: out
-  until: '"created" in out.stdout or "AlreadyExists" in out.stderr'
+  until: '"created" in out.stdout or "configured" in out.stdout or "unchanged" in out.stdout or "AlreadyExists" in out.stderr or "Warning" in out.stderr'
   retries: 200
   delay: 5
-  failed_when: out.stderr != '' and 'AlreadyExists' not in out.stderr
+  failed_when: out.stderr != '' and 'AlreadyExists' not in out.stderr and 'Warning' not in out.stderr
