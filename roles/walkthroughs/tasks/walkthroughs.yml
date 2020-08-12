@@ -1,7 +1,4 @@
 ---
-- name: Remove walkthroughs
-  include_tasks: 'uninstall.yml'
-
 - name: Add walkthrough apps to the catalog
   include_tasks: '{{ item  }}.yml'
   with_items:

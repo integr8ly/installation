@@ -5,9 +5,9 @@
     dest: /tmp/nodejs_orders_management_ui.yml
   
 - name: adds a nodejs based UI that renders data from the camel_orders_api template
-  command: oc create -f /tmp/nodejs_orders_management_ui.yml -n openshift
+  command: oc apply -f /tmp/nodejs_orders_management_ui.yml -n openshift
   register: out
-  until: '"created" in out.stdout or "AlreadyExists" in out.stderr'
+  until: '"created" in out.stdout or "configured" in out.stdout or "unchanged" in out.stdout or "AlreadyExists" in out.stderr or "Warning" in out.stderr'
   retries: 200
   delay: 5
-  failed_when: out.stderr != '' and 'AlreadyExists' not in out.stderr
+  failed_when: out.stderr != '' and 'AlreadyExists' not in out.stderr and 'Warning' not in out.stderr
