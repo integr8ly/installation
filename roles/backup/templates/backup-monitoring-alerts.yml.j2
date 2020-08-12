@@ -17,15 +17,6 @@ spec:
           time() - (max(kube_job_status_active * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"}) BY (job) * ON(job) GROUP_RIGHT() max(kube_job_status_start_time * ON(job) GROUP_RIGHT() kube_job_labels{label_monitoring_key="middleware"}) BY (job, namespace, label_cronjob_name) > 0) > 600
         labels:
           severity: critical
-      - alert: CronJobSuspended
-        annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
-          message: CronJob {{ '{{' }} $labels.namespace {{ '}}' }}/{{ '{{' }} $labels.cronjob {{ '}}' }} is suspended
-        expr: |
-          kube_cronjob_labels{ label_monitoring_key="middleware" } * ON (cronjob) GROUP_RIGHT() kube_cronjob_spec_suspend > 0
-        for: 60s
-        labels:
-          severity: critical
       - alert: CronJobNotRunInThreshold
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
