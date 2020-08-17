@@ -41,6 +41,11 @@
 
 # Add product specific upgrade tasks here, make sure to use the "when: upgrade_<product>|bool" condition on any new tasks added!!
 
+  - name: Update 3scale to 2.9
+    include_role:
+      name: 3scale
+      tasks_from: upgrade_2.8_to_2.9
+
   - name: Update webapp walkthroughs
     include_role:
       name: webapp
