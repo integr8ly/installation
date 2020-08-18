@@ -87,5 +87,10 @@
       name: webapp
       tasks_from: update_version_info.yml
 
+  - name: Upgrade backup monitoring alerts
+    include_role:
+      name: backup
+      tasks_from: upgrade.yaml
+
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"
