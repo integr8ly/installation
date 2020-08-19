@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    monitoring-key: "{{monitoring_label_value}}"
+  name: alertmanager-alerts
+spec:
+  groups:
+    - name: alertmanager.rules
+      rules:
+        - alert: AlertmanagerFailedNotifications
+          annotations:
+            message: Alertmanager has failed to deliver notifications
+          expr: |
+            rate(alertmanager_notifications_failed_total[1m]) > 0
+          for: 1m
+          labels:
+            severity: critical
+        - alert: AlertmanagerConfigReloadFailed
+          annotations:
+            message: Alertmanager configuration is invalid
+          expr: |
+            alertmanager_config_last_reload_successful == 0
+          for: 10m
+          labels:
+            severity: warning
