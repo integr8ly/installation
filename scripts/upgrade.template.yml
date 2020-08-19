@@ -58,5 +58,10 @@
       name: rhsso-user
       tasks_from: disable-idp-review-link-confirm.yml
 
+  - name: Update alert manager configuration
+    include_role:
+      name: middleware_monitoring_config
+      tasks_from: create_alertmanager.yml
+
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"
