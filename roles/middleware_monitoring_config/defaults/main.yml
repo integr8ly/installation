@@ -31,6 +31,7 @@ monitoring_prometheusrules_resource_templates:
 - kube_state_metrics_3scale_alerts.yml
 - kube_state_metrics_fuse_online_alerts.yml
 - alertmanager_alerts.yml
+- kube_state_metrics_3scale_endpoint_alerts.yml
 
 # BlackboxTargets template variables
 monitoring_blackboxtargets_resource_templates:
