@@ -12,9 +12,129 @@ spec:
         annotations:
           sop_url: <TODO>
           message: >-
-            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }}. is down. Expected at least 1.
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
           kube_endpoint_address_available{endpoint='apicast-production'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleApicastStagingServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='apicast-staging'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleBackendListenerServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='backend-listener'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleBackendRedisServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='backend-redis'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleSystemDeveloperServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='system-developer'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleSystemMasterServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }}. is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='system-master'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleSystemMemcacheServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='system-memcache'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleSystemMySqlServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='system-mysql'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleSystemProviderServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='system-provider'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleSystemRedisServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='system-provider'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleSystemSphinxServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='system-sphinx'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleZyncServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='zync'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIThreeScaleZyncDatabaseServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='zync-database'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
