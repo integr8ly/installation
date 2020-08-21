@@ -29,6 +29,7 @@ Some of these changes may include:
 
 ### Removed
 * Removed unused templates from UPS role
+* [INTLY-9048] - Removed CronJobSuspended alert
 
 
 ### Bug Fixes
