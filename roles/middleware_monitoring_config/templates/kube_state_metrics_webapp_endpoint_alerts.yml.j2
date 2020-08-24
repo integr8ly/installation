@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata: 
+  labels:
+    monitoring-key: "{{monitoring_label_value}}"
+  name: ksm-webapp-endpoint-alerts
+spec:   
+  groups: 
+    - name: webapp-endpoint.rules
+      rules: 
+      - alert: RHMIWebAppTutorialServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='tutorial-web-app'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
+      - alert: RHMIWebAppTutorialOperatorServiceEndpointDown
+        annotations:
+          sop_url: <TODO>
+          message: >-
+            No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
+        expr: |
+          kube_endpoint_address_available{endpoint='tutorial-web-app-operator'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+        for: 5m
+        labels:
+          severity: critical
