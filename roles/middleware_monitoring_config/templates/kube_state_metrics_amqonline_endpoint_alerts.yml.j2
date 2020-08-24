@@ -8,7 +8,7 @@ spec:
   groups: 
     - name: amqonline-endpoint.rules
       rules: 
-      - alert: RHMIAMQOnlineConsoleServiceEndpointDown
+      - alert: RHMIAmqOnlineConsoleServiceEndpointDown
         annotations:
           sop_url: <TODO>
           message: >-
@@ -18,7 +18,7 @@ spec:
         for: 5m
         labels:
           severity: critical
-      - alert: RHMIAMQOnlineStandardAuthServiceEndpointDown
+      - alert: RHMIAmqOnlineStandardAuthServiceEndpointDown
         annotations:
           sop_url: <TODO>
           message: >-
@@ -28,7 +28,7 @@ spec:
         for: 5m
         labels:
           severity: critical
-      - alert: RHMIAMQOnlineEnmasseOperatorMetricsServiceEndpointDown
+      - alert: RHMIAmqOnlineEnmasseOperatorMetricsServiceEndpointDown
         annotations:
           sop_url: <TODO>
           message: >-
@@ -38,7 +38,7 @@ spec:
         for: 5m
         labels:
           severity: critical
-      - alert: RHMIAMQOnlineAddressSpaceControllerServiceEndpointDown
+      - alert: RHMIAmqOnlineAddressSpaceControllerServiceEndpointDown
         annotations:
           sop_url: <TODO>
           message: >-
@@ -48,7 +48,7 @@ spec:
         for: 5m
         labels:
           severity: critical
-      - alert: RHMIAMQOnlineServiceBrokerServiceEndpointDown
+      - alert: RHMIAmqOnlineServiceBrokerServiceEndpointDown
         annotations:
           sop_url: <TODO>
           message: >-
@@ -58,7 +58,7 @@ spec:
         for: 5m
         labels:
           severity: critical
-      - alert: RHMIAMQOnlinePostgreSqlServiceEndpointDown
+      - alert: RHMIAmqOnlinePostgreSqlServiceEndpointDown
         annotations:
           sop_url: <TODO>
           message: >-
