@@ -13,6 +13,7 @@ Some of these changes may include:
 ## Unreleased
 
 ### Added
+* [INTLY-9909] - Creation of RHMI service endpoints alerts
 
 ### Changed
 * [INTLY-3623] - Refactor of inventories and associated group_vars to support POC, OSD and PDS environments
