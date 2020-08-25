@@ -33,7 +33,6 @@ monitoring_prometheusrules_resource_templates:
 - alertmanager_alerts.yml
 - kube_state_metrics_3scale_endpoint_alerts.yml
 - kube_state_metrics_amqonline_endpoint_alerts.yml
-- kube_state_metrics_amqstreams_endpoint_alerts.yml
 - kube_state_metrics_fuse_endpoint_alerts.yml
 - kube_state_metrics_launcher_endpoint_alerts.yml
 - kube_state_metrics_sso_endpoint_alerts.yml
