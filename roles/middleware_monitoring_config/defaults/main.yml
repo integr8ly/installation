@@ -39,6 +39,13 @@ monitoring_prometheusrules_resource_templates:
 - kube_state_metrics_sso_endpoint_alerts.yml
 - kube_state_metrics_user_sso_endpoint_alerts.yml
 - kube_state_metrics_apicurito_endpoint_alerts.yml
+- kube_state_metrics_codeready_endpoint_alerts.yml
+- kube_state_metrics_console_config_endpoint_alerts.yml
+- kube_state_metrics_managed_service_broker_endpoint_alerts.yml
+- kube_state_metrics_nexus_endpoint_alerts.yml
+- kube_state_metrics_webapp_endpoint_alerts.yml
+- kube_state_metrics_middleware_monitoring_endpoint_alerts.yml
+- kube_state_metrics_mobile_unifiedpush_endpoint_alerts.yml
 
 # BlackboxTargets template variables
 monitoring_blackboxtargets_resource_templates:
