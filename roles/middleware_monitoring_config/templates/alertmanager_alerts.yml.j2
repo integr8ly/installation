@@ -11,6 +11,7 @@ spec:
         - alert: AlertmanagerFailedNotifications
           annotations:
             message: Alertmanager has failed to deliver notifications
+            sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
           expr: |
             rate(alertmanager_notifications_failed_total[1m]) > 0
           for: 1m
