@@ -14,7 +14,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='msb'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='msb', namespace="{{ eval_msbroker_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical

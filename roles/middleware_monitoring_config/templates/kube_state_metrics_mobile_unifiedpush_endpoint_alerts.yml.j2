@@ -14,7 +14,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='unifiedpush-operator-metrics'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='unifiedpush-operator-metrics', namespace="{{ eval_ups_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -24,7 +24,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='unifiedpush-postgresql'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='unifiedpush-postgresql', namespace="{{ eval_ups_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -34,7 +34,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='unifiedpush-unifiedpush'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='unifiedpush-unifiedpush', namespace="{{ eval_ups_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -44,7 +44,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='unifiedpush-unifiedpush-proxy'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='unifiedpush-unifiedpush-proxy', namespace="{{ eval_ups_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical

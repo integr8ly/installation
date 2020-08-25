@@ -14,7 +14,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='launcher-sso'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='launcher-sso', namespace="{{ eval_launcher_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -24,7 +24,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='launcher-sso-ping'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='launcher-sso-ping', namespace="{{ eval_launcher_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -34,7 +34,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='launcher-sso-postgresql'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='launcher-sso-postgresql', namespace="{{ eval_launcher_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -44,7 +44,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='launcher-backend'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='launcher-backend', namespace="{{ eval_launcher_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -54,7 +54,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='launcher-creator-backend'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='launcher-creator-backend', namespace="{{ eval_launcher_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -64,7 +64,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='launcher-frontend'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='launcher-frontend', namespace="{{ eval_launcher_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical

@@ -14,7 +14,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='console'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='console', namespace="{{ eval_enmasse_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -24,7 +24,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='standard-authservice'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='standard-authservice', namespace="{{ eval_enmasse_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -34,7 +34,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='enmasse-operator-metrics'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='enmasse-operator-metrics', namespace="{{ eval_enmasse_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -44,7 +44,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='address-space-controller'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='address-space-controller', namespace="{{ eval_enmasse_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -54,7 +54,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='service-broker'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='service-broker', namespace="{{ eval_enmasse_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -64,7 +64,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='postgresql'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='postgresql', namespace="{{ eval_enmasse_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical

@@ -14,7 +14,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='apicast-production'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='apicast-production', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -24,7 +24,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='apicast-staging'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='apicast-staging', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -34,7 +34,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='backend-listener'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='backend-listener', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -44,7 +44,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='backend-redis'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='backend-redis', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -54,7 +54,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='system-developer'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='system-developer', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -64,7 +64,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }}. is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='system-master'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='system-master', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -74,7 +74,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='system-memcache'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='system-memcache', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -84,7 +84,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='system-mysql'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='system-mysql', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -94,7 +94,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='system-provider'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='system-provider', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -104,7 +104,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='system-provider'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='system-provider', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -114,7 +114,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='system-sphinx'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='system-sphinx', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -124,7 +124,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='zync'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='zync', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
@@ -134,7 +134,7 @@ spec:
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
-          kube_endpoint_address_available{endpoint='zync-database'} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
+          kube_endpoint_address_available{endpoint='zync-database', namespace="{{ threescale_namespace }}"} * on (namespace) group_left kube_namespace_labels{label_monitoring_key='middleware'} < 1
         for: 5m
         labels:
           severity: critical
