@@ -10,7 +10,7 @@ spec:
       rules: 
       - alert: RHMIThreeScaleApicastProductionServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -20,7 +20,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleApicastStagingServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -30,7 +30,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleBackendListenerServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -40,7 +40,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleBackendRedisServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -50,7 +50,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleSystemDeveloperServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -60,7 +60,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleSystemMasterServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }}. is down. Expected at least 1.
         expr: |
@@ -70,7 +70,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleSystemMemcacheServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -80,7 +80,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleSystemMySqlServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -90,7 +90,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleSystemProviderServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -100,7 +100,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleSystemRedisServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -110,7 +110,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleSystemSphinxServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -120,7 +120,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleZyncServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
@@ -130,7 +130,7 @@ spec:
           severity: critical
       - alert: RHMIThreeScaleZyncDatabaseServiceEndpointDown
         annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/service_endpoint_down.asciidoc
+          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc
           message: >-
             No {{ "{{" }}$labels.endpoint{{ "}}" }} endpoints in namespace {{ "{{" }}$labels.namespace{{ "}}" }} is down. Expected at least 1.
         expr: |
