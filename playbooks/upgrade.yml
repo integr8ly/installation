@@ -40,21 +40,12 @@
       - run_master_tasks | default(true) | bool
 
 # Add product specific upgrade tasks here, make sure to use the "when: upgrade_<product>|bool" condition on any new tasks added!!
-
-  - name: Update 3scale to 2.9
-    include_role:
-      name: 3scale
-      tasks_from: upgrade_2.8_to_2.9
-
-  - name: Update webapp walkthroughs
-    include_role:
-      name: webapp
-      tasks_from: upgrade_rhmi_1.7_to_1.8
-
-  - name: Update monitoring alerts
-    include_role:
-      name: middleware_monitoring_config
-      tasks_from: create_alerts
+#
+#    - name: Some Special webapp only upgrade thing
+#      include_role:
+#        name: webapp
+#        tasks_from: upgrade_patch
+#      when: upgrade_webapp|bool
 
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
@@ -62,30 +53,10 @@
       name: rhsso-user
       tasks_from: obtain-user-sso-token.yml
 
-  - name: Disable review and confirming link account
+  - name: Disable review and confirming link account 
     include_role:
       name: rhsso-user
       tasks_from: disable-idp-review-link-confirm.yml
-
-  - name: Upgrade RHSSO
-    include_role:
-      name: rhsso
-      tasks_from: upgrade_images.yml
-
-  - name: Upgrade RHSSO User
-    include_role:
-      name: rhsso-user
-      tasks_from: upgrade_images.yml
-
-  - name: Upgrade walkthrough templates
-    include_role:
-      name: walkthroughs
-      tasks_from: upgrade.yml
-
-  - name: Upgrade webapp integreatly version
-    include_role:
-      name: webapp
-      tasks_from: update_version_info.yml
 
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"
