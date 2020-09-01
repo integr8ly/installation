@@ -92,5 +92,10 @@
       name: backup
       tasks_from: upgrade.yaml
 
+  - name: Update alert manager configuration
+    include_role:
+      name: middleware_monitoring_config
+      tasks_from: upgrade_alert_manager_email.yml
+
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"
