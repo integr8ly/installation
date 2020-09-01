@@ -16,6 +16,7 @@ Some of these changes may include:
 * [INTLY-9909] - Creation of RHMI service endpoints alerts and accompanying [SOP](https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts/service_endpoint_down.asciidoc)
 
 ### Changed
+* [INTLY-9948] - Lower the severity of threescale alerts that do not meet the cssre critical alert criteria to warning.
 * [INTLY-3623] - Refactor of inventories and associated group_vars to support POC, OSD and PDS environments
 * [INTLY-3847] - Update Alert Manager emails to include cluster URL and timestamps
 * [INTLY-5856] - Improve resiliency of sso/user-sso w/ 2nd replica and qos of postgres pods up from BestEffort to Burstable

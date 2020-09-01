@@ -27,7 +27,7 @@ spec:
           absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"apicast-production.*"})
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: ThreeScaleBackendWorkerPod
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
@@ -37,7 +37,7 @@ spec:
           absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"backend-worker.*"})
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: ThreeScaleBackendListenerPod
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
@@ -47,7 +47,7 @@ spec:
           absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"backend-listener.*"})
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: ThreeScaleBackendRedisPod
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
@@ -57,7 +57,7 @@ spec:
           absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"backend-redis.*"})
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: ThreeScaleSystemRedisPod
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
@@ -67,7 +67,7 @@ spec:
           absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"system-redis.*"})
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: ThreeScaleSystemMySQLPod
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
@@ -77,7 +77,7 @@ spec:
           absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"system-mysql.*"})
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: ThreeScaleSystemAppPod
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
@@ -87,7 +87,7 @@ spec:
           absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"system-app-.*"})
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: ThreeScaleAdminUIBBT
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
