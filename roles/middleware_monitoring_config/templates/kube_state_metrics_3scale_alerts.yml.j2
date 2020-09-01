@@ -125,15 +125,6 @@ spec:
         for: 5m
         labels:
           severity: critical
-      - alert: ThreeScalePodCount
-        annotations:
-          sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
-          message: Pod count for namespace {{ '{{' }} $labels.namespace {{ '}}' }} is {{ '{{' }} printf "%.0f" $value {{ '}}' }}. Expected at least 15 pods.
-        expr: |
-          absent(sum(kube_pod_status_ready{condition="true",namespace="{{ threescale_namespace }}"}) >= 15)
-        for: 5m
-        labels:
-          severity: warning
       - alert: ThreeScalePodHighMemory
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
