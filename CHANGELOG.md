@@ -25,6 +25,7 @@ Some of these changes may include:
 * [INTLY-8459] - Fix 3Scale probe alerts
 * [INTLY-8601] - Add dummy/null reciever for UnifiedPushJavaHeapThresholdExceeded alert
 * [INTLY-8413] - Update PV usage alerts to match upstream kubernetes-mixin
+* [INTLY-9907] - Lower all generic Kube* alerts to warning in 1.x
 
 * [INTLY-8600] - Updated SSOPodCount alert to check for at least 2 sso pods to allow for scaling of pods
 * [INTLY-9132] - Update alertmanager config during upgrade

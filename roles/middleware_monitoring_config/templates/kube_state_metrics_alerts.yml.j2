@@ -16,7 +16,7 @@ spec:
           rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[15m]) * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"} * 60 * 5 > 0
         for: 15m
         labels:
-          severity: critical
+          severity: warning
       - alert: ESPodCount
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
@@ -43,7 +43,7 @@ spec:
           sum by(pod, namespace) (kube_pod_status_phase{phase=~"Pending|Unknown"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
         for: 15m
         labels:
-          severity: critical
+          severity: warning
       - alert: KubePodImagePullBackOff
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
@@ -52,7 +52,7 @@ spec:
           (kube_pod_container_status_waiting_reason{reason="ImagePullBackOff"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: KubePodBadConfig
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
@@ -61,7 +61,7 @@ spec:
           (kube_pod_container_status_waiting_reason{reason="CreateContainerConfigError"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: KubePodStuckCreating
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
@@ -70,7 +70,7 @@ spec:
           (kube_pod_container_status_waiting_reason{reason="ContainerCreating"} * on (namespace, namespace) group_left(label_monitoring_key) kube_namespace_labels{label_monitoring_key="middleware"}) > 0
         for: 15m
         labels:
-          severity: critical
+          severity: warning
       - alert: SSOPodHighMemory
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
