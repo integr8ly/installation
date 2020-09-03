@@ -10,3 +10,9 @@
   shell: oc patch deployment keycloak-operator --patch='{"spec":{"template":{"spec":{"containers":[{"name":"keycloak-operator","image":"{{ rhsso_operator_image }}"}]}}}}' --namespace {{ rhsso_namespace }}
   register: keycloak_operator_image_patch
   failed_when: keycloak_operator_image_patch.stderr
+
+- name: Wait for the new keycloak operator to be ready
+  shell: oc rollout status deployment/keycloak-operator -n {{ rhsso_namespace }}
+  register: rollout_cmd
+  failed_when: rollout_cmd.rc != 0
+  changed_when: rollout_cmd.rc == 0

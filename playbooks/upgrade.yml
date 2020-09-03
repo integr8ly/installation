@@ -78,15 +78,20 @@
       name: rhsso
       tasks_from: upgrade_images.yml
 
+  - name: Upgrade RHSSO User
+    include_role:
+      name: rhsso-user
+      tasks_from: upgrade_images.yml
+
   - name: Upgrade RHSSO Alerts
     include_role:
       name: rhsso
       tasks_from: upgrade_alerts.yml
 
-  - name: Upgrade RHSSO User
+  - name: Upgrade RHSSO User Alerts
     include_role:
       name: rhsso-user
-      tasks_from: upgrade_images.yml
+      tasks_from: upgrade_alerts.yml
 
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"
