@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    monitoring-key: "{{monitoring_label_value}}"
+  name: target-down-alerts
+spec:
+  groups:
+    - name: general.rules
+      rules:
+      - alert: TargetDown
+        annotations:
+          message: >-
+            {{ '{{' }} printf "%.4g" $value {{ '}}' }}% of the {{ '{{' }} $labels.job {{ '}}' }}/{{ '{{' }} $labels.service {{ '}}' }} targets in the {{ '{{' }} $labels.namespace {{ '}}' }} namespace are down.
+        expr: 100 * (count(up{job!="blackbox"} == 0) BY (job, namespace, service) / count(up{job!="blackbox"}) BY (job, namespace, service)) > 10
+        for: 10m
+        labels:
+          severity: warning
+      - alert: BlackboxTargetDown
+        annotations:
+          message: >-
+            The {{ '{{' }} $labels.service {{ '}}' }} blackbox probe for the endpoint {{ '{{' }} $labels.instance {{ '}}' }} is failing.
+        expr: (up{job="blackbox"}==0)
+        for: 10m
+        labels:
+          severity: warning

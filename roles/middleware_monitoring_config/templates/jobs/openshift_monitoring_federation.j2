@@ -28,6 +28,10 @@
     source_labels:
     - __meta_kubernetes_service_label_prometheus
     regex: k8s
+  - action: replace
+    source_labels:
+    - __meta_kubernetes_namespace
+    target_label: namespace
   metric_relabel_configs:
   - action: labeldrop
     regex: prometheus_replica
