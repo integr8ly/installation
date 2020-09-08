@@ -21,6 +21,9 @@ route:
   - match_re:
       alertname: ^RouterMeshConnectivityHealth$|^RouterMeshUndeliveredHealth$|^ComponentHealth$|^BrokerMemory$|^AuthenticationService$
     receiver: critical
+  - match_re:
+      alertname: ^RestartingPods$
+    receiver: default
   - match:
       severity: critical
     receiver: critical
