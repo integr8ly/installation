@@ -11,6 +11,8 @@ Some of these changes may include:
 - Changes in resource requirements (num pods, ram, cpu, containers)
 
 ## Unreleased
+
+## 1.9.0
 * [INTLY-8750] - Update the alert manager routing of the enmasse "RestartingPods" alert from "critical" to "default" (Warning). Note: Will still appear as "critical" in prometheus.
 * [INTLY-9947] - Added `TargetDown` and `BlackboxTargetDown` alerts
 * [INTLY-9949] - Update keycloak operator version 1.10.1. Lower the severity of sso alerts that do not meet the cssre critical alert criteria to warning.
