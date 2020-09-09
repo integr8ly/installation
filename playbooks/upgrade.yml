@@ -93,5 +93,16 @@
       name: rhsso-user
       tasks_from: upgrade_alerts.yml
 
+  - name: Upgrade RHSSO Readiness and Liveness probes
+    include_role:
+      name: rhsso
+      tasks_from: upgrade_probes.yml
+
+  - name: Upgrade RHSSO User Readiness and Liveness probes
+    include_role:
+      name: rhsso-user
+      tasks_from: upgrade_probes.yml
+
+
 #Update product version (should always be last)
 - import_playbook: "./generate-customisation-inventory.yml"
