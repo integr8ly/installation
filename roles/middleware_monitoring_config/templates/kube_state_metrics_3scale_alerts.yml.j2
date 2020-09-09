@@ -17,7 +17,7 @@ spec:
           absent(kube_pod_status_ready{namespace="{{ threescale_namespace }}", condition="true", pod=~"apicast-staging.*"})
         for: 5m
         labels:
-          severity: critical
+          severity: warning
       - alert: ThreeScaleApicastProductionPod
         annotations:
           sop_url: https://github.com/RHCloudServices/integreatly-help/blob/master/sops/alerts_and_troubleshooting.md
