@@ -1,0 +1,12 @@
+---
+
+- name: Patch SSO Readiness and Liveness probes
+  shell: >
+    oc patch dc sso -n {{ rhsso_user_namespace }} --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/livenessProbe/initialDelaySeconds", "value": "60" },
+                                                   {"op": "replace", "path": "/spec/template/spec/containers/0/livenessProbe/periodSeconds", "value": "30" },
+                                                   {"op": "replace", "path": "/spec/template/spec/containers/0/livenessProbe/timeoutSeconds", "value": "22" },
+                                                   {"op": "add", "path": "/spec/template/spec/containers/0/readinessProbe/initialDelaySeconds", "value": "40" },
+                                                   {"op": "replace", "path": "/spec/template/spec/containers/0/readinessProbe/periodSeconds", "value": "30" },
+                                                   {"op": "replace", "path": "/spec/template/spec/containers/0/readinessProbe/timeoutSeconds", "value": "22" }]'
+  register: probes_patch
+  failed_when: probes_patch.stderr != ''
