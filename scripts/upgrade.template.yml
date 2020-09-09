@@ -63,5 +63,10 @@
       name: middleware_monitoring_config
       tasks_from: upgrade_alert_manager_email.yml
 
-#Update product version (should always be last)
+  #Update product version (should always be last)
+  - name: Update webapp version info
+    include_role:
+      name: webapp
+      tasks_from: update_version_info.yml
+
 - import_playbook: "./generate-customisation-inventory.yml"
