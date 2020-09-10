@@ -1,4 +1,24 @@
 ---
-#ToDo Implement CVE image update steps as described https://github.com/RHCloudServices/integreatly-help/blob/master/sops/cves/applying-cve-updates.md
-- debug:
-    msg: "TODO Implement me!!"
+
+- name: Scale down the application monitoring operator
+  shell: oc scale deployment application-monitoring-operator --replicas 0 -n {{ monitoring_namespace }}
+  register: amo_scale_down_cmd
+  failed_when: amo_scale_down_cmd.rc != 0
+  changed_when: amo_scale_down_cmd.rc == 0
+
+- name: Upgrade application monitoring operator image
+  shell: oc patch deployment application-monitoring-operator -n {{ monitoring_namespace }} --type json -p '[{"op":"replace", "path":"/spec/template/spec/containers/0/image", "value":"{{ upgrade_deployment_image }}"}]'
+  register: patch_monitoring_deployment
+  failed_when: patch_monitoring_deployment.stderr != '' and 'not patched' not in patch_monitoring_deployment.stderr
+
+- name: Scale up the application monitoring operator
+  shell: oc scale deployment application-monitoring-operator --replicas 1 -n {{ monitoring_namespace }}
+  register: amo_scale_up_cmd
+  failed_when: amo_scale_up_cmd.rc != 0
+  changed_when: amo_scale_up_cmd.rc == 0
+
+- name: Wait for application monitoring operator to be ready
+  shell: oc rollout status deployment/application-monitoring-operator -n {{ monitoring_namespace }}
+  register: rollout_cmd
+  failed_when: rollout_cmd.rc != 0
+  changed_when: rollout_cmd.rc == 0
