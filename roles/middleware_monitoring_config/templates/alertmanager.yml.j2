@@ -15,15 +15,15 @@ route:
   repeat_interval: 12h
   receiver: default
   routes:
-  - receiver: "null"
-    match:
-      alertname: UnifiedPushJavaHeapThresholdExceeded
   - match_re:
       alertname: ^RouterMeshConnectivityHealth$|^RouterMeshUndeliveredHealth$|^ComponentHealth$|^BrokerMemory$|^AuthenticationService$
     receiver: critical
   - match_re:
       alertname: ^RestartingPods$
     receiver: default
+  - match_re:
+      alertname: ^UnifiedPushJavaHeapThresholdExceeded$|^UnifiedPushJavaNonHeapThresholdExceeded$
+    receiver: "null"
   - match:
       severity: critical
     receiver: critical
