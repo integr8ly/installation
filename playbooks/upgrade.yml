@@ -63,6 +63,13 @@
       name: backup
       tasks_from: upgrade.yaml
 
+  - name: Upgrade monitoring operator image
+    include_role:
+      name: middleware_monitoring
+      tasks_from: upgrade_images
+    vars:
+      upgrade_deployment_image: quay.io/integreatly/application-monitoring-operator:{{ middleware_monitoring_operator_release_tag }}
+
   - name: Update alert manager configuration
     include_role:
       name: middleware_monitoring_config
