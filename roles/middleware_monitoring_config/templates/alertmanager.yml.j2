@@ -18,6 +18,9 @@ route:
   - receiver: "null"
     match:
       alertname: UnifiedPushJavaHeapThresholdExceeded
+  - receiver: "null"
+    match:
+      alertname: UnifiedPushJavaNonHeapThresholdExceeded
   - match_re:
       alertname: ^RouterMeshConnectivityHealth$|^RouterMeshUndeliveredHealth$|^ComponentHealth$|^BrokerMemory$|^AuthenticationService$
     receiver: critical
