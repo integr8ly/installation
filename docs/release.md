@@ -58,24 +58,24 @@ For the master branch reset, please go ahead and create a pr from the above bran
 
 ### Minor Release
 
-1) Checkout and pull down the latest `master` of https://github.com/fheng/integreatly-help (private repo)
+1) Checkout and pull down the latest `master` of https://github.com/RHCloudServices/integreatly-help (private repo)
 2) Create a new branch for the release. e.g.:
 
     ```git checkout -b v1.5```
-3) Review any `Known Issues` in the [Installation SOP](https://github.com/fheng/integreatly-help/blob/master/sops/OSD_SRE_integreatly_install.asciidoc), and add/remove as appropriate for this release.
+3) Review any `Known Issues` in the [Installation SOP](https://github.com/RHCloudServices/integreatly-help/blob/master/sops/OSD_SRE_integreatly_install.asciidoc), and add/remove as appropriate for this release.
 4) Commit and push back the new branch to the upstream
 
 ### Patch Release
 
-1) Checkout and pull down the release branch (e.g. v1.5) of https://github.com/fheng/integreatly-help (private repo)
+1) Checkout and pull down the release branch (e.g. v1.5) of https://github.com/RHCloudServices/integreatly-help (private repo)
 
     ```git checkout v1.5```
-2) Review any `Known Issues` in the [Installation SOP](https://github.com/fheng/integreatly-help/blob/master/sops/OSD_SRE_integreatly_install.asciidoc), and add/remove as appropriate for this patch release.
+2) Review any `Known Issues` in the [Installation SOP](https://github.com/RHCloudServices/integreatly-help/blob/master/sops/OSD_SRE_integreatly_install.asciidoc), and add/remove as appropriate for this patch release.
 3) Commit and push back any changes to the upstream
 
 ### Tagging the help repo
 
-Once a release has been signed off, the [help repo](https://github.com/fheng/integreatly-help) will need to be tagged on the release branch:
+Once a release has been signed off, the [help repo](https://github.com/RHCloudServices/integreatly-help) will need to be tagged on the release branch:
 
 ```
 git checkout v1.5
