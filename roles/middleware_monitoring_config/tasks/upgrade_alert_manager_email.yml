@@ -1,5 +1,17 @@
 - name: Upgrade AlertManager
   block:
+  - name: Set smtp_auth_password
+    shell: oc get secret alertmanager-application-monitoring -n openshift-middleware-monitoring --template='{{index .data "alertmanager.yaml"}}' | base64 --decode | grep smtp_auth_password | awk '{print $2}'
+    register: smtp_auth_password
+ 
+  - name: Set dms_webhook_url
+    shell: oc get secret alertmanager-application-monitoring -n openshift-middleware-monitoring --template='{{index .data "alertmanager.yaml"}}' | base64 --decode | grep nosnch | cut -d "\"" -f2
+    register: dms_webhook_url 
+  
+  - name: Set pd_service_key
+    shell: oc get secret alertmanager-application-monitoring -n openshift-middleware-monitoring --template='{{index .data "alertmanager.yaml"}}' | base64 --decode | grep service_key | cut -d ":" -f2 | cut -d " " -f2
+    register: pd_service_key
+    
   - name: Delete alertmanager-application-monitoring secret
     shell: oc delete --ignore-not-found secret alertmanager-application-monitoring -n middleware-monitoring
 
