@@ -47,6 +47,17 @@
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
 
+  # Solution Explorer
+  - name: Webapp upgrade
+    include_role:
+      name: webapp
+      tasks_from: upgrade
+    vars:
+      rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
+      rhsso_namespace: "{{ eval_rhsso_namespace }}"
+      upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
+    when: upgrade_webapp|default(false)|bool
+    
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
     include_role:
