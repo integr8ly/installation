@@ -3,8 +3,8 @@ imageSync:
   projects:
     rh-osbs:
       images:
-      - 3scale-amp2-apicast-gateway-rhel8:3scale2.9
-      - 3scale-amp2-backend-rhel7:3scale2.9
-      - 3scale-amp2-memcached-rhel7:3scale2.9
-      - 3scale-amp2-system-rhel7:3scale2.9
-      - 3scale-amp2-zync-rhel7:3scale2.9
+      - 3scale-amp2-apicast-gateway-rhel8:3scale2.10
+      - 3scale-amp2-backend-rhel7:3scale2.10
+      - 3scale-amp2-memcached-rhel7:3scale2.10
+      - 3scale-amp2-system-rhel7:3scale2.10
+      - 3scale-amp2-zync-rhel7:3scale2.10
