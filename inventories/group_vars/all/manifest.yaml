@@ -22,7 +22,7 @@ che_git_url: https://github.com/redhat-developer/codeready-workspaces-deprecated
 
 #controls whether enmasse is installed or not
 enmasse: True
-enmasse_version: '1.6.0.GA'
+enmasse_version: '1.6.1.GA'
 enmasse_git_url: https://github.com/jboss-container-images/amq-online-images.git
 enmasse_postgresql_image: 'postgresql:9.6'
 
