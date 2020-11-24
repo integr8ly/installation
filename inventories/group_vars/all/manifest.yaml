@@ -36,7 +36,7 @@ fuse_version: '7.6.0'
 #controls whether Fuse Online is installed or not
 fuse_online: True
 # Syndesis operator version to be installed
-fuse_online_release_tag: '1.11.3'
+fuse_online_release_tag: '1.11.4'
 #Imagestream version installed by syndesis operator
 fuse_online_operator_imagestream_version: '1.6'
 # Used by msbroker
