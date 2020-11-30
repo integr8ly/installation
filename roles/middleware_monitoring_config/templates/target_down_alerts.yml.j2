@@ -12,7 +12,7 @@ spec:
         annotations:
           message: >-
             {{ '{{' }} printf "%.4g" $value {{ '}}' }}% of the {{ '{{' }} $labels.job {{ '}}' }}/{{ '{{' }} $labels.service {{ '}}' }} targets in the {{ '{{' }} $labels.namespace {{ '}}' }} namespace are down.
-        expr: 100 * (count(up{job!="blackbox"} == 0) BY (job, namespace, service) / count(up{job!="blackbox"}) BY (job, namespace, service)) > 10
+        expr: 100 * (count(up{job!="blackbox",  job!="openshift-monitoring-federation"} == 0) BY (job, namespace, service) / count(up{job!="blackbox",  job!="openshift-monitoring-federation"}) BY (job, namespace, service)) > 10
         for: 10m
         labels:
           severity: warning
@@ -24,3 +24,11 @@ spec:
         for: 10m
         labels:
           severity: warning
+      - alert: OpenshiftPrometheusFederationTargetDown
+        annotations:
+            message: >-
+                The {{ '{{' }} $labels.job {{ '}}' }} instance is down in the {{ '{{' }} $labels.namespace {{ '}}' }} namespace.
+        expr: (up{namespace="openshift-monitoring", job="openshift-monitoring-federation"} == 0)
+        for: 10m
+        labels:
+            severity: warning

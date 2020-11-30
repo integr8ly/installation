@@ -11,7 +11,7 @@ Some of these changes may include:
 - Changes in resource requirements (num pods, ram, cpu, containers)
 
 ## Unreleased
-
+* [INTLY-10161] - New target down alert added, `OpenshiftPrometheusFederationTargetDown`
 ## 1.9.0
 * [INTLY-9069] - Update the alert manager routing of the UnifiedPushJavaNonHeapThresholdExceeded alert from "critical" to "null". Note: Will still appear as "critical" in prometheus.
 * [INTLY-8750] - Update the alert manager routing of the enmasse "RestartingPods" alert from "critical" to "default" (Warning). Note: Will still appear as "critical" in prometheus.
