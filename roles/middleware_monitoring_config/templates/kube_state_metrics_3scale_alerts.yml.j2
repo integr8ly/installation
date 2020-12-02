@@ -119,9 +119,8 @@ spec:
             3Scale System Admin UI Blackbox Target: If this console is
             unavailable, the client is unable to perform Account Management,
             Analytics or Billing.
-        expr: >
-          absent(probe_success{job="blackbox",
-          service="3scale-system-admin-ui"} == 1)
+        expr: |
+            probe_success{job="blackbox", service="3scale-system-admin-ui"} == 0 and up{job="blackbox", service="3scale-system-admin-ui"} ==1
         for: 5m
         labels:
           severity: critical
