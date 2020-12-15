@@ -1,3 +1,0 @@
----
-- name: Create Service Monitors
-  include_tasks: service_monitors.yaml
