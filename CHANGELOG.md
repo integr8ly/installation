@@ -12,6 +12,8 @@ Some of these changes may include:
 
 ## Unreleased
 * [INTLY-10338] - Remove ServiceMonitor CR for zync component of 3Scale
+* [INTLY-10158] - Fixed issue with backup-container where it could sometimes fail because it ran out of inodes.
+* [INTLY-10129] - Fixed issue with backup-container where it would needlessly retry Enmasse PV backup if a file had changed, causing alerts to fire as the backup was taking longer than they should.
 
 ## 1.9.0
 * [INTLY-9069] - Update the alert manager routing of the UnifiedPushJavaNonHeapThresholdExceeded alert from "critical" to "null". Note: Will still appear as "critical" in prometheus.

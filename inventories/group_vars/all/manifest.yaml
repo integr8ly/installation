@@ -1,5 +1,5 @@
 ---
-integreatly_version: release-1.8.0-er1
+integreatly_version: master
 
 # threescale version is controlled by the operator. Changing the operator version will change the 3scale version
 
@@ -126,7 +126,7 @@ amq_streams_repo_url: https://github.com/jboss-container-images/amqstreams-1-ope
 amq_version: 1.1.0
 
 # information about backups
-backup_version: '1.0.13'
+backup_version: '1.0.16'
 backup_resources_location: 'https://raw.githubusercontent.com/integr8ly/backup-container-image/{{ backup_version }}/templates/openshift'
 backup_image: quay.io/integreatly/backup-container:{{ backup_version }}
 backup_schedule: '30 2 * * *'
