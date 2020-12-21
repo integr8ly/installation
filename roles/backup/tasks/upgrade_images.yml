@@ -9,7 +9,7 @@
     cronjobs_names_list: "{{ cronjobs_names.stdout_lines }}"
 
 - name: Patch the image in each cronjob
-  shell: "oc patch cronjob {{ item.0 }} -n {{ backup_namespace }} --type json -p '[{\"op\":\"replace\", \"path\":\"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\":\"{{ backup_image }}\"}]'"
+  shell: "oc patch cronjob {{ item }} -n {{ backup_namespace }} --type json -p '[{\"op\":\"replace\", \"path\":\"/spec/jobTemplate/spec/template/spec/containers/0/image\", \"value\":\"{{ backup_image }}\"}]'"
   with_items: "{{ cronjobs_names_list }}"
   when: (cronjobs_names_list | length) > 0
 
