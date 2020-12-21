@@ -11,6 +11,7 @@ Some of these changes may include:
 - Changes in resource requirements (num pods, ram, cpu, containers)
 
 ## Unreleased
+* [INTLY-10338] - Remove ServiceMonitor CR for zync component of 3Scale
 
 ## 1.9.0
 * [INTLY-9069] - Update the alert manager routing of the UnifiedPushJavaNonHeapThresholdExceeded alert from "critical" to "null". Note: Will still appear as "critical" in prometheus.

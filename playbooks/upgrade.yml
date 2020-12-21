@@ -47,6 +47,13 @@
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
 
+  # 3Scale Config
+  - name: Delete Zync ServiceMonitor
+    shell: oc delete servicemonitor {{ threescale_zync_sm_name | default("3scale-zync-servicemonitor") }} -n {{ threescale_namespace }}
+    register: zync_sm_output
+    failed_when: zync_sm_output.stderr != '' and 'not found' not in zync_sm_output.stderr
+    changed_when: zync_sm_output.rc == 0 and 'deleted' in zync_sm_output.stdout
+
   # Solution Explorer
   - name: Webapp upgrade
     include_role:

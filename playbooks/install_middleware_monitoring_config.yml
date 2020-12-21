@@ -4,8 +4,6 @@
   roles:
   - role: middleware_monitoring_config
     when: middleware_monitoring | default(true) | bool
-  - role: 3scale_config
-    when: middleware_monitoring | default(true) | bool
   tasks:
   - include_role:
       name: gitea
