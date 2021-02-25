@@ -47,7 +47,7 @@
   shell: sleep 5; oc get pods --namespace {{ webapp_namespace }}  |  grep  "Creating"
   register: result
   until: not result.stdout
-  retries: 100
+  retries: 200
   delay: 10
   failed_when: result.stdout
   changed_when: False
@@ -69,7 +69,7 @@
 - name: Get webapp secure route
   shell: oc get route/{{ webapp_route }} -o template --template \{\{.spec.host\}\} -n {{ webapp_namespace }}
   register: webapp_secure_route
-  retries: 60
+  retries: 90
   delay: 5
   until: webapp_secure_route.rc == 0
 

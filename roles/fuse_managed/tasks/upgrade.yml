@@ -88,7 +88,7 @@
   shell: "oc get syndesis -n {{ fuse_namespace }} | awk '{print $3}' | grep -v VERSION"
   register: fuse_version_cr_status
   until: fuse_version_cr_status.stdout == fuse_online_operator_imagestream_version
-  retries: 50
+  retries: 75
   delay: 10
   
 - name: Wait for Fuse rollouts to complete

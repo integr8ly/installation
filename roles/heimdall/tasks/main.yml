@@ -36,5 +36,5 @@
   shell: "oc get pods --namespace={{ heimdall_namespace }} --selector='name=heimdall' -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w"
   register: heimdall_result
   until: heimdall_result.stdout.find("1") != -1
-  retries: 90
+  retries: 135
   delay: 5

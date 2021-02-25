@@ -7,6 +7,6 @@
       shell: "sleep 5; oc get pods -l strimzi.io/cluster={{ integreatly_kafka_cluster_name }} -n {{ amq_streams_namespace_name }} -o jsonpath='{.items[*].status.conditions[?(@.type==\"ContainersReady\")].status}'"
       register: amq_streams_pod_statuses
       until: amq_streams_pod_statuses.stdout.split() | select('match', 'True') | list | count == 7
-      retries: 50
+      retries: 75
       delay: 10
       failed_when: amq_streams_pod_statuses.stdout.split() | select('match', 'True') | list | count != 7

@@ -26,7 +26,7 @@
 - name: Find encrypted RH-SSO route
   shell: for route in $(oc get routes -n {{ launcher_namespace }} | awk '{print $1}' | grep 'sso' | grep -v 'NAME'); do term=$(oc get route $route -n {{ launcher_namespace }} -o template --template \{\{.spec.tls.termination\}\}); if [ "$term" == "edge" ] || [ "$term" == "reencrypt" ]; then echo $route; break; fi; done
   register: rhsso_secure_route_name
-  retries: 60
+  retries: 90
   delay: 5
   failed_when: rhsso_secure_route_name.stdout == ''
   until: rhsso_secure_route_name.stdout != ''
@@ -70,7 +70,7 @@
   shell: sleep 5; oc get keycloakrealm {{ rhsso_realm }} -o template --template \{\{.status.phase\}\}  -n {{ rhsso_namespace }}  |  grep  'reconcile'
   register: result
   until: result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: not result.stdout
   changed_when: False

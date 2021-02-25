@@ -29,7 +29,7 @@
   shell: oc get checluster {{ che_cr_name }} -n {{ che_namespace }} -o jsonpath='{.status.cheClusterRunning}'
   register: codeready_verify_result
   until: codeready_verify_result.stdout == 'Available'
-  retries: 50
+  retries: 75
   delay: 10
 
 - name: Remove the temp file

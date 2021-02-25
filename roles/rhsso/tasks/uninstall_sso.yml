@@ -15,7 +15,7 @@
   shell: oc get keycloak rhsso -n {{ sso_namespace }}
   register: result
   until: not result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stdout
   changed_when: False
@@ -24,7 +24,7 @@
   shell: oc get keycloakrealm {{ rhsso_realm }} -n {{ sso_namespace }}
   register: result
   until: not result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stdout
   changed_when: False

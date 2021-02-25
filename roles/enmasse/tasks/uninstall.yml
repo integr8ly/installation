@@ -21,7 +21,7 @@
   shell: oc get clusterservicebroker enmasse
   register: result
   until: not result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stdout
   changed_when: False

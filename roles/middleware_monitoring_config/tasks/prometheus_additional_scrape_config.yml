@@ -43,7 +43,7 @@
     register: monitoring_prometheus_check
     until: monitoring_prometheus_check.rc == 0
     delay: 5
-    retries: 50
+    retries: 75
 
   - name: Delete the temp yaml files
     file:

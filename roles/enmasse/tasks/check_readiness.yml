@@ -5,7 +5,7 @@
       shell: sleep 5; oc get pod -l name=address-space-controller --namespace {{ enmasse_namespace }}  |  grep  "deploy"
       register: result
       until: not result.stdout
-      retries: 50
+      retries: 75
       delay: 10
       failed_when: result.stdout
       changed_when: False
@@ -13,7 +13,7 @@
       shell: sleep 5; oc get pod -l component=api-server --namespace {{ enmasse_namespace }}  |  grep  "deploy"
       register: result
       until: not result.stdout
-      retries: 50
+      retries: 75
       delay: 10
       failed_when: result.stdout
       changed_when: False
@@ -21,7 +21,7 @@
       shell: sleep 5; oc get pod -l component=service-broker --namespace {{ enmasse_namespace }}  |  grep  "deploy"
       register: result
       until: not result.stdout
-      retries: 50
+      retries: 75
       delay: 10
       failed_when: result.stdout
       changed_when: False

@@ -20,7 +20,7 @@
   async_status: jid={{ item.ansible_job_id }}
   register: rollout_jobs
   until: rollout_jobs.finished
-  retries: 300
+  retries: 600
   with_items:
     "{{ rollout_status.results }}"
   changed_when: rollout_jobs.stderr is defined and rollout_jobs.stderr != ""

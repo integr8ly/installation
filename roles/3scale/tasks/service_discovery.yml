@@ -31,7 +31,7 @@
   shell: "oc rollout status dc/system-app -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   changed_when: False
@@ -46,7 +46,7 @@
   shell: "oc rollout status dc/system-sidekiq -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   changed_when: False

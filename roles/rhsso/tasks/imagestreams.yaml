@@ -4,7 +4,7 @@
   shell: oc tag --source=docker {{ rhsso_imagestream_image }} openshift/{{ rhsso_imagestream_name }}
   register: result
   until: result.stdout
-  retries: 50
+  retries: 75
   delay: 1
   failed_when: not result.stdout
   changed_when: False
@@ -13,7 +13,7 @@
   shell: oc -n openshift import-image {{ rhsso_imagestream_name }}
   register: result
   until: result.stdout
-  retries: 50
+  retries: 75
   delay: 1
   failed_when: not result.stdout
   changed_when: False

@@ -14,7 +14,7 @@
     status_code: [200]
   register: result
   until: result.status == 200
-  retries: 50
+  retries: 75
   delay: 10
 
 - name: Retrieve default admin user ID
@@ -51,7 +51,7 @@
   shell: "oc rollout status dc/system-app -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   changed_when: False
@@ -60,7 +60,7 @@
   shell: sleep 5; oc get pods --namespace {{ threescale_namespace }} | grep  "deploy"
   register: result
   until: not result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stdout
   changed_when: False

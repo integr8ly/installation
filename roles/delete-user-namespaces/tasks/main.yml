@@ -14,7 +14,7 @@
   shell: "oc get namespaces -o json | jq -r '{{ delete_user_namespaces.jq_query }}' | wc -l"
   register: namespaces_count
   until: namespaces_count.stdout == "0"
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: false
   changed_when: false

@@ -6,6 +6,6 @@
       shell: oc get pods -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' -n {{ launcher_namespace }} | wc -w
       register: result
       until: result.stdout == "6"
-      retries: 50
+      retries: 75
       delay: 10
       changed_when: False

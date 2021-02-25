@@ -22,7 +22,7 @@
   when: eval_user_xml.failed
   register: created_eval_user
   until: ('status' in created_eval_user) and (created_eval_user.status == 201)
-  retries: 3
+  retries: 5
   delay: 5
 
 - set_fact:
@@ -38,5 +38,5 @@
     status_code: 200
   register: result
   until: ('status' in result) and (result.status == 200)
-  retries: 3
+  retries: 5
   delay: 5
