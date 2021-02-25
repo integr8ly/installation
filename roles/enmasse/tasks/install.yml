@@ -22,7 +22,7 @@
   shell: sleep 5; oc get pods --namespace {{ enmasse_namespace }}  |  grep  "deploy"
   register: result
   until: not result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stdout
   changed_when: False

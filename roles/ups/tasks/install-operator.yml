@@ -30,21 +30,21 @@
   shell: "oc auth can-i create addressspace -n {{ ups_namespace }} --as system:serviceaccount:{{ ups_namespace }}:unifiedpush-operator"
   register: result
   until: result.rc == 0
-  retries: 50
+  retries: 75
   delay: 10
 
 - name: Wait for operator ServiceAccount to have access to Address resource from enmasse
   shell: "oc auth can-i create address -n {{ ups_namespace }} --as system:serviceaccount:{{ ups_namespace }}:unifiedpush-operator"
   register: result
   until: result.rc == 0
-  retries: 50
+  retries: 75
   delay: 10
 
 - name: Wait for operator ServiceAccount to have access to MessagingUser resource from enmasse
   shell: "oc auth can-i create messaginguser -n {{ ups_namespace }} --as system:serviceaccount:{{ ups_namespace }}:unifiedpush-operator"
   register: result
   until: result.rc == 0
-  retries: 50
+  retries: 75
   delay: 10
 
 - name: Process operator template
@@ -63,6 +63,6 @@
   shell: "oc get deployment/unifiedpush-operator -o jsonpath='{.status.availableReplicas}' -n {{ ups_namespace }}"
   register: result
   until: result.stdout == ups_operator_replicas_cmd.stdout
-  retries: 50
+  retries: 75
   delay: 10
   changed_when: False

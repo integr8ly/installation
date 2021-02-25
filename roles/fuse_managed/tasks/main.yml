@@ -93,7 +93,7 @@
   shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
   register: fuse_verify_result
   until: fuse_verify_result.stdout|int >= 7
-  retries: 50
+  retries: 75
   delay: 10
   changed_when: False
 
@@ -106,7 +106,7 @@
   shell: oc get pods -n {{ fuse_namespace }} --selector="app=syndesis" -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w
   register: fuse_verify_result
   until: fuse_verify_result.stdout|int >= 7
-  retries: 50
+  retries: 75
   delay: 10
   changed_when: False
 

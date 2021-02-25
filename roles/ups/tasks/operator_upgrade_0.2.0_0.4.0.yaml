@@ -6,7 +6,7 @@
   shell: "oc get po -l 'name=unifiedpush-operator' --no-headers -o name -n {{ ups_namespace }} | wc -l"
   register: result
   until: result.stdout == "0"
-  retries: 50
+  retries: 75
   delay: 10
   changed_when: False
 
@@ -56,7 +56,7 @@
       shell: "oc get {{ item.split(' ')[0] }}/{{ item.split(' ')[1] }} -n {{ item.split(' ')[2] }}"
       register: result
       until: not result.stdout
-      retries: 50
+      retries: 75
       delay: 10
       failed_when: result.stdout
       changed_when: False
@@ -85,7 +85,7 @@
   shell: "oc get deployment/unifiedpush-operator -o jsonpath='{.status.availableReplicas}' -n {{ ups_namespace }}"
   register: result
   until: result.stdout == "1"
-  retries: 50
+  retries: 75
   delay: 10
   changed_when: False
 

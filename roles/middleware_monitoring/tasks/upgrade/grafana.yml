@@ -11,7 +11,7 @@
   failed_when: get_deployment_cmd.rc == 0
   until: get_deployment_cmd.rc != 0
   changed_when: "'NotFound' in get_deployment_cmd.stderr"
-  retries: 10
+  retries: 15
   delay: 5
 
 - name: Delete grafana operator

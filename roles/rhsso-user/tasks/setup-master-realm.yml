@@ -37,7 +37,7 @@
   shell: sleep 5; oc get keycloakrealm master -o template --template \{\{.status.phase\}\}  -n {{ eval_user_rhsso_namespace }}  |  grep  'reconcile'
   register: result
   until: result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: not result.stdout
   changed_when: False

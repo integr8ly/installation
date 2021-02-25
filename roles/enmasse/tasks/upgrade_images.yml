@@ -11,6 +11,6 @@
   shell: oc import-image {{ enmasse_postgresql_image }} -n openshift
   register: result
   until: result.stdout
-  retries: 50
+  retries: 75
   delay: 1
   failed_when: not result.stdout

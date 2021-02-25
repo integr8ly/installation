@@ -57,7 +57,7 @@
   - name: Wait for dc to come up
     shell: oc wait --for=condition=available dc tutorial-web-app  --namespace {{ webapp_namespace }} --timeout=600s
     register: result
-    retries: 50
+    retries: 75
     delay: 1
     until: result.stdout is search("condition met")
     

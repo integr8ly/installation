@@ -6,7 +6,7 @@
       shell: oc get pods --selector='name=keycloak-operator' -o jsonpath='{.items[?(@.status.containerStatuses[0].ready==true)].spec.containers[0].image}' -n {{ rhsso_namespace }} | sed -e 's/.*://'
       register: result
       until: result.stdout == sso_operator_tag
-      retries: 50
+      retries: 75
       delay: 10
       changed_when: False
       when: sso_operator_tag is defined
@@ -15,7 +15,7 @@
       shell: oc get keycloak rhsso -o template --template \{\{.status.phase\}\}  -n {{ rhsso_namespace }}  |  grep  'reconcile'
       register: result
       until: result.stdout
-      retries: 50
+      retries: 75
       delay: 10
       changed_when: False
 
@@ -23,6 +23,6 @@
       shell: oc get keycloakrealm {{ rhsso_realm }} -o template --template \{\{.status.phase\}\}  -n {{ rhsso_namespace }}  |  grep  'reconcile'
       register: result
       until: result.stdout
-      retries: 50
+      retries: 75
       delay: 10
       changed_when: False

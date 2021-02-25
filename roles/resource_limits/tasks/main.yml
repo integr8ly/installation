@@ -60,7 +60,7 @@
   async_status: jid={{ item.ansible_job_id }}
   register: patch_jobs
   until: patch_jobs.finished
-  retries: 300
+  retries: 600
   with_items:
     "{{ rollout_status.results }}"
   when: resource_limits_wait_for_rollouts_per_ns | default(true) | bool

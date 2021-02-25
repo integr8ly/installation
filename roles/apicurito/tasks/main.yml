@@ -23,7 +23,7 @@
   shell: "oc get pods --namespace={{ apicurito_namespace }} -o jsonpath='{.items[*].status.containerStatuses[?(@.ready==true)].ready}' | wc -w"
   register: apicurito_result
   until: apicurito_result.stdout.find("2") != -1
-  retries: 20
+  retries: 30
   delay: 5
 
 - import_tasks: heimdall.yml

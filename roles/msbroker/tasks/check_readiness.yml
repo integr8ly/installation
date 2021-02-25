@@ -6,7 +6,7 @@
       shell: oc get pods --selector='app=managed-service-broker' -o jsonpath='{.items[?(@.status.containerStatuses[0].ready==true)].spec.containers[0].image}' -n {{ msbroker_namespace }} | sed -e 's/.*://'
       register: result
       until: result.stdout == msbroker_release_tag
-      retries: 50
+      retries: 75
       delay: 10
       changed_when: False
       when: msbroker_release_tag is defined

@@ -14,7 +14,7 @@
   register: wait_sso_result
   until: wait_sso_result is succeeded
   ignore_errors: yes
-  retries: 30
+  retries: 45
   delay: 30
 
 - name: Get SSO Admin Username

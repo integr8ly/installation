@@ -33,7 +33,7 @@
   shell: oc get {{ item }} -n {{ mdc_namespace }}
   register: result
   until: not result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stdout
   changed_when: False
@@ -70,7 +70,7 @@
   shell: "oc get {{ item }} -n {{ mdc_namespace }}"
   register: result
   until: not result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stdout
   changed_when: False

@@ -30,7 +30,7 @@
   shell: "oc get keycloak/rhsso -o jsonpath='{.status.phase}' -n {{ sso_namespace }}"
   register: result
   until: result.stdout == 'reconcile'
-  retries: 50
+  retries: 75
   delay: 10
   changed_when: False
   when: rhsso_provision_immediately

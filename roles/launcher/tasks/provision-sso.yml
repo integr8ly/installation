@@ -24,7 +24,7 @@
   shell: oc tag --source=docker {{ launcher_sso_imagestream_image }} openshift/{{ launcher_sso_imagestream_name }}
   register: result
   until: result.stdout
-  retries: 50
+  retries: 75
   delay: 1
   failed_when: not result.stdout
   changed_when: False
@@ -34,7 +34,7 @@
   shell: oc -n openshift import-image {{ launcher_sso_imagestream_name }}
   register: result
   until: result.stdout
-  retries: 50
+  retries: 75
   delay: 1
   failed_when: not result.stdout
   changed_when: False
@@ -48,7 +48,7 @@
   shell: sleep 5; oc get pods --namespace {{ launcher_namespace }}  |  grep  "deploy"
   register: result
   until: not result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stdout
   changed_when: False

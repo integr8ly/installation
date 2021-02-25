@@ -47,7 +47,7 @@
   shell: "oc rollout status dc/system-sidekiq -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and system_sidekiq_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_system_patch_latest.stdout.find("no change") == -1
@@ -56,7 +56,7 @@
   shell: "oc rollout status dc/system-sphinx -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and system_sphinx_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_system_patch_latest.stdout.find("no change") == -1
@@ -65,7 +65,7 @@
   shell: "oc rollout status dc/system-app -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and system_app_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_system_patch_latest.stdout.find("no change") == -1
@@ -92,7 +92,7 @@
   shell: "oc rollout status dc/apicast-production -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and apicast_production_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_apicast_patch_latest.stdout.find("no change") == -1
@@ -101,7 +101,7 @@
   shell: "oc rollout status dc/apicast-staging -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and apicast_staging_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_apicast_patch_latest.stdout.find("no change") == -1
@@ -133,7 +133,7 @@
   shell: "oc rollout status dc/backend-listener -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and backend_listener_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_backend_patch_latest.stdout.find("no change") == -1
@@ -142,7 +142,7 @@
   shell: "oc rollout status dc/backend-worker -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and backend_worker_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_backend_patch_latest.stdout.find("no change") == -1
@@ -151,7 +151,7 @@
   shell: "oc rollout status dc/backend-cron -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and backend_cron_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_backend_patch_latest.stdout.find("no change") == -1
@@ -178,7 +178,7 @@
   shell: "oc rollout status dc/zync -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and zync_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_zync_patch_latest.stdout.find("no change") == -1
@@ -187,7 +187,7 @@
   shell: "oc rollout status dc/zync-que -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and zync_que_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_zync_patch_latest.stdout.find("no change") == -1
@@ -209,7 +209,7 @@
   shell: "oc rollout status dc/system-memcache -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and system_memcache_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: system_memcache_patch_latest.stdout.find("no change") == -1
@@ -281,7 +281,7 @@
   shell: "oc rollout status dc/system-app -n {{ threescale_namespace }} --watch=false | grep 'rolled out'"
   register: result
   until: result.stdout and system_app_replication_controller_id.stdout not in result.stdout
-  retries: 50
+  retries: 75
   delay: 10
   failed_when: result.stderr
   when: amp_release_env_var.stdout == ""

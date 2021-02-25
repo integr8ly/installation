@@ -49,7 +49,7 @@
       shell: oc get nodes
       register: task_result
       until: task_result.rc == 0
-      retries: 6
+      retries: 9
       delay: 5
       failed_when: task_result.rc != 0
 
