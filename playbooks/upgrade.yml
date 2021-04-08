@@ -26,6 +26,14 @@
     set_fact: upgrade_{{ item | replace('-', '') }}=true
     with_items: "{{ upgrade_product_roles }}"
 
+  # Enmasse 1.5 to 1.6
+  - name: Update enmasse to 1.6
+    include_role:
+      name: enmasse
+      tasks_from: enmasse_to_1.6.yml
+    vars:
+      enmasse_version: '1.6.0.GA'
+
   - name: Upgrade product images
     include_role:
       name: "{{ item }}"
