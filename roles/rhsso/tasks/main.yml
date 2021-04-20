@@ -72,8 +72,6 @@
   until: result.stdout
   retries: 75
   delay: 10
-  #failed_when: not result.stdout 
-  #changed_when: False
 
 - name: "remove unused service-ca env"
   shell: oc set env dc/sso X509_CA_BUNDLE=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt -n {{ rhsso_namespace }}
@@ -81,8 +79,6 @@
   until: result.stdout
   retries: 75
   delay: 10
-  #failed_when: not result.stdout 
-  #changed_when: False
   
 - name: "Verify rhsso realm is provisioned"
   shell: sleep 5; oc get keycloakrealm {{ rhsso_realm }} -o template --template \{\{.status.phase\}\}  -n {{ rhsso_namespace }}  |  grep  'reconcile'

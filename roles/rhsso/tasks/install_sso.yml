@@ -24,6 +24,22 @@
   register: rhsso_keycloak
   failed_when: rhsso_keycloak.stderr != '' and 'AlreadyExists' not in rhsso_keycloak.stderr
 
+- name: "remove unused service-ca volume mount"
+  shell: oc set volume dc/sso --remove --name=service-ca -n {{ rhsso_namespace }}
+  register: result
+  until: result.stdout
+  retries: 75
+  delay: 10
+  when: rhsso_provision_immediately
+  
+- name: "remove unused service-ca env"
+  shell: oc set env dc/sso X509_CA_BUNDLE=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt -n {{ sso_namespace }}
+  register: result
+  until: result.stdout
+  retries: 75
+  delay: 10
+  when: rhsso_provision_immediately
+  
 - name: "Wait for keycloak to be ready"
   shell: "oc get keycloak/rhsso -o jsonpath='{.status.phase}' -n {{ sso_namespace }}"
   register: result
