@@ -154,14 +154,14 @@ threescale_route_system_master: system-master
 threescale_route_system_provider: system-provider
 
 threescale_image_streams:
-  - amp-apicast:latest
-  - amp-backend:latest
-  - amp-system:latest
-  - amp-zync:latest
-  - zync-database-postgresql:latest
-  - system-mysql:latest
-  - system-memcached:latest
-  - system-redis:latest
-  - backend-redis:latest
+  - amp-apicast:2.9
+  - amp-backend:2.9
+  - amp-system:2.9
+  - amp-zync:2.9
+  - zync-database-postgresql:2.9
+  - system-mysql:2.9
+  - system-memcached:2.9
+  - system-redis:2.9
+  - backend-redis:2.9
 
 threescale_heimdall_exclude_pattern: ""

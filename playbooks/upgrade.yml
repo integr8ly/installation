@@ -80,6 +80,12 @@
     include_role:
       name: middleware_monitoring_config
       tasks_from: upgrade_alert_manager_email.yml
+      
+  # Update 3scale from 2.9 to 2.10 
+  - name: update from 2.9 to 2.10
+    include_role:
+      name: 3scale
+      tasks_from: upgrade_2.9_to_2.10
 
 #Update product version (should always be last)
   - name: Update webapp version info

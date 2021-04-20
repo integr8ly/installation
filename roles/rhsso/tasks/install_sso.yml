@@ -8,8 +8,6 @@
     monitor: true
     is_service: true
 
-
-
 - name: "Create required objects"
   shell: "oc create -f {{ item }} -n {{ sso_namespace }}"
   with_items: "{{ rhsso_operator_resource_items }}"

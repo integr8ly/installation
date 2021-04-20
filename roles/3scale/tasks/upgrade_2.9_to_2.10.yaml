@@ -1,0 +1,312 @@
+---
+
+# 2.2.1. Updating 3scale version number
+
+- name: Update 3scale version number
+  shell: |
+    oc patch cm system-environment --patch '{"data": {"AMP_RELEASE": "2.10"}}' -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# 2.2.4.1. Patch the system image
+
+- name: Patch the system image
+  shell: |
+    oc patch imagestream/amp-system --type=json -p '[{"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP system 2.10"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/3scale-amp2/system-rhel7:3scale2.10"}, "name": "2.10", "referencePolicy": {"type": "Source"}}}]' -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# system-app
+
+- name: Remove the system-app trigger
+  shell: |
+    oc set triggers dc/system-app --from-image=amp-system:2.9 --containers=system-master,system-developer,system-provider --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new system-app trigger
+  shell: |
+    oc set triggers dc/system-app --from-image=amp-system:2.10 --containers=system-master,system-developer,system-provider -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# system-sidekiq
+
+- name: Remove the system-sidekiq trigger
+  shell: |
+    oc set triggers dc/system-sidekiq --from-image=amp-system:2.9 --containers=system-sidekiq,check-svc --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new system-sidekiq trigger
+  shell: |
+    oc set triggers dc/system-sidekiq --from-image=amp-system:2.10 --containers=system-sidekiq,check-svc -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# system-sphinx
+
+- name: Remove the system-sphinx trigger
+  shell: |
+    oc set triggers dc/system-sphinx --from-image=amp-system:2.9 --containers=system-sphinx,system-master-svc --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new system-sphinx trigger
+  shell: |
+    oc set triggers dc/system-sphinx --from-image=amp-system:2.10 --containers=system-sphinx,system-master-svc -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# 2.2.4.2. Patch the apicast image
+
+- name: Patch the apicast image
+  shell: |
+    oc patch imagestream/amp-apicast --type=json -p '[{"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP APIcast 2.10"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/3scale-amp2/apicast-gateway-rhel8:3scale2.10"}, "name": "2.10", "referencePolicy": {"type": "Source"}}}]' -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# apicast-staging
+
+- name: Remove the apicast-staging trigger
+  shell: |
+    oc set triggers dc/apicast-staging --from-image=amp-apicast:2.9 --containers=apicast-staging --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new apicast-staging trigger
+  shell: |
+    oc set triggers dc/apicast-staging --from-image=amp-apicast:2.10 --containers=apicast-staging -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# apicast-production
+
+- name: Remove the apicast-production trigger
+  shell: |
+    oc set triggers dc/apicast-production --from-image=amp-apicast:2.9 --containers=apicast-production,system-master-svc --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new apicast-production trigger
+  shell: |
+    oc set triggers dc/apicast-production --from-image=amp-apicast:2.10 --containers=apicast-production,system-master-svc -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# 2.2.4.3. Patch the backend image
+
+- name: Patch the apicast image
+  shell: |
+    oc patch imagestream/amp-backend --type=json -p '[{"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP Backend 2.10"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/3scale-amp2/backend-rhel7:3scale2.10"}, "name": "2.10", "referencePolicy": {"type": "Source"}}}]' -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# backend-listener
+
+- name: Remove the backend-listener trigger
+  shell: |
+    oc set triggers dc/backend-listener --from-image=amp-backend:2.9 --containers=backend-listener --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new backend-listener trigger
+  shell: |
+    oc set triggers dc/backend-listener --from-image=amp-backend:2.10 --containers=backend-listener -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# backend-worker
+
+- name: Remove the backend-worker trigger
+  shell: |
+    oc set triggers dc/backend-worker --from-image=amp-backend:2.9 --containers=backend-worker,backend-redis-svc --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new backend-worker trigger
+  shell: |
+    oc set triggers dc/backend-worker --from-image=amp-backend:2.10 --containers=backend-worker,backend-redis-svc -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# backend-cron
+
+- name: Remove the backend-cron trigger
+  shell: |
+    oc set triggers dc/backend-cron --from-image=amp-backend:2.9 --containers=backend-cron,backend-redis-svc --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new backend-cron trigger
+  shell: |
+    oc set triggers dc/backend-cron --from-image=amp-backend:2.10 --containers=backend-cron,backend-redis-svc -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# 2.2.4.4. Patch the zync image
+
+- name: Patch the apicast image
+  shell: |
+    oc patch imagestream/amp-zync --type=json -p '[{"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "AMP Zync 2.10"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/3scale-amp2/zync-rhel7:3scale2.10"}, "name": "2.10", "referencePolicy": {"type": "Source"}}}]' -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# zync
+
+- name: Remove the zync trigger
+  shell: |
+    oc set triggers dc/zync --from-image=amp-zync:2.9 --containers=zync,zync-db-svc --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new zync trigger
+  shell: |
+    oc set triggers dc/zync --from-image=amp-zync:2.10 --containers=zync,zync-db-svc -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# zync-que
+
+- name: Remove the zync-que trigger
+  shell: |
+    oc set triggers dc/zync-que --from-image=amp-zync:2.9 --containers=que --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new zync-que trigger
+  shell: |
+    oc set triggers dc/zync-que --from-image=amp-zync:2.10 --containers=que -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# 2.2.4.5. Patch the system-memcached image
+
+- name: Patch the apicast image
+  shell: |
+    oc patch imagestream/system-memcached --type=json -p '[{"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System 2.10 Memcached"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/3scale-amp2/memcached-rhel7:3scale2.10"}, "name": "2.10", "referencePolicy": {"type": "Source"}}}]' -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# system-memcached
+
+- name: Remove the system-memcached trigger
+  shell: |
+    oc set triggers dc/system-memcache --from-image=system-memcached:2.9 --containers=memcache --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new system-memcached trigger
+  shell: |
+    oc set triggers dc/system-memcache --from-image=system-memcached:2.10 --containers=memcache -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# 2.2.4.6. Patch the zync-database-postgresql image
+
+- name: Patch the apicast image
+  shell: |
+    oc patch imagestream/zync-database-postgresql --type=json -p '[{"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "Zync 2.10 PostgreSQL"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/rhscl/postgresql-10-rhel7"}, "name": "2.10", "referencePolicy": {"type": "Source"}}}]' -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# zync-database
+
+- name: Remove the zync-database trigger
+  shell: |
+    oc set triggers dc/zync-database --from-image=zync-database-postgresql:2.9 --containers=postgresql --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new zync-database trigger
+  shell: |
+    oc set triggers dc/zync-database --from-image=zync-database-postgresql:2.10 --containers=postgresql -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# 2.2.4.7.1. backend-redis DeploymentConfig
+
+- name: Patch the apicast image
+  shell: |
+    oc patch imagestream/backend-redis --type=json -p '[{"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "Backend 2.10 Redis"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/rhscl/redis-32-rhel7:3.2"}, "name": "2.10", "referencePolicy": {"type": "Source"}}}]' -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# backend-redis
+
+- name: Remove the backend-redis trigger
+  shell: |
+    oc set triggers dc/backend-redis --from-image=backend-redis:2.9 --containers=backend-redis --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new backend-redis trigger
+  shell: |
+    oc set triggers dc/backend-redis --from-image=backend-redis:2.10 --containers=backend-redis -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# 2.2.4.7.2. system-redis DeploymentConfig
+
+- name: Patch the apicast image
+  shell: |
+    oc patch imagestream/system-redis --type=json -p '[{"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System 2.10 Redis"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/rhscl/redis-32-rhel7:3.2"}, "name": "2.10", "referencePolicy": {"type": "Source"}}}]' -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# system-redis
+
+- name: Remove the system-redis trigger
+  shell: |
+    oc set triggers dc/system-redis --from-image=system-redis:2.9 --containers=system-redis --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new system-redis trigger
+  shell: |
+    oc set triggers dc/system-redis --from-image=system-redis:2.10 --containers=system-redis -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# 2.2.4.7.3. system-mysql DeploymentConfig
+
+- name: Patch the system-mysql image
+  shell: |
+    oc patch imagestream/system-mysql --type=json -p '[{"op": "add", "path": "/spec/tags/-", "value": {"annotations": {"openshift.io/display-name": "System 2.10 MySQL"}, "from": { "kind": "DockerImage", "name": "registry.redhat.io/rhscl/mysql-57-rhel7:5.7"}, "name": "2.10", "referencePolicy": {"type": "Source"}}}]' -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+# system-mysql
+
+- name: Remove the system-mysql trigger
+  shell: |
+    oc set triggers dc/system-mysql --from-image=system-mysql:2.9 --containers=system-mysql --remove -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Add new system-mysql trigger
+  shell: |
+    oc set triggers dc/system-mysql --from-image=system-mysql:2.10 --containers=system-mysql -n {{ threescale_namespace }}
+  register: result
+  failed_when: result.stderr
+
+- name: Wait for 3scale rollouts to complete
+  import_tasks: wait_for_rollouts.yml
+  vars:
+    namespace_to_watch: "{{ threescale_namespace }}"
+    rollouts_to_watch:
+      - dc/apicast-production
+      - dc/apicast-staging
+      - dc/backend-cron
+      - dc/backend-listener
+      - dc/backend-redis
+      - dc/backend-worker
+      - dc/system-app
+      - dc/system-memcache
+      - dc/system-mysql
+      - dc/system-redis
+      - dc/system-sidekiq
+      - dc/system-sphinx
+      - dc/zync
+      - dc/zync-database
+      - dc/zync-que
