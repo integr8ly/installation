@@ -45,7 +45,7 @@
 - name: Delete 
   shell: oc delete rolebinding api-server -n {{ enmasse_namespace }}
   failed_when: false
-  
+
 # Does not seem to exist in 1.5
 - name: Delete 
   shell: oc delete role enmasse.io:api-server -n {{ enmasse_namespace }}

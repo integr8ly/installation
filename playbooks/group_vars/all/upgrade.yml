@@ -2,3 +2,4 @@
 upgrade_from_version: master
 upgrade_product_roles:
 - 3scale
+- enmasse

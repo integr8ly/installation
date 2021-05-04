@@ -16,6 +16,18 @@
     enmasse_inventory_path: /tmp/enmasse-{{ enmasse_version }}/templates/ansible/inventory/
     enmasse_crds_path: /tmp/enmasse-{{ enmasse_version }}/templates/ansible/playbooks/openshift/components/crds
     enmasse_authentication_services: [standard]
+  when: enmasse_version != "1.7.0.GA"
+
+- set_fact:
+    enmasse_playbook_location: enmasse-"{{ enmasse_version }}"/templates/prekube1_16/ansible/playbooks/openshift/deploy_all.yml
+    enmasse_inventory_path: /tmp/enmasse-{{ enmasse_version }}/templates/prekube1_16/ansible/inventory/
+    enmasse_crds_path: /tmp/enmasse-{{ enmasse_version }}/templates/prekube1_16/ansible/playbooks/openshift/components/crds
+    enmasse_authentication_services: [standard]
+  when: enmasse_version == "1.7.0.GA"
+
+- name: "Remove 'type: object' from openAPIV3Schema in 0.1.0-messagingusers.crd.yaml.original.yaml"
+  shell: "sed -i -e '52d' /tmp/enmasse-{{ enmasse_version }}/templates/prekube1_16/ansible/playbooks/openshift/components/crds/010-messagingusers.crd.yaml"
+  when: enmasse_version == "1.7.0.GA"
 
 - name: Generate keycloak admin password
   set_fact:
