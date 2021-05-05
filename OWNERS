@@ -4,13 +4,11 @@ approvers:
 - pmccarthy
 - philbrookes
 - david-martin
-- mikenairn
 - maleck13
 - pb82
 - jessesarn
-- davidffrench
-- wei-lee
-- JameelB
+- ciaran-byrne
+
 
 reviewers:
 - pmccarthy
@@ -29,3 +27,5 @@ reviewers:
 - obrienrobert
 - damienomurchu
 - wei-lee
+- briangallagher
+- CathalOConnorRH
