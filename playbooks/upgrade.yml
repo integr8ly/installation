@@ -26,14 +26,6 @@
     set_fact: upgrade_{{ item | replace('-', '') }}=true
     with_items: "{{ upgrade_product_roles }}"
 
-  # Enmasse 1.5 to 1.6
-  - name: Update enmasse to 1.6
-    include_role:
-      name: enmasse
-      tasks_from: enmasse_to_1.6.yml
-    vars:
-      enmasse_version: '1.6.0.GA'
-
   - name: Upgrade product images
     include_role:
       name: "{{ item }}"
@@ -55,24 +47,6 @@
 #        tasks_from: upgrade_patch
 #      when: upgrade_webapp|bool
 
-  # 3Scale Config
-  - name: Delete Zync ServiceMonitor
-    shell: oc delete servicemonitor {{ threescale_zync_sm_name | default("3scale-zync-servicemonitor") }} -n {{ threescale_namespace }}
-    register: zync_sm_output
-    failed_when: zync_sm_output.stderr != '' and 'not found' not in zync_sm_output.stderr
-    changed_when: zync_sm_output.rc == 0 and 'deleted' in zync_sm_output.stdout
-
-  # Solution Explorer
-  - name: Webapp upgrade
-    include_role:
-      name: webapp
-      tasks_from: upgrade
-    vars:
-      rhsso_openshift_master_config_path: "{{ eval_openshift_master_config_path }}"
-      rhsso_namespace: "{{ eval_rhsso_namespace }}"
-      upgrade_webapp_operator_image: quay.io/integreatly/tutorial-web-app-operator:{{ webapp_operator_release_tag }}
-    when: upgrade_webapp|default(false)|bool
-    
   # Prevent user from linking customer-admin to incorrect account on first login to user-sso
   - name: Obtain user sso token for API calls
     include_role:
@@ -89,13 +63,7 @@
       name: middleware_monitoring_config
       tasks_from: upgrade_alert_manager_email.yml
 
-# Update 3scale from 2.9 to 2.10 
-  - name: update from 2.9 to 2.10
-    include_role:
-      name: 3scale
-      tasks_from: upgrade_2.9_to_2.10
-      
-#Update product version (should always be last)
+  #Update product version (should always be last)
   - name: Update webapp version info
     include_role:
       name: webapp
